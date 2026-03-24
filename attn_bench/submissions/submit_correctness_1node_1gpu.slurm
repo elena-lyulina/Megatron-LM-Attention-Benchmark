@@ -35,4 +35,4 @@ export WANDB_EXP_NAME="correctness_${ATTN}_${IMPL}_1node_1gpu_tp${TP_SIZE}_pp${P
 mkdir -p /iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark/logs/correctness/
 
 # passing attention params to run_correctness.sh
-srun /iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark/attn_bench/scripts/run_correctness.sh "$@"
+bash /iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark/attn_bench/scripts/run_correctness.sh "$@"

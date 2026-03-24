@@ -58,8 +58,7 @@ ulimit -c 0  # Disable core dumps to avoid filling up scratch space
 
 # Log initial GPU memory usage on each node before training starts
 echo "[$(date)] Logging GPU memory usage..."
-srun -l bash -c 'echo $(hostname) $(nvidia-smi | grep -o "|\s*[0-9]*MiB")'
-#srun -l bash -c 'echo $(hostname) $(nvidia-smi | grep -o "|\s*[0-9]*MiB")' > "${GPU_MEM_LOGGING}"
+srun -l bash -c 'echo $(hostname) $(nvidia-smi | grep -o "|\s*[0-9]*MiB")' > "${GPU_MEM_LOGGING}"
 echo "[$(date)] GPU memory logged to ${GPU_MEM_LOGGING}"
 
 
