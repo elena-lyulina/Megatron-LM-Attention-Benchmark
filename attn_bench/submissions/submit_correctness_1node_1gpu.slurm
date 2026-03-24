@@ -7,7 +7,7 @@
 #SBATCH --cpus-per-task=72
 #SBATCH --mem=200GB
 #SBATCH --time=00:10:00
-#SBATCH --environment=nemo.toml # in my ~/.edf
+#SBATCH --environment=nemo # in my ~/.edf
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/correctness/%x_%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/correctness/%x_%j.err
 #SBATCH --no-requeue	# Prevent Slurm to requeue the job if the execution crashes (e.g. node failure)
@@ -18,7 +18,7 @@
 # All the other params (model configuration, training params, etc) are set in scripts/run_correctness.sh
 
 # Usage:
-#   sbatch attn_bench/submissions/submit_correctness_1node_1gpu.slurm full flash
+#   sbatch submissions/submit_correctness_1node_1gpu.slurm full flash
 
 export TP_SIZE=1
 export PP_SIZE=1
