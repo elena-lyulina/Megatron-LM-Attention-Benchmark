@@ -1,0 +1,15 @@
+Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+/opt/TensorRT-Model-Optimizer/modelopt/torch/utils/import_utils.py:32: UserWarning: Failed to import diffusers plugin due to: ImportError('peft>=0.17.0 is required for a normal functioning of this module, but found peft==0.13.2.'). You may ignore this warning if you do not need this plugin.
+  warnings.warn(
+/opt/TensorRT-Model-Optimizer/modelopt/torch/utils/import_utils.py:32: UserWarning: Failed to import peft plugin due to: ImportError("cannot import name 'ParamWrapper' from 'peft.tuners.lora.layer' (/opt/venv/lib/python3.12/site-packages/peft/tuners/lora/layer.py)"). You may ignore this warning if you do not need this plugin.
+  warnings.warn(
+/opt/TensorRT-Model-Optimizer/modelopt/torch/__init__.py:36: UserWarning: transformers version 4.57.3 is incompatible with nvidia-modelopt and may cause issues. Please install recommended version with `pip install nvidia-modelopt[hf]` if working with HF models.
+  _warnings.warn(
+Traceback (most recent call last):
+  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/benchmarks/correctness.py", line 142, in <module>
+    main()
+  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/benchmarks/correctness.py", line 129, in main
+    check_git_working_tree()
+  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/utils/git_info.py", line 69, in check_git_working_tree
+    raise RuntimeError(
+RuntimeError: Working tree is dirty with 106 diff lines (limit: 100). Commit or stash your changes before running the benchmark.

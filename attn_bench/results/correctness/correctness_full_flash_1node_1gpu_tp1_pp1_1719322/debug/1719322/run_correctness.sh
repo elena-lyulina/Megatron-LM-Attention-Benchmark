@@ -281,9 +281,7 @@ SEP=$(printf '=%.0s' {1..100})
 echo "Correctness benchmark: attn=${ATTN} impl=${IMPL} tp=${TP_SIZE} pp=${PP_SIZE} nodes=${SLURM_NNODES:-1} gpus_per_node=${SLURM_GPUS_PER_NODE:-1}"
 
 echo "[$(date)] Launching training..."
-# srun -lu --cpus-per-task "${SLURM_CPUS_PER_TASK}" --wait 60 bash -c "${CMD_PREFIX} ${TRAINING_CMD}"
-srun -lu --cpus-per-task "${SLURM_CPUS_PER_TASK}" --wait 60 bash -c "export PYTHONPATH='${PYTHONPATH}'; ${CMD_PREFIX} ${TRAINING_CMD}"
-
+srun -lu --cpus-per-task "${SLURM_CPUS_PER_TASK}" --wait 60 bash -c "${CMD_PREFIX} ${TRAINING_CMD}"
 echo "[$(date)] Training finished."
 
 echo "END TIME: $(date)"

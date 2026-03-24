@@ -31,9 +31,10 @@ _GIT_INFO_LOGGED = False
 
 
 #  Parse args and build the model with the custom attention mechanism
-def model_provider(pre_process=True, post_process=True):
+def model_provider(pre_process=True, post_process=True, config=None, vp_stage=None, pg_collection=None):
     args = get_args()
-    config = core_transformer_config_from_args(args)
+    if config is None:
+        config = core_transformer_config_from_args(args)
     return build_model(
         args=args,
         config=config,
@@ -41,6 +42,8 @@ def model_provider(pre_process=True, post_process=True):
         impl=args.impl,
         pre_process=pre_process,
         post_process=post_process,
+	vp_stage=vp_stage,
+	pg_collection=pg_collection
     )
 
 # Simplified for benchmarks
