@@ -8,8 +8,8 @@
 #SBATCH --mem=200GB
 #SBATCH --time=00:10:00
 #SBATCH --environment=nemo # in my ~/.edf
-#SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/correctness/%x_%j.out
-#SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/correctness/%x_%j.err
+#SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
+#SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
 #SBATCH --no-requeue	# Prevent Slurm to requeue the job if the execution crashes (e.g. node failure)
 
 
@@ -32,7 +32,7 @@ export WANDB_PROJECT="Megatron-LM-Attention-Benchmark"
 export WANDB_EXP_NAME="correctness_${ATTN}_${IMPL}_1node_1gpu_tp${TP_SIZE}_pp${PP_SIZE}_${SLURM_JOB_ID}"
 
 # create log directory if it doesn't exist
-mkdir -p /iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark/logs/correctness/
+mkdir -p /iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark/attn_bench/logs/
 
 # passing attention params to run_correctness.sh
 bash /iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark/attn_bench/scripts/run_correctness.sh "$@"
