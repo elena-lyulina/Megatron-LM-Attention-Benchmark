@@ -16,10 +16,10 @@ class FlashFullAttention(nn.Module):
     Full (standard) causal attention using the FlashAttention kernel.
 
     Format: sbhd (standard non-packed)
-      query:      [sq, b, np, hn]
-      key/value:  [sk, b, ng, hn]
-        np = num query heads per TP rank
-        ng = num KV heads per TP rank  (ng <= np for GQA)
+    query: [sq, b, np, hn]
+    key/value: [sk, b, ng, hn]
+    np = num query heads per TP rank
+    ng = num KV heads per TP rank (ng <= np for GQA)
 
     Output: [sq, b, np * hn]
     """

@@ -1,10 +1,9 @@
 """
 Spec provider for full (dense) attention.
 
-One provider covers all full-attention kernel classes — the kernel and base
-backend are injected at construction time. The Megatron wrapper is created
-dynamically via make_megatron_wrapper, so adding a new impl (sdpa, triton)
-requires no changes here.
+One provider covers all implementations (kernels) for the same attention mechanism, the kernel and base
+backend are injected at construction time. The Megatron wrapper is created dynamically via make_megatron_wrapper,
+so adding a new impl (sdpa, triton) shouldn't require any changes here (unless they have a different projection structure)
 """
 
 from megatron.core.models.backends import BackendSpecProvider

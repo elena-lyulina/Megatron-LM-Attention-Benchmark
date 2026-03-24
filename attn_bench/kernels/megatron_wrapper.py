@@ -8,8 +8,7 @@ wrapped into a MegatronModule via make_megatron_wrapper(). The wrapper:
   - Passes mechanism-specific kwargs (e.g. window_size) to the kernel
   - Delegates all compute to the pure kernel
 
-Shared across all mechanisms — each mechanism's specs.py calls this factory
-and contributes its own SpecProvider + attention_spec().
+Shared across all mechanisms: each mechanism's specs.py calls this factory and contributes its own SpecProvider + attention_spec().
 """
 
 import math
@@ -28,11 +27,9 @@ def make_megatron_wrapper(kernel_cls: type, **kernel_kwargs) -> type:
     Dynamically create a MegatronModule wrapper for a pure attention kernel.
 
     Args:
-        kernel_cls:     pure kernel class with signature:
-                            __init__(num_heads, num_kv_heads, head_dim,
-                                     softmax_scale, dropout_p, **kernel_kwargs)
-        **kernel_kwargs: mechanism-specific kwargs forwarded to the kernel
-                         constructor, e.g. window_size=512 for sliding window.
+    - kernel_cls: pure kernel class with signature:
+         __init__(num_heads, num_kv_heads, head_dim, softmax_scale, dropout_p, **kernel_kwargs)
+    - **kernel_kwargs: mechanism-specific kwargs forwarded to the kernel constructor (e.g. window_size=512 for sliding window)
 
     Returns:
         A MegatronModule subclass satisfying the CoreAttentionBuilder protocol.

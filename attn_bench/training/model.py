@@ -20,32 +20,15 @@ from attn_bench.training.spec_builder import make_spec
 
 
 def build_model(
-    args,
-    config: TransformerConfig,
-    mechanism: str,
-    impl: str,
-    pre_process: bool = True,
-    post_process: bool = True,
-    vp_stage: Optional[int] = None,
-    pg_collection: Optional[ProcessGroupCollection] = None,
+    args, # Megatron argparse namespace (from get_args())
+    config: TransformerConfig, # TransformerConfig built from args
+    attn: str, # attention type, e.g. "full"
+    impl: str, # kernel implementation, e.g. "flash"
+    pre_process: bool = True, # whether this rank handles embeddings (pipeline parallel)
+    post_process: bool = True, # whether this rank handles LM head (pipeline parallel)
+    vp_stage: Optional[int] = None, # virtual pipeline stage index
+    pg_collection: Optional[ProcessGroupCollection] = None, #process group collection
 ) -> GPTModel:
-    """
-    Build a GPTModel with a custom attention kernel.
-
-    Starts from the standard Transformer Engine layer spec (same as a normal
-    Megatron run with --transformer-impl transformer_engine) and replaces only
-    the self_attention ModuleSpec with our custom kernel.
-
-    Args:
-        args:       Megatron argparse namespace (from get_args())
-        config:     TransformerConfig built from args
-        mechanism:  attention mechanism, e.g. "full", "sliding_window"
-        impl:       kernel implementation, e.g. "flash", "sdpa"
-        pre_process:  whether this rank handles embeddings (pipeline parallel)
-        post_process: whether this rank handles LM head (pipeline parallel)
-        vp_stage:   virtual pipeline stage index, or None
-        pg_collection: process group collection, or None to use global state
-    """
     # Start from the standard TE layer spec — same as a normal Megatron run.
     # We use the minimal set of config flags relevant to our benchmark so the spec stays simple.
     layer_spec = get_gpt_layer_with_transformer_engine_spec(
@@ -59,7 +42,7 @@ def build_model(
     # Replace only self_attention with our custom kernel.
     # All other slots (input_layernorm, mlp, mlp_bda, etc.) stay as-is.
     layer_spec.submodules.self_attention = make_spec(
-        mechanism=mechanism,
+        attn=attn,
         impl=impl,
         backend=TESpecProvider(),
         qk_layernorm=getattr(config, 'qk_layernorm', False),
