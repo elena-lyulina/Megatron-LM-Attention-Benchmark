@@ -29,6 +29,7 @@ GPU_MEM_LOGGING=$DEBUG_DIR/memory_logging.txt
 TENSORBOARD_DIR="${EXP_DIR}/tensorboard"
 
 # Set up directories
+echo "[$(date)] Setting up directories..."
 mkdir -p $EXP_DIR
 mkdir -p $TRIGGER_DIR
 mkdir -p $DEBUG_DIR
@@ -50,12 +51,16 @@ fi
 
 
 ##### Environment #####
+echo "[$(date)] Setting up environment..."
 cd $REPO_ROOT
 export PYTHONPATH="${REPO_ROOT}:${PYTHONPATH:-}"
 ulimit -c 0  # Disable core dumps to avoid filling up scratch space
 
 # Log initial GPU memory usage on each node before training starts
-srun -l bash -c 'echo $(hostname) $(nvidia-smi | grep -o "|\s*[0-9]*MiB")' > "${GPU_MEM_LOGGING}"
+echo "[$(date)] Logging GPU memory usage..."
+srun -l bash -c 'echo $(hostname) $(nvidia-smi | grep -o "|\s*[0-9]*MiB")'
+#srun -l bash -c 'echo $(hostname) $(nvidia-smi | grep -o "|\s*[0-9]*MiB")' > "${GPU_MEM_LOGGING}"
+echo "[$(date)] GPU memory logged to ${GPU_MEM_LOGGING}"
 
 
 ##### Distributed #####
@@ -267,7 +272,9 @@ SEP=$(printf '=%.0s' {1..100})
 
 echo "Correctness benchmark: attn=${ATTN} impl=${IMPL} tp=${TP_SIZE} pp=${PP_SIZE} nodes=${SLURM_NNODES:-1} gpus_per_node=${SLURM_GPUS_PER_NODE:-1}"
 
+echo "[$(date)] Launching training..."
 srun -lu --cpus-per-task "${SLURM_CPUS_PER_TASK}" --wait 60 bash -c "${CMD_PREFIX} ${TRAINING_CMD}"
+echo "[$(date)] Training finished."
 
 echo "END TIME: $(date)"
 echo "Done. Results in ${EXP_DIR}"
