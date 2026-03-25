@@ -45,7 +45,7 @@ def make_megatron_wrapper(kernel_cls: type, **kernel_kwargs) -> type:
             attention_type: str,
             attention_dropout: Optional[float] = None,
             softmax_scale: Optional[float] = None,
-            cp_comm_type: Optional[str] = None, # CP is not supported yet
+            cp_comm_type: Optional[str] = None,  # CP is not supported yet
             pg_collection: Optional[ProcessGroupCollection] = None,
         ):
             super().__init__(config=config)

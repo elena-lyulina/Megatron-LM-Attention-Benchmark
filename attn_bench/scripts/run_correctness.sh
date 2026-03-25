@@ -226,7 +226,7 @@ TRAINING_CMD="torchrun ${TORCHRUN_ARGS[*]} ${ATTN_BENCH_ROOT}/benchmarks/correct
     ${CHECKPOINTING_ARGS[*]}"
 
 
-# WANDB Logging 
+# WANDB Logging
 LOG_WANDB="${LOG_WANDB:-false}"
 if [ "${LOG_WANDB}" = "true" ]; then
     echo "[$(date)] W&B logging enabled."
@@ -264,7 +264,7 @@ SEP=$(printf '=%.0s' {1..100})
     echo -e "${SEP}"
     echo -e "\n$(pip list)"
     echo -e "${SEP}"
-    echo -e "\nPython sys.path:\n$(python -c 'import sys; print(chr(10).join(sys.path))')" 
+    echo -e "\nPython sys.path:\n$(python -c 'import sys; print(chr(10).join(sys.path))')"
     echo -e "${SEP}"
     echo -e "\nmegatron location: $(python -c 'import megatron; print(megatron.__file__)' 2>&1)"
     echo -e "${SEP}"
@@ -282,6 +282,7 @@ echo "Correctness benchmark: attn=${ATTN} impl=${IMPL} tp=${TP_SIZE} pp=${PP_SIZ
 
 echo "[$(date)] Launching training..."
 # srun -lu --cpus-per-task "${SLURM_CPUS_PER_TASK}" --wait 60 bash -c "${CMD_PREFIX} ${TRAINING_CMD}"
+# Need to export PythonPath explicitly, otherwise it finds wrong megatron
 srun -lu --cpus-per-task "${SLURM_CPUS_PER_TASK}" --wait 60 bash -c "export PYTHONPATH='${PYTHONPATH}'; ${CMD_PREFIX} ${TRAINING_CMD}"
 
 echo "[$(date)] Training finished."
