@@ -64,7 +64,7 @@ echo "[$(date)] GPU memory logged to ${GPU_MEM_LOGGING}"
 
 
 ##### Distributed #####
-export TORCH_NCCL_AVOID_RECORD_STREAMS=1  # reduce GPU memory fragmentation during NCCL communication
+# export TORCH_NCCL_AVOID_RECORD_STREAMS=1  # now the default behaviour in PyTorch, no longer needs to be set explicitly
 export TORCH_NCCL_ASYNC_ERROR_HANDLING=1  # surface NCCL errors immediately instead of hanging
 export CUDA_DEVICE_MAX_CONNECTIONS=1       # limit CUDA kernel launch queues to improve gradient communication overlap
 export NCCL_IB_TIMEOUT=22                 # increasing the default timeout (2^22 ms ~4s), avoids false failures under network load

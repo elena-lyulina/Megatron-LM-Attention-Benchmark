@@ -379,6 +379,7 @@ def _initialize_distributed(get_embedding_ranks, get_position_embedding_ranks, s
             'world_size': args.world_size,
             'rank': args.rank,
             'timeout': timedelta(minutes=args.distributed_timeout_minutes),
+            'device_id': device_id,
         }
         if args.fake_process_group:
             assert is_torch_min_version("2.3.0"), "Fake process group is only supported with PyTorch 2.3.0 and above."
