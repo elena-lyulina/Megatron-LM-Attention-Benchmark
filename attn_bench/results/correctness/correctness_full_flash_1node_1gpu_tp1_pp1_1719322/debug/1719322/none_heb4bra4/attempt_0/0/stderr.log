@@ -1,7 +1,0 @@
-/opt/megatron-lm/megatron/core/inference/unified_memory.py:83: UserWarning: Failed to create unified memory mempool.
-  warnings.warn("Failed to create unified memory mempool.")
-fused_indices_to_multihot has reached end of life. Please migrate to a non-experimental function.
-Traceback (most recent call last):
-  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/benchmarks/correctness.py", line 21, in <module>
-    from megatron.training import get_args, pretrain, print_rank_0
-ModuleNotFoundError: No module named 'megatron.training'
