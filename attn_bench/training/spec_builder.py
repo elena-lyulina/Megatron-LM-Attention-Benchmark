@@ -14,6 +14,12 @@ from megatron.core.transformer.spec_utils import ModuleSpec
 from attn_bench.kernels.full.flash import FlashFullAttention
 from attn_bench.kernels.full.specs import FullSpecProvider
 from attn_bench.kernels.full.torch_native import TorchFullAttention
+from attn_bench.kernels.gated.flash import GatedFlashAttention
+from attn_bench.kernels.gated.specs import GatedSpecProvider
+from attn_bench.kernels.gated.torch_native import GatedTorchAttention
+from attn_bench.kernels.sink.specs import SinkSpecProvider
+from attn_bench.kernels.sink.te import SinkTEAttention
+from attn_bench.kernels.sink.torch_native import SinkTorchAttention
 
 # Registry: (mechanism, impl) -> (SpecProvider class, kernel class)
 # SpecProvider controls the module class, submodules dataclass, and projection layers.
@@ -21,6 +27,10 @@ from attn_bench.kernels.full.torch_native import TorchFullAttention
 _REGISTRY: dict[tuple[str, str], tuple[type, type]] = {
     ("full", "flash"): (FullSpecProvider, FlashFullAttention),
     ("full", "torch"): (FullSpecProvider, TorchFullAttention),
+    ("gated", "flash"): (GatedSpecProvider, GatedFlashAttention),
+    ("gated", "torch"): (GatedSpecProvider, GatedTorchAttention),
+    ("sink", "torch"): (SinkSpecProvider, SinkTorchAttention),
+    ("sink", "te"): (SinkSpecProvider, SinkTEAttention),
 }
 
 
