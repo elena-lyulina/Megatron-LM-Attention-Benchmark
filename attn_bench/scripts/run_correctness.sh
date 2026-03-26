@@ -106,7 +106,7 @@ TRANSFORMER_ENGINE_ARGS=(
 
 # Network size (Llama 3.2 1B)
 
-SEQ_LEN="${SEQ_LEN:-8192}"
+SEQ_LEN="${SEQ_LEN:-2048}"
 
 NETWORK_SIZE_ARGS=(
     --num-layers 16
