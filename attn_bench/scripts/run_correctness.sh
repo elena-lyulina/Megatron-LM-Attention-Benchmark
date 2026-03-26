@@ -163,10 +163,8 @@ LEARNING_RATE_ARGS=(
 )
 
 CHECKPOINTING_ARGS=(
-    --save "${EXP_DIR}/checkpoints" # in case megatron needs this set?
-    --save-interval 10000  # effectively disables checkpointing for a short run
-    --no-save-optim
-    --no-save-rng
+    # No --save: disables all checkpointing (Megatron always saves a final checkpoint if --save is set,
+    # even if --save-interval is never reached, which wastes ~2GB for a short correctness run)
 )
 
 MIXED_PRECISION_ARGS=(
