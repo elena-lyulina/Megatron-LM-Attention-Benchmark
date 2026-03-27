@@ -2,10 +2,12 @@
 Sink attention
 gpt-oss-120b & gpt-oss-20b Model Card (Agarwal et al. 2025), https://arxiv.org/abs/2508.10925
 
-Modifies the softmax denominator with a learnable scalar `sink`:
-    Softmax_sink(x)_i = exp(x_i) / (sum_j exp(x_j) + exp(sink))
+Modifies the softmax denominator with a learnable per-head scalar `sink`:
+    Softmax_sink(x)_{h,i} = exp(x_{h,i}) / (exp(sink_h) + sum_j exp(x_{h,j}))
 
-Equivalent to appending a synthetic token with logit=sink and value=0, so the output is unaffected, only the normalization changes.
+Equivalent to appending a synthetic token with logit=sink_h and value=0 per head,
+so the output is unaffected, only the normalization changes.
+Matches TE's softmax_type='learnable': per-head parameter, torch.empty initialisation.
 """
 
 from typing import Optional
@@ -32,9 +34,9 @@ class SinkTorchAttention(nn.Module):
         self.head_dim = head_dim
         self.softmax_scale = softmax_scale
         self.dropout_p = dropout_p
-        # Learnable sink logit. exp(sink) is added to the softmax denominator,
-        # acting as a zero-value synthetic token. init=0 → exp(sink)=1 at start.
-        self.sink = nn.Parameter(torch.zeros(1))
+        # Learnable sink logit per head, matching TE's softmax_offset shape [num_heads] and
+        # torch.empty initialisation. exp(sink_h) is added to head h's softmax denominator.
+        self.sink = nn.Parameter(torch.empty(num_heads))
 
     def forward(
         self,
@@ -79,8 +81,9 @@ class SinkTorchAttention(nn.Module):
         scores = scores.masked_fill(~causal_mask, float('-inf'))
 
         # Append sink logit as an extra column, softmax over it, then drop it
-        # equivalent to the paper's formula but avoids any kernel modification
-        sink_col = self.sink.expand(b, self.num_heads, sq, 1)
+        # equivalent to the paper's formula but avoids any kernel modification.
+        # self.sink: [h] -> [1, h, 1, 1] -> [b, h, sq, 1]
+        sink_col = self.sink.view(1, self.num_heads, 1, 1).expand(b, self.num_heads, sq, 1)
         attn = F.softmax(torch.cat([scores, sink_col], dim=-1), dim=-1)[:, :, :, :-1]
 
         if self.training and self.dropout_p > 0.0:
