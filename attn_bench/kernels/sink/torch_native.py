@@ -83,9 +83,9 @@ class SinkTorchAttention(nn.Module):
 
         # Append sink logit as an extra column, softmax over it, then drop it
         # equivalent to the paper's formula but avoids any kernel modification.
-        # Cast to float32 matching TE's softmax_offset.to(torch.float32) before the softmax.
+        # Cast to activation dtype (matching TE's softmax_offset.to(dtype=matmul_result.dtype)).
         # self.sink: [h] -> [1, h, 1, 1] -> [b, h, sq, 1]
-        sink_col = self.sink.to(torch.float32).reshape(1, self.num_heads, 1, 1).expand(b, self.num_heads, sq, 1)
+        sink_col = self.sink.to(q.dtype).reshape(1, self.num_heads, 1, 1).expand(b, self.num_heads, sq, 1)
         attn = F.softmax(torch.cat([scores, sink_col], dim=-1), dim=-1)[:, :, :, :-1]
 
         if self.training and self.dropout_p > 0.0:
