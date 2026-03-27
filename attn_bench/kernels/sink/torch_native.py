@@ -35,8 +35,9 @@ class SinkTorchAttention(nn.Module):
         self.softmax_scale = softmax_scale
         self.dropout_p = dropout_p
         # Learnable sink logit per head, matching TE's softmax_offset shape [num_heads] and
-        # torch.empty initialisation. exp(sink_h) is added to head h's softmax denominator.
+        # initialisation: TE calls reset_parameters with get_default_init_method() = N(0, 0.023).
         self.sink = nn.Parameter(torch.empty(num_heads))
+        nn.init.normal_(self.sink, mean=0.0, std=0.023)
 
     def forward(
         self,
@@ -82,8 +83,9 @@ class SinkTorchAttention(nn.Module):
 
         # Append sink logit as an extra column, softmax over it, then drop it
         # equivalent to the paper's formula but avoids any kernel modification.
+        # Cast to float32 matching TE's softmax_offset.to(torch.float32) before the softmax.
         # self.sink: [h] -> [1, h, 1, 1] -> [b, h, sq, 1]
-        sink_col = self.sink.view(1, self.num_heads, 1, 1).expand(b, self.num_heads, sq, 1)
+        sink_col = self.sink.to(torch.float32).reshape(1, self.num_heads, 1, 1).expand(b, self.num_heads, sq, 1)
         attn = F.softmax(torch.cat([scores, sink_col], dim=-1), dim=-1)[:, :, :, :-1]
 
         if self.training and self.dropout_p > 0.0:
