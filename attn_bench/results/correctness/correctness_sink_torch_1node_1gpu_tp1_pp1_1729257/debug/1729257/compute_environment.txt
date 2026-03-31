@@ -1,0 +1,974 @@
+Thu Mar 26 16:36:52 CET 2026
+====================================================================================================
+
+CMD:  torchrun --nproc-per-node 1 --nnodes 1 --rdzv_endpoint nid006132:29619 --rdzv_backend c10d --max_restarts 0 --tee 3 --log-dir /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/results/correctness/correctness_sink_torch_1node_1gpu_tp1_pp1_1729257/debug/1729257 /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/benchmarks/correctness.py     --attn sink --impl torch     --transformer-impl transformer_engine --use-precision-aware-optimizer --main-grads-dtype bf16     --tensor-model-parallel-size 1 --pipeline-model-parallel-size 1 --context-parallel-size 1 --wgrad-deferral-limit 50 --use-distributed-optimizer --overlap-grad-reduce --overlap-param-gather     --num-layers 16 --hidden-size 2048 --ffn-hidden-size 8192 --num-attention-heads 32 --group-query-attention --num-query-groups 8 --max-position-embeddings 8192 --position-embedding-type rope --rotary-base 500000 --use-rope-scaling --rope-scaling-factor 32 --normalization RMSNorm --swiglu --disable-bias-linear     --seed 28 --init-method-std 0.008944     --micro-batch-size 2 --global-batch-size 80 --train-iters 15 --cross-entropy-loss-fusion --optimizer adam --dataloader-type single     --bf16     --attention-dropout 0.0 --hidden-dropout 0.0 --weight-decay 0.1 --clip-grad 1.0 --adam-beta1 0.9 --adam-beta2 0.95     --lr 0.0003 --min-lr 0.00003 --lr-decay-style cosine --lr-warmup-iters 2     --mock-data --tokenizer-type NullTokenizer --vocab-size 32768 --seq-length 8192 --make-vocab-size-divisible-by 128     --log-interval 1 --log-throughput --log-progress --log-timers-to-tensorboard --no-log-loss-scale-to-tensorboard --log-memory-to-tensorboard --tensorboard-dir /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/results/correctness/correctness_sink_torch_1node_1gpu_tp1_pp1_1729257/tensorboard     --eval-interval 100 --eval-iters 0          --wandb-save-dir /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/results/correctness/correctness_sink_torch_1node_1gpu_tp1_pp1_1729257     --wandb-project Megatron-LM-Attention-Benchmark     --wandb-exp-name correctness_sink_torch_1node_1gpu_tp1_pp1_1729257
+====================================================================================================
+
+NODES: nid006132
+====================================================================================================
+
+Repo: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark (b1b44d425b5576f4628f97b49c009a12683062f6)
+====================================================================================================
+
+Package                                     Version                        Build    Editable project location
+------------------------------------------- ------------------------------ -------- --------------------------------------
+absl-py                                     2.3.1
+accelerate                                  1.12.0
+accelerated-scan                            0.2.0
+addict                                      2.4.0
+aenum                                       3.1.16
+aiobotocore                                 2.26.0
+aiohappyeyeballs                            2.6.1
+aiohttp                                     3.13.2
+aiohttp-cors                                0.8.1
+aioitertools                                0.13.0
+aiosignal                                   1.4.0
+alabaster                                   1.0.0
+alembic                                     1.17.2
+aniso8601                                   10.0.1
+annotated-doc                               0.0.4
+annotated-types                             0.7.0
+antlr4-python3-runtime                      4.9.3
+anyio                                       4.9.0
+apache-tvm-ffi                              0.1.5
+apex                                        0.1
+argcomplete                                 3.6.3
+argon2-cffi                                 25.1.0
+argon2-cffi-bindings                        25.1.0
+arrow                                       1.3.0
+asciitree                                   0.3.3
+astor                                       0.8.1
+asttokens                                   3.0.1
+astunparse                                  1.6.3
+async-lru                                   2.0.5
+attrdict                                    2.0.1
+attrs                                       25.4.0
+audioread                                   3.1.0
+av                                          15.1.0
+babel                                       2.17.0
+backoff                                     2.2.1
+bcrypt                                      5.0.0
+beautifulsoup4                              4.13.1
+bitsandbytes                                0.48.2
+black                                       24.10.0
+blake3                                      1.0.6
+bleach                                      6.2.0
+blinker                                     1.9.0
+blobfile                                    3.1.0
+boto3                                       1.41.5
+botocore                                    1.41.5
+braceexpand                                 0.1.7
+bracex                                      2.6
+brotli                                      1.2.0
+build                                       1.3.0
+cachetools                                  6.2.2
+catalogue                                   2.0.10
+causal_conv1d                               1.5.3
+cbor2                                       5.7.0
+cdifflib                                    1.2.6
+certifi                                     2025.11.12
+cffi                                        2.0.0
+chardet                                     5.2.0
+charset-normalizer                          3.4.4
+click                                       8.2.1
+click-option-group                          0.5.9
+clip                                        0.2.0
+cloudpickle                                 3.0.0
+cmake                                       3.31.6
+colorama                                    0.4.6
+colored                                     2.3.1
+colorful                                    0.6.0a1
+colorlog                                    6.10.1
+comm                                        0.2.3
+compressed-tensors                          0.10.2
+contextlib2                                 21.6.0
+contourpy                                   1.3.3
+coverage                                    7.13.0
+cryptography                                42.0.8
+ctc_segmentation                            1.7.4
+cuda-bindings                               13.0.3
+cuda-core                                   0.4.2
+cuda-pathfinder                             1.3.2
+cuda-python                                 13.0.3
+cycler                                      0.12.1
+Cython                                      3.2.2
+cytoolz                                     1.1.0
+DataProperty                                1.1.0
+datasets                                    3.1.0
+debugpy                                     1.8.16
+decorator                                   5.2.1
+deep_ep                                     1.2.1+ef73fd9
+defusedxml                                  0.8.0rc2
+Deprecated                                  1.3.1
+depyf                                       0.19.0
+diffusers                                   0.36.0
+dill                                        0.3.8
+diskcache                                   5.6.3
+distlib                                     0.4.0
+distro                                      1.9.0
+dllist                                      2.0.0
+dm-tree                                     0.1.9
+dnspython                                   2.8.0
+docker                                      7.1.0
+docopt                                      0.6.2
+docstring_parser                            0.17.0
+docutils                                    0.22.3
+editdistance                                0.8.1
+einops                                      0.8.1
+einops-exts                                 0.0.4
+email-validator                             2.3.0
+etcd3                                       0.12.0
+evaluate                                    0.4.6
+exceptiongroup                              1.3.1
+execnet                                     2.1.1
+executing                                   2.2.1
+expecttest                                  0.3.0
+fabric                                      3.2.2
+faiss-cpu                                   1.13.1
+fastapi                                     0.124.2
+fastapi-cli                                 0.0.13
+fastapi-cloud-cli                           0.2.1
+fasteners                                   0.20
+fastjsonschema                              2.21.2
+fiddle                                      0.3.0
+filelock                                    3.20.0
+fla-core                                    0.4.0
+flash_attn                                  2.7.4.post1
+flash-linear-attention                      0.4.0
+flashinfer-python                           0.5.3
+Flask                                       3.1.2
+Flask-RESTful                               0.3.10
+fonttools                                   4.61.0
+fqdn                                        1.5.1
+freqencoder                                 0.0.0
+frozenlist                                  1.8.0
+fsspec                                      2024.9.0
+ftfy                                        6.3.1
+gast                                        0.6.0
+gdown                                       5.2.0
+gevent                                      25.9.1
+geventhttpclient                            2.0.2
+gguf                                        0.17.1
+gitdb                                       4.0.12
+GitPython                                   3.1.45
+google-api-core                             2.28.1
+google-auth                                 2.43.0
+googleapis-common-protos                    1.72.0
+graphviz                                    0.21
+greenlet                                    3.3.0
+gridencoder                                 0.0.0
+grouped_gemm                                1.1.2
+grpcio                                      1.76.0
+h11                                         0.16.0
+h2                                          4.3.0
+h5py                                        3.15.1
+hf-xet                                      1.2.1rc0
+hpack                                       4.1.0
+httpcore                                    1.0.9
+httptools                                   0.7.1
+httpx                                       0.27.2
+huggingface-hub                             0.36.0
+hydra-core                                  1.3.2
+hyperframe                                  6.1.0
+hypothesis                                  6.130.8
+idna                                        3.11
+ijson                                       3.4.0.post0
+ImageIO                                     2.37.2
+imagesize                                   1.4.1
+immutabledict                               4.2.0
+importlib_metadata                          8.7.0
+indic_numtowords                            1.1.0
+inflect                                     7.5.0
+iniconfig                                   2.3.0
+inquirerpy                                  0.3.4
+interegular                                 0.3.3
+intervaltree                                3.1.0
+invoke                                      2.2.1
+ipykernel                                   6.30.1
+ipython                                     9.8.0
+ipython_pygments_lexers                     1.1.1
+isoduration                                 20.11.0
+isort                                       5.13.2
+itsdangerous                                2.2.0
+Janome                                      0.5.0
+jedi                                        0.19.2
+jieba                                       0.42.1
+Jinja2                                      3.1.6
+jiter                                       0.12.0
+jiwer                                       3.1.0
+jmespath                                    1.0.1
+joblib                                      1.5.2
+json5                                       0.12.1
+jsonlines                                   4.0.0
+jsonpointer                                 3.0.0
+jsonschema                                  4.25.1
+jsonschema-specifications                   2025.9.1
+jupyter_client                              8.6.3
+jupyter_core                                5.8.1
+jupyter-events                              0.12.0
+jupyter-lsp                                 2.3.0
+jupyter_server                              2.17.0
+jupyter_server_terminals                    0.5.3
+jupyterlab                                  4.4.7
+jupyterlab_code_formatter                   3.0.2
+jupyterlab_pygments                         0.3.0
+jupyterlab_server                           2.27.3
+jupyterlab_tensorboard_pro                  4.0.0
+jupytext                                    1.17.3
+kaldi-python-io                             1.2.2
+kaldialign                                  0.9.1
+kiwisolver                                  1.4.10rc0
+kornia                                      0.8.2
+kornia_rs                                   0.1.10
+langdetect                                  1.0.9
+lark                                        1.2.2
+latexcodec                                  3.0.1
+lazy_loader                                 0.4
+ledoc-ui                                    0.1.0
+leptonai                                    0.26.7
+lhotse                                      1.32.1
+libcst                                      1.8.6
+librosa                                     0.11.0
+lightning                                   2.4.0
+lightning-thunder                           0.2.5.dev0
+lightning-utilities                         0.15.2
+lilcom                                      1.8.1
+lintrunner                                  0.12.7
+llguidance                                  0.7.29
+llvmlite                                    0.44.0
+lm-format-enforcer                          0.10.12
+loguru                                      0.7.3
+looseversion                                1.3.0
+lxml                                        6.0.2
+Mako                                        1.3.10
+mamba_ssm                                   2.2.5
+Markdown                                    3.10
+markdown-it-py                              4.0.0
+markdown2                                   2.5.4
+MarkupSafe                                  3.0.3
+marshmallow                                 4.1.1
+matplotlib                                  3.10.8
+matplotlib-inline                           0.2.1
+mbstrdecoder                                1.1.4
+mdit-py-plugins                             0.5.0
+mdurl                                       0.1.2
+mediapy                                     1.1.6
+megatron-bridge                             0.2.0                                   /opt/Megatron-Bridge
+megatron-core                               0.16.0rc0                               /opt/megatron-lm
+megatron-energon                            5.2.0
+meson                                       1.9.1
+mistral_common                              1.8.5
+mistune                                     3.1.4
+ml_dtypes                                   0.5.4
+mock                                        5.2.0
+more-itertools                              10.8.0
+mpi4py                                      3.1.5
+mpmath                                      1.3.0
+msgpack                                     1.1.2
+msgspec                                     0.19.0
+multi-storage-client                        0.37.1
+multidict                                   6.7.0
+multiprocess                                0.70.16
+mypy_extensions                             1.1.0
+nbclient                                    0.10.2
+nbconvert                                   7.16.6
+nbformat                                    5.10.4
+nemo-evaluator                              0.1.46                                  /opt/Evaluator/packages/nemo-evaluator
+NeMo-Export-Deploy                          0.3.1
+NeMo-FW                                     25.11rc3                                /opt/NeMo-FW
+nemo_run                                    0.7.0rc0.dev0                           /opt/Run
+nemo-toolkit                                2.6.0rc0                                /opt/NeMo
+nerfacc                                     0.5.3
+nest-asyncio                                1.6.0
+networkx                                    3.6.1
+ninja                                       1.13.0
+nltk                                        3.9.2
+notebook                                    7.4.5
+notebook_shim                               0.2.4
+num2words                                   0.5.14
+numba                                       0.61.2
+numba-cuda                                  0.20.1
+numcodecs                                   0.15.1
+numexpr                                     2.13.1
+numpy                                       1.26.4
+nv-one-logger-core                          2.3.1
+nv-one-logger-pytorch-lightning-integration 2.3.1
+nv-one-logger-training-telemetry            2.3.1
+nvdiffrast                                  0.3.1
+nvfuser                                     0.2.29+gita71c674
+nvidia-cuda-cccl                            13.1.78
+nvidia-cuda-nvrtc                           13.1.80
+nvidia-cuda-runtime                         13.0.88
+nvidia-cudnn-frontend                       1.16.0
+nvidia-cutlass-dsl                          4.3.3
+nvidia-dali-cuda130                         1.51.2
+nvidia_lm_eval                              25.11
+nvidia-ml-py                                13.590.44
+nvidia-modelopt                             0.37.0                                  /opt/TensorRT-Model-Optimizer
+nvidia-modelopt-core                        0.33.0
+nvidia-nvcomp-cu13                          5.0.0.6
+nvidia-nvimgcodec-cu13                      0.6.0.32
+nvidia-nvjitlink                            13.0.88
+nvidia-nvjpeg-cu13                          0.0.0a0
+nvidia-nvjpeg2k-cu13                        0.9.0.43
+nvidia-nvshmem-cu13                         3.4.5
+nvidia-nvtiff-cu13                          0.5.1.75
+nvidia-nvvm                                 13.0.88
+nvidia-pytriton                             0.7.0
+nvidia-resiliency-ext                       0.4.1                                   /opt/nvidia-resiliency-ext
+nvtx                                        0.2.14
+omegaconf                                   2.3.0
+onnx                                        1.18.0
+onnx_graphsurgeon                           0.5.8
+onnx-ir                                     0.1.12
+onnxscript                                  0.5.7.dev20251209
+open_clip_torch                             3.2.0
+openai                                      2.11.0
+openai-harmony                              0.0.4
+OpenCC                                      1.1.9
+opencensus                                  0.11.4
+opencensus-context                          0.2.dev0
+opencv-python-headless                      4.11.0.86
+opentelemetry-api                           1.39.1
+opentelemetry-exporter-prometheus           0.60b1
+opentelemetry-proto                         1.39.1
+opentelemetry-sdk                           1.39.1
+opentelemetry-semantic-conventions          0.60b1
+opt_einsum                                  3.4.0
+optimum                                     2.0.0
+optree                                      0.17.0
+optuna                                      4.6.0
+ordered-set                                 4.1.0
+outlines_core                               0.2.10
+overrides                                   7.7.0
+packaging                                   25.0
+pandas                                      2.2.3
+pandocfilters                               1.5.1
+pangu                                       4.0.6.1
+parameterized                               0.9.0
+paramiko                                    4.0.0
+parso                                       0.8.5
+partial-json-parser                         0.2.1.1.post6
+pathspec                                    0.12.1
+pathvalidate                                3.3.1
+peft                                        0.13.2
+pesq                                        0.0.4
+pexpect                                     4.9.0
+pfzy                                        0.3.4
+pillow                                      11.3.0
+pip                                         25.2
+platformdirs                                4.5.1
+pluggy                                      1.6.0
+polygraphy                                  0.49.9
+pooch                                       1.8.2
+portalocker                                 3.2.0
+prettytable                                 3.17.0
+progress                                    1.6.1
+prometheus_client                           0.23.1
+prometheus-fastapi-instrumentator           7.0.0
+prompt_toolkit                              3.0.52
+propcache                                   0.4.1
+proto-plus                                  1.26.1
+protobuf                                    4.25.8
+psutil                                      7.1.3
+ptyprocess                                  0.7.0
+PuLP                                        3.3.0
+pure_eval                                   0.2.3
+py-cpuinfo                                  9.0.0
+py-spy                                      0.4.1
+pyannote.core                               5.0.0
+pyannote-database                           6.0.0rc1
+pyannote.metrics                            3.2.1
+pyarrow                                     20.0.0
+pyasn1                                      0.6.1
+pyasn1_modules                              0.4.2
+pybase64                                    1.4.2
+pybind11                                    3.0.1
+pybind11-global                             3.0.1
+pybtex                                      0.25.1
+pybtex-docutils                             1.0.3
+pycocotools                                 2.0+nv0.8.1
+pycountry                                   24.6.1
+pycparser                                   2.23
+pycryptodomex                               3.23.0
+pydantic                                    2.12.5
+pydantic_core                               2.41.5
+pydantic-extra-types                        2.10.5
+pydantic-settings                           2.12.0
+pydub                                       0.25.1
+Pygments                                    2.19.2
+pyloudnorm                                  0.1.1
+PyNaCl                                      1.6.1
+pyparsing                                   3.3.0b1
+pypinyin                                    0.55.0
+pypinyin-dict                               0.9.0
+pyproject_hooks                             1.2.0
+pyre-extensions                             0.0.32
+PySocks                                     1.7.1
+pystoi                                      0.4.1
+pytablewriter                               1.2.1
+pytest                                      8.4.2
+pytest-flakefinder                          1.1.0
+pytest_httpserver                           1.1.3
+pytest-mock                                 3.15.1
+pytest-rerunfailures                        16.0.1
+pytest-runner                               6.0.1
+pytest-shard                                0.1.2
+pytest-xdist                                3.8.0
+python-dateutil                             2.9.0.post0
+python-dotenv                               1.2.1
+python_hostlist                             2.3.0
+python-json-logger                          3.3.0
+python-multipart                            0.0.20
+python-rapidjson                            1.23
+pytorch-lightning                           2.6.0
+pytz                                        2025.2
+PyYAML                                      6.0.3
+pyzmq                                       25.1.2
+qwen-vl-utils                               0.0.14
+RapidFuzz                                   3.14.3
+ray                                         2.52.1
+raymarching                                 0.0.0
+referencing                                 0.37.0
+regex                                       2025.11.3
+requests                                    2.32.5
+resampy                                     0.4.3
+rfc3339-validator                           0.1.4
+rfc3986-validator                           0.1.1
+rfc3987-syntax                              1.1.0
+rich                                        14.2.0
+rich-toolkit                                0.15.1
+rignore                                     0.6.4
+roman-numerals                              3.1.0
+rouge_score                                 0.1.2
+rpds-py                                     0.30.0
+rsa                                         4.9.1
+ruamel.yaml                                 0.18.16
+ruamel.yaml.clib                            0.2.15
+s3fs                                        2025.12.0
+s3transfer                                  0.15.0
+sacrebleu                                   2.5.1
+sacremoses                                  0.1.1
+safetensors                                 0.7.0
+scikit-learn                                1.8.0
+scipy                                       1.17.0rc1
+seaborn                                     0.13.2
+Send2Trash                                  1.8.3
+sentence-transformers                       5.2.0
+sentencepiece                               0.2.1
+sentry-sdk                                  3.0.0a7
+setproctitle                                1.3.7
+setuptools                                  79.0.1
+sh                                          2.2.2
+shellingham                                 1.5.4
+shencoder                                   0.0.0
+six                                         1.17.0
+smart_open                                  7.5.0
+smmap                                       5.0.2
+sniffio                                     1.3.1
+snowballstemmer                             3.0.1
+sortedcontainers                            2.4.0
+soundfile                                   0.13.1
+soupsieve                                   2.8
+sox                                         1.5.0
+soxr                                        1.0.0
+Sphinx                                      9.0.4
+sphinxcontrib-applehelp                     2.0.0
+sphinxcontrib-bibtex                        2.6.5
+sphinxcontrib-devhelp                       2.0.0
+sphinxcontrib-htmlhelp                      2.1.0
+sphinxcontrib-jsmath                        1.0.1
+sphinxcontrib-qthelp                        2.0.0
+sphinxcontrib-serializinghtml               2.0.0
+SQLAlchemy                                  2.0.45
+stack-data                                  0.6.3
+starlette                                   0.50.0
+StrEnum                                     0.4.15
+structlog                                   25.5.0
+sympy                                       1.14.0
+tabledata                                   1.3.4
+tabulate                                    0.9.0
+taming-transformers                         0.0.1
+tcolorpy                                    0.1.7
+tenacity                                    9.1.2
+tensorboard                                 2.20.0
+tensorboard-data-server                     0.7.2
+tensorrt                                    10.13.3.9
+tensorrt_llm                                1.1.0
+tensorstore                                 0.1.71
+terminado                                   0.18.1
+text-unidecode                              1.3
+textdistance                                4.6.3
+threadpoolctl                               3.6.0
+tiktoken                                    0.12.0
+timm                                        1.0.22
+tinycss2                                    1.4.0
+tokenizers                                  0.22.2rc0
+toml                                        0.10.2
+tomlkit                                     0.13.3
+toolz                                       1.1.0
+torch                                       2.9.0a0+50eac811a6.nv25.9
+torch_tensorrt                              2.9.0a0
+torchao                                     0.13.0+git
+torchdiffeq                                 0.2.5
+torchmetrics                                1.8.2
+torchprofile                                0.0.4
+torchsde                                    0.2.6
+torchvision                                 0.24.0a0+98f8b375
+torchx                                      0.7.0
+tornado                                     6.5.2
+tqdm                                        4.67.1
+tqdm-multiprocess                           0.0.11
+traitlets                                   5.14.3
+trampoline                                  0.1.2
+transformer_engine                          2.9.0+70f53666
+transformers                                4.57.3
+tree-sitter                                 0.25.2
+tree-sitter-python                          0.25.0
+trimesh                                     4.10.1
+triton                                      3.4.0+gitc817b9b6
+tritonclient                                2.51.0
+typeguard                                   4.4.4
+typepy                                      1.3.4
+typer                                       0.20.0
+types-python-dateutil                       2.9.0.20250822
+typing_extensions                           4.15.0
+typing-inspect                              0.9.0
+typing-inspection                           0.4.2
+tzdata                                      2025.2
+uri-template                                1.3.0
+urllib3                                     2.6.2
+uv                                          0.8.17
+uvicorn                                     0.38.0
+uvloop                                      0.22.1
+virtualenv                                  20.35.4
+vllm                                        0.10.1.1+381074ae.nv25.9.cu130 35620633
+wandb                                       0.23.1
+watchfiles                                  1.1.1
+wcmatch                                     10.1
+wcwidth                                     0.2.14
+webcolors                                   24.11.1
+webdataset                                  0.2.86
+webencodings                                0.5.1
+websocket-client                            1.8.0
+websockets                                  15.0.1
+Werkzeug                                    3.1.4
+wget                                        3.2
+wheel                                       0.45.1
+whisper_normalizer                          0.1.12
+word2number                                 1.1
+wrapt                                       1.17.3
+xattr                                       1.3.0
+xdoctest                                    1.0.2
+xformers                                    0.0.32+nv25.9                  35620633
+xgrammar                                    0.1.25
+xmltodict                                   1.0.2
+xxhash                                      3.6.0
+yarl                                        1.22.0
+yq                                          3.4.3
+zarr                                        2.18.7
+zipp                                        3.23.0
+zope.event                                  6.1
+zope.interface                              8.1.1
+zstandard                                   0.25.0
+====================================================================================================
+
+Python sys.path:
+
+/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark
+/opt/Export-Deploy
+/opt/venv/lib/python3.12/site-packages
+/usr/lib/python312.zip
+/usr/lib/python3.12
+/usr/lib/python3.12/lib-dynload
+__editable__.megatron_bridge-0.2.0.finder.__path_hook__
+__editable__.megatron_core-0.16.0rc0.finder.__path_hook__
+/opt/Evaluator/packages/nemo-evaluator/src
+/opt/TensorRT-Model-Optimizer
+/opt/Run
+/opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages
+/opt/nvidia-resiliency-ext/src
+/usr/local/lib/python3.12/dist-packages
+/usr/local/lib/python3.12/dist-packages/nvidia_cutlass_dsl/python_packages
+/usr/lib/python3/dist-packages
+====================================================================================================
+
+megatron location: None
+====================================================================================================
+
+megatron.__path__: ['/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron', '/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron', '/opt/venv/lib/python3.12/site-packages/megatron', '__editable__.megatron_bridge-0.2.0.finder.__path_hook__', '__editable__.megatron_core-0.16.0rc0.finder.__path_hook__']
+====================================================================================================
+
+megatron/training exists: __init__.py
+__pycache__
+argument_utils.py
+arguments.py
+async_utils.py
+====================================================================================================
+
+Thu Mar 26 16:36:59 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 590.48.01              Driver Version: 590.48.01      CUDA Version: 13.1     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA GH200 120GB             On  |   00000009:01:00.0 Off |                    0 |
+| N/A   23C    P0             89W /  900W |       4MiB /  97871MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   1  NVIDIA GH200 120GB             On  |   00000019:01:00.0 Off |                    0 |
+| N/A   25C    P0             88W /  900W |       3MiB /  97871MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   2  NVIDIA GH200 120GB             On  |   00000029:01:00.0 Off |                    0 |
+| N/A   24C    P0             95W /  900W |       4MiB /  97871MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   3  NVIDIA GH200 120GB             On  |   00000039:01:00.0 Off |                    0 |
+| N/A   22C    P0             93W /  900W |       3MiB /  97871MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+====================================================================================================
+
+Environment Variables:
+
+NPP_VERSION=13.0.1.2
+SHELL=/bin/bash
+SLURM_GPUS_PER_NODE=1
+VLLM_VERSION=0.10.1.1+381074ae
+UV_CACHE_DIR=/opt/uv_cache
+NVIDIA_VISIBLE_DEVICES=all
+DALI_URL_SUFFIX=130
+COLORTERM=1
+SDK_HOME=/usr/lib64/jvm/java-11-openjdk-11
+DALI_BUILD=
+SLURM_JOB_USER=elyulina
+XDG_CONFIG_DIRS=/etc/xdg
+SLURM_TASKS_PER_NODE=1
+NEMO_FW_RESIL_COMMIT=54f85fe422d296cf04ea524130014bd3a2c3add1
+LESS=-M -I -R
+QT_SYSTEM_DIR=/usr/share/desktop-data
+SLURM_JOB_UID=65686
+CUSOLVER_VERSION=12.0.4.66
+JDK_HOME=/usr/lib64/jvm/java-11-openjdk-11
+SLURM_TIME_FORMAT=relative
+SLURM_TASK_PID=2868
+CONDA_EXE=/users/elyulina/miniconda3/bin/conda
+NVJITLINK_VERSION=13.0.88
+_CE_M=
+CLUSTER_NAME=clariden
+CUBLAS_VERSION=13.0.2.14
+MACHTYPE=aarch64-suse-linux
+SLURM_JOB_GPUS=0,1,2,3
+SLURM_LOCALID=0
+NVFATBIN_VERSION=13.0.85
+SLURM_SUBMIT_DIR=/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench
+G_BROKEN_FILENAMES=1
+HOSTNAME=nid006132
+HISTSIZE=1000
+PYTORCH_TRITON_VERSION=3.4.0+gitc817b9b6
+CUFILE_VERSION=1.15.1.6
+MINICOM=-c on
+SLURMD_NODENAME=nid006132
+PP_SIZE=1
+SLURM_JOB_START_TIME=1774539383
+HYDRA_LAUNCHER_EXTRA_ARGS=--external-launcher
+JAVA_HOME=/usr/lib64/jvm/java-11-openjdk-11
+CUFFT_VERSION=12.0.0.61
+NVIDIA_REQUIRE_CUDA=cuda>=9.0
+FI_CXI_RX_MATCH_MODE=software
+JRE_HOME=/usr/lib64/jvm/java-11-openjdk-11
+SSH_AUTH_SOCK=/tmp/ssh-XXXXI4XtyC/agent.280898
+__LMOD_REF_COUNT_MODULEPATH=/usr/share/lmod/modulefiles:1
+TRITON_CUPTI_PATH=/usr/local/cuda/include
+NVVM_VERSION=13.0.88
+CPU=aarch64
+CUDA_CACHE_PATH=/dev/shm/elyulina/cuda_cache
+DOCA_VERSION=3.1.0
+OCI_ANNOTATION_com__hooks__aws_ofi_nccl__variant=cuda12
+TENSORBOARD_PORT=6006
+NCCL_NET_PLUGIN=ofi
+SLURM_CLUSTER_NAME=clariden
+_CUDA_COMPAT_STATUS=System has unsupported display driver / cuda driver combination (CUDA_ERROR_SYSTEM_DRIVER_MISMATCH) cuInit()=803
+JAVA_BINDIR=/usr/lib64/jvm/java-11-openjdk-11/bin
+SLURM_JOB_END_TIME=1774539983
+SLURM_SPANK__SLURM_SPANK_OPTION_pyxis_environment=nemo
+SLURM_CPUS_ON_NODE=288
+TORCH_CUDA_ARCH_LIST=8.0 8.6 9.0 10.0 11.0 12.0+PTX
+NEMO_FW_RESIL_VERSION=0.4.1
+NCCL_VERSION=2.27.7
+MODEL_OPT_VERSION=0.33.0
+SLURM_JOB_CPUS_PER_NODE=288
+GPG_TTY=/dev/pts/221
+NCCL_SOCKET_IFNAME=hsn
+LMOD_DIR=/usr/share/lmod/lmod/libexec
+NCCL_NET_GDR_LEVEL=PHB
+CUSPARSE_VERSION=12.6.3.3
+NVSHMEM_VERSION=3.4.5
+ENV=/etc/shinit_v2
+SLURM_GPUS_ON_NODE=4
+PWD=/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark
+PRTE_MCA_plm_slurm_args=--external-launcher
+SLURM_GTIDS=0
+LOGNAME=elyulina
+INFRANAME=alps
+XDG_SESSION_TYPE=tty
+SLURM_JOB_PARTITION=normal
+PIP_NO_BUILD_ISOLATION=1
+OPENUCX_VERSION=1.19.0
+MODULESHOME=/usr/share/lmod/lmod
+NSIGHT_SYSTEMS_VERSION=2025.4.1.172
+NVIDIA_DRIVER_CAPABILITIES=compute,utility,video
+MANPATH=/usr/local/man:/usr/local/share/man:/usr/share/man
+TORCH_NCCL_USE_COMM_NONBLOCKING=0
+SLURM_TRES_PER_TASK=cpu=72
+POLYGRAPHY_VERSION=0.49.26
+ROCR_VISIBLE_DEVICES=0,1,2,3
+LMOD_PREPEND_BLOCK=normal
+PIP_BREAK_SYSTEM_PACKAGES=1
+CUDA_ARCH_LIST=8.0 8.6 9.0 10.0 11.0 12.0
+SLURM_JOB_NUM_NODES=1
+NCCL_NET=AWS Libfabric
+UCC_CL_BASIC_TLS=^sharp
+NEMO_FW_TRT_LLM_VERSION=
+TRT_VERSION=10.13.3.9
+CUSPARSELT_VERSION=0.8.1.1
+SLURM_JOBID=1729257
+FI_CXI_DEFAULT_TX_SIZE=32768
+NVIDIA_PRODUCT_NAME=NeMo Framework
+NEMO_FW_NEMO_VERSION=2.6.0rc0
+RDMACORE_VERSION=56.0
+I_MPI_HYDRA_BOOTSTRAP_EXEC_EXTRA_ARGS=--external-launcher
+SLURM_JOB_QOS=normal
+XKEYSYMDB=/usr/X11R6/lib/X11/XKeysymDB
+MOTD_SHOWN=pam
+MPIR_CVAR_CH4_OFI_MULTI_NIC_STRIPING_THRESHOLD=100000000
+NVPL_LAPACK_MATH_MODE=PEDANTIC
+FI_CXI_DEFAULT_CQ_SIZE=131072
+XNLSPATH=/usr/X11R6/lib/X11/nls
+HOME=/users/elyulina
+_ModuleTable_Sz_=1
+SINFO_FORMAT=%9P %5a %8s %.10l %.6c %.6z %.7D %10T %N
+STORE=/capstor/store/cscs/swissai/infra01
+SLURM_PROCID=0
+OCI_ANNOTATION_com__hooks__aws_ofi_nccl__enabled=true
+LOG_WANDB=true
+SCRATCH=/iopsstor/scratch/cscs/elyulina
+COCOAPI_VERSION=2.0+nv0.8.1
+PIP_CONSTRAINT=/etc/pip/constraint.txt
+CUDA_VERSION=13.0.1.012
+LMOD_SETTARG_FULL_SUPPORT=no
+PYTORCH_VERSION=2.9.0a0+50eac81
+CURAND_VERSION=10.4.0.35
+OSTYPE=linux
+NEMO_FW_MCORE_COMMIT=696a38e0b2e87e7bcd7412e1d45e8943f646a8d3
+TMPDIR=/tmp
+SLURM_EDF_IMAGESTORE=/iopsstor/scratch/cscs/elyulina/.edf_imagestore
+PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+VSCODE_AGENT_FOLDER=/users/elyulina/.vscode-server/clariden-tunnel/.vscode-server
+SLURM_CPUS_PER_TASK=72
+SLURM_NTASKS=1
+PYTORCH_BUILD_NUMBER=0
+LESS_ADVANCED_PREPROCESSOR=no
+UV_LINK_MODE=copy
+SLURM_TOPOLOGY_ADDR=global.group24.nid006132
+LMOD_VERSION=8.7.34
+SSH_CONNECTION=148.187.1.6 48558 172.28.38.17 22
+CUBLASMP_VERSION=0.5.1.65
+PIP_DEFAULT_TIMEOUT=100
+ZE_AFFINITY_MASK=0,1,2,3
+NVFUSER_BUILD_VERSION=a71c674
+HPCX_VERSION=2.24.1
+NVIDIA_BIGNLP_VERSION=
+HYDRA_BOOTSTRAP=slurm
+CUDA_VISIBLE_DEVICES=0,1,2,3
+SLURM_TOPOLOGY_ADDR_PATTERN=switch.switch.node
+TRITON_CUDACRT_PATH=/usr/local/cuda/include
+CUDNN_FRONTEND_VERSION=1.14.0
+LESSCLOSE=lessclose.sh %s %s
+XDG_SESSION_CLASS=user
+LMOD_PKG=/usr/share/lmod/lmod
+SLURM_SCRIPT_CONTEXT=prolog_task
+SLURM_MEM_PER_NODE=204800
+PYTHONPATH=/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark:/opt/Export-Deploy:/opt/venv/lib/python3.12/site-packages/:
+TERM=xterm-256color
+_CE_CONDA=
+WANDB_PROJECT=Megatron-LM-Attention-Benchmark
+TORCH_NCCL_ASYNC_ERROR_HANDLING=1
+HOST=clariden-ln003
+GDRCOPY_VERSION=2.5
+NEMO_FW_NEMO_EXPORT_DEPLOY_VERSION=
+NVFUSER_VERSION=a71c674
+LESSOPEN=lessopen.sh %s
+NVRX_VERSION=0.4.1+cuda13
+FI_CXI_COMPAT=0
+USER=elyulina
+OPENMPI_VERSION=4.1.7
+NEMO_FW_TRT_LLM_COMMIT=55a9771ff0122ded47e6711eaf19c48f54630fe6
+NVPTXCOMPILER_VERSION=13.0.88
+SSH_SENDS_LOCALE=yes
+NVJPEG_VERSION=13.0.1.86
+NEMO_FW_NEMO_COMMIT=0425500334506b9b9f8dfa554fd7d920746a08cd
+LIBRARY_PATH=/usr/local/cuda/lib64/stubs:
+SLURM_NODELIST=nid006132
+WANDB_API_KEY=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
+NEMO_FW_NEMO_RUN_COMMIT=01a9a8ba360f7b2908728ad0516e0ad9d936966d
+ENVIRONMENT=BATCH
+PYTHONIOENCODING=utf-8
+NVIDIA_VLLM_VERSION=25.09
+GPU_DEVICE_ORDINAL=0,1,2,3
+AWS_OFI_NCCL_VERSION=1.14.0
+CONDA_SHLVL=0
+UENV_WARN_MIGRATE=1
+MORE=-sl
+SLURM_JOB_ACCOUNT=infra01
+CSHEDIT=emacs
+SLURM_PRIO_PROCESS=0
+SLURM_NPROCS=1
+NCCL_IB_TIMEOUT=22
+LMOD_ROOT=/usr/share/lmod
+LMOD_SETTARG_CMD=:
+NEMO_FW_MCORE_VERSION=0.16.0rc0
+SHLVL=1
+MAX_JOBS=12
+SLURM_NNODES=1
+BASH_ENV=/etc/bash.bashrc
+TP_SIZE=1
+WINDOWMANAGER=/usr/bin/gnome
+PAGER=less
+TRITON_CUOBJDUMP_PATH=/usr/local/cuda/bin/cuobjdump
+LMOD_FULL_SETTARG_SUPPORT=no
+CUDA_DEVICE_MAX_CONNECTIONS=1
+LIBGL_DEBUG=quiet
+CUDNN_VERSION=9.13.0.50
+VSCODE_CLI_DATA_DIR=/users/elyulina/.vscode-server/clariden-tunnel/.vscode-server/cli
+MAXSMVER=121
+EFA_VERSION=1.38.1
+NEMO_FW_NEMO_EVAL_COMMIT=
+NSIGHT_COMPUTE_VERSION=2025.3.1.4
+SLURM_SUBMIT_HOST=clariden-ln003
+NEMO_FW_MEGATRON_BRIDGE_COMMIT=57c3c149fbde7bcc6c36d763781bb1fa560ba0db
+DALI_VERSION=1.51.2
+WANDB_EXP_NAME=correctness_sink_torch_1node_1gpu_tp1_pp1_1729257
+_ModuleTable001_=X01vZHVsZVRhYmxlXyA9IHsKTVR2ZXJzaW9uID0gMywKY19yZWJ1aWxkVGltZSA9IGZhbHNlLApjX3Nob3J0VGltZSA9IGZhbHNlLApkZXB0aFQgPSB7fSwKZmFtaWx5ID0ge30sCm1UID0ge30sCm1wYXRoQSA9IHsKIi91c3Ivc2hhcmUvbG1vZC9tb2R1bGVmaWxlcyIsCn0sCnN5c3RlbUJhc2VNUEFUSCA9ICIvdXNyL3NoYXJlL2xtb2QvbW9kdWxlZmlsZXMiLAp9Cg==
+NEMO_FW_NEMO_EXPORT_DEPLOY_COMMIT=0947b64f45136550d0c570b233d370870edd4d42
+CONDA_PYTHON_EXE=/users/elyulina/miniconda3/bin/python
+UCC_EC_CUDA_EXEC_NUM_THREADS=256
+JUPYTER_PORT=8888
+TRITON_NVDISASM_PATH=/usr/local/cuda/bin/nvdisasm
+NEMO_FW_NEMO_EVAL_VERSION=
+PYTORCH_HOME=/opt/pytorch/pytorch
+LD_LIBRARY_PATH=/usr/local/tensorrt/lib:/usr/local/tensorrt/lib:/usr/local/tensorrt/lib:/usr/local/lib/python3.12/dist-packages/torch/lib:/usr/local/lib/python3.12/dist-packages/torch_tensorrt/lib:/usr/local/cuda/compat/lib:/usr/local/nvidia/lib:/usr/local/nvidia/lib64
+LC_CTYPE=UTF-8
+NVIDIA_BUILD_ID=243847215
+LMOD_COLORIZE=no
+SLURM_JOB_ID=1729257
+SLURM_NODEID=0
+SSH_CLIENT=148.187.1.6 48558 22
+OMPI_MCA_coll_hcoll_enable=0
+FI_MR_CACHE_MONITOR=userfaultfd
+DOCKER_HOST=unix:///run/user/65686/podman/podman.sock
+OPAL_PREFIX=/opt/hpcx/ompi
+TRT_VER=10.13.3.9
+OMP_NUM_THREADS=72
+SQUEUE_SORT=t,-e,-p
+CUDA_DRIVER_VERSION=580.82.07
+LC_ALL=C.UTF-8
+TRANSFORMER_ENGINE_VERSION=2.7
+PYTORCH_BUILD_VERSION=2.9.0a0+50eac81
+_CUDA_COMPAT_PATH=/usr/local/cuda/compat
+CUDA_HOME=/usr/local/cuda
+TRITON_PTXAS_PATH=/usr/local/cuda/bin/ptxas
+FI_CXI_DISABLE_HOST_REGISTER=1
+XCURSOR_THEME=DMZ
+XDG_DATA_DIRS=/usr/share
+CUDA_MODULE_LOADING=LAZY
+NEMO_FW_MEGATRON_BRIDGE_VERSION=0.2.0
+NVIDIA_REQUIRE_JETPACK_HOST_MOUNTS=
+SLURM_CONF=/var/spool/slurmd/conf-cache/slurm.conf
+PATH=/opt/venv/bin:/opt/venv/bin:/usr/local/lib/python3.12/dist-packages/torch_tensorrt/bin:/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/mpi/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/ucx/bin:/opt/amazon/efa/bin:/opt/tensorrt/bin:/opt/mellanox/doca/tools/:/users/elyulina/ngc-cli
+SLURM_JOB_NAME=attn-correctness-1gpu
+MODULEPATH=/usr/share/lmod/modulefiles
+SQUEUE_FORMAT=%.8i %8u %7a %.14j %.9B%.3t %.10r %.12S %.12e %.10L %.5D %.10Q
+SLURM_NTASKS_PER_NODE=1
+DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/65686/bus
+PROFILEREAD=true
+PIP_NO_CACHE_DIR=1
+CUDLA_VERSION=13.0.1.012
+LMOD_CMD=/usr/share/lmod/lmod/libexec/lmod
+MOFED_VERSION=5.4-rdmacore56.0
+MAIL=/var/spool/mail/elyulina
+SSH_TTY=/dev/pts/221
+HOSTTYPE=aarch64
+NVIDIA_PYTORCH_VERSION=25.09
+SLURM_EDF_EXPANDED=image = "/capstor/store/cscs/swissai/infra01/MLLM/containers/nvcr.io#nvidia+nemo+25.11.aarch64.sqsh"
+workdir = "/workspace"
+writable = true
+mounts = [
+    "/capstor:/capstor:",
+    "/iopsstor:/iopsstor:",
+    "/users:/users:"
+  ]
+[env]
+OCI_ANNOTATION_com__hooks__aws_ofi_nccl__enabled = "true"
+OCI_ANNOTATION_com__hooks__aws_ofi_nccl__variant = "cuda12"
+[annotations]
+com.hooks.aws_ofi_nccl.enabled = "true"
+com.hooks.aws_ofi_nccl.variant = "cuda12"
+
+UV_PROJECT_ENVIRONMENT=/opt/venv
+TRTOSS_VERSION=
+OMPI_MCA_plm_slurm_args=--external-launcher
+SLURM_JOB_GID=65603
+PROJECT=/capstor/store/cscs/swissai/infra01
+DEBIAN_FRONTEND=noninteractive
+LUSTRE_JOB_ID=clariden_1729257
+LESSKEY=/etc/lesskey.bin
+TORCH_ALLOW_TF32_CUBLAS_OVERRIDE=1
+NCCL_CROSS_NIC=1
+OLDPWD=/workspace
+TRITON_CUDART_PATH=/usr/local/cuda/include
+SLURM_JOB_NODELIST=nid006132
+TERM_PROGRAM=WarpTerminal
+I_MPI_HYDRA_BOOTSTRAP=slurm
+VLLM_USE_STANDALONE_COMPILE=0
+BASH_FUNC_ml%%=() {  eval "$($LMOD_DIR/ml_cmd "$@")"
+}
+BASH_FUNC_module%%=() {  if [ -z "${LMOD_SH_DBG_ON+x}" ]; then
+ case "$-" in 
+ *v*x*)
+ __lmod_sh_dbg='vx'
+ ;;
+ *v*)
+ __lmod_sh_dbg='v'
+ ;;
+ *x*)
+ __lmod_sh_dbg='x'
+ ;;
+ esac;
+ fi;
+ if [ -n "${__lmod_sh_dbg:-}" ]; then
+ set +$__lmod_sh_dbg;
+ echo "Shell debugging temporarily silenced: export LMOD_SH_DBG_ON=1 for Lmod's output" 1>&2;
+ fi;
+ eval "$($LMOD_CMD shell "$@")" && eval "$(${LMOD_SETTARG_CMD:-:} -s sh)";
+ __lmod_my_status=$?;
+ if [ -n "${__lmod_sh_dbg:-}" ]; then
+ echo "Shell debugging restarted" 1>&2;
+ set -$__lmod_sh_dbg;
+ fi;
+ unset __lmod_sh_dbg;
+ return $__lmod_my_status
+}
+_=/usr/bin/printenv
+====================================================================================================

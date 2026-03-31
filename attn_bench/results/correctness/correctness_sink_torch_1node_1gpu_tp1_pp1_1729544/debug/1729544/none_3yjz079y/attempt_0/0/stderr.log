@@ -1,0 +1,54 @@
+Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+/opt/TensorRT-Model-Optimizer/modelopt/torch/utils/import_utils.py:32: UserWarning: Failed to import diffusers plugin due to: ImportError('peft>=0.17.0 is required for a normal functioning of this module, but found peft==0.13.2.'). You may ignore this warning if you do not need this plugin.
+  warnings.warn(
+/opt/TensorRT-Model-Optimizer/modelopt/torch/utils/import_utils.py:32: UserWarning: Failed to import peft plugin due to: ImportError("cannot import name 'ParamWrapper' from 'peft.tuners.lora.layer' (/opt/venv/lib/python3.12/site-packages/peft/tuners/lora/layer.py)"). You may ignore this warning if you do not need this plugin.
+  warnings.warn(
+/opt/TensorRT-Model-Optimizer/modelopt/torch/__init__.py:36: UserWarning: transformers version 4.57.3 is incompatible with nvidia-modelopt and may cause issues. Please install recommended version with `pip install nvidia-modelopt[hf]` if working with HF models.
+  _warnings.warn(
+/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: Overriding default arguments for tokenizer_type:NullTokenizer with tokenizer_type:NullTokenizer
+  warnings.warn(message)
+/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: Overriding default arguments for vocab_size:32768 with vocab_size:32768
+  warnings.warn(message)
+/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-use-fast argument is deprecated and will be removed soon. `use_fast` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-use-fast if you want to disable `use_fast`.
+  warnings.warn(message)
+/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-include-special-tokens argument is deprecated and will be removed soon. `include_special_tokens` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-include-special-tokens if you want to disable `include_special_tokens`.
+  warnings.warn(message)
+wandb: Currently logged in as: elyulina (elyulina-thesis) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: setting up run lkqpvu2s
+wandb: Tracking run with wandb version 0.23.1
+wandb: Run data is saved locally in /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/results/correctness/correctness_sink_torch_1node_1gpu_tp1_pp1_1729544/wandb/run-20260326_171546-lkqpvu2s
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run correctness_sink_torch_1node_1gpu_tp1_pp1_1729544
+wandb: ⭐️ View project at https://wandb.ai/elyulina-thesis/Megatron-LM-Attention-Benchmark
+wandb: 🚀 View run at https://wandb.ai/elyulina-thesis/Megatron-LM-Attention-Benchmark/runs/lkqpvu2s
+wandb: Detected [openai] in use.
+wandb: Use W&B Weave for improved LLM call tracing. Install Weave with `pip install weave` then add `import weave` to the top of your script.
+wandb: For more information, check out the docs at: https://weave-docs.wandb.ai/
+wandb: uploading history steps 10-11, summary, console lines 215-216; updating run metadata
+wandb: uploading history steps 10-11, summary, console lines 215-216; uploading wandb-summary.json; uploading output.log
+wandb: uploading history steps 10-11, summary, console lines 215-216; uploading config.yaml
+wandb: uploading history steps 12-14, summary, console lines 217-219
+wandb: 
+wandb: Run history:
+wandb:       batch-size ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:        grad-norm ▂▂▄█▄▄▁▁▁▁▁▁▁▁▁
+wandb:   iteration-time █▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:    learning-rate ▄███▇▆▆▅▄▃▃▂▁▁▁
+wandb:          lm loss ██▆▇██▅▃▃▂▂▁▁▁▁
+wandb: samples vs steps ▁▁▂▃▃▃▄▅▅▅▆▇▇▇█
+wandb:       throughput ▁▄█████████████
+wandb: 
+wandb: Run summary:
+wandb:       batch-size 80
+wandb:        grad-norm 0.24589
+wandb:   iteration-time 8.10455
+wandb:    learning-rate 3e-05
+wandb:          lm loss 8.37293
+wandb: samples vs steps 1200
+wandb:       throughput 134.34106
+wandb: 
+wandb: 🚀 View run correctness_sink_torch_1node_1gpu_tp1_pp1_1729544 at: https://wandb.ai/elyulina-thesis/Megatron-LM-Attention-Benchmark/runs/lkqpvu2s
+wandb: ⭐️ View project at: https://wandb.ai/elyulina-thesis/Megatron-LM-Attention-Benchmark
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/results/correctness/correctness_sink_torch_1node_1gpu_tp1_pp1_1729544/wandb/run-20260326_171546-lkqpvu2s/logs
+[rank0]:[W326 17:18:25.766804815 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())

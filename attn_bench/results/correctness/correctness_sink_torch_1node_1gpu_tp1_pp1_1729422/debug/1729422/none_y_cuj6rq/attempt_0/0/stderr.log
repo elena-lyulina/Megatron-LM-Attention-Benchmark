@@ -1,0 +1,135 @@
+Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+/opt/TensorRT-Model-Optimizer/modelopt/torch/utils/import_utils.py:32: UserWarning: Failed to import diffusers plugin due to: ImportError('peft>=0.17.0 is required for a normal functioning of this module, but found peft==0.13.2.'). You may ignore this warning if you do not need this plugin.
+  warnings.warn(
+/opt/TensorRT-Model-Optimizer/modelopt/torch/utils/import_utils.py:32: UserWarning: Failed to import peft plugin due to: ImportError("cannot import name 'ParamWrapper' from 'peft.tuners.lora.layer' (/opt/venv/lib/python3.12/site-packages/peft/tuners/lora/layer.py)"). You may ignore this warning if you do not need this plugin.
+  warnings.warn(
+/opt/TensorRT-Model-Optimizer/modelopt/torch/__init__.py:36: UserWarning: transformers version 4.57.3 is incompatible with nvidia-modelopt and may cause issues. Please install recommended version with `pip install nvidia-modelopt[hf]` if working with HF models.
+  _warnings.warn(
+/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: Overriding default arguments for tokenizer_type:NullTokenizer with tokenizer_type:NullTokenizer
+  warnings.warn(message)
+/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: Overriding default arguments for vocab_size:32768 with vocab_size:32768
+  warnings.warn(message)
+/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-use-fast argument is deprecated and will be removed soon. `use_fast` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-use-fast if you want to disable `use_fast`.
+  warnings.warn(message)
+/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-include-special-tokens argument is deprecated and will be removed soon. `include_special_tokens` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-include-special-tokens if you want to disable `include_special_tokens`.
+  warnings.warn(message)
+wandb: Currently logged in as: elyulina (elyulina-thesis) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: setting up run uu6tv8j3
+wandb: Tracking run with wandb version 0.23.1
+wandb: Run data is saved locally in /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/results/correctness/correctness_sink_torch_1node_1gpu_tp1_pp1_1729422/wandb/run-20260326_165747-uu6tv8j3
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run correctness_sink_torch_1node_1gpu_tp1_pp1_1729422
+wandb: ⭐️ View project at https://wandb.ai/elyulina-thesis/Megatron-LM-Attention-Benchmark
+wandb: 🚀 View run at https://wandb.ai/elyulina-thesis/Megatron-LM-Attention-Benchmark/runs/uu6tv8j3
+wandb: Detected [openai] in use.
+wandb: Use W&B Weave for improved LLM call tracing. Install Weave with `pip install weave` then add `import weave` to the top of your script.
+wandb: For more information, check out the docs at: https://weave-docs.wandb.ai/
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/benchmarks/correctness.py", line 144, in <module>
+[rank0]:     main()
+[rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/benchmarks/correctness.py", line 133, in main
+[rank0]:     pretrain(
+[rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1077, in pretrain
+[rank0]:     iteration, num_floating_point_operations_so_far = train(
+[rank0]:                                                       ^^^^^^
+[rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 2926, in train
+[rank0]:     ) = train_step(
+[rank0]:         ^^^^^^^^^^^
+[rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1730, in train_step
+[rank0]:     losses_reduced = forward_backward_func(
+[rank0]:                      ^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/pipeline_parallel/schedules.py", line 617, in forward_backward_no_pipelining
+[rank0]:     output_tensor, num_tokens = forward_step(
+[rank0]:                                 ^^^^^^^^^^^^^
+[rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/pipeline_parallel/schedules.py", line 404, in forward_step
+[rank0]:     output_tensor, loss_func = forward_step_func(data_iterator, model)
+[rank0]:                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/benchmarks/correctness.py", line 88, in forward_step
+[rank0]:     output_tensor = model(
+[rank0]:                     ^^^^^^
+[rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/distributed/data_parallel_base.py", line 22, in forward
+[rank0]:     return self.module(*inputs, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/module.py", line 493, in forward
+[rank0]:     outputs = self.module(*inputs, **kwargs)
+[rank0]:               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/models/gpt/gpt_model.py", line 534, in forward
+[rank0]:     hidden_states = self.decoder(
+[rank0]:                     ^^^^^^^^^^^^^
+[rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/transformer_block.py", line 650, in __call__
+[rank0]:     return super().__call__(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/module.py", line 356, in __call__
+[rank0]:     return super().__call__(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/transformer_block.py", line 829, in forward
+[rank0]:     hidden_states, context = layer(
+[rank0]:                              ^^^^^^
+[rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/module.py", line 356, in __call__
+[rank0]:     return super().__call__(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/transformer_layer.py", line 703, in forward
+[rank0]:     hidden_states, context = self._forward_attention(*args, **kwargs)
+[rank0]:                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/transformer_layer.py", line 615, in _forward_attention
+[rank0]:     attention_output_with_bias = self.self_attention(
+[rank0]:                                  ^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/attention.py", line 1162, in forward
+[rank0]:     core_attn_out = apply_module(self.core_attention)(
+[rank0]:                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/kernels/megatron_wrapper.py", line 91, in forward
+[rank0]:     return self.kernel(
+[rank0]:            ^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/kernels/sink/torch_native.py", line 85, in forward
+[rank0]:     scores = torch.matmul(q_chunk, k.transpose(-2, -1)) * self.softmax_scale  # [b, h, chunk_q, sk]
+[rank0]:              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+[rank0]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 512.00 MiB. GPU 0 has a total capacity of 95.00 GiB of which 313.94 MiB is free. Including non-PyTorch memory, this process has 94.68 GiB memory in use. Of the allocated memory 86.67 GiB is allocated by PyTorch, and 352.35 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[rank0]:[W326 16:58:29.985265722 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
