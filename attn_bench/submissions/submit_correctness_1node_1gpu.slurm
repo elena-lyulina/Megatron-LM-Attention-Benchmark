@@ -19,6 +19,7 @@
 
 # Usage:
 #   sbatch submissions/submit_correctness_1node_1gpu.slurm full flash
+#   sbatch submissions/submit_correctness_1node_1gpu.slurm sink torch --attn_kwargs init_sink_zero=true
 
 export TP_SIZE=1
 export PP_SIZE=1

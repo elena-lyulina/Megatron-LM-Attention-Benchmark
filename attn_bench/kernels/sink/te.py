@@ -1,6 +1,7 @@
 import dataclasses
 from typing import Optional
 
+import torch.nn as nn
 from megatron.core.extensions.transformer_engine import TEDotProductAttention
 from megatron.core.process_groups_config import ProcessGroupCollection
 from megatron.core.transformer.enums import AttnMaskType
@@ -25,6 +26,7 @@ class SinkTEAttention(TEDotProductAttention):
         softmax_scale: Optional[float] = None,
         cp_comm_type: Optional[str] = "p2p",
         pg_collection: Optional[ProcessGroupCollection] = None,
+        init_sink_zero: bool = False,
     ):
         sink_config = dataclasses.replace(config, softmax_type="learnable")
         super().__init__(
@@ -37,3 +39,6 @@ class SinkTEAttention(TEDotProductAttention):
             cp_comm_type=cp_comm_type,
             pg_collection=pg_collection,
         )
+        if init_sink_zero:
+            # changes it in-place, already after TE's initialized the params inside the super call
+            nn.init.zeros_(self.softmax_offset)

@@ -7,7 +7,6 @@ Modifies the softmax denominator with a learnable per-head scalar `sink`:
 
 Equivalent to appending a synthetic token with logit=sink_h and value=0 per head,
 so the output is unaffected, only the normalization changes.
-Matches TE's softmax_type='learnable': per-head parameter, torch.empty initialisation.
 """
 
 from typing import Optional
@@ -27,6 +26,7 @@ class SinkTorchAttention(nn.Module):
         head_dim: int,
         softmax_scale: float,
         dropout_p: float = 0.0,
+        init_sink_zero: bool = False,
     ):
         super().__init__()
         self.num_heads = num_heads
@@ -34,10 +34,11 @@ class SinkTorchAttention(nn.Module):
         self.head_dim = head_dim
         self.softmax_scale = softmax_scale
         self.dropout_p = dropout_p
-        # Learnable sink logit per head, matching TE's softmax_offset shape [num_heads] and
-        # initialisation: TE calls reset_parameters with get_default_init_method() = N(0, 0.023).
-        self.sink = nn.Parameter(torch.empty(num_heads))
-        nn.init.normal_(self.sink, mean=0.0, std=0.023)
+        # Learnable sink logit per head, matching TE's softmax_offset shape [num_heads]
+        self.sink = nn.Parameter(torch.zeros(num_heads) if init_sink_zero else torch.empty(num_heads))
+        if not init_sink_zero:
+            # Matches default TE's implementation (doesn't guarantee the same value since TE's rng is different)
+            nn.init.normal_(self.sink, mean=0.0, std=0.023)
 
     def forward(
         self,

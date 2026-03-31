@@ -19,4 +19,12 @@ def add_benchmark_args(parser):
         default="flash",
         help="Kernel implementation (e.g. flash, torch).",
     )
+    group.add_argument(
+        "--attn-kwargs",
+        nargs='*',
+        default=[],
+        metavar="KEY=VALUE",
+        help="Mechanism-specific kwargs as key=value pairs (e.g. --attn-kwargs init_sink_zero=true). "
+             "Bools must be true/false. Valid kwargs depend on (attn, impl) — see attn_bench/kernels/attn_registry.py.",
+    )
     return parser

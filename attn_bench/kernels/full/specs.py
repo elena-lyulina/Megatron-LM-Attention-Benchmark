@@ -27,8 +27,8 @@ class FullSpecProvider:
     delegates all projection / layernorm choices to the base backend.
     """
 
-    def __init__(self, kernel_cls: type, base: BackendSpecProvider):
-        self._kernel_wrapper_cls = make_megatron_wrapper(kernel_cls)
+    def __init__(self, kernel_cls: type, base: BackendSpecProvider, **kernel_kwargs):
+        self._kernel_wrapper_cls = make_megatron_wrapper(kernel_cls, **kernel_kwargs)
         self._base = base
 
     def core_attention(self) -> CoreAttentionBuilder:

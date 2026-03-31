@@ -23,6 +23,7 @@ from megatron.training.arguments import core_transformer_config_from_args
 from megatron.training.utils import is_first_or_last_pipeline_stage, get_batch_on_this_tp_rank
 
 from attn_bench.benchmarks.args import add_benchmark_args
+from attn_bench.kernels.attn_registry import parse_attn_kwargs, validate_attn_kwargs
 from attn_bench.training.model import build_model
 from attn_bench.utils.git_info import check_git_working_tree, get_git_info
 
@@ -35,11 +36,15 @@ def model_provider(pre_process=True, post_process=True, config=None, vp_stage=No
     args = get_args()
     if config is None:
         config = core_transformer_config_from_args(args)
+    # validating kwargs before building the attention
+    attn_kwargs = validate_attn_kwargs(args.attn, args.impl, parse_attn_kwargs(args.attn_kwargs))
+
     return build_model(
         args=args,
         config=config,
         attn=args.attn,
         impl=args.impl,
+        attn_kwargs=attn_kwargs,
         pre_process=pre_process,
         post_process=post_process,
         vp_stage=vp_stage,

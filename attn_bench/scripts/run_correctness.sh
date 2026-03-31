@@ -6,9 +6,11 @@
 # Args:
 #   $1  attention mechanism, e.g. full
 #   $2  kernel implementation, e.g. flash, torch
+#   $@  (optional) extra benchmark args forwarded verbatim to correctness.py, e.g. --attn-kwargs init_sink_zero=true
 
 # Usage:
 #   bash attn_bench/scripts/run_correctness.sh full flash
+#   bash attn_bench/scripts/run_correctness.sh sink torch --attn-kwargs init_sink_zero=true
 
 set -euox pipefail # -e exit immediately on error, -u treat unset vars as errors, -o pipefail fail if any command in a pipe fails, -x print each command before executing it (for debugging)
 
@@ -16,6 +18,9 @@ echo "START TIME: $(date)"
 
 ATTN="${1:?usage: run_correctness.sh <attn> <impl>}"
 IMPL="${2:?usage: run_correctness.sh <attn> <impl>}"
+# shift removes the first 2 positional arguments, shifting everything down
+shift 2
+EXTRA_BENCHMARK_ARGS=("$@")  # remaining args forwarded verbatim to correctness.py (e.g. --attn-kwargs init_sink_zero=true)
 
 ##### Paths #####
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)" # points at Megatron-LM-Attention-Benchmark. BASH_SOURCE[0] has the path of the current file, we just cd a few dirs up and get the repo abs path dynamically (works from everywhere)
@@ -201,6 +206,7 @@ EVAL_ARGS=(
 BENCHMARK_ARGS=(
     --attn "${ATTN}"
     --impl "${IMPL}"
+    "${EXTRA_BENCHMARK_ARGS[@]}"
 )
 
 ##### Run #####
@@ -276,7 +282,7 @@ SEP=$(printf '=%.0s' {1..100})
     echo -e "${SEP}"
 } > "${COMPUTE_ENVIRONMENT_DIR}"
 
-echo "Correctness benchmark: attn=${ATTN} impl=${IMPL} tp=${TP_SIZE} pp=${PP_SIZE} nodes=${SLURM_NNODES:-1} gpus_per_node=${SLURM_GPUS_PER_NODE:-1}"
+echo "Correctness benchmark: attn=${ATTN} impl=${IMPL} tp=${TP_SIZE} pp=${PP_SIZE} nodes=${SLURM_NNODES:-1} gpus_per_node=${SLURM_GPUS_PER_NODE:-1} extra=${EXTRA_BENCHMARK_ARGS[*]:-}"
 
 echo "[$(date)] Launching training..."
 # srun -lu --cpus-per-task "${SLURM_CPUS_PER_TASK}" --wait 60 bash -c "${CMD_PREFIX} ${TRAINING_CMD}"
