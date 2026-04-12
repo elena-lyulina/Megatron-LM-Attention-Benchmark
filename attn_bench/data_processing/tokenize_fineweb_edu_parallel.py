@@ -59,7 +59,7 @@ def get_parquet_urls() -> list[str]:
     return urls
 
 
-def worker_fn(worker_id: int, parquet_urls: list, output_dir: str, tokenizer_path: str, token_budget: int) -> tuple[int, int]:
+def worker_fn(worker_id: int, parquet_urls: list, output_dir: str, tokenizer_path: str, token_budget: int, n_workers: int) -> tuple[int, int]:
     logging.basicConfig(
         level=logging.INFO,
         format=f"%(asctime)s [worker-{worker_id:02d}] %(message)s",
@@ -108,10 +108,14 @@ def worker_fn(worker_id: int, parquet_urls: list, output_dir: str, tokenizer_pat
                 break
 
         elapsed = time.time() - t_start
+        speed = total_tokens / elapsed if elapsed > 0 else 0
+        remaining = max(token_budget - global_total, 0)
+        eta_seconds = remaining / (speed * n_workers) if speed > 0 else float("inf")
         logger.info(
             f"Finished {Path(parquet_url).name} | "
             f"Docs: {total_docs:,} | Tokens: {total_tokens:,} ({total_tokens / 1e6:.1f}M) | "
-            f"Speed: {total_tokens / elapsed / 1e6:.1f}M tok/s"
+            f"Speed: {speed / 1e6:.1f}M tok/s | "
+            f"ETA: {eta_seconds / 60:.1f}min"
         )
 
         if done:
@@ -156,7 +160,7 @@ def main(args):
     shared_counter = multiprocessing.Value("l", 0)  # signed long, counts tokens globally
 
     worker_args = [
-        (i, worker_files[i], str(output_dir), args.tokenizer_path, args.token_budget)
+        (i, worker_files[i], str(output_dir), args.tokenizer_path, args.token_budget, n_workers)
         for i in range(n_workers)
     ]
 
