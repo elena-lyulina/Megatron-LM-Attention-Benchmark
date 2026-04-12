@@ -1,20 +1,20 @@
 #!/bin/bash
 
-#SBATCH --account=your-account
+#SBATCH --account=infra01
 #SBATCH --job-name=tokenize-fineweb-edu
 #SBATCH --output=/iopsstor/scratch/cscs/elyulina/logs/tokenize-fineweb-edu-%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/elyulina/logs/tokenize-fineweb-edu-%j.err
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=64
-#SBATCH --time=12:00:00
-#SBATCH --environment=/capstor/store/cscs/swissai/a06/containers/NGC-PyTorch/ngc_pt_jan.toml
+#SBATCH --time=00:15:00
+#SBATCH --environment=nemo
 #SBATCH --partition=normal
 
 echo "START TIME: $(date)"
 
 #### Config ####
-TEST=false   # Set to true for a quick throughput test (10M tokens, 1M/shard)
+TEST=true   # Set to true for a quick throughput test (10M tokens, 1M/shard)
 ################
 
 export HF_TOKEN=$(cat $HOME/.hf-token)
