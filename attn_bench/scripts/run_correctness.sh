@@ -143,7 +143,7 @@ REGULARIZATION_ARGS=(
 ##### Training #####
 MBS=2
 GBS=80
-TRAIN_ITERS="${TRAIN_ITERS:-15}"
+TRAIN_ITERS="${TRAIN_ITERS:-1000}"
 
 TRAINING_ARGS=(
     --micro-batch-size "${MBS}"
@@ -162,9 +162,8 @@ INITIALIZATION_ARGS=(
 
 LEARNING_RATE_ARGS=(
     --lr 0.0003
-    --min-lr 0.00003
-    --lr-decay-style cosine
-    --lr-warmup-iters 2
+    --lr-decay-style constant
+    --lr-warmup-iters 500
 )
 
 CHECKPOINTING_ARGS=(
@@ -203,18 +202,27 @@ EVAL_ARGS=(
 
 
 ##### Benchmark-specific #####
-BENCHMARK_ARGS=(
-    --attn "${ATTN}"
-    --impl "${IMPL}"
-    "${EXTRA_BENCHMARK_ARGS[@]}"
-)
+
+# pretrain-gpt is a special impl that runs pretrain_gpt.py directly (native TE attention, no substitution).
+# It doesn't accept --attn/--impl args, so we skip BENCHMARK_ARGS in that case.
+if [ "${IMPL}" = "pretrain-gpt" ]; then
+    SCRIPT="${REPO_ROOT}/pretrain_gpt.py"
+    BENCHMARK_ARGS=()
+else
+    SCRIPT="${ATTN_BENCH_ROOT}/benchmarks/correctness.py"
+    BENCHMARK_ARGS=(
+        --attn "${ATTN}"
+        --impl "${IMPL}"
+        "${EXTRA_BENCHMARK_ARGS[@]}"
+    )
+fi
 
 ##### Run #####
 
 # CMD_PREFIX="numactl --membind=0-3"  # bind memory to NUMA nodes for better locality (disabled until node NUMA topology is verified)
 CMD_PREFIX=""
 
-TRAINING_CMD="torchrun ${TORCHRUN_ARGS[*]} ${ATTN_BENCH_ROOT}/benchmarks/correctness.py \
+TRAINING_CMD="torchrun ${TORCHRUN_ARGS[*]} ${SCRIPT} \
     ${BENCHMARK_ARGS[*]} \
     ${TRANSFORMER_ENGINE_ARGS[*]} \
     ${DISTRIBUTED_ARGS[*]} \

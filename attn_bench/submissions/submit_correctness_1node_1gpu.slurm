@@ -6,7 +6,7 @@
 #SBATCH --gpus-per-node=1
 #SBATCH --cpus-per-task=72
 #SBATCH --mem=200GB
-#SBATCH --time=00:10:00
+#SBATCH --time=04:30:00
 #SBATCH --environment=nemo # in my ~/.edf
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
