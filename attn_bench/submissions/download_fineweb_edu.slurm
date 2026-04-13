@@ -17,7 +17,7 @@ echo "START TIME: $(date)"
 export HF_TOKEN=$(cat $HOME/.hf-token)
 
 MEGATRON_DIR=/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark
-RAW_DIR=/iopsstor/scratch/cscs/elyulina/datasets/dedup-fineweb-edu/raw
+RAW_DIR=/iopsstor/scratch/cscs/elyulina/datasets/raw
 
 mkdir -p $RAW_DIR
 mkdir -p /iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark/attn_bench/logs

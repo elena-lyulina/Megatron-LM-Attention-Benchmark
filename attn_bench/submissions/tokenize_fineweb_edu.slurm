@@ -17,8 +17,9 @@ export HF_TOKEN=$(cat $HOME/.hf-token)
 
 MEGATRON_DIR=/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark
 TOKENIZER_PATH=/iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b
-RAW_DIR=/iopsstor/scratch/cscs/elyulina/datasets/dedup-fineweb-edu/raw
-OUTPUT_DIR=/iopsstor/scratch/cscs/elyulina/datasets/dedup-fineweb-edu/tokenized
+DATASETS_PATH=/iopsstor/scratch/cscs/elyulina/datasets
+RAW_DIR=$DATASETS_PATH/raw/fineweb-edu-dedup
+OUTPUT_DIR=$DATASETS_PATH/tokenized/fineweb-edu-dedup-160B
 
 mkdir -p $OUTPUT_DIR
 mkdir -p /iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark/attn_bench/logs

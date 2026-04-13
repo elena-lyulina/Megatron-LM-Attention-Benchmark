@@ -48,7 +48,7 @@ def _init_worker(shared_counter):
 
 
 def get_parquet_paths(raw_dir: str) -> list[str]:
-    parquet_dir = Path(raw_dir) / DATASET_CONFIG
+    parquet_dir = Path(raw_dir)
     paths = sorted(str(p) for p in parquet_dir.glob("*.parquet"))
     if not paths:
         raise FileNotFoundError(f"No parquet files found in {parquet_dir}")
