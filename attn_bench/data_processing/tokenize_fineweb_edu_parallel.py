@@ -1,8 +1,10 @@
 """
-Parallel tokenization of FineWeb-Edu-dedup from HuggingFace.
+Parallel tokenization of FineWeb-Edu-dedup from local parquet files.
 
-Each worker streams its own subset of parquet files and writes a Megatron binary shard.
+Each worker processes its own subset of parquet files and writes a Megatron binary shard.
 A shared counter stops all workers once the global token budget is reached.
+
+Download parquet files first with download_fineweb_edu.py, then run this script.
 
 Output layout:
     <output_dir>/
@@ -13,9 +15,10 @@ Output layout:
 Usage:
     python tokenize_fineweb_edu_parallel.py \
         --tokenizer-path /path/to/tokenizer \
+        --raw-dir /path/to/raw \
         --output-dir /path/to/dedup-fineweb-edu-160B \
-        --token-budget 160_000_000_000 \
-        --num-workers 20
+        --token-budget 160000000000 \
+        --num-workers 128
 """
 
 import argparse
@@ -27,12 +30,10 @@ from pathlib import Path
 
 import torch
 from datasets import load_dataset
-from huggingface_hub import HfApi
 from transformers import AutoTokenizer
 
 from megatron.core.datasets.indexed_dataset import IndexedDatasetBuilder, DType
 
-DATASET_REPO = "HuggingFaceTB/smollm-corpus"
 DATASET_CONFIG = "fineweb-edu-dedup"
 BATCH_SIZE = 1000
 LOG_INTERVAL = 50_000  # docs
@@ -46,17 +47,12 @@ def _init_worker(shared_counter):
     _shared_counter = shared_counter
 
 
-
-
-def get_parquet_urls() -> list[str]:
-    api = HfApi()
-    all_files = list(api.list_repo_files(DATASET_REPO, repo_type="dataset"))
-    urls = sorted(
-        f"hf://datasets/{DATASET_REPO}/{f}"
-        for f in all_files
-        if DATASET_CONFIG in f and f.endswith(".parquet")
-    )
-    return urls
+def get_parquet_paths(raw_dir: str) -> list[str]:
+    parquet_dir = Path(raw_dir) / DATASET_CONFIG
+    paths = sorted(str(p) for p in parquet_dir.glob("*.parquet"))
+    if not paths:
+        raise FileNotFoundError(f"No parquet files found in {parquet_dir}")
+    return paths
 
 
 def worker_fn(worker_id: int, parquet_urls: list, output_dir: str, tokenizer_path: str, token_budget: int, n_workers: int) -> tuple[int, int]:
@@ -142,8 +138,8 @@ def main(args):
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    logger.info("Fetching parquet file list from HuggingFace ...")
-    parquet_urls = get_parquet_urls()
+    logger.info(f"Reading parquet files from {args.raw_dir} ...")
+    parquet_urls = get_parquet_paths(args.raw_dir)
     logger.info(f"Found {len(parquet_urls)} parquet files for {DATASET_CONFIG}")
 
     # Split files round-robin across workers
@@ -201,6 +197,12 @@ if __name__ == "__main__":
         type=int,
         default=20,
         help="Number of parallel worker processes (default: 20)",
+    )
+    parser.add_argument(
+        "--raw-dir",
+        type=str,
+        required=True,
+        help="Path to local directory containing downloaded parquet files.",
     )
     args = parser.parse_args()
     main(args)
