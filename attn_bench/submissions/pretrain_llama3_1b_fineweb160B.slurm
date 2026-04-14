@@ -6,7 +6,7 @@
 #SBATCH --gpus-per-node=4
 #SBATCH --cpus-per-task=288
 #SBATCH --mem=460000
-#SBATCH --time=24:00:00
+#SBATCH --time=12:00:00
 #SBATCH --environment=nemo
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
@@ -83,8 +83,7 @@ GBS=80  # must be divisible by MBS * num_gpus (2 * 40 = 80); Gradient Accumulati
 TRAINING_STEPS=244306
 
 # <--override any variables before sourcing-->
-# overrides CHECKPOINT_STEPS from configs/training.sh
-CHECKPOINT_STEPS=2000
+# CHECKPOINT_STEPS defaults to 1000 in configs/training.sh
 
 # Defines TRANSFORMER_ENGINE_ARGS, MIXED_PRECISION_ARGS, VOCAB_ARGS, TRAINING_ARGS, CHECKPOINTING_ARGS, checkpoints/triggers dirs
 source $REPO_ROOT/attn_bench/configs/training.sh
