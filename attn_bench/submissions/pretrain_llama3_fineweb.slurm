@@ -16,20 +16,23 @@
 # Used to obtain a model for perplexity-based dataset curation.
 #
 # Usage:
-#   sbatch attn_bench/submissions/submit_pretrain_llama3_fineweb.slurm
+#   sbatch attn_bench/submissions/pretrain_llama3_fineweb.slurm
 
 echo "START TIME: $(date)"
 
 ################ Configs ################
 
-FINEWEB_PREFIX="/capstor/store/cscs/swissai/infra01/users/xyixuan/finewebedu-sample-100BT/megatrontokenized/finewebedu-llama3tok_text_document"
+TOKENIZED_DIR="/iopsstor/scratch/cscs/$USER/datasets/tokenized/fineweb-edu-dedup-160B"
+# Blended path: equal weight per shard (1 <prefix> 1 <prefix> ...)
+FINEWEB_DATA_PATH=$(for f in $TOKENIZED_DIR/shard_*.bin; do echo -n "1 ${f%.bin} "; done)
 
 MBS=2
 GBS=80
 SEQ_LEN=8192
-# ~100B tokens: 100e9 / (80 * 8192) ≈ 152588
-TRAINING_STEPS=152588
-CHECKPOINT_STEPS=5000
+# ~160B tokens: 160e9 / (80 * 8192) ≈ 244140
+# Update once tokenization completes and exact token count is known from the job log.
+TRAINING_STEPS=244140
+CHECKPOINT_STEPS=1000
 
 #### Debugging ####
 LOG_NCCL=false
@@ -170,7 +173,7 @@ DISTRIBUTED_ARGS=(
 
 TOKENIZER_ARGS=(
     --tokenizer-type HuggingFaceTokenizer
-    --tokenizer-model nvidia/OpenMath2-Llama3.1-8B
+    --tokenizer-model /iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b
 )
 
 DATA_ARGS=(
@@ -186,7 +189,7 @@ DATA_ARGS=(
 if [ "$MOCK_DATA" = true ]; then
     DATA_ARGS="${DATA_ARGS[@]} --mock-data"
 else
-    DATA_ARGS="${DATA_ARGS[@]} --data-path $FINEWEB_PREFIX --data-cache-path $DATASET_CACHE_DIR"
+    DATA_ARGS="${DATA_ARGS[@]} --data-path $FINEWEB_DATA_PATH --data-cache-path $DATASET_CACHE_DIR"
 fi
 
 TORCHRUN_ARGS=(
