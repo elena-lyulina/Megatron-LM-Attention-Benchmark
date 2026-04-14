@@ -27,6 +27,8 @@ REPO_ROOT=/iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark
 cd $REPO_ROOT
 export PYTHONPATH=$REPO_ROOT:${PYTHONPATH:-}
 
+source $REPO_ROOT/attn_bench/configs/check_clean_env.sh
+
 PROJECT_NAME="fineweb-160B"
 PROJECT_DIR=$REPO_ROOT/attn_bench/results/pretrain/$PROJECT_NAME
 EXP_NAME=llama3-1b-fineweb160B

@@ -6,7 +6,7 @@
 #SBATCH --gpus-per-node=4
 #SBATCH --cpus-per-task=288
 #SBATCH --mem=460000
-#SBATCH --time=01:00:00
+#SBATCH --time=00:15:00
 #SBATCH --environment=nemo
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
@@ -28,6 +28,8 @@ echo "START TIME: $(date)"
 REPO_ROOT=/iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark
 cd $REPO_ROOT
 export PYTHONPATH=$REPO_ROOT:${PYTHONPATH:-}
+
+source $REPO_ROOT/attn_bench/configs/check_clean_env.sh
 
 PROJECT_NAME="fineweb-160B"
 PROJECT_DIR=$REPO_ROOT/attn_bench/results/pretrain/$PROJECT_NAME

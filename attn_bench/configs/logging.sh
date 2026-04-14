@@ -25,7 +25,7 @@ LOGGING_ARGS=(
 
 # uses / modifies $TRAINING_CMD, so run as a function after it is set
 setup_wandb() {
-    LOG_WANDB="${LOG_WANDB:-false}"
+    LOG_WANDB="${LOG_WANDB:-true}"
     if [ "${LOG_WANDB}" = "true" ]; then
         echo "[$(date)] W&B logging enabled."
         if [ -d "$LOGGING_DIR/wandb/latest-run" ]; then
