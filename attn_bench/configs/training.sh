@@ -30,6 +30,7 @@ TRAINING_ARGS=(
 
 ### CHECKPOINTING ###
 : ${CHECKPOINT_STEPS:=1000}
+: ${SAVE_RETAIN_INTERVAL:=10000}  # keep permanent snapshots every N steps; must be multiple of CHECKPOINT_STEPS
 : ${CKPT_DIR:=$EXP_DIR/checkpoints}
 
 mkdir -p $CKPT_DIR
@@ -38,6 +39,7 @@ CHECKPOINTING_ARGS=(
     --save $CKPT_DIR
     --load $CKPT_DIR # delete this to NOT reload from the latest checkpoint
     --save-interval $CHECKPOINT_STEPS
+    --save-retain-interval $SAVE_RETAIN_INTERVAL
     --ckpt-format torch_dist
     --async-save
 )
