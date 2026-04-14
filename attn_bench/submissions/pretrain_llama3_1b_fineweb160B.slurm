@@ -81,9 +81,8 @@ GBS=80  # must be divisible by MBS * num_gpus (2 * 40 = 80); Gradient Accumulati
 TRAINING_STEPS=244306
 
 # <--override any variables before sourcing-->
-# overrides CHECKPOINT_STEPS and KEEP_LAST_N_CHECKPOINTS from configs/training.sh
+# overrides CHECKPOINT_STEPS from configs/training.sh
 CHECKPOINT_STEPS=2000
-KEEP_LAST_N_CHECKPOINTS=2
 
 # Defines TRANSFORMER_ENGINE_ARGS, MIXED_PRECISION_ARGS, VOCAB_ARGS, TRAINING_ARGS, CHECKPOINTING_ARGS, checkpoints/triggers dirs
 source $REPO_ROOT/attn_bench/configs/training.sh

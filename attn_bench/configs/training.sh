@@ -30,7 +30,6 @@ TRAINING_ARGS=(
 
 ### CHECKPOINTING ###
 : ${CHECKPOINT_STEPS:=1000}
-: ${KEEP_LAST_N_CHECKPOINTS:=2}
 : ${CKPT_DIR:=$EXP_DIR/checkpoints}
 
 mkdir -p $CKPT_DIR
@@ -39,7 +38,6 @@ CHECKPOINTING_ARGS=(
     --save $CKPT_DIR
     --load $CKPT_DIR # delete this to NOT reload from the latest checkpoint
     --save-interval $CHECKPOINT_STEPS
-    --keep-last-n-checkpoints $KEEP_LAST_N_CHECKPOINTS
     --ckpt-format torch_dist
     --async-save
 )

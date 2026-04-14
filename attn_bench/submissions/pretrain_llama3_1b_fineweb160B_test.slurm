@@ -77,9 +77,8 @@ GBS=80  # must be divisible by MBS * num_gpus (2 * 40 = 80); Gradient Accumulati
 TRAINING_STEPS=500
 
 # <--override any variables before sourcing-->
-# overrides CHECKPOINT_STEPS and KEEP_LAST_N_CHECKPOINTS from configs/training.sh
+# overrides CHECKPOINT_STEPS from configs/training.sh
 CHECKPOINT_STEPS=100
-KEEP_LAST_N_CHECKPOINTS=5  # keep all 5 checkpoints to verify they're written correctly
 
 source $REPO_ROOT/attn_bench/configs/training.sh
 
