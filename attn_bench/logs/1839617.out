@@ -1,0 +1,45 @@
+START TIME: Sun Apr 12 21:32:27 CEST 2026
+Shard: /iopsstor/scratch/cscs/elyulina/dataset/dedup-fineweb-edu-parallel-test/shard_00000
+Total sequences: 9,000
+================================================================================
+
+--- Sequence 0 | 749 tokens ---
+First tokens: [2822, 13, 220, 1187, 26, 16459, 5587, 220, 679, 16]
+Last tokens:  [323, 98582, 69244, 13, 128001]
+EOS at end:   True (eos=128001)
+Text preview: 'No. 24; Updated March 2011\nClick here to download and print a PDF version of this document.\nParents are usually the first to recognize that their child has a problem with emotions or behavior. Still, the decision to seek professional help can be difficult and painful for a parent. The first step is '
+Text ending:  'ial 911.\nCopyright © 2012 by the American Academy of Child and Adolescent Psychiatry.<|end_of_text|>'
+================================================================================
+
+--- Sequence 1 | 210 tokens ---
+First tokens: [21994, 8278, 9479, 8278, 198, 5396, 220, 1272, 482, 578]
+Last tokens:  [10920, 15182, 369, 7742, 128001]
+EOS at end:   True (eos=128001)
+Text preview: 'Previous abstract Next abstract\nSession 40 - The Interstellar Medium.\nDisplay session, Tuesday, June 09\nGamma Ray Burst (GRB) explosions can make kpc-size shells and holes in the interstellar media (ISM) of spiral galaxies if much of the energy heats the local gas to above 10^7 K. Disk blowout is pr'
+Text ending:  'ormal galaxies can account for the number of such shells.\nProgram listing for Tuesday<|end_of_text|>'
+================================================================================
+
+--- Sequence 2 | 72 tokens ---
+First tokens: [14924, 25, 2650, 374, 65919, 19823, 2204, 505, 653, 575]
+Last tokens:  [7053, 292, 18243, 13, 128001]
+EOS at end:   True (eos=128001)
+Text preview: "Question: How is bipolar disorder different from unipolar depression or'regular' depression?\nAnswer: Both bipolar disorder and major depression are typically associated with depressive episodes. So both illnesses are accompanied by depressions. The difference is that in bipolar disorder people also "
+Text ending:  'ds of elevation -- or severe irritability. We call these manic or hypomanic episodes.<|end_of_text|>'
+================================================================================
+
+--- Sequence 3 | 1251 tokens ---
+First tokens: [32, 4363, 6832, 9257, 13042, 28948, 374, 11352, 539, 1193]
+Last tokens:  [3440, 89718, 32575, 1131, 128001]
+EOS at end:   True (eos=128001)
+Text preview: 'A land whose rich cultural heritage is discovered not only from within the walls of numerous museums, galleries and churches, many of which today, as zero category monuments are included in a part of the UNESCO World Heritage List, but also in that magical place on the Mediterranean, where even the '
+Text ending:  'asha on a platter. After this event, the Turks scattered and did not attack Zagreb...<|end_of_text|>'
+================================================================================
+
+--- Sequence 4 | 911 tokens ---
+First tokens: [99338, 1690, 5528, 311, 8417, 3508, 279, 86333, 8945, 374]
+Last tokens:  [5112, 3135, 690, 810, 128001]
+EOS at end:   True (eos=128001)
+Text preview: 'adopt many methods to determine whether the unborn baby is a boy or a\ngirl. The Chinese\npregnancy calendar is an often used\nmethod to know about the\ngender of the new life in the mothers womb.\nis an ancient way for\npredicting the gender of\nthe unborn baby\nIt is also known as a Chinese\nconception cha'
+Text ending:  'sier to realize at late\nterms of pregnancy, after 22-26 weeks. Then results will more<|end_of_text|>'
+================================================================================
+END TIME: Sun Apr 12 21:32:56 CEST 2026

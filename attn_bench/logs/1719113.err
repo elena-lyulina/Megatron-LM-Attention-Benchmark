@@ -1,0 +1,10 @@
+++ date
++ echo 'START TIME: Tue Mar 24 17:53:28 CET 2026'
++ ATTN=full
++ IMPL=flash
++++ dirname /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/scripts/run_correctness.sh
+++ cd /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/scripts/../..
+++ pwd
++ REPO_ROOT=/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark
++ ATTN_BENCH_ROOT=/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench
+/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/scripts/run_correctness.sh: line 23: ATTN_BENCH__ROOT: unbound variable
