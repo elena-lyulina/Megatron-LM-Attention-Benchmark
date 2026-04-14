@@ -44,6 +44,7 @@ printenv > $DEBUG_DIR/env_before.txt
 
 
 ####### MODEL #####################
+LR_WARMUP=50  # override default 2000; must be < TRAINING_STEPS
 source $REPO_ROOT/attn_bench/configs/models/llama3_1b.sh
 ###################################
 
