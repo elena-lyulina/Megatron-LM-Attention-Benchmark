@@ -1,0 +1,38 @@
+Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+wandb: Currently logged in as: elyulina (elyulina-thesis) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: setting up run 5dapsuj5
+wandb: Tracking run with wandb version 0.23.1
+wandb: Run data is saved locally in /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/results/pretrain/fineweb-160B/llama3-1b-fineweb160B-test/logging/wandb/run-20260414_233411-5dapsuj5
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run llama3-1b-fineweb160B-test-1857626
+wandb: ⭐️ View project at https://wandb.ai/elyulina-thesis/fineweb-160B
+wandb: 🚀 View run at https://wandb.ai/elyulina-thesis/fineweb-160B/runs/5dapsuj5
+wandb: Detected [openai] in use.
+wandb: Use W&B Weave for improved LLM call tracing. Install Weave with `pip install weave` then add `import weave` to the top of your script.
+wandb: For more information, check out the docs at: https://weave-docs.wandb.ai/
+[W414 23:34:14.751311243 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+[rank39]: Traceback (most recent call last):
+[rank39]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+[rank39]:     pretrain(
+[rank39]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+[rank39]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+[rank39]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+[rank39]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+[rank39]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank39]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+[rank39]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+[rank39]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank39]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+[rank39]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+[rank39]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank39]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+[rank39]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+[rank39]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+[rank39]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+Stack (most recent call first):
+  File "/usr/lib/python3.12/subprocess.py", line 2011 in _try_wait
+  File "/usr/lib/python3.12/subprocess.py", line 2053 in _wait
+  File "/usr/lib/python3.12/subprocess.py", line 1264 in wait
+  File "/opt/venv/lib/python3.12/site-packages/wandb/sdk/lib/service/service_process.py", line 57 in join
+  File "/opt/venv/lib/python3.12/site-packages/wandb/sdk/lib/service/service_connection.py", line 301 in teardown
+  File "/opt/venv/lib/python3.12/site-packages/wandb/sdk/lib/service/service_connection.py", line 65 in teardown_atexit

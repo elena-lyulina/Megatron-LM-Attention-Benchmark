@@ -1,0 +1,5 @@
+INFO 04-14 20:12:48 [__init__.py:241] Automatically detected platform cuda.
+LANG_RL Log directory: None
+[Gloo] Rank 10 is connected to 39 peer ranks. Expected number of connected peer ranks is : 39
+[Gloo] Rank 10 is connected to 39 peer ranks. Expected number of connected peer ranks is : 39
+[Gloo] Rank 10 is connected to 39 peer ranks. Expected number of connected peer ranks is : 39

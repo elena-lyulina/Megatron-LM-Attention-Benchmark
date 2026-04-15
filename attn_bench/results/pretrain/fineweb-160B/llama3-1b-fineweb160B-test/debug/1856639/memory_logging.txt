@@ -1,0 +1,10 @@
+0: nid006664 | 3MiB | 3MiB | 3MiB | 3MiB
+7: nid007514 | 38MiB | 21MiB | 25MiB | 47MiB
+6: nid007496 | 3MiB | 3MiB | 3MiB | 3MiB
+9: nid007522 | 3MiB | 3MiB | 3MiB | 3MiB
+2: nid006844 | 3MiB | 7MiB | 5MiB | 6MiB
+8: nid007521 | 3MiB | 3MiB | 3MiB | 3MiB
+3: nid006863 | 4MiB | 5MiB | 5MiB | 4MiB
+4: nid007479 | 3MiB | 3MiB | 3MiB | 3MiB
+5: nid007495 | 3MiB | 3MiB | 3MiB | 3MiB
+1: nid006676 | 3MiB | 3MiB | 3MiB | 3MiB
