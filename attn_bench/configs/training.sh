@@ -21,7 +21,7 @@ VOCAB_ARGS=(
 )
 
 ### TRAINING ###
-: ${EVAL_INTERVAL:=1000}  # must be set to avoid TypeError even when EVAL_ITERS=0
+: ${EVAL_INTERVAL:=1000}  # must match or be a multiple of checkpoint interval, must be set to avoid TypeError even when EVAL_ITERS=0
 : ${EVAL_ITERS:=0}        # no validation split for pretraining (--split 100,0,0)
 
 TRAINING_ARGS=(
