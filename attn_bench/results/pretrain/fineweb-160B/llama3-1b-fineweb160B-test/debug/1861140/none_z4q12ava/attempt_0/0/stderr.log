@@ -1,0 +1,47 @@
+Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+/opt/TensorRT-Model-Optimizer/modelopt/torch/utils/import_utils.py:32: UserWarning: Failed to import diffusers plugin due to: ImportError('peft>=0.17.0 is required for a normal functioning of this module, but found peft==0.13.2.'). You may ignore this warning if you do not need this plugin.
+  warnings.warn(
+/opt/TensorRT-Model-Optimizer/modelopt/torch/utils/import_utils.py:32: UserWarning: Failed to import peft plugin due to: ImportError("cannot import name 'ParamWrapper' from 'peft.tuners.lora.layer' (/opt/venv/lib/python3.12/site-packages/peft/tuners/lora/layer.py)"). You may ignore this warning if you do not need this plugin.
+  warnings.warn(
+/opt/TensorRT-Model-Optimizer/modelopt/torch/__init__.py:36: UserWarning: transformers version 4.57.3 is incompatible with nvidia-modelopt and may cause issues. Please install recommended version with `pip install nvidia-modelopt[hf]` if working with HF models.
+  _warnings.warn(
+/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: Overriding default arguments for tokenizer_type:GPT2BPETokenizer with tokenizer_type:HuggingFaceTokenizer
+  warnings.warn(message)
+/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --async-save is not supported without --use-persistent-ckpt-worker. Disabling --async-save.
+  warnings.warn(message)
+/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-use-fast argument is deprecated and will be removed soon. `use_fast` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-use-fast if you want to disable `use_fast`.
+  warnings.warn(message)
+/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-include-special-tokens argument is deprecated and will be removed soon. `include_special_tokens` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-include-special-tokens if you want to disable `include_special_tokens`.
+  warnings.warn(message)
+[W415 11:18:14.888857819 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+/opt/TensorRT-Model-Optimizer/modelopt/torch/utils/import_utils.py:32: UserWarning: Failed to import diffusers plugin due to: ImportError('peft>=0.17.0 is required for a normal functioning of this module, but found peft==0.13.2.'). You may ignore this warning if you do not need this plugin.
+  warnings.warn(
+/opt/TensorRT-Model-Optimizer/modelopt/torch/utils/import_utils.py:32: UserWarning: Failed to import peft plugin due to: ImportError("cannot import name 'ParamWrapper' from 'peft.tuners.lora.layer' (/opt/venv/lib/python3.12/site-packages/peft/tuners/lora/layer.py)"). You may ignore this warning if you do not need this plugin.
+  warnings.warn(
+/opt/TensorRT-Model-Optimizer/modelopt/torch/__init__.py:36: UserWarning: transformers version 4.57.3 is incompatible with nvidia-modelopt and may cause issues. Please install recommended version with `pip install nvidia-modelopt[hf]` if working with HF models.
+  _warnings.warn(
+Stack (most recent call first):
+Stack (most recent call first):
+  File   File ""/usr/lib/python3.12/threading.py/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py"", line , line 359266 in  in wait_reduce_any
+
+  File   File ""/usr/lib/python3.12/threading.py/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py"", line , line 655327 in  in waitshould_run_forward_backward
+
+  File   File ""/usr/lib/python3.12/multiprocessing/managers.py/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py"", line , line 1761691 in  in serve_forevertrain_step
+
+  File   File ""/usr/lib/python3.12/multiprocessing/managers.py/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py"", line 599, line  in 2926_run_server in 
+train  File 
+"  File /usr/lib/python3.12/multiprocessing/process.py""/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py, line "108, line  in 1077run in 
+pretrain  File 
+"  File /usr/lib/python3.12/multiprocessing/process.py""/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py, line "314, line  in 338_bootstrap in 
+<module>  File 
+"/usr/lib/python3.12/multiprocessing/spawn.py"Stack (most recent call first):
+, line   File 135" in /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py_main"
+, line   File 266" in /usr/lib/python3.12/multiprocessing/spawn.py_reduce_any"
+, line   File 122" in /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.pyspawn_main"
+, line   File 327" in <string>should_run_forward_backward"
+, line   File 1" in /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py<module>"
+, line 1691 in train_step
+  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 2926 in train
+  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1077 in pretrain
+  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338 in <module>

@@ -1,0 +1,38 @@
+Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+wandb: Currently logged in as: elyulina (elyulina-thesis) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: setting up run jwn9nful
+wandb: Tracking run with wandb version 0.23.1
+wandb: Run data is saved locally in /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/results/pretrain/fineweb-160B/llama3-1b-fineweb160B-test/logging/wandb/run-20260415_111816-jwn9nful
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run llama3-1b-fineweb160B-test-1861140
+wandb: ⭐️ View project at https://wandb.ai/elyulina-thesis/fineweb-160B
+wandb: 🚀 View run at https://wandb.ai/elyulina-thesis/fineweb-160B/runs/jwn9nful
+wandb: Detected [openai] in use.
+wandb: Use W&B Weave for improved LLM call tracing. Install Weave with `pip install weave` then add `import weave` to the top of your script.
+wandb: For more information, check out the docs at: https://weave-docs.wandb.ai/
+[W415 11:18:19.267263638 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+Stack (most recent call first):
+Stack (most recent call first):
+  File   File ""/usr/lib/python3.12/threading.py/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py"", line , line 359266 in  in wait_reduce_any
+
+  File   File ""/usr/lib/python3.12/threading.py/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py"", line 655 in , line wait327
+ in   File should_run_forward_backward"
+/usr/lib/python3.12/multiprocessing/managers.py  File "", line /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py176" in serve_forever
+  File , line "1691/usr/lib/python3.12/multiprocessing/managers.py in "train_step, line 
+599  File  in "_run_server/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py
+"  File "/usr/lib/python3.12/multiprocessing/process.py", line 108 in run
+  File ", line /usr/lib/python3.12/multiprocessing/process.py2926" in , line train314
+ in   File _bootstrap"
+/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py  File ""/usr/lib/python3.12/multiprocessing/spawn.py", line 135 in _main
+  File "/usr/lib/python3.12/multiprocessing/spawn.py", line , line 1221077 in  in spawn_mainpretrain
+
+  File   File ""<string>/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py"", line 1, line  in 338<module> in 
+<module>
+Stack (most recent call first):
+  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 266 in _reduce_any
+  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 327 in should_run_forward_backward
+  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1691 in train_step
+  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 2926 in train
+  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1077 in pretrain
+  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338 in <module>

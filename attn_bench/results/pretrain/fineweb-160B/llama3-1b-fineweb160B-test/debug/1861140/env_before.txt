@@ -1,0 +1,320 @@
+NPP_VERSION=13.0.1.2
+SHELL=/bin/bash
+VLLM_VERSION=0.10.1.1+381074ae
+SLURM_GPUS_PER_NODE=4
+NVIDIA_VISIBLE_DEVICES=all
+UV_CACHE_DIR=/opt/uv_cache
+DALI_URL_SUFFIX=130
+COLORTERM=1
+SDK_HOME=/usr/lib64/jvm/java-11-openjdk-11
+DALI_BUILD=
+SLURM_JOB_USER=elyulina
+NEMO_FW_RESIL_COMMIT=54f85fe422d296cf04ea524130014bd3a2c3add1
+SLURM_TASKS_PER_NODE=1(x10)
+XDG_CONFIG_DIRS=/etc/xdg
+QT_SYSTEM_DIR=/usr/share/desktop-data
+LESS=-M -I -R
+CUSOLVER_VERSION=12.0.4.66
+SLURM_JOB_UID=65686
+SLURM_TIME_FORMAT=relative
+JDK_HOME=/usr/lib64/jvm/java-11-openjdk-11
+SLURM_TASK_PID=243969
+NVJITLINK_VERSION=13.0.88
+CONDA_EXE=/users/elyulina/miniconda3/bin/conda
+_CE_M=
+CLUSTER_NAME=clariden
+CUBLAS_VERSION=13.0.2.14
+MACHTYPE=aarch64-suse-linux
+SLURM_JOB_GPUS=0,1,2,3
+SLURM_LOCALID=0
+NVFATBIN_VERSION=13.0.85
+SLURM_SUBMIT_DIR=/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench
+G_BROKEN_FILENAMES=1
+HISTSIZE=1000
+HOSTNAME=nid007420
+PYTORCH_TRITON_VERSION=3.4.0+gitc817b9b6
+CUFILE_VERSION=1.15.1.6
+MINICOM=-c on
+SLURMD_NODENAME=nid007420
+SLURM_JOB_START_TIME=1776244597
+HYDRA_LAUNCHER_EXTRA_ARGS=--external-launcher
+JAVA_HOME=/usr/lib64/jvm/java-11-openjdk-11
+NVIDIA_REQUIRE_CUDA=cuda>=9.0
+CUFFT_VERSION=12.0.0.61
+FI_CXI_RX_MATCH_MODE=software
+JRE_HOME=/usr/lib64/jvm/java-11-openjdk-11
+SSH_AUTH_SOCK=/tmp/ssh-XXXX23W17K/agent.178410
+__LMOD_REF_COUNT_MODULEPATH=/usr/share/lmod/modulefiles:1
+NVVM_VERSION=13.0.88
+TRITON_CUPTI_PATH=/usr/local/cuda/include
+CPU=aarch64
+CUDA_CACHE_PATH=/dev/shm/elyulina/cuda_cache
+DOCA_VERSION=3.1.0
+OCI_ANNOTATION_com__hooks__aws_ofi_nccl__variant=cuda12
+TENSORBOARD_PORT=6006
+NCCL_NET_PLUGIN=ofi
+SLURM_CLUSTER_NAME=clariden
+_CUDA_COMPAT_STATUS=System has unsupported display driver / cuda driver combination (CUDA_ERROR_SYSTEM_DRIVER_MISMATCH) cuInit()=803
+SLURM_JOB_END_TIME=1776245497
+JAVA_BINDIR=/usr/lib64/jvm/java-11-openjdk-11/bin
+SLURM_CPUS_ON_NODE=288
+SLURM_SPANK__SLURM_SPANK_OPTION_pyxis_environment=nemo
+TORCH_CUDA_ARCH_LIST=8.0 8.6 9.0 10.0 11.0 12.0+PTX
+NEMO_FW_RESIL_VERSION=0.4.1
+NCCL_VERSION=2.27.7
+MODEL_OPT_VERSION=0.33.0
+SLURM_JOB_CPUS_PER_NODE=288(x10)
+GPG_TTY=/dev/pts/93
+NCCL_SOCKET_IFNAME=hsn
+LMOD_DIR=/usr/share/lmod/lmod/libexec
+NCCL_NET_GDR_LEVEL=PHB
+CUSPARSE_VERSION=12.6.3.3
+ENV=/etc/shinit_v2
+NVSHMEM_VERSION=3.4.5
+SLURM_GPUS_ON_NODE=4
+PRTE_MCA_plm_slurm_args=--external-launcher
+PWD=/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark
+SLURM_GTIDS=0
+LOGNAME=elyulina
+XDG_SESSION_TYPE=tty
+INFRANAME=alps
+SLURM_JOB_PARTITION=normal
+OPENUCX_VERSION=1.19.0
+PIP_NO_BUILD_ISOLATION=1
+MODULESHOME=/usr/share/lmod/lmod
+NSIGHT_SYSTEMS_VERSION=2025.4.1.172
+NVIDIA_DRIVER_CAPABILITIES=compute,utility,video
+TORCH_NCCL_USE_COMM_NONBLOCKING=0
+MANPATH=/usr/local/man:/usr/local/share/man:/usr/share/man
+SLURM_TRES_PER_TASK=cpu=288
+POLYGRAPHY_VERSION=0.49.26
+ROCR_VISIBLE_DEVICES=0,1,2,3
+LMOD_PREPEND_BLOCK=normal
+PIP_BREAK_SYSTEM_PACKAGES=1
+CUDA_ARCH_LIST=8.0 8.6 9.0 10.0 11.0 12.0
+NCCL_NET=AWS Libfabric
+SLURM_JOB_NUM_NODES=10
+UCC_CL_BASIC_TLS=^sharp
+NEMO_FW_TRT_LLM_VERSION=
+CUSPARSELT_VERSION=0.8.1.1
+TRT_VERSION=10.13.3.9
+SLURM_JOBID=1861140
+NVIDIA_PRODUCT_NAME=NeMo Framework
+FI_CXI_DEFAULT_TX_SIZE=32768
+RDMACORE_VERSION=56.0
+NEMO_FW_NEMO_VERSION=2.6.0rc0
+SLURM_JOB_QOS=normal
+I_MPI_HYDRA_BOOTSTRAP_EXEC_EXTRA_ARGS=--external-launcher
+XKEYSYMDB=/usr/X11R6/lib/X11/XKeysymDB
+MPIR_CVAR_CH4_OFI_MULTI_NIC_STRIPING_THRESHOLD=100000000
+MOTD_SHOWN=pam
+NVPL_LAPACK_MATH_MODE=PEDANTIC
+FI_CXI_DEFAULT_CQ_SIZE=131072
+XNLSPATH=/usr/X11R6/lib/X11/nls
+HOME=/users/elyulina
+_ModuleTable_Sz_=1
+SINFO_FORMAT=%9P %5a %8s %.10l %.6c %.6z %.7D %10T %N
+STORE=/capstor/store/cscs/swissai/infra01
+SLURM_PROCID=0
+OCI_ANNOTATION_com__hooks__aws_ofi_nccl__enabled=true
+SCRATCH=/iopsstor/scratch/cscs/elyulina
+PIP_CONSTRAINT=/etc/pip/constraint.txt
+COCOAPI_VERSION=2.0+nv0.8.1
+CUDA_VERSION=13.0.1.012
+LMOD_SETTARG_FULL_SUPPORT=no
+PYTORCH_VERSION=2.9.0a0+50eac81
+CURAND_VERSION=10.4.0.35
+OSTYPE=linux
+NEMO_FW_MCORE_COMMIT=696a38e0b2e87e7bcd7412e1d45e8943f646a8d3
+TMPDIR=/iopsstor/scratch/cscs/elyulina/tmp
+SLURM_EDF_IMAGESTORE=/iopsstor/scratch/cscs/elyulina/.edf_imagestore
+PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+VSCODE_AGENT_FOLDER=/users/elyulina/.vscode-server/clariden-tunnel/.vscode-server
+SLURM_CPUS_PER_TASK=288
+PYTORCH_BUILD_NUMBER=0
+SLURM_NTASKS=10
+LESS_ADVANCED_PREPROCESSOR=no
+UV_LINK_MODE=copy
+SLURM_TOPOLOGY_ADDR=global.group35.nid007420
+LMOD_VERSION=8.7.34
+SSH_CONNECTION=148.187.1.10 38522 172.28.38.18 22
+CUBLASMP_VERSION=0.5.1.65
+PIP_DEFAULT_TIMEOUT=100
+ZE_AFFINITY_MASK=0,1,2,3
+NVFUSER_BUILD_VERSION=a71c674
+HPCX_VERSION=2.24.1
+NVIDIA_BIGNLP_VERSION=
+HYDRA_BOOTSTRAP=slurm
+SLURM_TOPOLOGY_ADDR_PATTERN=switch.switch.node
+CUDA_VISIBLE_DEVICES=0,1,2,3
+TRITON_CUDACRT_PATH=/usr/local/cuda/include
+CUDNN_FRONTEND_VERSION=1.14.0
+LESSCLOSE=lessclose.sh %s %s
+XDG_SESSION_CLASS=user
+LMOD_PKG=/usr/share/lmod/lmod
+SLURM_SCRIPT_CONTEXT=prolog_task
+SLURM_MEM_PER_NODE=460000
+PYTHONPATH=/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark:/opt/Export-Deploy:/opt/venv/lib/python3.12/site-packages/:
+TERM=xterm-256color
+_CE_CONDA=
+HOST=clariden-ln003
+GDRCOPY_VERSION=2.5
+NEMO_FW_NEMO_EXPORT_DEPLOY_VERSION=
+NVFUSER_VERSION=a71c674
+NVRX_VERSION=0.4.1+cuda13
+LESSOPEN=lessopen.sh %s
+FI_CXI_COMPAT=0
+USER=elyulina
+OPENMPI_VERSION=4.1.7
+NVPTXCOMPILER_VERSION=13.0.88
+NEMO_FW_TRT_LLM_COMMIT=55a9771ff0122ded47e6711eaf19c48f54630fe6
+NVJPEG_VERSION=13.0.1.86
+SSH_SENDS_LOCALE=yes
+LIBRARY_PATH=/usr/local/cuda/lib64/stubs:
+NEMO_FW_NEMO_COMMIT=0425500334506b9b9f8dfa554fd7d920746a08cd
+SLURM_NODELIST=nid[007420,007422-007425,007427,007429,007432,007434-007435]
+NEMO_FW_NEMO_RUN_COMMIT=01a9a8ba360f7b2908728ad0516e0ad9d936966d
+WANDB_API_KEY=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
+PYTHONIOENCODING=utf-8
+ENVIRONMENT=BATCH
+NVIDIA_VLLM_VERSION=25.09
+GPU_DEVICE_ORDINAL=0,1,2,3
+AWS_OFI_NCCL_VERSION=1.14.0
+CONDA_SHLVL=0
+UENV_WARN_MIGRATE=1
+MORE=-sl
+SLURM_JOB_ACCOUNT=infra01
+SLURM_PRIO_PROCESS=0
+CSHEDIT=emacs
+SLURM_NPROCS=10
+LMOD_ROOT=/usr/share/lmod
+LMOD_SETTARG_CMD=:
+NEMO_FW_MCORE_VERSION=0.16.0rc0
+SHLVL=1
+MAX_JOBS=12
+SLURM_NNODES=10
+BASH_ENV=/etc/bash.bashrc
+WINDOWMANAGER=/usr/bin/gnome
+PAGER=less
+TRITON_CUOBJDUMP_PATH=/usr/local/cuda/bin/cuobjdump
+LMOD_FULL_SETTARG_SUPPORT=no
+LIBGL_DEBUG=quiet
+CUDNN_VERSION=9.13.0.50
+VSCODE_CLI_DATA_DIR=/users/elyulina/.vscode-server/clariden-tunnel/.vscode-server/cli
+MAXSMVER=121
+EFA_VERSION=1.38.1
+NSIGHT_COMPUTE_VERSION=2025.3.1.4
+NEMO_FW_NEMO_EVAL_COMMIT=
+SLURM_SUBMIT_HOST=clariden-ln003
+DALI_VERSION=1.51.2
+NEMO_FW_MEGATRON_BRIDGE_COMMIT=57c3c149fbde7bcc6c36d763781bb1fa560ba0db
+_ModuleTable001_=X01vZHVsZVRhYmxlXyA9IHsKTVR2ZXJzaW9uID0gMywKY19yZWJ1aWxkVGltZSA9IGZhbHNlLApjX3Nob3J0VGltZSA9IGZhbHNlLApkZXB0aFQgPSB7fSwKZmFtaWx5ID0ge30sCm1UID0ge30sCm1wYXRoQSA9IHsKIi91c3Ivc2hhcmUvbG1vZC9tb2R1bGVmaWxlcyIsCn0sCnN5c3RlbUJhc2VNUEFUSCA9ICIvdXNyL3NoYXJlL2xtb2QvbW9kdWxlZmlsZXMiLAp9Cg==
+NEMO_FW_NEMO_EXPORT_DEPLOY_COMMIT=0947b64f45136550d0c570b233d370870edd4d42
+JUPYTER_PORT=8888
+UCC_EC_CUDA_EXEC_NUM_THREADS=256
+CONDA_PYTHON_EXE=/users/elyulina/miniconda3/bin/python
+TRITON_NVDISASM_PATH=/usr/local/cuda/bin/nvdisasm
+PYTORCH_HOME=/opt/pytorch/pytorch
+NEMO_FW_NEMO_EVAL_VERSION=
+LD_LIBRARY_PATH=/usr/local/tensorrt/lib:/usr/local/tensorrt/lib:/usr/local/lib/python3.12/dist-packages/torch/lib:/usr/local/lib/python3.12/dist-packages/torch_tensorrt/lib:/usr/local/cuda/compat/lib:/usr/local/nvidia/lib:/usr/local/nvidia/lib64
+LC_CTYPE=UTF-8
+NVIDIA_BUILD_ID=243847215
+LMOD_COLORIZE=no
+SLURM_JOB_ID=1861140
+SLURM_NODEID=0
+SSH_CLIENT=148.187.1.10 38522 22
+OMPI_MCA_coll_hcoll_enable=0
+FI_MR_CACHE_MONITOR=userfaultfd
+OPAL_PREFIX=/opt/hpcx/ompi
+DOCKER_HOST=unix:///run/user/65686/podman/podman.sock
+TRT_VER=10.13.3.9
+SQUEUE_SORT=t,-e,-p
+CUDA_DRIVER_VERSION=580.82.07
+TRANSFORMER_ENGINE_VERSION=2.7
+LC_ALL=C.UTF-8
+PYTORCH_BUILD_VERSION=2.9.0a0+50eac81
+_CUDA_COMPAT_PATH=/usr/local/cuda/compat
+CUDA_HOME=/usr/local/cuda
+TRITON_PTXAS_PATH=/usr/local/cuda/bin/ptxas
+FI_CXI_DISABLE_HOST_REGISTER=1
+XCURSOR_THEME=DMZ
+CUDA_MODULE_LOADING=LAZY
+XDG_DATA_DIRS=/usr/share
+NVIDIA_REQUIRE_JETPACK_HOST_MOUNTS=
+NEMO_FW_MEGATRON_BRIDGE_VERSION=0.2.0
+SLURM_CONF=/var/spool/slurmd/conf-cache/slurm.conf
+PATH=/opt/venv/bin:/opt/venv/bin:/usr/local/lib/python3.12/dist-packages/torch_tensorrt/bin:/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/mpi/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/ucx/bin:/opt/amazon/efa/bin:/opt/tensorrt/bin:/opt/mellanox/doca/tools/:/users/elyulina/ngc-cli
+SLURM_JOB_NAME=train-llama1B-fineweb-test
+MODULEPATH=/usr/share/lmod/modulefiles
+SQUEUE_FORMAT=%.8i %8u %7a %.14j %.9B%.3t %.10r %.12S %.12e %.10L %.5D %.10Q
+SLURM_NTASKS_PER_NODE=1
+DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/65686/bus
+PROFILEREAD=true
+PIP_NO_CACHE_DIR=1
+CUDLA_VERSION=13.0.1.012
+LMOD_CMD=/usr/share/lmod/lmod/libexec/lmod
+MOFED_VERSION=5.4-rdmacore56.0
+MAIL=/var/spool/mail/elyulina
+SSH_TTY=/dev/pts/93
+HOSTTYPE=aarch64
+NVIDIA_PYTORCH_VERSION=25.09
+UV_PROJECT_ENVIRONMENT=/opt/venv
+SLURM_EDF_EXPANDED=image = "/capstor/store/cscs/swissai/infra01/MLLM/containers/nvcr.io#nvidia+nemo+25.11.aarch64.sqsh"
+workdir = "/workspace"
+writable = true
+mounts = [
+    "/capstor:/capstor:",
+    "/iopsstor:/iopsstor:",
+    "/users:/users:"
+  ]
+[env]
+OCI_ANNOTATION_com__hooks__aws_ofi_nccl__enabled = "true"
+OCI_ANNOTATION_com__hooks__aws_ofi_nccl__variant = "cuda12"
+[annotations]
+com.hooks.aws_ofi_nccl.enabled = "true"
+com.hooks.aws_ofi_nccl.variant = "cuda12"
+
+TRTOSS_VERSION=
+OMPI_MCA_plm_slurm_args=--external-launcher
+SLURM_JOB_GID=65603
+PROJECT=/capstor/store/cscs/swissai/infra01
+DEBIAN_FRONTEND=noninteractive
+LUSTRE_JOB_ID=clariden_1861140
+TORCH_ALLOW_TF32_CUBLAS_OVERRIDE=1
+LESSKEY=/etc/lesskey.bin
+NCCL_CROSS_NIC=1
+TRITON_CUDART_PATH=/usr/local/cuda/include
+OLDPWD=/workspace
+SLURM_JOB_NODELIST=nid[007420,007422-007425,007427,007429,007432,007434-007435]
+TERM_PROGRAM=WarpTerminal
+I_MPI_HYDRA_BOOTSTRAP=slurm
+VLLM_USE_STANDALONE_COMPILE=0
+BASH_FUNC_ml%%=() {  eval "$($LMOD_DIR/ml_cmd "$@")"
+}
+BASH_FUNC_module%%=() {  if [ -z "${LMOD_SH_DBG_ON+x}" ]; then
+ case "$-" in 
+ *v*x*)
+ __lmod_sh_dbg='vx'
+ ;;
+ *v*)
+ __lmod_sh_dbg='v'
+ ;;
+ *x*)
+ __lmod_sh_dbg='x'
+ ;;
+ esac;
+ fi;
+ if [ -n "${__lmod_sh_dbg:-}" ]; then
+ set +$__lmod_sh_dbg;
+ echo "Shell debugging temporarily silenced: export LMOD_SH_DBG_ON=1 for Lmod's output" 1>&2;
+ fi;
+ eval "$($LMOD_CMD shell "$@")" && eval "$(${LMOD_SETTARG_CMD:-:} -s sh)";
+ __lmod_my_status=$?;
+ if [ -n "${__lmod_sh_dbg:-}" ]; then
+ echo "Shell debugging restarted" 1>&2;
+ set -$__lmod_sh_dbg;
+ fi;
+ unset __lmod_sh_dbg;
+ return $__lmod_my_status
+}
+_=/usr/bin/printenv
