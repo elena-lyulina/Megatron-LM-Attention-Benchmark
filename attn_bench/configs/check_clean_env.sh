@@ -19,6 +19,8 @@ _PROTECTED_VARS=(
     # training.sh
     CHECKPOINT_STEPS
     SAVE_RETAIN_INTERVAL
+    EVAL_INTERVAL
+    EVAL_ITERS
 
     # logging.sh
     LOG_WANDB

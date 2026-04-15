@@ -21,11 +21,16 @@ VOCAB_ARGS=(
 )
 
 ### TRAINING ###
+: ${EVAL_INTERVAL:=1000}  # must be set to avoid TypeError even when EVAL_ITERS=0
+: ${EVAL_ITERS:=0}        # no validation split for pretraining (--split 100,0,0)
+
 TRAINING_ARGS=(
     --no-check-for-nan-in-loss-and-grad
     --cross-entropy-loss-fusion
     --manual-gc
     --manual-gc-interval 5000
+    --eval-interval $EVAL_INTERVAL
+    --eval-iters $EVAL_ITERS
 )
 
 ### CHECKPOINTING ###
