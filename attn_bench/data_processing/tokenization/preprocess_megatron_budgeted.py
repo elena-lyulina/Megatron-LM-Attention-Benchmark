@@ -11,7 +11,7 @@ from datatrove.executor.local import LocalPipelineExecutor
 from datatrove.pipeline.readers import ParquetReader
 from datatrove.pipeline.tokens.megatron_tokenizer import MegatronDocumentTokenizer
 
-from attn_bench.data_processing.tokenization.budgeted_tokenizer import BudgetedMegatronDocumentTokenizer, SharedBudget
+from attn_bench.data_processing.tokenization.budgeted_tokenizer import BudgetedMegatronDocumentTokenizer
 
 
 def get_args():
@@ -84,6 +84,12 @@ def get_args():
         default=None,
         help="Token budget for this node. If not set, tokenizes everything.",
     )
+    group.add_argument(
+        "--batch-size",
+        type=int,
+        default=1000,
+        help="Tokenization batch size — smaller = less overshoot past budget (default: 1000)",
+    )
 
     args = parser.parse_args()
 
@@ -99,11 +105,13 @@ def main(args):
         n_tasks = number_of_files
 
     if args.node_budget is not None:
+        per_worker_budget = args.node_budget // n_tasks
         tokenizer = BudgetedMegatronDocumentTokenizer(
-            budget=SharedBudget(args.node_budget),
+            per_worker_budget=per_worker_budget,
             output_folder=args.output_folder,
             tokenizer_name_or_path=args.tokenizer_name_or_path,
             eos_token=args.eos_token,
+            batch_size=args.batch_size,
         )
     else:
         tokenizer = MegatronDocumentTokenizer(
