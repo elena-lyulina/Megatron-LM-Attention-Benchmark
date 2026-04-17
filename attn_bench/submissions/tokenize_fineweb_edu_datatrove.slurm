@@ -18,6 +18,7 @@ paths_file=$6
 number_of_tasks=$7
 MEGATRON_DIR=$8
 node_budget=$9
+batch_size=${10}
 
 # Setup ENV
 export HF_HUB_ENABLE_HF_TRANSFER=0
@@ -31,7 +32,7 @@ pip install datatrove --quiet
 echo "START TIME: $(date) | Preprocessing $paths_file with $number_of_tasks tasks per node with the $tokenizer tokenizer. Node budget: $node_budget tokens. Storing tokenized dataset in $output_folder"
 start_s=`date`
 start=`date +%s`
-numactl --membind=0-3 python3 $MEGATRON_DIR/attn_bench/data_processing/tokenization/preprocess_megatron_budgeted.py --tokenizer-name-or-path $tokenizer --output-folder $output_folder --logging-dir $logging_dir --n-tasks $number_of_tasks --dataset $input_folder --paths-file $paths_file --node-budget $node_budget
+numactl --membind=0-3 python3 $MEGATRON_DIR/attn_bench/data_processing/tokenization/preprocess_megatron_budgeted.py --tokenizer-name-or-path $tokenizer --output-folder $output_folder --logging-dir $logging_dir --n-tasks $number_of_tasks --dataset $input_folder --paths-file $paths_file --node-budget $node_budget --batch-size $batch_size
 end=`date +%s`
 end_s=`date`
 echo "FINISH TIME: $(date) | Preprocessed $paths_file ! Stored in $output_folder"
@@ -43,8 +44,8 @@ processed_total_size=$(du -shLb $output_folder | cut -f1)
 bw=$(python3 -c "print($dataset_total_size/$wc)")
 total_tokens_processed=$(($(du -shLcb $output_folder/*.bin | tail -n1 | sed -r 's/([^0-9]*([0-9]*)){1}.*/\2/')/4))
 throughput=$(python3 -c "print($total_tokens_processed/$wc)")
-echo "$SLURM_JOB_ID,$(hostname),$start_s,$end_s,$paths_file,$output_folder,$dataset_total_size,$processed_total_size,$number_of_tasks,$wc,$bw,$total_tokens_processed,$throughput"
-echo "$SLURM_JOB_ID,$(hostname),$start_s,$end_s,$paths_file,$output_folder,$dataset_total_size,$processed_total_size,$number_of_tasks,$wc,$bw,$total_tokens_processed,$throughput" >> $CSV_RESULTS_FILE
+echo "$SLURM_JOB_ID,$(hostname),$start_s,$end_s,$paths_file,$output_folder,$dataset_total_size,$processed_total_size,$number_of_tasks,$batch_size,$node_budget,$wc,$bw,$total_tokens_processed,$throughput"
+echo "$SLURM_JOB_ID,$(hostname),$start_s,$end_s,$paths_file,$output_folder,$dataset_total_size,$processed_total_size,$number_of_tasks,$batch_size,$node_budget,$wc,$bw,$total_tokens_processed,$throughput" >> $CSV_RESULTS_FILE
 
 sleep 10
 ls -lS $output_folder
