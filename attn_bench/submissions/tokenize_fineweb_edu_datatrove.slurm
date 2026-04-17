@@ -22,6 +22,7 @@ batch_size=${10}
 
 # Setup ENV
 export HF_HUB_ENABLE_HF_TRANSFER=0
+export HF_TOKEN=$(cat $HOME/.hf-token)
 export PYTHONPATH=$MEGATRON_DIR:$PYTHONPATH
 # Setup directories
 rm -rf $output_folder
