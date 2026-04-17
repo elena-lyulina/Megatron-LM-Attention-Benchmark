@@ -13,7 +13,7 @@ Output layout:
         ...
 
 Usage:
-    python tokenize_fineweb_edu_parallel.py \
+    python tokenize_fineweb_edu_native.py \
         --tokenizer-path /path/to/tokenizer \
         --raw-dir /path/to/raw \
         --output-dir /path/to/dedup-fineweb-edu-160B \

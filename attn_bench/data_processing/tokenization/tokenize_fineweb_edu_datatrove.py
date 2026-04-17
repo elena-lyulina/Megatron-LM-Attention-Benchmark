@@ -15,6 +15,7 @@ Usage:
 
 import argparse
 import logging
+import multiprocessing
 import struct
 import time
 from pathlib import Path
@@ -23,7 +24,8 @@ import numpy as np
 
 from datatrove.executor import LocalPipelineExecutor
 from datatrove.pipeline.readers import ParquetReader
-from datatrove.pipeline.tokens import MegatronTokenizer
+
+from attn_bench.data_processing.tokenization.budgeted_tokenizer import BudgetedMegatronTokenizer
 
 _INDEX_HEADER = b"MMIDIDX\x00\x00"
 
@@ -47,16 +49,20 @@ def main(args):
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
+    node_budget = args.token_budget // args.num_nodes
+    shared_counter = multiprocessing.Value('q', 0)
+
     pipeline = [
         ParquetReader(
             data_folder=args.raw_dir,
             text_key="text",
             glob_pattern="*.parquet",
         ),
-        MegatronTokenizer(
+        BudgetedMegatronTokenizer(
+            shared_counter=shared_counter,
+            node_budget=node_budget,
             output_folder=str(output_dir),
             tokenizer_name_or_path=args.tokenizer_path,
-            token_limit=args.token_budget,
             save_filename="shard",
         ),
     ]

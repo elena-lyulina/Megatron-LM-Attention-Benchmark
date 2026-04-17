@@ -29,7 +29,7 @@ export PYTHONPATH=$MEGATRON_DIR:$PYTHONPATH
 TOKEN_BUDGET=160000000000   # 160B tokens
 NUM_WORKERS=$SLURM_CPUS_PER_TASK   # 128 workers
 
-python3 $MEGATRON_DIR/attn_bench/data_processing/tokenize_fineweb_edu_parallel.py \
+python3 $MEGATRON_DIR/attn_bench/data_processing/tokenize_fineweb_edu_native.py \
     --tokenizer-path $TOKENIZER_PATH \
     --raw-dir $RAW_DIR \
     --output-dir $OUTPUT_DIR \
