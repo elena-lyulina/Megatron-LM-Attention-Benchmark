@@ -6,13 +6,12 @@ python3 preprocess_megatron_budgeted.py --tokenizer-name-or-path meta-llama/Meta
 """
 
 import argparse
-import multiprocessing
 
 from datatrove.executor.local import LocalPipelineExecutor
 from datatrove.pipeline.readers import ParquetReader
 from datatrove.pipeline.tokens.megatron_tokenizer import MegatronDocumentTokenizer
 
-from attn_bench.data_processing.tokenization.budgeted_tokenizer import BudgetedMegatronDocumentTokenizer
+from attn_bench.data_processing.tokenization.budgeted_tokenizer import BudgetedMegatronDocumentTokenizer, SharedBudget
 
 
 def get_args():
@@ -100,10 +99,8 @@ def main(args):
         n_tasks = number_of_files
 
     if args.node_budget is not None:
-        shared_counter = multiprocessing.Value('q', 0)
         tokenizer = BudgetedMegatronDocumentTokenizer(
-            shared_counter=shared_counter,
-            node_budget=args.node_budget,
+            budget=SharedBudget(args.node_budget),
             output_folder=args.output_folder,
             tokenizer_name_or_path=args.tokenizer_name_or_path,
             eos_token=args.eos_token,

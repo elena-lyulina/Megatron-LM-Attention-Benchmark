@@ -3,19 +3,34 @@ from datatrove.pipeline.tokens.megatron_tokenizer import MegatronDocumentTokeniz
 from datatrove.utils.batching import batched
 
 
+class SharedBudget:
+    """Picklable shared token budget for use across multiprocess workers."""
+
+    def __init__(self, node_budget: int):
+        manager = multiprocessing.Manager()
+        #  need to pass both the value and the lock, see https://github.com/python/cpython/issues/79967
+        self._counter = manager.Value('q', 0)
+        self._lock = manager.Lock()
+        self.node_budget = node_budget
+
+    def add_and_check(self, tokens: int) -> bool:
+        """Atomically add tokens and return True if budget is reached."""
+        with self._lock:
+            self._counter.value += tokens
+            return self._counter.value >= self.node_budget
+
+
 class BudgetedMegatronDocumentTokenizer(MegatronDocumentTokenizer):
     """MegatronDocumentTokenizer that stops all workers once a shared token budget is reached.
 
     Args:
-        shared_counter (multiprocessing.Value): shared 'q' counter incremented by all workers
-        node_budget (int): total tokens this node should produce before stopping
+        budget (SharedBudget): shared budget object across all workers
         See MegatronDocumentTokenizer for remaining args.
     """
 
-    def __init__(self, shared_counter: multiprocessing.Value, node_budget: int, **kwargs):
+    def __init__(self, budget: SharedBudget, **kwargs):
         super().__init__(**kwargs)
-        self.shared_counter = shared_counter
-        self.node_budget = node_budget
+        self.budget = budget
 
     def write_tokens(self, data, filename: str) -> MegatronTokenizedFile:
         from tokenizers import Encoding
@@ -36,11 +51,7 @@ class BudgetedMegatronDocumentTokenizer(MegatronDocumentTokenizer):
                     unshuff.write(tokens)
                     self.stat_update("tokens", value=len(tokens))
 
-            with self.shared_counter.get_lock():
-                self.shared_counter.value += sum(len(e.ids) for e in encoded_batch)
-                budget_reached = self.shared_counter.value >= self.node_budget
-
-            if budget_reached:
+            if self.budget.add_and_check(sum(len(e.ids) for e in encoded_batch)):
                 break
 
         unshuff.close()

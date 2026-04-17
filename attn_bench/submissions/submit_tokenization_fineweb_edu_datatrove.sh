@@ -1,7 +1,8 @@
 #!/bin/bash
 
 NUMBER_OF_DATATROVE_TASKS=28
-TOKEN_BUDGET=160000000000          # 160B tokens total
+#TOKEN_BUDGET=160000000000          # 160B tokens total
+TOKEN_BUDGET=1000000000          # 1B tokens total
 
 TOKENIZER_NAME=llama-3.2-1b
 DATASET_NAME=fineweb-edu-dedup
@@ -12,7 +13,7 @@ RAW_DIR=/iopsstor/scratch/cscs/$USER/datasets/raw/$DATASET_NAME
 PATH_TO_PREPROCESSING_METADATA=/iopsstor/scratch/cscs/$USER/datasets/preprocessing/$DATASET_NAME
 PATH_TO_DATATROVE_LOGGING_DIR=/iopsstor/scratch/cscs/$USER/datasets/logs/datatrove/$DATASET_NAME
 PATH_TO_SLURM_LOGGING_DIR=$MEGATRON_DIR/attn_bench/logs
-PATH_TO_OUTPUT_FOLDER=/iopsstor/scratch/cscs/$USER/datasets/tokenized/$DATASET_NAME-160B-datatrove
+PATH_TO_OUTPUT_FOLDER=/iopsstor/scratch/cscs/$USER/datasets/tokenized/$DATASET_NAME-1B-datatrove
 
 CSV_RESULTS_FILE=$PATH_TO_PREPROCESSING_METADATA/tokenize-$TOKENIZER_NAME-$DATASET_NAME.csv
 
