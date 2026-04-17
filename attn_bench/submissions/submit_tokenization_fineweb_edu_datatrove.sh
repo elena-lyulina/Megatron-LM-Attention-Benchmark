@@ -1,22 +1,23 @@
 #!/bin/bash
 
 NUMBER_OF_DATATROVE_TASKS=28
-BATCH_SIZE=1000
-#TOKEN_BUDGET=160000000000          # 160B tokens total
-TOKEN_BUDGET=1000000000          # 1B tokens total
+BATCH_SIZE=10000
+TOKEN_BUDGET=160000000000          # 160B tokens total
+#TOKEN_BUDGET=1000000000          # 1B tokens total
 
 TOKENIZER_NAME=llama-3.2-1B
 DATASET_NAME=fineweb-edu-dedup
+TOKENIZED_DATASET_NAME=$DATASET_NAME-160B
 
 MEGATRON_DIR=/iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark
 TOKENIZER_PATH=meta-llama/Llama-3.2-1B
 RAW_DIR=/iopsstor/scratch/cscs/$USER/datasets/raw/$DATASET_NAME
 PATH_TO_PREPROCESSING_METADATA=/iopsstor/scratch/cscs/$USER/datasets/preprocessing/$DATASET_NAME
-PATH_TO_DATATROVE_LOGGING_DIR=/iopsstor/scratch/cscs/$USER/datasets/logs/datatrove/$DATASET_NAME
+PATH_TO_DATATROVE_LOGGING_DIR=/iopsstor/scratch/cscs/$USER/datasets/logs/datatrove/$TOKENIZED_DATASET_NAME
 PATH_TO_SLURM_LOGGING_DIR=$MEGATRON_DIR/attn_bench/logs
-PATH_TO_OUTPUT_FOLDER=/iopsstor/scratch/cscs/$USER/datasets/tokenized/$DATASET_NAME-1B-datatrove
+PATH_TO_OUTPUT_FOLDER=/iopsstor/scratch/cscs/$USER/datasets/tokenized/$TOKENIZED_DATASET_NAME-datatrove
 
-CSV_RESULTS_FILE=$PATH_TO_PREPROCESSING_METADATA/tokenize-$TOKENIZER_NAME-$DATASET_NAME.csv
+CSV_RESULTS_FILE=$PATH_TO_PREPROCESSING_METADATA/tokenize-$TOKENIZER_NAME-$TOKENIZED_DATASET_NAME.csv
 
 mkdir -p $PATH_TO_OUTPUT_FOLDER
 mkdir -p $PATH_TO_SLURM_LOGGING_DIR
