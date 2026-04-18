@@ -5,7 +5,7 @@ for arg in "$@"; do
   [ "$arg" = "--continue" ] && CONTINUE_RUN=true
 done
 
-NUMBER_OF_DATATROVE_TASKS=28
+NUMBER_OF_DATATROVE_TASKS=20
 BATCH_SIZE=10000
 TOKEN_BUDGET=160000000000          # 160B tokens total
 #TOKEN_BUDGET=1000000000          # 1B tokens total

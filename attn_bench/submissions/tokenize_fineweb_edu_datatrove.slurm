@@ -7,7 +7,6 @@
 #SBATCH --cpus-per-task=288
 #SBATCH --environment=nemo
 #SBATCH --partition=normal
-#SBATCH --mem=800G  # fineweb edu parquet files are big (2.4G) so need a lot of memory for all workers
 #SBATCH --no-requeue
 
 input_folder=$1
