@@ -7,6 +7,7 @@
 #SBATCH --cpus-per-task=288
 #SBATCH --environment=nemo
 #SBATCH --partition=normal
+#SBATCH --mem=800G  # fineweb edu parquet files are big (2.4G) so need a lot of memory for all workers
 #SBATCH --no-requeue
 
 input_folder=$1
@@ -19,6 +20,7 @@ number_of_tasks=$7
 MEGATRON_DIR=$8
 node_budget=$9
 batch_size=${10}
+continue_run=${11:-false}
 
 # Setup ENV
 export HF_HUB_ENABLE_HF_TRANSFER=0
@@ -26,6 +28,9 @@ export HF_TOKEN=$(cat $HOME/.hf-token)
 export PYTHONPATH=$MEGATRON_DIR:$PYTHONPATH
 # Setup directories
 rm -rf $output_folder
+if [ "$continue_run" != "true" ]; then
+  rm -rf $logging_dir
+fi
 mkdir -p $output_folder
 
 pip install datatrove --quiet

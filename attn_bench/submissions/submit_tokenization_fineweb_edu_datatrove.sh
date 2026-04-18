@@ -1,5 +1,10 @@
 #!/bin/bash
 
+CONTINUE_RUN=false
+for arg in "$@"; do
+  [ "$arg" = "--continue" ] && CONTINUE_RUN=true
+done
+
 NUMBER_OF_DATATROVE_TASKS=28
 BATCH_SIZE=10000
 TOKEN_BUDGET=160000000000          # 160B tokens total
@@ -29,8 +34,8 @@ ln -sfn $PATH_TO_OUTPUT_FOLDER $PATH_TO_PREPROCESSING_METADATA/tokenized-dir-lin
 if [ ! -f $CSV_RESULTS_FILE ]; then
   echo "slurm_job_id,node,start,end,paths_file,output_folder,dataset_total_size,processed_total_size,number_of_workers_per_node,batch_size,token_budget,time,bw,total_tokens_processed,throughput (Million Tokens/Second/Node)" > $CSV_RESULTS_FILE
 fi
-# Move dumps back from completed_dumps if dumps folder is empty
-if [ -z "$(ls "$PATH_TO_PREPROCESSING_METADATA/dumps"/*.txt 2>/dev/null)" ]; then
+# Move dumps back from completed_dumps if dumps folder is empty (only on fresh run)
+if [ "$CONTINUE_RUN" != "true" ] && [ -z "$(ls "$PATH_TO_PREPROCESSING_METADATA/dumps"/*.txt 2>/dev/null)" ]; then
   echo "No dumps found, moving back from completed_dumps..."
   mv "$PATH_TO_PREPROCESSING_METADATA/completed_dumps"/*.txt "$PATH_TO_PREPROCESSING_METADATA/dumps"/
 fi
@@ -44,5 +49,5 @@ for paths_file in "$PATH_TO_PREPROCESSING_METADATA/dumps"/*.txt; do
   dump=$(grep -oP '(?<=paths_file_)\d+(?=\.txt)' <<< $paths_file)
   output_folder=$PATH_TO_OUTPUT_FOLDER/dump_$dump
   logging_dir=$PATH_TO_DATATROVE_LOGGING_DIR/dump_$dump
-  sbatch --job-name=tokenize-$DATASET_NAME --output=$PATH_TO_SLURM_LOGGING_DIR/%j.out --error=$PATH_TO_SLURM_LOGGING_DIR/%j.err $MEGATRON_DIR/attn_bench/submissions/tokenize_fineweb_edu_datatrove.slurm $PATH_TO_PREPROCESSING_METADATA/raw-dataset-link $output_folder $TOKENIZER_PATH $logging_dir $CSV_RESULTS_FILE $paths_file $NUMBER_OF_DATATROVE_TASKS $MEGATRON_DIR $NODE_BUDGET $BATCH_SIZE
+  sbatch --job-name=tokenize-$DATASET_NAME --output=$PATH_TO_SLURM_LOGGING_DIR/%j.out --error=$PATH_TO_SLURM_LOGGING_DIR/%j.err $MEGATRON_DIR/attn_bench/submissions/tokenize_fineweb_edu_datatrove.slurm $PATH_TO_PREPROCESSING_METADATA/raw-dataset-link $output_folder $TOKENIZER_PATH $logging_dir $CSV_RESULTS_FILE $paths_file $NUMBER_OF_DATATROVE_TASKS $MEGATRON_DIR $NODE_BUDGET $BATCH_SIZE $CONTINUE_RUN
 done
