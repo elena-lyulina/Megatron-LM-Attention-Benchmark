@@ -114,7 +114,7 @@ export WORLD_SIZE=$SLURM_NPROCS
 
 TRANSFORMER_ENGINE_ARGS=(
     --main-grads-dtype fp32
-    --transformer-impl local
+    --transformer-impl transformer_engine
 )
 
 # 1.23B
