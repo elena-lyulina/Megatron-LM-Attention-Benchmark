@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --account=infra01
-#SBATCH --time=00:15:00
-#SBATCH --job-name=pretrain-llama1B-fineweb160B-test
+#SBATCH --time=12:00:00
+#SBATCH --job-name=test-pretrain-llama1B-fineweb160B
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
 #SBATCH --nodes=2
@@ -26,7 +26,9 @@ cd $MEGATRON_LM_DIR
 export PYTHONPATH=$MEGATRON_LM_DIR:${PYTHONPATH:-}
 
 
-AUTO_JOB_REQUEUE=false # Set to `true` to continuously submit jobs to Slurm until training is complete. Enable it once you are sure of the cost involved in running this experiment.
+# Set to `true` to continuously submit jobs to Slurm until training is complete.
+# Enable it once you are sure of the cost involved in running this experiment.
+AUTO_JOB_REQUEUE=false
 if [ "$AUTO_JOB_REQUEUE" = true ]; then
     echo "[$(date)] Submitting follow-up job with singleton dependency and --resume"
     # Export the script path and submit with --resume
@@ -47,12 +49,11 @@ TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b  # Assumes t
 ### TRAINING ###
 
 SEQ_LEN=8192
-# todo: get real numbers (with references + exact tokens count)
-MBS=2 # Micro batch size
-#GBS=80  # Global batch size, must be divisible by MBS * num_gpus (2 * 40 = 80); Gradient Accumulation Steps (GAS) = 1
-GBS=16  # Global batch size, must be divisible by MBS * num_gpus (2 * 40 = 80); Gradient Accumulation Steps (GAS) = 1
-#TARGET_TOKENS=160153550653
-TARGET_TOKENS=1000000
+
+# Test values
+MBS=2
+GBS=16  # Global batch size, must be divisible by MBS * num_gpus; Gradient Accumulation Steps (GAS) = 1
+TARGET_TOKENS=1000000 # 1M
 CHECKPOINT_STEPS=10
 TRAINING_STEPS=$((TARGET_TOKENS / (GBS * SEQ_LEN)))
 TRAINING_STEPS=$((((TRAINING_STEPS + CHECKPOINT_STEPS/2) / CHECKPOINT_STEPS) * CHECKPOINT_STEPS)) # Round to nearest multiple of CHECKPOINT_STEPS
@@ -87,8 +88,6 @@ dump_env > $DEBUG_DIR/env_before.txt
 
 # Clean triggers
 rm -f $TRIGGER_DIR/save $TRIGGER_DIR/exit
-
-
 
 # Set up ENV
 export WANDB__FILE_STREAM_RETRY_MAX=10
@@ -144,7 +143,6 @@ NETWORK_SIZE_ARGS=(
     # Llama-3.2-1B config: "vocab_size": 128256 -- derived from the tokenizer
 )
 
-# checked
 LOGGING_ARGS=(
     --log-throughput
     --log-progress
@@ -156,18 +154,16 @@ LOGGING_ARGS=(
     --log-memory-to-tensorboard
 )
 
-#checked
 REGULARIZATION_ARGS=(
     --attention-dropout 0.0 # "attention_dropout": 0.0  -- following Llama-3.2-1B config
     --hidden-dropout 0.0 # following standard practice / LLama doesn't use it
     --clip-grad 1.0 # 1.0 — from the Llama 3 paper (gradient clipping = 1.0)
-    --weight-decay 0.01 # 0.01 -- following Xu et al
+    --weight-decay 0.01 # 0.01 -- following Xu et al, default Megatron + large WD can harm attention matrices https://openreview.net/pdf?id=oDeqjIM9Sk
     --optimizer adam # AdamW (decoupled weight decay) -- following Llama 3 paper
     --adam-beta1 0.9 # 0.9 — from the Llama 1/2 paper
     --adam-beta2 0.95 # 0.95 — from the Llama 1/2 paper
 )
 
-# checked
 TRAINING_ARGS=(
     --micro-batch-size $MBS
     --global-batch-size $GBS
@@ -181,23 +177,22 @@ TRAINING_ARGS=(
     --eval-iters 0                     # no validation split for pretraining (--split 100,0,0)
 )
 
-# checked
+
 INITIALIZATION_ARGS=(
     --seed 28
     --init-method-std 0.02 # initializer_range: 0.02  -- following Llama-3.2-1B config + default Megatron-LM value (transformer_config.py:327)
 )
 
-# checked
-# todo: check with papers
+
 # NOTE Check all the arguments in megatron/training/arguments.py#L1548
 LEARNING_RATE_ARGS=(
-    --lr 0.0003 # 3 × 10^−4 -- following Xu et al
-    --min-lr 0.00003  # 3 × 10^−5 -- following Xu et al, LLama3 paper
+    --lr 0.0004 # 4 × 10^−4 -- following Tiny llama
+    --min-lr 0.00004  # 4 × 10^−5 -- following Tiny llama
     --lr-decay-style cosine # cosine -- following LLama3 paper
-    --lr-warmup-iters 2 # 2000 -- following LLama3 paper
+    --lr-warmup-iters 2 # test value
 )
 
-# checked
+
 CHECKPOINTING_ARGS=(
     --load $CKPT_DIR  # delete this to NOT reload from the latest checkpoint
     --save $CKPT_DIR
@@ -209,35 +204,34 @@ CHECKPOINTING_ARGS=(
 
 )
 
-# checked
+
 MIXED_PRECISION_ARGS=(
     --bf16
 )
 
-# checked
+
 # Pads vocab to a multiple of 128 for even TP splits
 VOCAB_ARGS=(
     --make-vocab-size-divisible-by 128
 )
 
-# checked
+
 DISTRIBUTED_ARGS=(
     --tensor-model-parallel-size 1
     --pipeline-model-parallel-size 1
     --context-parallel-size 1
     --use-distributed-optimizer
-    --wgrad-deferral-limit 50
     --overlap-grad-reduce
     --overlap-param-gather
 )
 
-# checked
+
 TOKENIZER_ARGS=(
     --tokenizer-type HuggingFaceTokenizer
     --tokenizer-model $TOKENIZER_PATH
 )
 
-# checked
+
 DATA_ARGS=(
     --split "100,0,0"
     --dataloader-type single

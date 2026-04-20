@@ -1,13 +1,12 @@
 #!/bin/bash
 #SBATCH --account=infra01
-#SBATCH --job-name=train-llama1B-fineweb160B
-#SBATCH --nodes=10
-#SBATCH --ntasks-per-node=4
-#SBATCH --cpus-per-task=72
-#SBATCH --mem=460000
 #SBATCH --time=12:00:00
+#SBATCH --job-name=pretrain-llama1B-fineweb160B
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
+#SBATCH --nodes=14
+#SBATCH --ntasks-per-node=4
+#SBATCH --cpus-per-task=72
 #SBATCH --no-requeue
 
 # Train a standard LLaMA 3.2 1B model on 160B FineWeb Edu Dedup
@@ -18,18 +17,66 @@
 
 echo "START TIME: $(date)"
 
-
-### PATHS & EXPERIMENT ###
-
+# Container environment (used by srun --environment)
 CONTAINER_ENV=nemo
 
 # Megatron source (WARNING: must be on iopsstor)
-REPO_ROOT=/iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark
-cd $REPO_ROOT
-export PYTHONPATH=$REPO_ROOT:${PYTHONPATH:-}
+MEGATRON_LM_DIR=/iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark
+cd $MEGATRON_LM_DIR
+export PYTHONPATH=$MEGATRON_LM_DIR:${PYTHONPATH:-}
 
+
+# Set to `true` to continuously submit jobs to Slurm until training is complete.
+# Enable it once you are sure of the cost involved in running this experiment.
+AUTO_JOB_REQUEUE=true
+if [ "$AUTO_JOB_REQUEUE" = true ]; then
+    echo "[$(date)] Submitting follow-up job with singleton dependency and --resume"
+    # Export the script path and submit with --resume
+    sbatch --dependency=singleton --job-name=$SLURM_JOB_NAME $0
+fi
+
+### DATA ###
+BINARY_DATASET_DIR="/iopsstor/scratch/cscs/$USER/datasets/tokenized/fineweb-edu-dedup-160B-datatrove"
+DATA_PATH_LIST=($(find -L $BINARY_DATASET_DIR \
+    -name '*.bin' | sed 's/\.bin$//' | sort))
+DATA_PATH_STR=$(IFS=' '; echo "${DATA_PATH_LIST[*]}")
+
+DATASET_CACHE_DIR=/iopsstor/scratch/cscs/$USER/datasets/cache
+mkdir -p $DATASET_CACHE_DIR
+
+TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b  # Assumes the Llama 3.2 tokenizer is downloaded to this location
+
+### TRAINING ###
+
+SEQ_LEN=8192
+
+MBS=2 # Micro batch size, 4 causes OOM
+# following https://arxiv.org/html/2412.01505v1, the optimal batch can be calculated as
+#   B = 3.24 * 10^3 * (160 * 10^9)^0.264 = 2.94 M tokens/step
+# TinyLlama use 1.8M to 2M https://arxiv.org/pdf/2401.02385
+# The closest config with seq_len = 8192 and GAS=1 could be:
+#   seq_length * MBS * Nodes * GPUs/Node * GAS = 8192 * 2 * 14 * 4 = 0.92M
+# This gives us GBS = MBS * Nodes * GPUs/Node = 2 * 14 * 4 = 112
+GBS=112  # Global batch size, must be divisible by MBS * num_gpus; Gradient Accumulation Steps (GAS) = 1
+TARGET_TOKENS=160153550653 # 160B
+CHECKPOINT_STEPS=2000
+TRAINING_STEPS=$((TARGET_TOKENS / (GBS * SEQ_LEN)))
+# ~174,000 steps
+TRAINING_STEPS=$((((TRAINING_STEPS + CHECKPOINT_STEPS/2) / CHECKPOINT_STEPS) * CHECKPOINT_STEPS)) # Round to nearest multiple of CHECKPOINT_STEPS
+
+
+#### Debugging ####
+LOG_NCCL=false  # Log NCCL_DEBUG=info. Every process will dump the logging into separate files, check `NCCL_DEBUG_FILE`
+NSYS_PROFILER=false  # Turn on the NSYS profiler. Check the `--profile-*` args available in megatron/training/arguments.py
+###################
+
+TORCH_INDUCTOR_CACHE_DIR=/tmp/.torch_inductor
+TRITON_HOME_DIR=/tmp/.triton
+PYTHON_CACHE_DIR=/tmp/.python_cache
+
+# Logging directories & artifacts
 PROJECT_NAME="fineweb-160B"
-PROJECT_DIR=$REPO_ROOT/attn_bench/results/pretrain/$PROJECT_NAME
+PROJECT_DIR=$MEGATRON_LM_DIR/attn_bench/results/pretrain/$PROJECT_NAME
 EXP_NAME=llama3-1b-fineweb160B
 EXP_DIR=$PROJECT_DIR/$EXP_NAME
 CKPT_DIR=$EXP_DIR/checkpoints
@@ -39,50 +86,40 @@ LOGGING_DIR=$EXP_DIR/logging
 TENSORBOARD_DIR=$LOGGING_DIR/tensorboard
 
 mkdir -p $PROJECT_DIR $EXP_DIR $CKPT_DIR $TRIGGER_DIR $DEBUG_DIR $LOGGING_DIR $TENSORBOARD_DIR
-
-# snapshot env before any sourcing, to compare against compute_environment.txt after the run
-printenv > $DEBUG_DIR/env_before.txt
-
 # Clean triggers
 rm -f $TRIGGER_DIR/save $TRIGGER_DIR/exit
 
+dump_env() { printenv | grep -v '^WANDB_API_KEY='; }
 
-### DATA ###
-
-SEQ_LEN=8192
-
-BINARY_DATASET_DIR="/iopsstor/scratch/cscs/$USER/datasets/tokenized/fineweb-edu-dedup-160B"
-DATA_PATH=$(python3 $REPO_ROOT/attn_bench/utils/tools/create_data_config.py -p $BINARY_DATASET_DIR)
-
-DATASET_CACHE_DIR=/iopsstor/scratch/cscs/$USER/datasets/cache
-mkdir -p $DATASET_CACHE_DIR
+# snapshot env before training
+dump_env > $DEBUG_DIR/env_before.txt
 
 
-### TRAINING ###
+# Set up ENV
+export WANDB__FILE_STREAM_RETRY_MAX=10
+export HF_HUB_OFFLINE=1
 
-MBS=2
-GBS=80  # must be divisible by MBS * num_gpus (2 * 40 = 80); Gradient Accumulation Steps (GAS) = 1
+export TORCH_NCCL_AVOID_RECORD_STREAMS=1
+export TORCH_NCCL_ASYNC_ERROR_HANDLING=1
+export CUDA_DEVICE_MAX_CONNECTIONS=1
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 
-# Total tokens: 160,108,458,502 (160.11B)
-# 160,108,458,502 / (80 * 8192) = 244306.12 -> 244306
-TRAINING_STEPS=244306
+export TRITON_HOME=$TRITON_HOME_DIR
+export TRITON_CACHE_DIR=$TRITON_HOME_DIR/cache
 
-CHECKPOINT_STEPS=1000
+# We are preparing for torch.distributed programs so it wants:
+# - MASTER_ADDR, MASTER_PORT, WORLD_SIZE - already known before `srun`
+# - RANK, LOCAL_RANK - will set at `srun` command
+export MASTER_ADDR=$(scontrol show hostnames $SLURM_JOB_NODELIST | head -n 1)
+export MASTER_PORT=8888
+export WORLD_SIZE=$SLURM_NPROCS
 
-
-#### Debugging ####
-LOG_NCCL=false  # Log NCCL_DEBUG=info. Every process will dump the logging into separate files, check `NCCL_DEBUG_FILE`
-NSYS_PROFILER=false  # Turn on the NSYS profiler. Check the `--profile-*` args available in megatron/training/arguments.py
-MOCK_DATA=false  # Set to `true` to use mock data
-###################
-
-
-#### Megatron Args #### Check megatron/training/arguments.py
+#### Megatron Args ####
+# Check megatron/training/arguments.py
 
 TRANSFORMER_ENGINE_ARGS=(
+    --main-grads-dtype fp32
     --transformer-impl transformer_engine
-    --use-precision-aware-optimizer
-    --main-grads-dtype bf16
 )
 
 # 1.23B
@@ -99,7 +136,7 @@ NETWORK_SIZE_ARGS=(
     --use-rope-scaling
     --rotary-base 500000 # "rope_theta": 500000.0  -- following Llama-3.2-1B config
     --rope-scaling-factor 32 # "rope_scaling": "factor": 32.0  -- following Llama-3.2-1B config
-    # hardcoded in Megatron (megatron/core/models/common/embeddings/rotary_pos_embedding.py:92-98), correspond to Llama-3.2-1B config :
+    # hardcoded in Megatron (megatron/core/models/common/embeddings/rotary_pos_embedding.py:92-98), correspond to Llama-3.2-1B config:
     # high_freq_factor=4
     # low_freq_factor=1
     # original_max_position_embeddings=8192
@@ -115,6 +152,7 @@ NETWORK_SIZE_ARGS=(
 LOGGING_ARGS=(
     --log-throughput
     --log-progress
+    --log-params-norm
     --log-interval 1
     --tensorboard-dir $TENSORBOARD_DIR
     --log-timers-to-tensorboard
@@ -126,7 +164,7 @@ REGULARIZATION_ARGS=(
     --attention-dropout 0.0 # "attention_dropout": 0.0  -- following Llama-3.2-1B config
     --hidden-dropout 0.0 # following standard practice / LLama doesn't use it
     --clip-grad 1.0 # 1.0 — from the Llama 3 paper (gradient clipping = 1.0)
-    --weight-decay 0.01 # 0.01 -- following Xu et al
+    --weight-decay 0.01 # 0.01 -- following Xu et al, default Megatron + large WD can harm attention matrices https://openreview.net/pdf?id=oDeqjIM9Sk
     --optimizer adam # AdamW (decoupled weight decay) -- following Llama 3 paper
     --adam-beta1 0.9 # 0.9 — from the Llama 1/2 paper
     --adam-beta2 0.95 # 0.95 — from the Llama 1/2 paper
@@ -139,124 +177,126 @@ TRAINING_ARGS=(
     --train-iters $TRAINING_STEPS
     --cross-entropy-loss-fusion
     --manual-gc
-    --manual-gc-interval 5000
-    --eval-interval $CHECKPOINT_STEPS  # must match or be a multiple of checkpoint interval, must be set to avoid TypeError even when EVAL_ITERS=0
+    --manual-gc-interval 500
+    --exit-signal-handler # listen for SIGTERM/SIGINT and do a clean checkpoint save before exiting
+    --eval-interval 100000000000  # must match or be a multiple of checkpoint interval, must be set to avoid TypeError even when EVAL_ITERS=0
     --eval-iters 0                     # no validation split for pretraining (--split 100,0,0)
 )
+
 
 INITIALIZATION_ARGS=(
     --seed 28
     --init-method-std 0.02 # initializer_range: 0.02  -- following Llama-3.2-1B config + default Megatron-LM value (transformer_config.py:327)
 )
 
+
 # NOTE Check all the arguments in megatron/training/arguments.py#L1548
 LEARNING_RATE_ARGS=(
-    --lr 0.0003 # 3 × 10^−4 -- following Xu et al
-    --min-lr 0.00003  # 3 × 10^−5 -- following Xu et al, LLama3 paper
+    --lr 0.0004 # 4 × 10^−4 -- following Tiny llama
+    --min-lr 0.00004  # x10 reduction, 4 × 10^−5 -- following Tiny llama
     --lr-decay-style cosine # cosine -- following LLama3 paper
-    --lr-warmup-iters 2000 # 2000 -- following LLama3 paper
+    --lr-warmup-iters 2000 # 2000 -- following LLama3 / Tiny llama paper
 )
 
+
 CHECKPOINTING_ARGS=(
-    --save $CKPT_DIR
     --load $CKPT_DIR  # delete this to NOT reload from the latest checkpoint
+    --save $CKPT_DIR
     --save-interval $CHECKPOINT_STEPS
-    --save-retain-interval 10000  # keep permanent snapshots every N steps; must be multiple of CHECKPOINT_STEPS
     --ckpt-format torch_dist
     --async-save
+    --ckpt-fully-parallel-load # all ranks load checkpoint shards in parallel instead of sequentially
+    --dist-ckpt-strictness assume_ok_unexpected # suppresses errors when checkpoint has keys not in the current model (in case of minor model changes)
+
 )
+
 
 MIXED_PRECISION_ARGS=(
     --bf16
 )
+
 
 # Pads vocab to a multiple of 128 for even TP splits
 VOCAB_ARGS=(
     --make-vocab-size-divisible-by 128
 )
 
+
 DISTRIBUTED_ARGS=(
     --tensor-model-parallel-size 1
     --pipeline-model-parallel-size 1
     --context-parallel-size 1
-    --wgrad-deferral-limit 50
     --use-distributed-optimizer
     --overlap-grad-reduce
     --overlap-param-gather
 )
 
+
 TOKENIZER_ARGS=(
     --tokenizer-type HuggingFaceTokenizer
-    --tokenizer-model /iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b  # Default path assumes the Llama 3.2 tokenizer is downloaded to the standard location.
+    --tokenizer-model $TOKENIZER_PATH
 )
+
 
 DATA_ARGS=(
     --split "100,0,0"
     --dataloader-type single
     --seq-length $SEQ_LEN
-    --num-workers 2
-    --num-dataset-builder-threads 1
     --reset-position-ids
     --reset-attention-mask
     --eod-mask-loss
+    --num-workers 2
+    --num-dataset-builder-threads 4
+    --data-path $DATA_PATH_STR
+    --data-cache-path $DATASET_CACHE_DIR
 )
 
-if [ "$MOCK_DATA" = true ]; then
-    DATA_ARGS+=(--mock-data)
-else
-    DATA_ARGS+=(--data-path $DATA_PATH --data-cache-path $DATASET_CACHE_DIR)
-fi
+# we don't use mock data here
+#if [ "$MOCK_DATA" = true ]; then
+#    DATA_ARGS+=(--mock-data)
+#else
+#    DATA_ARGS+=(--data-path $DATA_PATH --data-cache-path $DATASET_CACHE_DIR)
+#fi
 
 
-### ENV ###
+#CMD_PREFIX="numactl --membind=0-3"
 
-export TORCH_NCCL_AVOID_RECORD_STREAMS=1
-export TORCH_NCCL_ASYNC_ERROR_HANDLING=1
-export CUDA_DEVICE_MAX_CONNECTIONS=1
-export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
-
-# We are preparing for torch.distributed programs so it wants:
-# - MASTER_ADDR, MASTER_PORT, WORLD_SIZE - already known before `srun`
-# - RANK, LOCAL_RANK - will be set inside the srun command
-export MASTER_ADDR=$(scontrol show hostnames $SLURM_JOB_NODELIST | head -n 1)
-export MASTER_PORT=8888
-export WORLD_SIZE=$SLURM_NPROCS
-
-CMD_PREFIX="numactl --membind=0-3"
-
-# disables core dumps to save disk space
-ulimit -c 0
-
-# NCCL Debug
-if [ "$LOG_NCCL" = true ]; then
-    CMD_PREFIX="NCCL_DEBUG=INFO NCCL_DEBUG_FILE=$DEBUG_DIR/nccl-info-procid-\$SLURM_PROCID.txt $CMD_PREFIX"
-fi
 
 
 ### TRAINING CMD ###
 
-TRAINING_CMD="python3 $REPO_ROOT/pretrain_gpt.py \
-    ${TRANSFORMER_ENGINE_ARGS[*]} \
-    ${NETWORK_SIZE_ARGS[*]} \
-    ${VOCAB_ARGS[*]} \
-    ${REGULARIZATION_ARGS[*]} \
-    ${TRAINING_ARGS[*]} \
-    ${INITIALIZATION_ARGS[*]} \
-    ${LEARNING_RATE_ARGS[*]} \
-    ${CHECKPOINTING_ARGS[*]} \
-    ${MIXED_PRECISION_ARGS[*]} \
-    ${DISTRIBUTED_ARGS[*]} \
-    ${TOKENIZER_ARGS[*]} \
-    ${LOGGING_ARGS[*]} \
-    ${DATA_ARGS[*]}"
+TRAINING_CMD="python3 $MEGATRON_LM_DIR/pretrain_gpt.py \
+    ${TRANSFORMER_ENGINE_ARGS[@]} \
+    ${NETWORK_SIZE_ARGS[@]} \
+    ${LOGGING_ARGS[@]} \
+    ${REGULARIZATION_ARGS[@]} \
+    ${TRAINING_ARGS[@]} \
+    ${INITIALIZATION_ARGS[@]} \
+    ${LEARNING_RATE_ARGS[@]} \
+    ${CHECKPOINTING_ARGS[@]} \
+    ${MIXED_PRECISION_ARGS[@]} \
+    ${DISTRIBUTED_ARGS[@]} \
+    ${TOKENIZER_ARGS[@]} \
+    ${VOCAB_ARGS[@]} \
+    ${DATA_ARGS[@]}"
 
 # W&B Logging
 if [ -n "$WANDB_API_KEY" ]; then
     echo "[$(date)] WANDB API key detected. Enabling WANDB logging."
+
+    # Get and display WandB entity/workspace
+    WANDB_ENTITY=$(python3 -c "import wandb; api = wandb.Api(); print(api.default_entity)" 2>/dev/null || echo "unknown")
+    echo "[$(date)] WandB logs will be sent to:"
+    echo "           Organization/Workspace: $WANDB_ENTITY"
+    echo "           Project: $PROJECT_NAME"
+    echo "           Experiment: $EXP_NAME-$SLURM_JOB_ID"
+
+    # Sync any previous run data if present
     if [ -d "$LOGGING_DIR/wandb/latest-run" ]; then
         echo "[$(date)] Syncing WANDB from previous run"
         wandb sync "$LOGGING_DIR/wandb/latest-run"
     fi
+    # Add wandb-related args to TRAINING_CMD
     TRAINING_CMD="$TRAINING_CMD \
         --wandb-save-dir $LOGGING_DIR \
         --wandb-project $PROJECT_NAME \
@@ -266,9 +306,17 @@ else
     echo "[$(date)] No WANDB API key found. WANDB logging disabled."
 fi
 
+# disables core dumps to save disk space
+ulimit -c 0
+
+# NCCL Debug
+if [ "$LOG_NCCL" = true ]; then
+    CMD_PREFIX="NCCL_DEBUG=INFO NCCL_DEBUG_FILE=$DEBUG_DIR/nccl-info-hostname-\$SLURMD_NODENAME-local-rank-\$SLURM_LOCALID-procid-\$SLURM_PROCID.txt $CMD_PREFIX"
+fi
+
 # NSYS profiler
 if [ "$NSYS_PROFILER" = true ]; then
-    NSYS_LAUNCHER="nsys profile -s none --trace='nvtx,cudnn,cublas,cuda' --output=$DEBUG_DIR/nsys-trace.nsys-rep --force-overwrite true --capture-range=cudaProfilerApi --capture-range-end=stop"
+    NSYS_LAUNCHER="nsys profile -s none --trace='nvtx,cudnn,cublas,cuda' --output=$DEBUG_DIR/nsys-trace-hostname-\$SLURMD_NODENAME-procid-\$SLURM_PROCID.nsys-rep --force-overwrite true --capture-range=cudaProfilerApi --capture-range-end=stop"
     TRAINING_CMD="$NSYS_LAUNCHER $TRAINING_CMD --profile"
 fi
 
@@ -295,7 +343,7 @@ SEP=$(printf '=%.0s' {1..100})
     echo -e "${SEP}"
     echo -e "\nNODES: $(scontrol show hostnames ${SLURM_JOB_NODELIST})"
     echo -e "${SEP}"
-    echo -e "\nRepo: ${REPO_ROOT} ($(git -C ${REPO_ROOT} rev-parse --verify HEAD))"
+    echo -e "\nRepo: ${MEGATRON_LM_DIR} ($(git -C ${MEGATRON_LM_DIR} rev-parse --verify HEAD))"
     echo -e "${SEP}"
     echo -e "\n$(pip list)"
     echo -e "${SEP}"
@@ -303,13 +351,9 @@ SEP=$(printf '=%.0s' {1..100})
     echo -e "${SEP}"
     echo -e "\nmegatron location: $(python -c 'import megatron; print(megatron.__file__)' 2>&1)"
     echo -e "${SEP}"
-    echo -e "\nmegatron.__path__: $(python -c 'import megatron; print(list(megatron.__path__))' 2>&1)"
-    echo -e "${SEP}"
-    echo -e "\nmegatron/training exists: $(ls ${REPO_ROOT}/megatron/training 2>&1 | head -5)"
-    echo -e "${SEP}"
     echo -e "\n$(nvidia-smi)"
     echo -e "${SEP}"
-    echo -e "\nEnvironment Variables:\n\n$(printenv)"
+    echo -e "\nEnvironment Variables:\n\n$(dump_env)"
     echo -e "${SEP}"
 } > "$DEBUG_DIR/compute_environment.txt"
 
@@ -324,9 +368,13 @@ srun \
     --mpi=pmix \
     --environment=$CONTAINER_ENV \
     --network=disable_rdzv_get \
-    --wait 60 \
     -lu \
-    bash -c "export PYTHONPATH='${PYTHONPATH}'; RANK=\$SLURM_PROCID LOCAL_RANK=\$SLURM_LOCALID ${CMD_PREFIX} ${TRAINING_CMD}"
+    bash -c "
+    mkdir -p $TORCH_INDUCTOR_CACHE_DIR
+    mkdir -p $TRITON_HOME_DIR
+    mkdir -p $TRITON_CACHE_DIR
+    mkdir -p $PYTHON_CACHE_DIR
+    export PYTHONPATH='${PYTHONPATH}'; RANK=\$SLURM_PROCID LOCAL_RANK=\$SLURM_LOCALID ${CMD_PREFIX} ${TRAINING_CMD}"
 
 echo "END TIME: $(date)"
 echo "Done. Results in ${EXP_DIR}"
