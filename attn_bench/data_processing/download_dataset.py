@@ -1,5 +1,5 @@
 """
-Download a raw dataset from HuggingFace and save parquet files flat under output-dir.
+Download a raw dataset from HuggingFace and save files flat under output-dir.
 
 Usage:
     python download_dataset.py --dataset fineweb-edu-dedup --raw-dir /path/to/raw
@@ -27,25 +27,28 @@ DATASETS = {
     "fineweb-edu-dedup": {
         "repo_id": "HuggingFaceTB/smollm-corpus",
         "allow_patterns": "fineweb-edu-dedup/*.parquet",
+        "extension": "parquet",
     },
     "gutenberg-en": {
-        "repo_id": "manu/project_gutenberg",
-        "allow_patterns": "data/en-*.parquet",
+        "repo_id": "common-pile/project_gutenberg",
+        "allow_patterns": "v0/documents/*.gz",
+        "extension": "gz",
     },
     "nemotron": {
         "repo_id": "nvidia/Nemotron-PII",
         "allow_patterns": "data/*.parquet",
+        "extension": "parquet",
     },
 }
 
 
-def flatten_parquets(output_dir: Path) -> None:
-    """Move all parquet files from subdirectories up to output_dir, then remove empty subdirs."""
-    for parquet in list(output_dir.rglob("*.parquet")):
-        if parquet.parent != output_dir:
-            dest = output_dir / parquet.name
-            shutil.move(str(parquet), dest)
-            logger.info(f"  moved {parquet.relative_to(output_dir.parent)} -> {dest.name}")
+def flatten_files(output_dir: Path, extension: str) -> None:
+    """Move all files with given extension from subdirectories up to output_dir, then remove empty subdirs."""
+    for f in list(output_dir.rglob(f"*.{extension}")):
+        if f.parent != output_dir:
+            dest = output_dir / f.name
+            shutil.move(str(f), dest)
+            logger.info(f"  moved {f.relative_to(output_dir.parent)} -> {dest.name}")
     for subdir in sorted(output_dir.iterdir(), key=lambda p: len(p.parts), reverse=True):
         if subdir.is_dir():
             try:
@@ -56,6 +59,7 @@ def flatten_parquets(output_dir: Path) -> None:
 
 def main(args):
     cfg = DATASETS[args.dataset]
+    ext = cfg["extension"]
     output_dir = Path(args.raw_dir) / args.dataset
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -68,11 +72,11 @@ def main(args):
         token=os.environ.get("HF_TOKEN"),
     )
 
-    logger.info("Flattening parquet files ...")
-    flatten_parquets(output_dir)
+    logger.info(f"Flattening {ext} files ...")
+    flatten_files(output_dir, ext)
 
-    parquets = sorted(output_dir.glob("*.parquet"))
-    logger.info(f"Done: {len(parquets)} parquet files in {output_dir}")
+    files = sorted(output_dir.glob(f"*.{ext}"))
+    logger.info(f"Done: {len(files)} {ext} files in {output_dir}")
 
 
 if __name__ == "__main__":
