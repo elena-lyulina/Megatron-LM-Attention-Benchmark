@@ -19,7 +19,7 @@ from pathlib import Path
 
 from transformers import AutoTokenizer
 
-sys.path.insert(0, str(Path(__file__).parents[2]))
+sys.path.insert(0, str(Path(__file__).parents[3]))
 from megatron.core.datasets.indexed_dataset import IndexedDataset
 
 
