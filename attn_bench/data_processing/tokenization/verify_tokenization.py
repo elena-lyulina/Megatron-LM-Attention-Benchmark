@@ -55,7 +55,7 @@ def print_detailed(shard_path: str, tokenizer, bos_id: int, eos_id: int, num_seq
         bos_count = token_ids.count(bos_id)
         eos_count = token_ids.count(eos_id)
         text = tokenizer.decode(token_ids, skip_special_tokens=False)
-        reenc = tokenizer.encode(text, add_special_tokens=True).ids
+        reenc = tokenizer.encode(text, add_special_tokens=False).ids
         roundtrip_delta = len(reenc) - len(token_ids)
         if roundtrip_delta != 0:
             nonzero_delta += 1
