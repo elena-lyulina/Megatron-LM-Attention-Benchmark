@@ -1,13 +1,17 @@
 """
-copied from https://github.com/swiss-ai/Megatron-LM/blob/main/scripts/tokenization/preprocess_megatron.py
-python3 preprocess_megatron.py --tokenizer-name-or-path meta-llama/Meta-Llama-3-8B --output-folder tokenized_datasets/fineweb-edu --n-tasks 16 --dataset datasets/fineweb-edu/raw-dataset-link --paths-file datasets/fineweb-edu/dumps/paths_file_0.txt
+Copied from https://github.com/swiss-ai/data-pipeline-pretrain/blob/yxu/support-local-tokenizer-and-parquet/examples/tokenize_megatron/preprocess_megatron.py
+
+To process HuggingFace Datasets:
+    python3 examples/tokenize_megatron/preprocess_megatron.py --tokenizer-name-or-path meta-llama/Meta-Llama-3-8B --output-folder datasets/emotion --n-tasks 16 hf --dataset dair-ai/emotion
+To process Jsonl files:
+    python3 examples/tokenize_megatron/preprocess_megatron.py --tokenizer-name-or-path meta-llama/Meta-Llama-3-8B --output-folder datasets/c4-es --n-tasks 16 jsonl --dataset raw_datasets/c4-es-json-files
 """
 
 import argparse
 
-from data_pipeline_pretrain.pipeline.tokens import MegatronDocumentTokenizer
 from datatrove.executor.local import LocalPipelineExecutor
-from datatrove.pipeline.readers import ParquetReader
+from datatrove.pipeline.readers import HuggingFaceDatasetReader, JsonlReader
+from data_pipeline_pretrain.pipeline.tokens import MegatronDocumentTokenizer
 
 
 def get_args():
@@ -24,7 +28,12 @@ def get_args():
         "--eos-token",
         type=str,
         default=None,
-        help="EOS token to add after each document. Default: None",
+        help="EOS token to add after each document. Default: <|endoftext|>",
+    )
+    group.add_argument(
+        "--no-add-special-tokens",
+        action="store_true",
+        help="Do not add special tokens (BOS/EOS) during tokenization. Use this if your data already has special tokens from apply_chat_template.",
     )
 
     group = parser.add_argument_group(title="Output data")
@@ -47,30 +56,57 @@ def get_args():
         default=8,
         help="Total number of tasks to run the preprocessing step. Default: 8",
     )
-    group.add_argument(
-        "--n-workers",
-        type=int,
-        default=-1,
-        help="Number of workers executing concurrently --n-tasks tasks. Default: -1, which means --n-workers==--n-tasks",
+    # Subparsers for processing either Hugging Face datasets or jsonl files
+    sp = parser.add_subparsers(
+        dest="readers",
+        required=True,
+        description="Type of dataset to process. It can be either a Hugging Face Dataset loaded with datasets.load_data ('hf') or a .jsonl dataset ('jsonl')",
     )
-    group = parser.add_argument_group(title="Dataset configs")
-    group.add_argument(
+
+    p1 = sp.add_parser(name="hf")
+    p1.add_argument(
         "--dataset",
         type=str,
         required=True,
-        help="Path to a folder recursively containing multiple .parquet files",
+        help="Dataset name or format (e.g., 'parquet', 'csv', or HuggingFace hub name like 'dair-ai/emotion')",
     )
-    group.add_argument(
-        "--paths-file",
+    p1.add_argument(
+        "--data-files",
         type=str,
-        required=True,
-        help="A file with one path per line (without the `dataset` prefix) to read",
+        default=None,
+        help="Path to data files (for parquet/csv formats). Default: None",
     )
-    group.add_argument(
+    p1.add_argument(
         "--column",
         type=str,
         default="text",
         help="Column to preprocess from the Dataset. Default: text",
+    )
+    p1.add_argument(
+        "--split",
+        type=str,
+        default="train",
+        help="Which split of the data to process. Default: train",
+    )
+
+    p2 = sp.add_parser(name="jsonl")
+    p2.add_argument(
+        "--dataset",
+        type=str,
+        required=True,
+        help="Path to a .jsonl file or a folder containing multiple .jsonl files",
+    )
+    p2.add_argument(
+        "--column",
+        type=str,
+        default="text",
+        help="Column to preprocess from the Dataset. Default: text",
+    )
+    p2.add_argument(
+        "--glob-pattern",
+        type=str,
+        default=None,
+        help="A glob pattern to filter files to read. Default: None",
     )
 
     args = parser.parse_args()
@@ -79,28 +115,36 @@ def get_args():
 
 
 def main(args):
-    n_tasks = args.n_tasks
-    # Check number of files > n tasks
-    with open(args.paths_file, "rb") as f:
-        number_of_files = sum(1 for _ in f)
-    if n_tasks > number_of_files:
-        n_tasks = number_of_files
+    # Build datatrove reader
+    if args.readers == "hf":
+        # Build dataset_options
+        dataset_options = {"split": args.split}
+        if hasattr(args, 'data_files') and args.data_files:
+            dataset_options["data_files"] = args.data_files
+
+        datatrove_reader = HuggingFaceDatasetReader(
+            dataset=args.dataset,
+            text_key=args.column,
+            dataset_options=dataset_options,
+        )
+    else:
+        datatrove_reader = JsonlReader(
+            data_folder=args.dataset,
+            text_key=args.column,
+            glob_pattern=args.glob_pattern,
+        )
 
     preprocess_executor = LocalPipelineExecutor(
         pipeline=[
-            ParquetReader(
-                data_folder=args.dataset,
-                paths_file=args.paths_file,
-                text_key=args.column,
-            ),
+            datatrove_reader,
             MegatronDocumentTokenizer(
                 output_folder=args.output_folder,
                 tokenizer_name_or_path=args.tokenizer_name_or_path,
                 eos_token=args.eos_token,
+                add_special_tokens=not args.no_add_special_tokens,
             ),
         ],
-        tasks=n_tasks,
-        workers=args.n_workers,
+        tasks=args.n_tasks,
         logging_dir=args.logging_dir,
     )
     preprocess_executor.run()

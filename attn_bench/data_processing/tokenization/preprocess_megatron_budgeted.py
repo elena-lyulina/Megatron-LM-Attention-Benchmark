@@ -1,17 +1,17 @@
 """
-copied from https://github.com/swiss-ai/Megatron-LM/blob/main/scripts/tokenization/preprocess_megatron.py
-Extended with a shared token budget: all workers on a node stop once the node budget is reached.
-
-python3 preprocess_megatron_budgeted.py --tokenizer-name-or-path meta-llama/Meta-Llama-3-8B --output-folder tokenized_datasets/fineweb-edu --n-tasks 16 --dataset datasets/fineweb-edu/raw-dataset-link --paths-file datasets/fineweb-edu/dumps/paths_file_0.txt --node-budget 80000000000
+Copied from https://github.com/swiss-ai/data-pipeline-pretrain/blob/yxu/support-local-tokenizer-and-parquet/examples/tokenize_megatron/preprocess_megatron.py
+Modified to support token budgets and explicit EOS control
 """
 
 import argparse
 
 from datatrove.executor.local import LocalPipelineExecutor
 from datatrove.pipeline.readers import ParquetReader
-from datatrove.pipeline.tokens.megatron_tokenizer import MegatronDocumentTokenizer
 
-from attn_bench.data_processing.tokenization.budgeted_tokenizer import BudgetedMegatronDocumentTokenizer
+from attn_bench.data_processing.tokenization.megatron_tokenizer_budgeted import (
+    BudgetedMegatronDocumentTokenizer,
+    MegatronDocumentTokenizer,
+)
 
 
 def get_args():
@@ -25,10 +25,16 @@ def get_args():
         help="A path to a directory containing vocabulary files required by the tokenizer or the model id of a predefined tokenizer hosted inside a model repo on the Hugging Face Hub.",
     )
     group.add_argument(
-        "--eos-token",
-        type=str,
-        default=None,
-        help="EOS token to add after each document. Default: None",
+        "--add-bos",
+        default=True,
+        action=argparse.BooleanOptionalAction,
+        help="Add BOS token from the tokenizer before each document (default: True).",
+    )
+    group.add_argument(
+        "--add-eos",
+        default=True,
+        action=argparse.BooleanOptionalAction,
+        help="Add EOS token from the tokenizer after each document (default: True).",
     )
 
     group = parser.add_argument_group(title="Output data")
@@ -36,7 +42,7 @@ def get_args():
         "--output-folder",
         type=str,
         required=True,
-        help="Path to the output folder to store the tokenized documents",
+        help="Path to the output folder to store the tokenized documents.",
     )
     group = parser.add_argument_group(title="Miscellaneous configs")
     group.add_argument(
@@ -55,27 +61,23 @@ def get_args():
         "--n-workers",
         type=int,
         default=-1,
-        help="Number of workers executing concurrently --n-tasks tasks. Default: -1, which means --n-workers==--n-tasks",
+        help="Number of workers executing concurrently. Default: -1 (== --n-tasks)",
     )
+
     group = parser.add_argument_group(title="Dataset configs")
     group.add_argument(
         "--dataset",
         type=str,
         required=True,
-        help="Path to a folder recursively containing multiple .parquet files",
+        help="Path to a folder recursively containing multiple .parquet files.",
     )
     group.add_argument(
         "--paths-file",
         type=str,
         required=True,
-        help="A file with one path per line (without the `dataset` prefix) to read",
+        help="A file with one path per line (without the dataset prefix) to read.",
     )
-    group.add_argument(
-        "--column",
-        type=str,
-        default="text",
-        help="Column to preprocess from the Dataset. Default: text",
-    )
+    group.add_argument("--column", type=str, default="text")
 
     group = parser.add_argument_group(title="Token budget")
     group.add_argument(
@@ -88,12 +90,10 @@ def get_args():
         "--batch-size",
         type=int,
         default=1000,
-        help="Tokenization batch size — smaller = less overshoot past budget (default: 1000)",
+        help="Tokenization batch size — smaller = less overshoot past budget. Default: 1000",
     )
 
-    args = parser.parse_args()
-
-    return args
+    return parser.parse_args()
 
 
 def main(args):
@@ -104,23 +104,23 @@ def main(args):
     if n_tasks > number_of_files:
         n_tasks = number_of_files
 
+    tokenizer_kwargs = dict(
+        output_folder=args.output_folder,
+        tokenizer_name_or_path=args.tokenizer_name_or_path,
+        add_bos=args.add_bos,
+        add_eos=args.add_eos,
+    )
+
     if args.node_budget is not None:
-        per_worker_budget = args.node_budget // n_tasks
         tokenizer = BudgetedMegatronDocumentTokenizer(
-            per_worker_budget=per_worker_budget,
-            output_folder=args.output_folder,
-            tokenizer_name_or_path=args.tokenizer_name_or_path,
-            eos_token=args.eos_token,
+            per_worker_budget=args.node_budget // n_tasks,
             batch_size=args.batch_size,
+            **tokenizer_kwargs,
         )
     else:
-        tokenizer = MegatronDocumentTokenizer(
-            output_folder=args.output_folder,
-            tokenizer_name_or_path=args.tokenizer_name_or_path,
-            eos_token=args.eos_token,
-        )
+        tokenizer = MegatronDocumentTokenizer(**tokenizer_kwargs)
 
-    preprocess_executor = LocalPipelineExecutor(
+    LocalPipelineExecutor(
         pipeline=[
             ParquetReader(
                 data_folder=args.dataset,
@@ -132,10 +132,8 @@ def main(args):
         tasks=n_tasks,
         workers=args.n_workers,
         logging_dir=args.logging_dir,
-    )
-    preprocess_executor.run()
+    ).run()
 
 
 if __name__ == "__main__":
-    _args = get_args()
-    main(_args)
+    main(get_args())

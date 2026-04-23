@@ -32,7 +32,7 @@ With 20 workers, it is at most 200M, or just ~0.125% of the 160B target.
 **Scripts:**
 - [`prepare_dumps.py`](prepare_dumps.py) — splits parquet files into balanced dumps
 - [`preprocess_megatron_budgeted.py`](preprocess_megatron_budgeted.py) — main tokenization script
-- [`budgeted_tokenizer.py`](budgeted_tokenizer.py) — per-worker budget logic
+- [`budgeted_tokenizer.py`](megatron_tokenizer_budgeted.py) — per-worker budget logic
 - [`../submissions/submit_tokenization_fineweb_edu_datatrove.sh`](../../submissions/submit_tokenization_fineweb_edu_datatrove.sh) — submits one slurm job per dump
 - [`../submissions/tokenize_fineweb_edu_datatrove.slurm`](../../submissions/tokenize_fineweb_edu_datatrove.slurm) — slurm job script
 
