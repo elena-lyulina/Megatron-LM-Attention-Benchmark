@@ -19,7 +19,10 @@ TOKENIZED_DIR=/iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-ded
 
 mkdir -p /iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark/attn_bench/logs
 
-export PYTHONPATH=$MEGATRON_DIR:$PYTHONPATH
+echo "PYTHONPATH before: ${PYTHONPATH:-unset}"
+export PYTHONPATH=$MEGATRON_DIR:${PYTHONPATH:-}
+echo "PYTHONPATH after:  $PYTHONPATH"
+python3 -c "import megatron; print('megatron from:', megatron.__file__)" 2>&1 || echo "megatron not found"
 
 python3 $MEGATRON_DIR/attn_bench/data_processing/tokenization/verify_tokenization.py \
     --tokenized-dir $TOKENIZED_DIR \
