@@ -15,14 +15,14 @@ echo "START TIME: $(date)"
 
 MEGATRON_DIR=/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark
 TOKENIZER_PATH=/iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b
-SHARD_PATH=/iopsstor/scratch/cscs/elyulina/dataset/dedup-fineweb-edu-parallel-test/shard_00000
+TOKENIZED_DIR=/iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-1B-datatrove
 
 mkdir -p /iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark/attn_bench/logs
 
 export PYTHONPATH=$MEGATRON_DIR:$PYTHONPATH
 
-python3 $MEGATRON_DIR/attn_bench/data_processing/verify_tokenization.py \
-    --shard-path $SHARD_PATH \
+python3 $MEGATRON_DIR/attn_bench/data_processing/tokenization/verify_tokenization.py \
+    --tokenized-dir $TOKENIZED_DIR \
     --tokenizer-path $TOKENIZER_PATH \
     --num-sequences 5
 
