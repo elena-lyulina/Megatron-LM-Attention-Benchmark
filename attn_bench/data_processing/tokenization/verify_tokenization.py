@@ -55,7 +55,7 @@ def print_detailed(shard_path: str, tokenizer, bos_id: int, eos_id: int, num_seq
         bos_count = token_ids.count(bos_id)
         eos_count = token_ids.count(eos_id)
         text = tokenizer.decode(token_ids, skip_special_tokens=False)
-        reenc = tokenizer.encode(text, add_special_tokens=False)
+        reenc = tokenizer.encode(text, add_special_tokens=True).ids
         roundtrip_delta = len(reenc) - len(token_ids)
         if roundtrip_delta != 0:
             nonzero_delta += 1
@@ -71,11 +71,19 @@ def print_detailed(shard_path: str, tokenizer, bos_id: int, eos_id: int, num_seq
 
 
 def main(args):
-    tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_path, use_fast=True)
-    tokenizer.add_bos_token = True
-    tokenizer.add_eos_token = True
-    bos_id = tokenizer.bos_token_id
-    eos_id = tokenizer.eos_token_id
+    from tokenizers.processors import TemplateProcessing
+
+    hf_tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_path, use_fast=True)
+    bos_id = hf_tokenizer.bos_token_id
+    eos_id = hf_tokenizer.eos_token_id
+
+    # Use the same underlying tokenizer + TemplateProcessing as MegatronDocumentTokenizer
+    tokenizer = hf_tokenizer._tokenizer
+    tokenizer.post_processor = TemplateProcessing(
+        single="<BOS> $A <EOS>",
+        special_tokens=[("<BOS>", bos_id), ("<EOS>", eos_id)],
+        pair=None,
+    )
     print(f"BOS id: {bos_id} | EOS id: {eos_id}")
 
     if args.tokenized_dir:
