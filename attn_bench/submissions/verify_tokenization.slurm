@@ -22,7 +22,14 @@ mkdir -p /iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark/attn_bench
 echo "PYTHONPATH before: ${PYTHONPATH:-unset}"
 export PYTHONPATH=$MEGATRON_DIR:${PYTHONPATH:-}
 echo "PYTHONPATH after:  $PYTHONPATH"
-python3 -c "import megatron; print('megatron from:', megatron.__file__)" 2>&1 || echo "megatron not found"
+python3 -c "
+import megatron
+print('megatron __path__:', list(megatron.__path__))
+import megatron.core
+print('megatron.core __path__:', list(megatron.core.__path__))
+import megatron.core.datasets
+print('megatron.core.datasets __path__:', list(megatron.core.datasets.__path__))
+" 2>&1 || echo "import chain broken above"
 
 python3 $MEGATRON_DIR/attn_bench/data_processing/tokenization/verify_tokenization.py \
     --tokenized-dir $TOKENIZED_DIR \

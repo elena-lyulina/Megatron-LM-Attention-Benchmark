@@ -42,19 +42,23 @@ def check_shard(shard_path: str, bos_id: int, eos_id: int):
     return n, fails
 
 
-def print_detailed(shard_path: str, tokenizer, bos_id: int, eos_id: int, num_sequences: int):
+def print_detailed(shard_path: str, tokenizer, bos_id: int, eos_id: int, num_sequences: int) -> int:
+    """Returns number of sequences with non-zero round-trip delta."""
     dataset = IndexedDataset(shard_path)
     n = len(dataset)
     print(f"\n{'=' * 80}")
-    print(f"Detailed check: {shard_path} ({n:,} sequences)")
+    print(f"Detailed check: {Path(shard_path).name} ({n:,} sequences, showing {min(num_sequences, n)})")
     print("=" * 80)
+    nonzero_delta = 0
     for i in range(min(num_sequences, n)):
         token_ids = dataset[i].tolist()
         bos_count = token_ids.count(bos_id)
         eos_count = token_ids.count(eos_id)
-        text = tokenizer.decode(token_ids, skip_special_tokens=True)
-        reenc = tokenizer.encode(text, add_special_tokens=True)
+        text = tokenizer.decode(token_ids, skip_special_tokens=False)
+        reenc = tokenizer.encode(text, add_special_tokens=False)
         roundtrip_delta = len(reenc) - len(token_ids)
+        if roundtrip_delta != 0:
+            nonzero_delta += 1
         print(f"\n--- Sequence {i} | {len(token_ids)} tokens ---")
         print(f"First tokens: {token_ids[:10]}")
         print(f"Last tokens:  {token_ids[-5:]}")
@@ -63,10 +67,13 @@ def print_detailed(shard_path: str, tokenizer, bos_id: int, eos_id: int, num_seq
         print(f"Round-trip:   delta={roundtrip_delta:+d} tokens {'OK' if roundtrip_delta == 0 else 'WARN'}")
         print(f"Text preview: {text[:300]!r}")
         print(f"Text ending:  {text[-100:]!r}")
+    return nonzero_delta
 
 
 def main(args):
     tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_path, use_fast=True)
+    tokenizer.add_bos_token = True
+    tokenizer.add_eos_token = True
     bos_id = tokenizer.bos_token_id
     eos_id = tokenizer.eos_token_id
     print(f"BOS id: {bos_id} | EOS id: {eos_id}")
@@ -105,8 +112,13 @@ def main(args):
     print("  ALL OK")
 
     # --- Detailed preview for each shard ---
+    total_nonzero_delta = 0
+    total_checked = 0
     for shard_path, _, _ in shard_results:
-        print_detailed(shard_path, tokenizer, bos_id, eos_id, args.num_sequences)
+        total_nonzero_delta += print_detailed(shard_path, tokenizer, bos_id, eos_id, args.num_sequences)
+        total_checked += min(args.num_sequences, len(IndexedDataset(shard_path)))
+
+    print(f"\nRound-trip summary: {total_nonzero_delta} / {total_checked} sequences had non-zero delta")
 
 
 if __name__ == "__main__":
