@@ -15,6 +15,7 @@ Usage:
 
 import argparse
 import sys
+from multiprocessing import Pool
 from pathlib import Path
 
 from transformers import AutoTokenizer
@@ -100,8 +101,10 @@ def main(args):
     total_fails = {"no_bos": 0, "no_eos": 0, "multi_bos": 0, "multi_eos": 0}
     shard_results = []
 
-    for shard_path in shard_paths:
-        n, fails = check_shard(shard_path, bos_id, eos_id)
+    with Pool(args.num_workers) as pool:
+        results = pool.starmap(check_shard, [(sp, bos_id, eos_id) for sp in shard_paths])
+
+    for shard_path, (n, fails) in zip(shard_paths, results):
         total_seqs += n
         for k in total_fails:
             total_fails[k] += fails[k]
@@ -136,5 +139,6 @@ if __name__ == "__main__":
     group.add_argument("--tokenized-dir", type=str, help="Directory to search for all shards recursively")
     parser.add_argument("--tokenizer-path", type=str, required=True)
     parser.add_argument("--num-sequences", type=int, default=5)
+    parser.add_argument("--num-workers", type=int, default=1)
     args = parser.parse_args()
     main(args)
