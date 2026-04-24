@@ -72,6 +72,7 @@ def build_model(
             qk_layernorm=qk_layernorm,
             multi_latent_attention=False,
             qk_l2_norm=getattr(config, 'qk_l2_norm', False),
+            normalization=getattr(config, 'normalization', None),
         )
         backend = LocalSpecProvider()
     else:
