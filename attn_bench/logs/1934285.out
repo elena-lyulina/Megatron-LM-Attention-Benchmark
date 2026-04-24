@@ -1,0 +1,2020 @@
+START TIME: Fri Apr 24 17:01:59 CEST 2026
+PYTHONPATH before: /opt/Export-Deploy:/opt/venv/lib/python3.12/site-packages/:
+PYTHONPATH after:  /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark:/opt/Export-Deploy:/opt/venv/lib/python3.12/site-packages/:
+megatron __path__: ['/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron', '/opt/venv/lib/python3.12/site-packages/megatron', '__editable__.megatron_bridge-0.2.0.finder.__path_hook__', '__editable__.megatron_core-0.16.0rc0.finder.__path_hook__']
+megatron.core __path__: ['/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core']
+megatron.core.datasets __path__: ['/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/datasets']
+BOS id: 128000 | EOS id: 128001
+
+Found 40 shard(s)
+
+  00000_tokens | 3,990,000 seqs | OK
+  00001_tokens | 4,000,000 seqs | OK
+  00002_tokens | 4,010,000 seqs | OK
+  00003_tokens | 4,010,000 seqs | OK
+  00004_tokens | 4,010,000 seqs | OK
+  00005_tokens | 4,010,000 seqs | OK
+  00006_tokens | 4,020,000 seqs | OK
+  00007_tokens | 4,040,000 seqs | OK
+  00008_tokens | 4,030,000 seqs | OK
+  00009_tokens | 4,040,000 seqs | OK
+  00010_tokens | 4,040,000 seqs | OK
+  00011_tokens | 4,040,000 seqs | OK
+  00012_tokens | 4,050,000 seqs | OK
+  00013_tokens | 4,040,000 seqs | OK
+  00014_tokens | 4,040,000 seqs | OK
+  00015_tokens | 4,050,000 seqs | OK
+  00016_tokens | 4,050,000 seqs | OK
+  00017_tokens | 4,060,000 seqs | OK
+  00018_tokens | 4,063,419 seqs | OK
+  00019_tokens | 4,063,419 seqs | OK
+  00000_tokens | 3,990,000 seqs | OK
+  00001_tokens | 4,000,000 seqs | OK
+  00002_tokens | 4,020,000 seqs | OK
+  00003_tokens | 4,010,000 seqs | OK
+  00004_tokens | 4,020,000 seqs | OK
+  00005_tokens | 4,020,000 seqs | OK
+  00006_tokens | 4,020,000 seqs | OK
+  00007_tokens | 4,030,000 seqs | OK
+  00008_tokens | 4,030,000 seqs | OK
+  00009_tokens | 4,040,000 seqs | OK
+  00010_tokens | 4,040,000 seqs | OK
+  00011_tokens | 4,040,000 seqs | OK
+  00012_tokens | 4,050,000 seqs | OK
+  00013_tokens | 4,050,000 seqs | OK
+  00014_tokens | 4,050,000 seqs | OK
+  00015_tokens | 4,060,000 seqs | OK
+  00016_tokens | 4,060,000 seqs | OK
+  00017_tokens | 4,060,000 seqs | OK
+  00018_tokens | 4,060,000 seqs | OK
+  00019_tokens | 4,063,419 seqs | OK
+
+Total: 161,370,257 sequences across 40 shards
+  BOS missing at start : 0
+  EOS missing at end   : 0
+  Multiple BOS         : 0
+  Multiple EOS         : 0
+  ALL OK
+
+================================================================================
+Detailed check: 00000_tokens (3,990,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 433 tokens ---
+First tokens: [128000, 2675, 27600, 369, 512, 33775, 43609, 482, 2052, 41994]
+Last tokens:  [279, 357, 859, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>You searched for:\nEnergy Conversion - All Topics\nResults 1 - 100 of 159 ... Complete list of articles about Technology / Energy Conversion: Adsorption\nchiller, Air-conditioning, Airbrush, Alfred Brandt, Alternator, ...\nElectric generator - Permanent-magnet generators\nAn inductor alt'
+Text ending:  'tor alternators: In the heteropolar type, the field coils are\nin slots in the stator.<|end_of_text|>'
+
+--- Sequence 1 | 187 tokens ---
+First tokens: [128000, 13601, 315, 24623, 8326, 198, 41481, 505, 279, 5000]
+Last tokens:  [19923, 304, 90539, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Origin of piggin\nExamples from the Web for piggin\n"A say if ever a piggin was in sore need o\' a new link, \'tis that one," saith she.A Brother To Dragons and Other Old-time Tales|Amelie Rives\nAfter churning, butter should be taken up in what is called "a piggin," first scalded and th'
+Text ending:  'Lonesome Cove she found the piggin where she had hid it, and milked the cow in haste.<|end_of_text|>'
+
+--- Sequence 2 | 681 tokens ---
+First tokens: [128000, 14832, 367, 315, 7572, 304, 264, 87415, 1887, 512]
+Last tokens:  [26436, 315, 1855, 1023, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Separation of Power in a Parliamentary system:\nThe article intends to comprehend readers on all legal as well as practical aspects of the “doctrine of Trias Politica” (Separation of Power in a Parliamentary system) with how it is being exploited and the limit.\nHowever, it also discu'
+Text ending:  'e for a welfare state one at the time or other encroaches in the sphere of each other<|end_of_text|>'
+
+--- Sequence 3 | 454 tokens ---
+First tokens: [128000, 2028, 5211, 14861, 279, 26154, 11, 7479, 323, 5655]
+Last tokens:  [46703, 304, 4477, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>This resource covers the integral, surface and deep features of Homophones, Homographs, and Homonyms. It contains full-on activities and assessments to cover the skills of literacy in an easy, structured, cover-your-bases system. It includes everything you need to get going with H-H'
+Text ending:  'ded to spell and use effectively the homophones, homographs, and homonyms in writing.<|end_of_text|>'
+
+--- Sequence 4 | 335 tokens ---
+First tokens: [128000, 791, 2778, 1766, 220, 19, 3135, 304, 220, 15]
+Last tokens:  [1057, 19739, 84137, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>The search found 4 results in 0.022 seconds.\nMethods textbooks play a role in socializing a new generation of researchers about ethical research. How do undergraduate social research methods textbooks portray harm, its prevalence, and ways to mitigate harm to participants? We conduc'
+Text ending:  'potential strategies to retool our racial emotive order as well as our racial selves.<|end_of_text|>'
+
+================================================================================
+Detailed check: 00001_tokens (4,000,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 205 tokens ---
+First tokens: [128000, 1991, 19723, 14173, 198, 76, 7531, 296, 816, 4640]
+Last tokens:  [617, 459, 2759, 30, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: "<|begin_of_text|>Get Study Tools\nm Find m Y=(6x+44)\nExpert Community at Your Service\nSolve your problem for the price of one coffee\nFirst, you combine the equations in blue to be −4x+109=117\nNow solve for x x=−2\nAnd finally, substitute -2 in for x in the blue equations to get the angle's values. You"
+Text ending:  'r\nDont have an account?\nCreate a free account to see answers\nAlready have an account?<|end_of_text|>'
+
+--- Sequence 1 | 941 tokens ---
+First tokens: [128000, 13622, 315, 10007, 40607, 944, 8494, 374, 25051, 832]
+Last tokens:  [2795, 2999, 65109, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Most of south-eastern Australia is experiencing one of the coldest starts to winter in decades with maximum temperatures in several cities staying below 15°C since the beginning of June. With many Australians cranking up their thermostats, there has been a corresponding increase in '
+Text ending:  'y if efforts are made to better shade windows and other glass areas,” says Dr Jensen.<|end_of_text|>'
+
+--- Sequence 2 | 308 tokens ---
+First tokens: [128000, 791, 16628, 315, 35335, 3090, 304, 358, 8288, 276]
+Last tokens:  [1543, 7710, 10334, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>The interaction of coastal water in I-Lan Bay, a bay near northeast Taiwan, and the Kuroshio Current is studied using the data from hydrologic survey and satellite remote sensing. An index for water mass distinguished is used for clarifying the origin of water mass in I-Lan Bay. The'
+Text ending:  'mics of the countercurrent occurrence can be explained by the Ekman transport theory.<|end_of_text|>'
+
+--- Sequence 3 | 989 tokens ---
+First tokens: [128000, 1383, 4488, 468, 34856, 1540, 4669, 13692, 2507, 198]
+Last tokens:  [6134, 3727, 91813, 13654, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>By Mark Waghorn via SWNS\nThe areas of the brain where fragments of memory are stored and the mechanism which results in the total recall have been uncovered by scientists.\nMemories form in two different areas of the brain, an overall event is stored in the hippocampus and individual'
+Text ending:  ' the office?\n- Animals14 hours ago\nHedgehog on death’s door makes miraculous recovery<|end_of_text|>'
+
+--- Sequence 4 | 573 tokens ---
+First tokens: [128000, 32, 4857, 753, 20314, 19358, 5764, 32267, 323, 8141]
+Last tokens:  [2543, 6500, 37172, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>A building’s electrical wiring includes switches and distribution boards to plugs and light fixtures. It is essential to install wiring as per the established safety guidelines. The electric current and operating voltage capacity of a circuit determine the permissible wire and cable'
+Text ending:  's to our valued customers.\nContact us to secure the best torque turn computer cables.<|end_of_text|>'
+
+================================================================================
+Detailed check: 00002_tokens (4,010,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 700 tokens ---
+First tokens: [128000, 32, 18682, 76022, 315, 423, 8194, 69530, 38859, 38470]
+Last tokens:  [315, 92659, 28697, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>A Deep Exploration of Diverse Cartoon Drawing Styles\nCartoon drawing styles, with their kaleidoscope of vibrant shades and unbridled imagination, have enchased our hearts and minds. This comprehensive guide dives into the fascinating array of such styles, each possessing a unique ch'
+Text ending:  'ir boundless ability to enchant and transport us into realms of limitless creativity.<|end_of_text|>'
+
+--- Sequence 1 | 239 tokens ---
+First tokens: [128000, 644, 832, 3492, 11, 1148, 374, 279, 1888, 1648]
+Last tokens:  [304, 279, 3938, 30, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>In one word, what is the best way to treat others?\nKindness is a simple act of showing care and respect for others. Being kind to others makes us feel better about ourselves. Showing kindness to others can make the world a better place!\nThe Power of Kindness\nEmpathy: the ability to '
+Text ending:  'in the past to show kindness?\nWhat are ways that you can show kindness in the future?<|end_of_text|>'
+
+--- Sequence 2 | 687 tokens ---
+First tokens: [128000, 8368, 276, 1223, 74, 5513, 8, 59250, 505, 279]
+Last tokens:  [6302, 323, 12933, 2029, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>(Nanowerk News) Researchers from the Munich Institute of Robotics and Machine Intelligence (MIRMI) at the Technical University of Munich (TUM) have developed an automated process for creating soft sensors. This universal measuring cell can be attached to almost any type of object. A'
+Text ending:  'on of wireless and adaptable sensor technologies for arbitrary objects and machines.”<|end_of_text|>'
+
+--- Sequence 3 | 856 tokens ---
+First tokens: [128000, 2059, 50703, 304, 28929, 25, 74105, 11, 77417, 11]
+Last tokens:  [304, 2262, 4477, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Shingles in Eye: Causes, Symptoms, and Effective Treatment Options\nSeptember 11, 2023\nIn the ever-evolving realm of eye health, one condition that often goes under the radar but can be immensely uncomfortable is shingles in the eye. This viral infection, caused by the varicella-zost'
+Text ending:  'ly transitioned from her biotechnology roots to a thriving career in content writing.<|end_of_text|>'
+
+--- Sequence 4 | 432 tokens ---
+First tokens: [128000, 44587, 31156, 1148, 374, 779, 27387, 922, 220, 20]
+Last tokens:  [48582, 3708, 828, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Ever wondered what is so fascinating about 5G and why people are so excited about it? In this article, we will break down why the next generation of wireless technology is more than just a boost in speed.\nWhat is 5G?\n5G is called the next generation of cellular technology. It promis'
+Text ending:  'to work on the same battery for 10 years and still be able to periodically send data.<|end_of_text|>'
+
+================================================================================
+Detailed check: 00003_tokens (4,010,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 760 tokens ---
+First tokens: [128000, 20204, 922, 6925, 94783, 23691, 5699, 25, 6925, 94783]
+Last tokens:  [3780, 2587, 9071, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Posts about synoptic essays category: synoptic essays – a level biology this is important because too much water can saturate the plant and drown it. So there are 3 main synoptic essay aqa biology unit 5 of synoptic questions in the exams synoptic preview of page 5 the biological im'
+Text ending:  'synoptic essay next page essay medical school sample do you want to buy custom essay.<|end_of_text|>'
+
+--- Sequence 1 | 109 tokens ---
+First tokens: [128000, 35197, 11031, 5043, 0, 29837, 8469, 315, 279, 16029]
+Last tokens:  [279, 2082, 4793, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Tech moves fast! Stay ahead of the curve with Techopedia!\nJoin nearly 200,000 subscribers who receive actionable tech insights from Techopedia.\nA volatile variable is a variable that is marked or cast with the keyword "volatile" so that it is established that the variable can be cha'
+Text ending:  'pate changes to the variable other than those that are common within the code module.<|end_of_text|>'
+
+--- Sequence 2 | 1233 tokens ---
+First tokens: [128000, 4599, 499, 1541, 956, 617, 49080, 477, 17401, 6767]
+Last tokens:  [279, 4495, 1404, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: "<|begin_of_text|>When you don't have ruler or tape measure on hand, there are many easy ways to estimate measurements using parts of your body or items you may have on hand. This can come very handy when you are shopping to determine if an item is the proper size. Nothing is more frustrating than bu"
+Text ending:  ' scale—you can easily place it next to an object to see if it looks the correct size.<|end_of_text|>'
+
+--- Sequence 3 | 746 tokens ---
+First tokens: [128000, 38538, 954, 69871, 323, 5933, 2191, 198, 13058, 2191]
+Last tokens:  [13997, 87, 884, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Essays realism and naturalism\nRealism in american literature, 1860-1890 to the cambridge companion to american realism and naturalism: the realism bibliography and essays by. Category: essays research papers title: realism and naturalism. Realism essay examples 2 pages a paper on th'
+Text ending:  'ssays realism literature naturalism december 17, 2017 @ 1:28 pm http://levitrabcxcom.<|end_of_text|>'
+
+--- Sequence 4 | 696 tokens ---
+First tokens: [128000, 2127, 12434, 6873, 23693, 902, 6137, 304, 220, 6393]
+Last tokens:  [315, 4696, 4518, 4497, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>An environmental education charity which began in 1943, the Field Studies Council works with people of all ages and abilities, providing opportunities for them to experience the environment at first hand; to discover, explore, be inspired by, and understand the natural environment. '
+Text ending:  ' to be recorded. The Royal Parks’ data currently account for nearly 10% of …Read More<|end_of_text|>'
+
+================================================================================
+Detailed check: 00004_tokens (4,010,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 1319 tokens ---
+First tokens: [128000, 40, 574, 5403, 1555, 279, 4072, 15008, 258, 596]
+Last tokens:  [323, 25982, 1124, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: "<|begin_of_text|>I was reading through the Eladrin's puzzle thread, and it reminded me of something I've worked on here and there for a while, now, and figured this would be a pretty good place to pose my theory. What I am suggesting is kind of out there, and a bit geeky (I guess), so if this isn't "
+Text ending:  'mly generated numbers or they keep changing when you sort them or cut and paste them.<|end_of_text|>'
+
+--- Sequence 1 | 139 tokens ---
+First tokens: [128000, 10955, 25, 3580, 279, 19576, 198, 17673, 13238, 1887]
+Last tokens:  [2212, 520, 264, 2564, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Video: See the simulation\nTHE solar system’s clockwork motion is by no means guaranteed: one day the Earth could collide with Venus or tear Mars apart in a close encounter, a new simulation has shown.\nWe know that the apparently reliable orbits of the planets are unstable in the lon'
+Text ending:  ' perihelion, the point where it gets closest to the sun, slowly moves around at a ...<|end_of_text|>'
+
+--- Sequence 2 | 450 tokens ---
+First tokens: [128000, 39, 1924, 11, 477, 4433, 29150, 10649, 11, 264]
+Last tokens:  [5353, 305, 1924, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Hives, or urticaria, a sudden attack of red bumps and wheals on the skin, typically last up to one day, according to WebMD. The itchy swollen bumps can strike anywhere on the body,...\nThe first step in getting treatment is to figure out the cause of the hives. In most cases, your do'
+Text ending:  's,\nfood ... Having hives may cause stress, but stress by itself does not cause hives.<|end_of_text|>'
+
+--- Sequence 3 | 535 tokens ---
+First tokens: [128000, 91, 678, 25, 44941, 2179, 6101, 8651, 24684, 25]
+Last tokens:  [4339, 824, 2199, 8, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: "<|begin_of_text|>|Name: _________________________||Period: ___________________|\nThis test consists of 5 short answer questions, 10 short essay questions, and 1 (of 3) essay topics.\nShort Answer Questions\n1. Chickenhound considers Redwall to be his _____.\n2. The adder's jaws are the only _____ in the"
+Text ending:  ' her actions?\nThis section contains 772 words\n(approx. 3 pages at 300 words per page)<|end_of_text|>'
+
+--- Sequence 4 | 360 tokens ---
+First tokens: [128000, 6777, 12092, 13740, 83836, 198, 2028, 64955, 4101, 71849]
+Last tokens:  [5644, 311, 3790, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: "<|begin_of_text|>Teaching Channel Presents\nThis groundbreaking series showcases inspired teaching in America's K-12 classrooms. Hosted by Sarah Brown Wessling, the Teacher Laureate at Tch and the 2010 National Teacher of the Year, the weekly episodes cover a wide variety of topics including the New "
+Text ending:  'mble, as they work to incorporate material that not all students are ready to handle.<|end_of_text|>'
+
+================================================================================
+Detailed check: 00005_tokens (4,010,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 975 tokens ---
+First tokens: [128000, 26070, 43554, 374, 539, 40044, 45777, 4954, 2911, 753]
+Last tokens:  [220, 9079, 6086, 3115, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>South Sudan is not sufficiently prioritizing children’s education, UNICEF said today. While the internationally agreed international standard for education allocations is 20 per cent of the national budget, South Sudan only spends 5.6 per cent for 2019-2020, according the national b'
+Text ending:  'bile courts to clear backlog of ... - Washington Post - 11/10/2012 - Read 11982 times<|end_of_text|>'
+
+--- Sequence 1 | 595 tokens ---
+First tokens: [128000, 1, 14953, 323, 47912, 1, 16720, 611, 362, 51435]
+Last tokens:  [323, 16343, 16720, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>"Connect and Combine" assignment / A Crash Course on Creativity, Prof. Tina Seelig.\n1.Swinging sponges in the swimming pool A Crash Course on CreativityProf. Tina Seelig\n2. Spongeslice is the gamethat you will be eager to play.How it goes and basic rulesHere Im going to tell. 3. Net'
+Text ending:  ' will never give it up! 12. TThanks!HEENDGloria BesadaConnect and combine assignment.<|end_of_text|>'
+
+--- Sequence 2 | 2068 tokens ---
+First tokens: [128000, 37461, 13, 220, 717, 2360, 13, 220, 21, 11]
+Last tokens:  [2613, 279, 6576, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Vol. 12 No. 6, March 25, 2015\nFACTS AND STATS\nText Message Reminders Boost Breast Cancer Screening Attendance\nWomen who received a text message reminding them about their breast cancer screening appointment were 20% more likely to attend than those who were not texted, according to '
+Text ending:  'an sign up. Tell us what you think or what you would like included: email the editor.<|end_of_text|>'
+
+--- Sequence 3 | 473 tokens ---
+First tokens: [128000, 31916, 11513, 22269, 86712, 19813, 311, 279, 4272, 2515]
+Last tokens:  [5070, 323, 3300, 30, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Hydrodynamic dispersion refers to the net effect of a variety of microscopic, macroscopic, and regional conditions that affect the spread of a solute front through an aquifer.58 Quantifying the dispersion is important to fate assessment because contaminants can move more rapidly thr'
+Text ending:  'death of living with the fact that you feel like you are wasting resources and money?<|end_of_text|>'
+
+--- Sequence 4 | 310 tokens ---
+First tokens: [128000, 38255, 25, 14967, 6938, 11994, 198, 2028, 374, 4762]
+Last tokens:  [90425, 369, 1457, 0, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Introduction: Basic Card Force\nThis is probably the easiest force that there is in card magic. Read on for the instructions.\nTeachers! Did you use this instructable in your classroom?\nAdd a Teacher Note to share how you incorporated it into your lesson.\nStep 1: Setup\nFirst, you need'
+Text ending:  "ials. I will be posting how-to's for Arduino, circuitry, and card magic. Bye for now!<|end_of_text|>"
+
+================================================================================
+Detailed check: 00006_tokens (4,020,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 828 tokens ---
+First tokens: [128000, 16, 13, 3639, 374, 279, 6811, 1990, 14278, 2191]
+Last tokens:  [304, 735, 93264, 30, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>1. What is the difference between reductionism and antireductionism in understanding the essence of life?\n2. In what appears nonlinear structure and plasticity of the genome?\n3. What information is recorded in the genome?\n4. Why the body should be understood as a process?\n5. What is'
+Text ending:  'ent?\n44. What are the highlights of the model of science and its development in Kuhn?<|end_of_text|>'
+
+--- Sequence 1 | 1062 tokens ---
+First tokens: [128000, 14, 597, 9371, 75, 99638, 69, 133, 242, 135]
+Last tokens:  [13, 20, 7239, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>/ kæləfɔːrnjə /\nMnožina reči California je Californias.\nCA · Calif. · California · Golden State\nPrevedi California na: francuski · nemački\n1. A state in the western United States on the Pacific; the 3rd largest state; known for earthquakes; Also called: Golden State.\n2. Borough in P'
+Text ending:  'ers, including the fires in the S of the state 1993, were estimated at $28.5 billion.<|end_of_text|>'
+
+--- Sequence 2 | 302 tokens ---
+First tokens: [128000, 29012, 33342, 73583, 1631, 33342, 14747, 315, 384, 3178]
+Last tokens:  [38645, 546, 65009, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Symmetry/asymmetry conversion of eukaryotic flagellar waveform is caused by the changes in intracellular Ca2+. Animal sperm flagella show symmetric or asymmetric waveform at lower or higher concentration of intracellular Ca2+, respectively. In Chlamydomonas, high Ca2+ induces conver'
+Text ending:  'l innovation of calcium sensors of outer arm dynein in opisthokont or bikont lineage.<|end_of_text|>'
+
+--- Sequence 3 | 1163 tokens ---
+First tokens: [128000, 44456, 374, 264, 16595, 961, 315, 279, 15603, 8312]
+Last tokens:  [477, 3148, 7710, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Shipping is a vital part of the worldwide supply chain. Freight transportation is just the physical act of moving freight as well as various other items and also cargo by land, air or sea. Words shipping originally only referred to transport by sea, but later on, it was broadened to'
+Text ending:  ' less than various other means of transport, such as land products or mass transport.<|end_of_text|>'
+
+--- Sequence 4 | 302 tokens ---
+First tokens: [128000, 2170, 7528, 14645, 3719, 15098, 64564, 323, 3062, 5596]
+Last tokens:  [315, 1521, 20414, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>As digital technologies become increasingly ubiquitous and important parts of daily life, their downsides have become more apparent. Tech giants, including Google, Amazon, and Facebook, offer digital tools only in exchange for people’s personal data. Digital service providers are be'
+Text ending:  'uld unlock vast knowledge and insight into the further potential of these approaches.<|end_of_text|>'
+
+================================================================================
+Detailed check: 00007_tokens (4,040,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 1546 tokens ---
+First tokens: [128000, 12, 5858, 24627, 10164, 12279, 1067, 13284, 67052, 439]
+Last tokens:  [13230, 19766, 17989, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>- ItemSurface Water-Groundwater Connections as Pathways for Inland Salinization of Coastal Aquifers(Groundwater, 2022-11-17) Hingst, Mary C.; McQuiggan, Rachel W.; Peters, Chelsea N.; He, Changming; Andres, A. Scott; Michael, Holly A.Coastal agricultural zones are experiencing salin'
+Text ending:  'e insights for design of environmental networks to improve global-scale Rs estimates.<|end_of_text|>'
+
+--- Sequence 1 | 1092 tokens ---
+First tokens: [128000, 2620, 315, 36962, 198, 14262, 311, 220, 8011, 15]
+Last tokens:  [85, 304, 72122, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Table of Contents\nWelcome to 1140 volts to watts, our post about the 1140 volt to watt conversion.\nHere we show you how to convert one thousand, one hundred and forty volts to watts using the formulas for DC as well as AC circuits.\nIf you have been wondering how many watts is 1140 v'
+Text ending:  'he word about us by pressing the sharing buttons.\nThanks for visiting 1140v in watts.<|end_of_text|>'
+
+--- Sequence 2 | 1870 tokens ---
+First tokens: [128000, 39, 48738, 8772, 527, 1101, 3967, 439, 11070, 495]
+Last tokens:  [220, 605, 2919, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Hiccups are also known as Singultus. This word is derived from the Latin word Singult, which means “the act of catching one’s breath while sobbing.”\nTable of Contents\nHiccups are seen more commonly in males. Males (82 %) are affected more than females with a ratio of up to 4:1. Pers'
+Text ending:  'atient feels better while eating.\n- Dosage: 2x, 4 pellets, 2 times a day for 10 days.<|end_of_text|>'
+
+--- Sequence 3 | 1432 tokens ---
+First tokens: [128000, 3923, 527, 279, 22934, 315, 3318, 304, 264, 8803]
+Last tokens:  [374, 539, 2322, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>What are the advantages of working in a factory?\nWhat are the advantages of working in a factory?\nThese positions afford all of the benefits of working in manufacturing — the pride, stability, competitive salaries, excitement, great technology and others — to people from many differ'
+Text ending:  'oduction schedules. Performing corrective actions when production quality is not met.<|end_of_text|>'
+
+--- Sequence 4 | 303 tokens ---
+First tokens: [128000, 4516, 279, 3560, 315, 25407, 15419, 304, 279, 6373]
+Last tokens:  [323, 279, 4788, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>So the role of radiation therapy in the management of malignant glioma usually rests initially on a six weeks course of radiation therapy, which we described as external beam conformal radiation therapy. In the past, in the 1970s, when it was initially noted that chemotherapy may ha'
+Text ending:  ' radiation therapy once again. Well this is typically not the rule and the exception.<|end_of_text|>'
+
+================================================================================
+Detailed check: 00008_tokens (4,030,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 969 tokens ---
+First tokens: [128000, 69506, 11, 499, 9011, 265, 1457, 10489, 389, 279]
+Last tokens:  [1139, 2539, 43743, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Hopefully, youâre now properly on the means in which to writing the most effective expository essay Australia has ever seen! If you want a number of more clues, see the writing ideas below. When contemplating the means to structure an expository essay, you might want to take out a p'
+Text ending:  'e issues. Once you’ve your outline, expand the points you wrote into full paragraphs.<|end_of_text|>'
+
+--- Sequence 1 | 353 tokens ---
+First tokens: [128000, 54467, 511, 20180, 527, 7528, 12032, 10825, 311, 28696]
+Last tokens:  [21785, 9636, 279, 36443, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Cryptocurrencies are digital assets intended to facilitate peer-to-peer financial transactions and smart contracts on the internet in a decentralized manner. This was first achieved by solving the “double spend” problem and using advanced crypto graphy and programming techniques.\nCr'
+Text ending:  'nt explaining Bitcoin.\nBitcoin.org: What is Bitcoin?\nHow Bitcoin Works Under the Hood<|end_of_text|>'
+
+--- Sequence 2 | 699 tokens ---
+First tokens: [128000, 15724, 11, 45039, 690, 18890, 323, 83623, 279, 2324]
+Last tokens:  [1566, 369, 22540, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Today, Bristol will celebrate and commemorate the life of a legend Roy Hackett. Yet we will know Roy’s life extend beyond the cities walls.\nI credit Roy as one of the key elements for improving the lives of the Black community in Bristol through his selfless work. He has had also ha'
+Text ending:  'family, however the legacy of his lifetime of achievements will last for generations.<|end_of_text|>'
+
+--- Sequence 3 | 810 tokens ---
+First tokens: [128000, 10031, 279, 1252, 29412, 25, 18491, 5620, 279, 4435]
+Last tokens:  [279, 57492, 990, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>See the Unseen: Exploring the World of Otoscopy\nWelcome to the fascinating world of otoscopy, where we unveil the hidden wonders of the ear with a touch of curiosity and a dash of adventure. In this article, we embark on a journey to understand the importance of otoscopy and its rol'
+Text ending:  'and would recommend this hospital to family and friends. Keep up the phenomenal work.<|end_of_text|>'
+
+--- Sequence 4 | 959 tokens ---
+First tokens: [128000, 2822, 19101, 889, 5097, 8198, 14243, 1587, 779, 1606]
+Last tokens:  [7066, 1124, 31155, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>No-one who takes science seriously does so because they are “simply believing things you’ve been told.” That might happen if you’re being spoon-fed by Answers in Genesis, but it does not happen when you learn science properly.\nWhen you study science at university, you spend about ha'
+Text ending:  'a much shorter time, they would have released enough heat to destroy them altogether.<|end_of_text|>'
+
+================================================================================
+Detailed check: 00009_tokens (4,040,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 664 tokens ---
+First tokens: [128000, 15, 12, 21, 19961, 10846, 82, 198, 3915, 279]
+Last tokens:  [892, 0, 68679, 50712, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: "<|begin_of_text|>0-6 Month Olds\nFrom the time they're born until six months old, those littles have a lot to learn! They figure out muscle control, and how to lift their head up. They learn to smile, and express physical and emotional needs. They learn to put things in their mouth, hold onto small t"
+Text ending:  "ear on Instagram @thebabycubby for a chance to get reposted! 'Till next time! ♥ Alexa<|end_of_text|>"
+
+--- Sequence 1 | 396 tokens ---
+First tokens: [128000, 2460, 2262, 374, 1949, 369, 5127, 311, 27100, 11]
+Last tokens:  [31469, 1131, 4518, 810, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>All content is free for everyone to browse, download and share.\nTips for how to search on AER: type keywords into the search box or use the filtering options below to find the content relevant for you – including peer-reviewed journal articles and non-peer reviewed grey literature.\n'
+Text ending:  'tened marine mammals, but there is no empirical evidence that they are ef...Read more<|end_of_text|>'
+
+--- Sequence 2 | 406 tokens ---
+First tokens: [128000, 2460, 2262, 374, 1949, 369, 5127, 311, 27100, 11]
+Last tokens:  [11968, 1131, 4518, 810, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>All content is free for everyone to browse, download and share.\nTips for how to search on AER: type keywords into the search box or use the filtering options below to find the content relevant for you – including peer-reviewed journal articles and non-peer reviewed grey literature.\n'
+Text ending:  'ers respond to the spatial pattern of fire and create a patchy, heterogen...Read more<|end_of_text|>'
+
+--- Sequence 3 | 373 tokens ---
+First tokens: [128000, 3923, 374, 19225, 1989, 30, 763, 420, 3388, 11]
+Last tokens:  [1215, 11736, 5955, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>What is contemporary art? In this course, you’ll consider this question through more than 70 works of art made between 1980 and the present, with a focus on art from the past decade. You’ll hear directly from artists, architects, and designers from around the globe about their creat'
+Text ending:  'alization?\nIs financial aid available?\nMore questions? Visit the Learner Help Center.<|end_of_text|>'
+
+--- Sequence 4 | 6635 tokens ---
+First tokens: [128000, 32845, 68055, 374, 264, 36908, 430, 1690, 1274, 6604]
+Last tokens:  [753, 539, 10882, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Serotonin is a hormone that many people speak of with great reverence. But most people don’t actually know what it does and why it makes them happy. We’re going to explain in this article exactly what serotonin is, why you need it, and how to make sure your levels stay where they’re'
+Text ending:  'lar program of training than to force yourself into a routine that’s not comfortable.<|end_of_text|>'
+
+================================================================================
+Detailed check: 00010_tokens (4,040,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 230 tokens ---
+First tokens: [128000, 32, 2128, 315, 14248, 6197, 555, 7957, 29770, 11]
+Last tokens:  [505, 13235, 10170, 5513, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>A team of scientists led by James Collins, a professor of biomedical engineering at Boston University, has followed a trail of genetic clues to determine exactly how antibiotics kill bacteria. And their work may point to a new approach to revive the effectiveness of existing antibio'
+Text ending:  'he essential factor."\n- here\'s the release\n- read the story from Medical Science News<|end_of_text|>'
+
+--- Sequence 1 | 776 tokens ---
+First tokens: [128000, 52157, 430, 499, 617, 7041, 279, 1890, 11341, 11888]
+Last tokens:  [568, 11886, 12722, 30, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Imagine that you have exactly the same appearance nine balls of which one has a greater mass than the other. You have isosceles weights. Post a procedure as you would using a weights to discover heavier balls. How many measurements at least you have to do?\nThank you for submitting a'
+Text ending:  ' points are deducted. Ondrej got 25 points. How many problems did he solve correctly?<|end_of_text|>'
+
+--- Sequence 2 | 357 tokens ---
+First tokens: [128000, 3923, 656, 358, 2980, 311, 387, 279, 1455, 57042]
+Last tokens:  [279, 3723, 4273, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>What do I consider to be the most trustworthy sources of news, as of early 2019, 65 percent of adults who responded to a global survey stated that they trusted traditional media and search engines, making the two different but popular outlets the most trusted sources of news and inf'
+Text ending:  'ncerns about the influence of fake news on voters and elections in the United States.<|end_of_text|>'
+
+--- Sequence 3 | 881 tokens ---
+First tokens: [128000, 44, 66018, 26987, 66852, 119234, 15433, 689, 362, 10984]
+Last tokens:  [389, 8577, 82894, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Machu Picchu Wikipédia A Enciclopédia Livre\nMachu picchu is a 15th century inca citadel, located in the eastern cordillera of southern peru, on a 2,430 metre (7,970 ft) mountain ridge. it is located in the cusco region, urubamba province, machupicchu district, above the sacred valle'
+Text ending:  'on. see all 642 santuario historico de machu picchu tickets and tours on tripadvisor.<|end_of_text|>'
+
+--- Sequence 4 | 327 tokens ---
+First tokens: [128000, 65432, 41910, 1389, 3296, 16870, 17862, 44610, 31663, 466]
+Last tokens:  [2890, 2512, 37256, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Boston Globe – By Rosabeth Moss Kanter on\nWHEN POLICY MAKERS talk about solutions to inequality, they usually focus on education and jobs. But this conversation largely ignores the need for improved transportation infrastructure to provide access to these jobs and schools. Through b'
+Text ending:  'rsely affected finances, job choices, and ability to get to health care appointments.<|end_of_text|>'
+
+================================================================================
+Detailed check: 00011_tokens (4,040,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 746 tokens ---
+First tokens: [128000, 791, 35544, 374, 31183, 311, 279, 9909, 315, 279]
+Last tokens:  [1274, 264, 1060, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>The republic is situated to the west of the Ural Mountains, in the north-east of the East European Plain. Its area is 416774 km2. Winters in the republic are long and cold, and the summers, while short, are quite warm. River system of the republic counts about 59 thousands of rivers'
+Text ending:  't bases are active. On average, the park is visited by over 5 thousand people a year.<|end_of_text|>'
+
+--- Sequence 1 | 1384 tokens ---
+First tokens: [128000, 20004, 940, 3402, 17158, 304, 50298, 19845, 937, 3308]
+Last tokens:  [449, 701, 4885, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Sexual Reproduction in Plants ICSE Class-8th Goyal Brothers Biology Solutions Chapter-2 , Unit 2 . We Provide Step by Step Answer of Objective, True False , Fill in the blanks , Match the following , Short/Long Answer Type of Chapter-2 unit 2, Sexual Reproduction in Plants. Visit of'
+Text ending:  'd of Sexual Reproduction in Plants Class-8th Goyal :–\nPlease Share with your friends.<|end_of_text|>'
+
+--- Sequence 2 | 768 tokens ---
+First tokens: [128000, 32, 6742, 6051, 4691, 757, 922, 32380, 53049, 596]
+Last tokens:  [57865, 10748, 2324, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: "<|begin_of_text|>A reader recently asked me about Costa Rica's response to climate change, and it got me thinking about how Costa Rica is an eco-friendly destination. That made me want to dig deeper and share more on this topic, which is close to my heart.\nReserves, national parks, and wildlife refu"
+Text ending:  " in awe and wonder. It's no wonder the national motto is Pura Vida—meaning pure life.<|end_of_text|>"
+
+--- Sequence 3 | 3021 tokens ---
+First tokens: [128000, 791, 5845, 311, 6227, 11944, 2038, 374, 2663, 1579]
+Last tokens:  [13, 7322, 15287, 17, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>The ability to remember detailed information is called high-fidelity long-term memory. We use high-fidelity long-term memory to remember the details of our favorite stories and how to track which family member a green pair of socks belongs to. As we age, the ability to remember thes'
+Text ending:  'n hippocampal CA3 and dentate gyrus. Science 319:1640–2. doi: 10.1126/science.1152882<|end_of_text|>'
+
+--- Sequence 4 | 121 tokens ---
+First tokens: [128000, 45053, 5620, 24717, 311, 12192, 1579, 73119, 26895, 35]
+Last tokens:  [279, 6625, 41602, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Exploring mechanisms to promote high biodiversity REDD\n11/10 - 11/16\nThis project is part of\nThe project aims to make biodiversity a key criterion of the REDD+ debate. To that end, it is carrying out a measure in Viet Nam, where it is working to make the criterion of biodiversity an'
+Text ending:  'd will contribute the experience gathered in Viet Nam to the international discourse.<|end_of_text|>'
+
+================================================================================
+Detailed check: 00012_tokens (4,050,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 684 tokens ---
+First tokens: [128000, 66497, 3315, 350, 17606, 26, 279, 30191, 6685, 43618]
+Last tokens:  [8318, 9115, 580, 1, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Gerda Taro; the revolutionary photojournalist\nOn July 26, 1937, at age 26, newspaper correspondent Gerda Taro died in war torn Spain, a woman that can as well be considered the first war reporter fallen in a battlefield.\nShe was born in Stuttgart on August 1, 1910 in a Polish Jews w'
+Text ending:  ' to all newly published articles.\nThe editorial staff0 lettori hanno messo "mi piace"<|end_of_text|>'
+
+--- Sequence 1 | 2469 tokens ---
+First tokens: [128000, 57853, 11988, 38505, 198, 3923, 374, 12411, 11988, 38505]
+Last tokens:  [220, 9413, 21, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Federal Student Aid\nWhat is Federal Student Aid\nIt is financial aid from the federal government to help qualified students pay for education expenses at an eligible college, technical school, vocational school, or graduate school. The Financial Aid Office will help students navigate'
+Text ending:  'ion on financial aid, please contact our financial aid specialist at (740) 642- 1326.<|end_of_text|>'
+
+--- Sequence 2 | 366 tokens ---
+First tokens: [128000, 49812, 11, 40602, 66, 371, 285, 606, 26338, 16779]
+Last tokens:  [1455, 15748, 5157, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Study, Hydrocortisone reduces deaths in seriously ill patients from COVID-19\nA study conducted in the United Kingdom, hydrocortisone, a low-cost steroid, reduces the risk of death by about 20 percent in patients with severe forms of COVID-19. In this European country, doctors are go'
+Text ending:  'ital tests were conducted and that the steroid is reserved for the most severe cases.<|end_of_text|>'
+
+--- Sequence 3 | 309 tokens ---
+First tokens: [128000, 791, 18793, 1950, 49169, 220, 17, 3388, 690, 5357]
+Last tokens:  [279, 18793, 1950, 33410, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>The TEAS Prep 2 course will focus on the Mathematics and Science portion of the exam.The path to becoming a nurse starts with nursing school. Admission to nursing school depends on several factors, including your score on the standardized Test of Essential Academic Skills (TEAS).\nTh'
+Text ending:  'cientific Reasoning\n- Life Sciences\n- Physical Sciences\n- Preparing for the TEAS Exam<|end_of_text|>'
+
+--- Sequence 4 | 216 tokens ---
+First tokens: [128000, 1272, 26855, 15819, 425, 5046, 83797, 1439, 3296, 67888]
+Last tokens:  [311, 8108, 433, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>40 Detail Footage Of Sculptures By Famous Artist Michelangelo\nArt movements that emerged at the beginning of the century and\ngroups of artists have broken the traditional perception of art. Art\nit is not under the rule of a single group, but that society should cease to be under the'
+Text ending:  'her, the boundaries between art and life are largely\nthey could be said to reduce it.<|end_of_text|>'
+
+================================================================================
+Detailed check: 00013_tokens (4,040,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 239 tokens ---
+First tokens: [128000, 52, 18244, 355, 993, 13, 320, 24037, 8, 611]
+Last tokens:  [323, 3629, 20727, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Ulmus sp. (elm) / Carpinus heerii Ettingsh. (hornbeam) / Ostrya atlantides Ung. (hop hornbeam) / Betula confusa Sap. (birch)\nThe leaves of these four species are in most cases hard to distinguish with certainty from each other. They have a rather short petiole, a rounded base and a '
+Text ending:  'ngated leaves than elm and birch. These leaves are not very common and often damaged.<|end_of_text|>'
+
+--- Sequence 1 | 505 tokens ---
+First tokens: [128000, 4054, 315, 279, 1455, 3062, 5540, 315, 1203, 82129]
+Last tokens:  [39804, 701, 4027, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>One of the most important elements of backwoods camping or park camping if allowed is being able to start a fire in less than perfect weather. It’s extremely important to have a reliable method of starting the fire.\nThis is when you need to have adequate, dry fire-starters. Here’s a'
+Text ending:  'starters just strike the match heads on a rough surface like a rock.\nEnjoy your fire.<|end_of_text|>'
+
+--- Sequence 2 | 412 tokens ---
+First tokens: [128000, 37255, 6913, 8331, 14718, 264, 7631, 369, 2585, 304]
+Last tokens:  [10096, 315, 2585, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>А basic factor causing a demand for control in organizations, is the uncertainty and turbulence they are facing. Of course, there are also other factors calling for control, such as the need to coordinate activities and to motivate behavior. But, behind these needs we still find the'
+Text ending:  'tion will also make arrangements so as to meet other demands and purposes of control.<|end_of_text|>'
+
+--- Sequence 3 | 276 tokens ---
+First tokens: [128000, 36500, 14930, 5907, 68198, 198, 91, 8537, 4010, 220]
+Last tokens:  [3048, 323, 7065, 3649, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Science Fair Project Encyclopedia\n| ethyl 8-fluoro-5,6-dihydro-5-methyl-6-oxo-|\n| CAS number |\n| ATC code |\n|Elimination half life|| 7-15 min (initial) |\n20-30 min (brain)\n40-80 min (terminal)\n|Excretion|| Urine 90-95% |\nFlumazenil (flumazepil, Anexate®, Lanexat®, Mazicon®, Romazico'
+Text ending:  'e Documentation License. Click here to see the transparent copy and copyright details<|end_of_text|>'
+
+--- Sequence 4 | 256 tokens ---
+First tokens: [128000, 36500, 14930, 5907, 68198, 198, 1128, 10663, 315, 37355]
+Last tokens:  [3048, 323, 7065, 3649, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Science Fair Project Encyclopedia\nConstitution of Finland\nThe Constitution of Finland defines the government and its shape, the relationship between the different topmost branches of the commonwealth and the rights of the individual. The original constitution took force in 1919, soo'
+Text ending:  'e Documentation License. Click here to see the transparent copy and copyright details<|end_of_text|>'
+
+================================================================================
+Detailed check: 00014_tokens (4,040,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 168 tokens ---
+First tokens: [128000, 12833, 21625, 220, 1049, 20, 198, 12833, 21625, 220]
+Last tokens:  [6106, 6573, 8830, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Complete Kit 2005\nComplete Kit 2005 : 4th Edition\n- For ages: 12-17\n- Format: Paperback\n- Dimensions: 216 x 277 x 58mm | 2,722g\n- Publication date: 01 Apr 2004\n- Publisher: Saxon Publishers\n- Publication City/Country: United Kingdom\n- Language: English\n- Edition Statement: Teacher e'
+Text ending:  'ination of a specific math topic - discussed at length to ensure solid understanding.<|end_of_text|>'
+
+--- Sequence 1 | 314 tokens ---
+First tokens: [128000, 2170, 459, 15592, 4221, 1646, 11, 358, 1097, 539]
+Last tokens:  [1203, 369, 810, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>As an AI language model, I am not able to determine the specific article title to write about. Therefore, I will provide general information on how to write a good article.\nWriting a great article is not just about throwing words onto paper. It is about creating something that peopl'
+Text ending:  'e an effective and engaging article that will keep your readers coming back for more.<|end_of_text|>'
+
+--- Sequence 2 | 1484 tokens ---
+First tokens: [128000, 11076, 11245, 16536, 4595, 527, 33297, 635, 11, 96849]
+Last tokens:  [635, 79319, 1920, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Common iron ore types are magnetite, hematite, limonite and siderite. Among them, hematite is a weakly magnetic iron ore with uneven particle size and high fine particle content. Hematite is a mineral form that contains iron oxide. It is one of nature’s most abundant and widely dist'
+Text ending:  'decision, JXSC will help you get the most out of your hematite beneficiation process.<|end_of_text|>'
+
+--- Sequence 3 | 337 tokens ---
+First tokens: [128000, 3947, 527, 1690, 470, 1441, 430, 1304, 872, 1648]
+Last tokens:  [70797, 507, 8161, 49565, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: "<|begin_of_text|>There are many comets that make their way around our solar system. We are familiar with the ones that deploy like clockwork to their own calendars, for example Halley's Comet or Comet Hale-Bopp. Though our modern understanding of comets as travelers of the solar system is a few hund"
+Text ending:  'ebpage!\nThank you for your time and happy spotting,\nObservatory Intern, Tara ODonnell<|end_of_text|>'
+
+--- Sequence 4 | 696 tokens ---
+First tokens: [128000, 11769, 1060, 11, 439, 1690, 439, 220, 1135, 11]
+Last tokens:  [810, 9337, 5315, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Every year, as many as 50,000 elephants in Africa are killed illegally for their ivory tusks. Now scientists have improved DNA methods that allow them to match up tusks, and help track down criminal gangs that are selling the ivory.\nEven though it’s against the law, African elephant'
+Text ending:  'life will soon help protect other kinds of animals and break up more criminal groups.<|end_of_text|>'
+
+================================================================================
+Detailed check: 00015_tokens (4,050,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 992 tokens ---
+First tokens: [128000, 31224, 7569, 18143, 1514, 264, 16595, 3560, 304, 10695]
+Last tokens:  [315, 34225, 2671, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Scholarships play a vital role in helping students achieve their academic dreams. For high school students, scholarships can open doors to various opportunities, making their educational journey more accessible and rewarding. In this article, we will explore the different types of s'
+Text ending:  'nd use online scholarship databases that provide a wide range of scholarship options.<|end_of_text|>'
+
+--- Sequence 1 | 136 tokens ---
+First tokens: [128000, 791, 29551, 8957, 374, 14134, 4186, 4147, 304, 12387]
+Last tokens:  [4907, 18874, 8522, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>The roller chain is frequently utilised in numerous mechanical units to transmit electricity from a single rotating shaft or sprocket to a different. It is widely utilized in programs these types of as motorcycles, bicycles, industrial equipment, conveyors, and automotive programs.\n'
+Text ending:  ' to refer to the exact same style of chain used for energy transmission applications.<|end_of_text|>'
+
+--- Sequence 2 | 828 tokens ---
+First tokens: [128000, 791, 3157, 374, 2539, 315, 7185, 19476, 11, 2225]
+Last tokens:  [304, 279, 3157, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>The market is full of interesting concepts, both simple and complex. A simpler version of the market is trading and investing in stocks and mutual funds. The complicated version is knowing the internal mechanisms built into the system, known as exchanges. One such complex mechanism '
+Text ending:  ' make informed decisions and take advantage of opportunities available in the market.<|end_of_text|>'
+
+--- Sequence 3 | 270 tokens ---
+First tokens: [128000, 29784, 315, 220, 10562, 17, 482, 9805, 323, 51346]
+Last tokens:  [753, 5426, 9764, 30, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>War of 1812 - Context and guiding questions:\nEuropean (and other old-world) conflicts have effects on relationships and events in North America, and this was also true before, during and after the War of 1812. Alliances formed out of changing territorial occupation, and in response '
+Text ending:  'f women in the War of 1812? How did the War of 1812 shape Canada’s national identity?<|end_of_text|>'
+
+--- Sequence 4 | 352 tokens ---
+First tokens: [128000, 17, 13, 25927, 32, 6783, 889, 71945, 279, 1938]
+Last tokens:  [315, 459, 7471, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>2. OperationsA manager who oversees the day-to-day processes of delivering value to the customer. For example, management of revenue generating IT infrastructure.\n3. ProductionProduction of products such as a manager at a factory who is responsible for production levels, quality and'
+Text ending:  'erview: Line Management|\nThe management of the day-to-day outputs of an organization.<|end_of_text|>'
+
+================================================================================
+Detailed check: 00016_tokens (4,050,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 257 tokens ---
+First tokens: [128000, 14788, 279, 4384, 7917, 449, 5219, 220, 16, 12]
+Last tokens:  [279, 3830, 596, 1396, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Fill the empty cells with numbers 1-10 , however , one number has become the "Separator" (given as · in the grid). So that each row/column/box contains the separator and other nine numbers exactly once.\n2.Cyan lines are "friendly lines": numbers on the friendly lines must correspond'
+Text ending:  "r\nHow are the boxes numbered?\nReply: The number in the INDEX cell is the box's number<|end_of_text|>"
+
+--- Sequence 1 | 1063 tokens ---
+First tokens: [128000, 32, 9024, 63989, 31376, 505, 1611, 258, 3633, 331]
+Last tokens:  [389, 11406, 10170, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>A rare dinosaur fossil from Deinonychusthe species that inspired the appearance and behavior of the fearsome velociraptor in the “Jurassic Park” movies, it just sold for a whopping $12.4 million at auction.\nThe 10-foot-long (3-meter) skeleton, unearthed in Montana in 2015, includes '
+Text ending:  'nd opening in 2025 of a Natural History Museum.\nOriginally published on Live Science.<|end_of_text|>'
+
+--- Sequence 2 | 921 tokens ---
+First tokens: [128000, 12389, 499, 3596, 1027, 389, 264, 12141, 1405, 499]
+Last tokens:  [315, 701, 7458, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Have you ever been on a ride where you felt there was some kind of bounce in your car, even when you couldn’t see any bulge on the roads?\nHave you ever felt like your car is turning itself to any one particular side?\nThese are signs that there is a problem with the wheel alignment o'
+Text ending:  't is checked when you experience a change in the driving or handling of your vehicle.<|end_of_text|>'
+
+--- Sequence 3 | 1988 tokens ---
+First tokens: [128000, 2620, 315, 8970, 512, 12, 7874, 4595, 323, 872]
+Last tokens:  [11591, 1083, 17323, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Table of contents:\n- Common types and their characteristics\n- How the body becomes infected with parasites\n- Prevention of worms with drugs\n- Folk remedies to prevent helminthiasis\n- Personal hygiene and sanitation rules\nVideo: Prevention Of Worms In Children: What To Give, Pills An'
+Text ending:  'and the baby, and this can significantly reduce the risk of infection with helminths.<|end_of_text|>'
+
+--- Sequence 4 | 159 tokens ---
+First tokens: [128000, 791, 9511, 26086, 374, 264, 26654, 1990, 6373, 323]
+Last tokens:  [279, 8141, 315, 8070, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>The labor dispute is a controversy between management and labor over the terms and conditions of the workplace. Disputes are common in the labor market. They can take many aspects of the work environment, including working conditions, hours of work, tenures, wages, job descriptions,'
+Text ending:  'tatistic of economic inequality in a society. It tells you the distribution of income<|end_of_text|>'
+
+================================================================================
+Detailed check: 00017_tokens (4,060,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 311 tokens ---
+First tokens: [128000, 24762, 922, 279, 7419, 315, 264, 8798, 31498, 323]
+Last tokens:  [5475, 369, 8494, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Learn about the definition of a heatwave and how we classify heatwaves by intensity.\nOn this page\nA heatwave is when the maximum and minimum temperatures are unusually hot over 3 days. This is compared to the local climate and past weather.\nIt takes more than a high daily maximum te'
+Text ending:  ' works or exercises outdoors can be at risk.\nView our Heatwave Service for Australia.<|end_of_text|>'
+
+--- Sequence 1 | 515 tokens ---
+First tokens: [128000, 34, 51549, 73084, 40143, 512, 34, 51549, 73084, 40143]
+Last tokens:  [2754, 2184, 2324, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: "<|begin_of_text|>Cognitive Behavioral Therapy:\nCognitive Behavioral Therapy (CBT) is a therapy modality that focuses on the relationship between one\\'s thoughts, feelings, and behaviors. It is used to establish and allow for healthy responses to thoughts and feelings (instead of unhealthy responses,"
+Text ending:  'luding challenges faced by the patient in their social, family, and work/school life.<|end_of_text|>'
+
+--- Sequence 2 | 758 tokens ---
+First tokens: [128000, 2746, 499, 3629, 3568, 449, 9235, 11013, 11, 1101]
+Last tokens:  [1314, 369, 499, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>If you often deal with dry mouth, also known as xerostomia, you’re probably tired of facing this issue regularly. Getting rid of this oral health problem can be tough because it is often due to a medical condition or as a side effect of medication you need for treatment. That doesn’'
+Text ending:  ' your doctor or dentist to see if Aquoral or other treatments might be right for you.<|end_of_text|>'
+
+--- Sequence 3 | 1280 tokens ---
+First tokens: [128000, 58, 52397, 10063, 8655, 7899, 45221, 2078, 6498, 29738]
+Last tokens:  [1633, 7353, 4751, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>[responsivevoice_button voice=”US English Female” buttontext=”Read out this Theel for me”]\nFinancial inclusion is the availability of financial services, including savings and deposits, payments and transfer services, credits and insurances to the people of urban as well as remote a'
+Text ending:  'for an individual. In reality, you must have understood that it is a very broad term.<|end_of_text|>'
+
+--- Sequence 4 | 1184 tokens ---
+First tokens: [128000, 62647, 287, 20229, 505, 279, 19738, 17432, 315, 25534]
+Last tokens:  [18249, 1245, 1080, 68, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Protecting birds from the aggressive behaviour of killer honey bees is of utmost importance for bird farmers and enthusiasts. These hybrid bees, also known as Africanized honey bees, pose a significant threat to bird populations when they invade nests or hives. In this comprehensive'
+Text ending:  'y utilizing these natural methods, you can protect birds and promote a harmonious coe<|end_of_text|>'
+
+================================================================================
+Detailed check: 00018_tokens (4,063,419 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 1425 tokens ---
+First tokens: [128000, 2520, 264, 5647, 315, 1148, 1053, 3621, 1120, 439]
+Last tokens:  [1555, 279, 22237, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: "<|begin_of_text|>For a sense of what would happen just as a mental picture, what you do to the ball wouldn't translate clearly into a change in its orbit until you had both moved along on your paths through a fairly large angle. At the altitude of the ISS, of about 400 km, it takes about 90 minutes "
+Text ending:  's to download even just the demo of Kerbal Space Program and go through the tutorial.<|end_of_text|>'
+
+--- Sequence 1 | 250 tokens ---
+First tokens: [128000, 1383, 91149, 49894, 664, 11, 44851, 6576, 198, 45605]
+Last tokens:  [617, 6220, 12659, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>By Audrey Renaud, Comedy editor\nLiving in Georgia means we have to deal with extremely hot and humid summers. This kind of weather can present many different problems, including sun burns, dehydration, and in extreme cases, heat exhaustion or heat stroke. Sports, and other activitie'
+Text ending:  's of heat exhaustion in yourself and others so that everyone can have safe practices.<|end_of_text|>'
+
+--- Sequence 2 | 907 tokens ---
+First tokens: [128000, 2127, 22689, 374, 264, 3044, 304, 902, 279, 2547]
+Last tokens:  [25000, 323, 28585, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Anemia is a condition in which the body does not have enough healthy red Weakened stomach lining (atrophic gastritis); An autoimmune. Pernicious anemia probably is an autoimmune disorder with a genetic predisposition. The disease is more common than is expected in families. Pernicio'
+Text ending:  'ually fatal. Merck Research Laboratories; The risk is the same for males and females.<|end_of_text|>'
+
+--- Sequence 3 | 261 tokens ---
+First tokens: [128000, 7131, 499, 1440, 430, 1841, 37237, 527, 279, 674]
+Last tokens:  [57, 14757, 3997, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Did you know that car crashes are the #1 killer of young people in the U.S.?\nVisit the official National Organizations for Youth Safety website for resources on traffic-related injury prevention.\nTwo Wheel Safety Month: Motorcycle and Bicycles\nMotorcyclists, bicyclists and motorists'
+Text ending:  ' everyone in your vehicle and road workers.\nLearn more on the official NWZAW website.<|end_of_text|>'
+
+--- Sequence 4 | 565 tokens ---
+First tokens: [128000, 37440, 263, 304, 4892, 43101, 6406, 11, 20355, 2001]
+Last tokens:  [32054, 11, 20355, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Easton in Northampton County, Pennsylvania — The American Northeast (Mid-Atlantic)\nwhich General John Sullivan\nmarched June 18, 1779, to quell\nthe Indian insurrection and\navenge the Wyoming Massacre\nErected by the\nGeorge Taylor Chapter\nDaughters of the American\nRevolution, June 18, '
+Text ending:  ': 1, 2. submitted on July 2, 2019, by William Fischer, Jr. of Scranton, Pennsylvania.<|end_of_text|>'
+
+================================================================================
+Detailed check: 00019_tokens (4,063,419 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 508 tokens ---
+First tokens: [128000, 16778, 24561, 15457, 2541, 198, 791, 4382, 3347, 43787]
+Last tokens:  [81956, 19126, 60086, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: "<|begin_of_text|>Simple Past Storyboard\nThe simple past tense can be tricky for students to grasp at first. That's why it's important to teach it in engaging and interactive ways. Here are some fun simple past activities to liven up your grammar lessons.\nSimple Past Games\nTurn learning simple past i"
+Text ending:  'e activities and online tools to liven grammar lessons on tricky indefinite pronouns.<|end_of_text|>'
+
+--- Sequence 1 | 661 tokens ---
+First tokens: [128000, 8607, 26206, 15174, 5357, 389, 1268, 311, 4822, 389]
+Last tokens:  [279, 26487, 5507, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Many productivity strategies focus on how to stay on-task. However, it’s equally important to know how to switch tasks. A tendency to hyper-focus and perfectionism can both make switching tasks challenging.\nWhy is it important to know how to stop working on a task?\nImagine for a mom'
+Text ending:  ' a strategy called REST that can help. Click to view the HTML text for the REST tool.<|end_of_text|>'
+
+--- Sequence 2 | 344 tokens ---
+First tokens: [128000, 18077, 926, 18317, 12633, 198, 38, 8506, 18317, 12633]
+Last tokens:  [12351, 18991, 477, 2587, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>RFID Plant Tag\nGarden Plant Tag\nA plant label is a small tag or marker that is used to provide information about a specific plant. These labels are typically\nplaced near or on the plant in gardens, nurseries, botanical gardens, and other locations where plants are grown or displayed'
+Text ending:  'rolled experiments or natural environments.\nGarden Plant Tag\nlaser printing or custom<|end_of_text|>'
+
+--- Sequence 3 | 199 tokens ---
+First tokens: [128000, 791, 11188, 5111, 11, 48208, 58274, 596, 2132, 2363]
+Last tokens:  [8861, 8267, 5810, 91, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: "<|begin_of_text|>The River War, Winston Churchill's second book, describes the reconquest of the Sudan from the Islamist regime of the Dervishes by an Anglo-Egyptian army commanded by General Herbert Kitchener, 1896-99. Churchill participated in the campaign as an officer and a war correspondent, ch"
+Text ending:  "chill's thoughts on empire, war, race and religion.\n|Read More||Register Online Here|<|end_of_text|>"
+
+--- Sequence 4 | 1923 tokens ---
+First tokens: [128000, 11649, 35214, 7572, 25, 34507, 4718, 38895, 11, 28479]
+Last tokens:  [323, 24770, 2324, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Wellbeing Power: Boost Your Mental, Physical and Emotional Health\nWellbeing refers to the state of being comfortable, healthy, and happy, and is a broader concept than moment-to-moment happiness. It encompasses physical, mental, emotional, and social health factors.\nAchieving wellbe'
+Text ending:  'e care of yourself and prioritize your well-being for a fulfilling and balanced life.<|end_of_text|>'
+
+================================================================================
+Detailed check: 00000_tokens (3,990,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 2475 tokens ---
+First tokens: [128000, 2675, 649, 956, 3412, 264, 18355, 11, 719, 279]
+Last tokens:  [10458, 39, 2507, 715, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: "<|begin_of_text|>You can't hold a bitcoin, but the web currency's value has skyrocketed. Why?\nUnlike gold or dollar bills, the digital currency known as bitcoin does not physically exist. There is no there there.\nEven so, there is excitement – and speculation. And a wild rollercoaster ride.\nThe pric"
+Text ending:  'eated and move through the economy.\n- Tim Johnson\nSource: McClatchy DC by TIM JOHNSON<|end_of_text|>'
+
+--- Sequence 1 | 5026 tokens ---
+First tokens: [128000, 67393, 10721, 311, 636, 499, 3940, 198, 12805, 499]
+Last tokens:  [11, 4299, 1618, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>iPad apps to get you started\nOnce you have set up your iPad, the best thing to do is to spend some time browsing the internet using Safari – your iPad’s internet browser; taking and sharing pictures; and perhaps even reading ,composing and sending some emails to get used to its intu'
+Text ending:  ' the username and password.\nFinally, if you are ready for even more apps, click here.<|end_of_text|>'
+
+--- Sequence 2 | 104 tokens ---
+First tokens: [128000, 3408, 25, 220, 16, 220, 16, 14, 23, 702]
+Last tokens:  [1139, 813, 49816, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Width: 1 1/8"\nThe first of these unique and monumental crosses began to be erected in the 8th century.\nIt is popular belief and legend that the typical design of the traditional Celtic Cross was authored by St. Patrick himself. The Christian cross was placed over the circle represen'
+Text ending:  ' Cross predominates over paganism but at the same time accepts pagans into his flock.<|end_of_text|>'
+
+--- Sequence 3 | 275 tokens ---
+First tokens: [128000, 11787, 499, 5644, 369, 279, 8815, 5380, 23829, 2940]
+Last tokens:  [12, 24, 1667, 765, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Are you ready for the challenge?\nElsewhere $25.24 $18.70 Save $6.54 (26%)\nFree shipping Australia wide\nOrder now for Christmas delivery\n|Format: ||Paperback, 64 pages|\n|Other Information: ||Full colour throughout|\n|Published In: ||United Kingdom, 06 July 2017|\nKids can learn the ess'
+Text ending:  ' kids this year." * London Mums Magazine *\n24 x 20 centimetres (0.27 kg)|\n5-9 years |<|end_of_text|>'
+
+--- Sequence 4 | 142 tokens ---
+First tokens: [128000, 20175, 2191, 20326, 19823, 320, 1950, 35, 8, 323]
+Last tokens:  [304, 44229, 9265, 91, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Autism spectrum disorder (ASD) and Tourette syndrome (TS) are neurodevelopmental disorders. ASD and TS are traditionally considered to be separate conditions. Nevertheless, these disorders have a high degree of overlap, and “pure” cases are rare in both clinical and population-based'
+Text ending:  ' di pubblicazione:||Being printed|\n|Appare nelle tipologie:||1.1 Articolo in rivista|<|end_of_text|>'
+
+================================================================================
+Detailed check: 00001_tokens (4,000,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 557 tokens ---
+First tokens: [128000, 96014, 304, 264, 34267, 3190, 11, 7043, 1369, 258]
+Last tokens:  [15687, 323, 11841, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Raised in a refugee camp, Paul Sein Twa is one in every of Myanmar’s main environmental defenders. Regardless of residing in a battle zone, he has been instrumental in defending swathes of his homeland\nIndigenous leaders throughout the globe are successful gamechanging environmental'
+Text ending:  'weight on the Indigenous teams which are scoring main victories for folks and planet.<|end_of_text|>'
+
+--- Sequence 1 | 675 tokens ---
+First tokens: [128000, 47, 483, 40282, 304, 85581, 9451, 6406, 11, 16272]
+Last tokens:  [4756, 420, 2199, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Pine Harbor in McIntosh County, Georgia — The American South (South Atlantic)\nCaptain William McIntosh\nIn this plot under the “Great Oak at Mallow Plantation,” Captain William McIntosh, father of the Indian chief, General William McIntosh, was buried in 1794. Captain McIntosh, an of'
+Text ending:  'troud of Bluffton, South Carolina. • Kevin W. was the editor who published this page.<|end_of_text|>'
+
+--- Sequence 2 | 402 tokens ---
+First tokens: [128000, 50, 3713, 272, 291, 1590, 315, 872, 8333, 198]
+Last tokens:  [369, 872, 5021, 11, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Sapping cedars of their strength\nBe careful where you catch some shade this summer.\nAn infestation of red spider mites is causing cedar deodar trees\n-- the city’s second-most popular tree -- to defensively rain sap\ndroplets and shed needles.\nRed spider mite infestations occur just a'
+Text ending:  'ar before cooler\nweather arrives risk a lower expectation of survival for their tree,<|end_of_text|>'
+
+--- Sequence 3 | 1211 tokens ---
+First tokens: [128000, 644, 264, 3293, 4007, 8621, 311, 279, 1812, 51739]
+Last tokens:  [25496, 3080, 85, 16, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>In a recent study posted to the medRxiv* preprint server, researchers conducted a comparative study among a cohort of individuals on rheumatoid arthritis (RA) therapies vis-à-vis healthy controls to assess their responses to coronavirus disease 2019 (COVID-19) vaccines.\nRA, an autoi'
+Text ending:  '101/2023.01.03.23284167 https://www.medrxiv.org/content/10.1101/2023.01.03.23284167v1<|end_of_text|>'
+
+--- Sequence 4 | 303 tokens ---
+First tokens: [128000, 2677, 311, 33009, 3432, 4999, 7529, 16, 68198, 98520]
+Last tokens:  [220, 7529, 15, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Click to donate today!\n1911 Encyclopedia Britannica\nJOB ORTON (1717-1783), English dissenting minister, was born at Shrewsbury on the 4th of September 1717. He entered the academy of Dr Philip Doddridge at Northampton, became minister of a congregation formed by a fusion of Presbyte'
+Text ending:  'a Britanica. https://www.studylight.org/encyclopedias/eng/bri/j/job-orton.html. 1910.<|end_of_text|>'
+
+================================================================================
+Detailed check: 00002_tokens (4,020,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 1139 tokens ---
+First tokens: [128000, 791, 6873, 2115, 374, 15320, 304, 31405, 449, 502]
+Last tokens:  [304, 904, 5216, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>The education field is constantly in flux with new policies, emerging research, and evolving populations, all transactional spaces where change takes place. To say that keeping abreast of all that is new and coming is a challenge is an understatement. Yet, this growth is even more r'
+Text ending:  'our education as a teacher can open pathways to growth and movement in any direction.<|end_of_text|>'
+
+--- Sequence 1 | 150 tokens ---
+First tokens: [128000, 24819, 953, 362, 13, 39524, 449, 5632, 24485, 198]
+Last tokens:  [323, 1664, 2949, 2564, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Appendix A. Programming with Windows Forms\nSince the release of the .NET platform (circa 2001), the base class libraries have included a particular API named Windows Forms, represented primarily by the\nSystem.Windows.Forms.dll assembly. The Windows Forms toolkit provides the types n'
+Text ending:  'pulate image data.\nThe Windows Forms (and GDI+) APIs remain alive and well within ...<|end_of_text|>'
+
+--- Sequence 2 | 1317 tokens ---
+First tokens: [128000, 4438, 311, 2567, 22319, 17614, 9498, 369, 3938, 22540]
+Last tokens:  [2476, 568, 1071, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: "<|begin_of_text|>How to keep Indiana soil healthy for future generations\nEditor's Note: The following is part of a class project originally initiated in the classroom of Ball State University professor Adam Kuban in fall 2021. Kuban continued the project this fall, challenging his students to find s"
+Text ending:  'art a new tradition, so our land is sustainable for our future generations,” he said.<|end_of_text|>'
+
+--- Sequence 3 | 306 tokens ---
+First tokens: [128000, 3936, 315, 279, 5211, 198, 3936, 315, 279, 5211]
+Last tokens:  [42626, 329, 818, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Title of the resource\nTitle of the resource in english\nLanternfish: Jobs, Worksheets, and Flashcards for the ESL and TEFL Teacher\nTarget and Age Group\nPrimary/middle school (age 8-14)\nLink to resource\nAccessed on 22 July, 2020\nAuthor of the Entry:\nAyelet Peer, Bar- Ilan University, '
+Text ending:  '\nThe women featured in the cross word include Helen of Troy, Arachne, Medea, Ariadne.<|end_of_text|>'
+
+--- Sequence 4 | 181 tokens ---
+First tokens: [128000, 66875, 27194, 315, 54250, 33025, 198, 2181, 7077, 430]
+Last tokens:  [430, 358, 1097, 12671, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Treasury of Scripture Knowledge\nIt happened that while\nJesus was praying in a certain place, after He had finished, one of His disciples said to Him, “Lord, teach us to pray just as John also taught his disciples.”\nAnd He came out and proceeded as was His custom to the Mount of Oliv'
+Text ending:  'n the way He questioned His disciples, saying to them, “Who do people say that I am?”<|end_of_text|>'
+
+================================================================================
+Detailed check: 00003_tokens (4,010,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 715 tokens ---
+First tokens: [128000, 4438, 279, 3451, 38423, 529, 315, 42168, 27990, 11]
+Last tokens:  [527, 1101, 67740, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>How the ‘bio’ of dibunda, a plant used in cosmetics, can be made into a medicine\nA new plant, called ‘biola’ in Portuguese, could be a major new medical breakthrough, according to an article in The Hindu.\nIt has been called the ‘living plant’ because it can be grown in the laborator'
+Text ending:  'd, and the plant regains its original shape.\nMésenez says the bollas are also edible.<|end_of_text|>'
+
+--- Sequence 1 | 1261 tokens ---
+First tokens: [128000, 46324, 84, 36409, 5867, 5141, 323, 40782, 198, 91]
+Last tokens:  [220, 2366, 16, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Vanuatu Emigration and Immigration\n|Vanuatu Wiki Topics|\n|Local Research Resources|\nFrom 1774-1980, Vanuatu was called New Hebrides. Search records prior to 1980 using the location New Hebrides.\nOnline Records[edit | edit source]\n- 1876-1914 List of journals of government agents, ab'
+Text ending:  '"Vanuatu", in Wikipedia, https://en.wikipedia.org/wiki/Vanuatu, accessed 20 Juy 2021.<|end_of_text|>'
+
+--- Sequence 2 | 429 tokens ---
+First tokens: [128000, 2746, 499, 3463, 499, 1051, 16066, 505, 6212, 69764]
+Last tokens:  [2288, 1389, 4587, 30, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>If you thought you were suffering from sleep deprivation as a new parent, you’re not alone. Bees feel it too.\nCaring for newborns is seemingly as tough for bees as it is for humans, new research shows. Worker bees tending to the young get less sleep compared to their hive mates – su'
+Text ending:  'p without a cost to their brain or other tissue.”\nErm, can we have that too – please?<|end_of_text|>'
+
+--- Sequence 3 | 366 tokens ---
+First tokens: [128000, 21243, 300, 4781, 72, 7438, 323, 6371, 198, 791]
+Last tokens:  [28289, 5144, 731, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Payaspati meaning and origin\nThe boy name Payaspati is especially used in Sanskrit language, Payaspati means "The Lord of Milk".Names that rhyme with Payaspati\nPopularity of Payaspati\nPayaspati is an uncommon name around the world.\nWhat numbers say about Payaspati?\nYou want to be lo'
+Text ending:  ' of Prachura is "Many"\nNamesakes of Payaspati\nWe could not find any notable namesake.<|end_of_text|>'
+
+--- Sequence 4 | 1336 tokens ---
+First tokens: [128000, 1383, 11291, 43168, 1601, 261, 323, 9052, 31194, 2727]
+Last tokens:  [389, 13813, 33775, 916, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>By Peter Pfisterer and Christian Dirmeier, TàƒV SàƒD AG Embedded Systems\nIt will be crucial to upgrade existing electricity grids into smart grids if Germany’s government is going to successfully phase out nuclear energy and replace it with renewable generating sources. Smart grids '
+Text ending:  'electricity producers and consumers.\nView Power Generation Articles on PennEnergy.com<|end_of_text|>'
+
+================================================================================
+Detailed check: 00004_tokens (4,020,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 397 tokens ---
+First tokens: [128000, 42, 34191, 15173, 11, 37229, 15131, 6629, 29413, 2908]
+Last tokens:  [6784, 11088, 388, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Knee surgery, anterior cruciate ligament\nIn over 80% of cases, surgery to repair an anterior cruciate ligament (ACL) fully restores the functioning of the knee.\nACL surgery will improve the stability of your knee and stop it giving way. You should be able to resume normal activities'
+Text ending:  'urgery, including advice about physiotherapy, gentle exercises and using painkillers.<|end_of_text|>'
+
+--- Sequence 1 | 12439 tokens ---
+First tokens: [128000, 127848, 1413, 4221, 29519, 10264, 388, 4320, 1401, 627]
+Last tokens:  [5663, 20653, 35251, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>figurative language bell ringers answer key.\nReinforce rhetorical appeals strategies of ethos logos and pathos with this fun and interactive sorting game. Download the audio for the Listening tests, example Speaking test video and answer keys with extra explanations (instructions on'
+Text ending:  'hit the red-hot pan. But how, and why, this happens is complex and counter-intuitive.<|end_of_text|>'
+
+--- Sequence 2 | 2309 tokens ---
+First tokens: [128000, 19997, 315, 10928, 2405, 27663, 323, 26496, 7511, 2028]
+Last tokens:  [8605, 90517, 1, 304, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Review of Short Phrases and Links|\nThis Review contains major "Rootkits"- related terms, short phrases and links grouped together in the form of Encyclopedia article.\n- Rootkits are a special kind of software tool used to hide trojans, viruses and other malware from your anti-virus '
+Text ending:  'ware\n- Malicious Programs\n- Poems > Epics > Iliad > Trojans\nBooks about "Rootkits" in<|end_of_text|>'
+
+--- Sequence 3 | 346 tokens ---
+First tokens: [128000, 5876, 10915, 37056, 50, 3651, 41756, 13435, 964, 30626]
+Last tokens:  [2052, 10734, 15516, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>QUICKLINKS AND VIEW OPITONS\nGirls who watch a lot of TV and get little physical activity 3 times more likely to be overweight\nThursday, April 17, 2008 2:15 pm Email this article\nGirls who watch a lot of television, defined as more than four hours of television per day, and get a lit'
+Text ending:  'mments about this article.\n© Copyright 2003-2021 - Larry Hobbs - All Rights Reserved.<|end_of_text|>'
+
+--- Sequence 4 | 4632 tokens ---
+First tokens: [128000, 92159, 54865, 95944, 295, 480, 75030, 337, 13, 220]
+Last tokens:  [11, 706, 98590, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Ultrasound Obstet Gynecol. 1992 Jan 1;2(1):3-5. doi: 10.1046/j.1469-0705.1992.02010002-2.x Abnormal fetal movements, micrognathia and pulmonary hypoplasia: a case report\nA 2019 study of 500 women found no association between reported excessive fetal movements in the third trimester '
+Text ending:  'third episode of reduced fetal movements, USS shows cephalic SGA fetus, has elective.<|end_of_text|>'
+
+================================================================================
+Detailed check: 00005_tokens (4,020,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 1083 tokens ---
+First tokens: [128000, 65217, 664, 483, 362, 8115, 95780, 7552, 220, 1591]
+Last tokens:  [369, 12239, 220, 17, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Claudine Aaliyah February 28, 2021 worksheets\nHomeschool worksheets are a vital part of the student’s homeschool experience. They allow the child to test his or her knowledge, and they offer them a practical application for their learning. Worksheets also, when used properly, provid'
+Text ending:  'ool math vocabulary understanding decimals 5th grade printable worksheets for grade 2<|end_of_text|>'
+
+--- Sequence 1 | 849 tokens ---
+First tokens: [128000, 2149, 29093, 279, 8681, 320, 18788, 6498, 25, 1717]
+Last tokens:  [5772, 20519, 100160, 11, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: "<|begin_of_text|>Alfred the Great (Old English: Ælfrēd, Ælfrǣd, 'Elf-counsel' or 'Wise-elf'; between 847 and 849 – 26 October 899) was King of Wessex from 871 to c. 886 and King of the Anglo-Saxons from c. 886 to 899. He was the youngest son of King Æthelwulf of Wessex.His father died when he was yo"
+Text ending:  'nd Tv Shows, Handley Page Heyford, How To Replace Image In Clipping Mask Illustrator,<|end_of_text|>'
+
+--- Sequence 2 | 154 tokens ---
+First tokens: [128000, 3923, 374, 8325, 356, 1814, 50795, 12440, 5380, 8607]
+Last tokens:  [5825, 20897, 8554, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>What is Apple Cider Vinegar?\nMany foods, including grapes, oranges, maple syrup, honey and even beer can be used to produce vinegars; all of which have their own unique flavors. Apple cider vinegar is made in a two-step fermentation process to convert apple juice into vinegar. First'
+Text ending:  'pple cider vinegar a sweet and crisp flavor, and the acetic acid provides sour notes.<|end_of_text|>'
+
+--- Sequence 3 | 263 tokens ---
+First tokens: [128000, 37, 10892, 258, 11968, 23591, 304, 15394, 449, 1369]
+Last tokens:  [23537, 4726, 3495, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Fibrinogen Early in Children with Severe Traumatic Haemorrhage - FEISTY Junior\nTraumatic injuries in children are a leading cause of death and disability in Australia. In high income countries, 40% of child deaths are because of traumatic injuries.\nFibrinogen is one of the key clott'
+Text ending:  's recently highlighted by the National Blood Authority as requiring further research.<|end_of_text|>'
+
+--- Sequence 4 | 1960 tokens ---
+First tokens: [128000, 10172, 24203, 304, 18985, 198, 3683, 1299, 77041, 374]
+Last tokens:  [304, 81064, 18985, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Genomics in healthcare\nCellular pathology is a rapidly evolving field with a longstanding history of utilising technological advances to improve clinical practices. Genomebased testing now plays an increasingly important role in personalised medicine and healthcare. For safe and eff'
+Text ending:  'will play a vital role in the UK’s position as a global leader in genomic healthcare.<|end_of_text|>'
+
+================================================================================
+Detailed check: 00006_tokens (4,020,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 1868 tokens ---
+First tokens: [128000, 2028, 1957, 2643, 539, 387, 3284, 311, 29821, 13]
+Last tokens:  [17, 100545, 662, 662, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>This action might not be possible to undo. Are you sure you want to continue?\nNeelam Gupta The University of Arizona\n• A broad term that means definition • Used at different stages of software development for different purposes • Generally, a statement of agreement (contract) betwee'
+Text ending:  'ately by DFDs. . • Augment DFD model by introducing new features. d1 Trigger d2 Σ . .<|end_of_text|>'
+
+--- Sequence 1 | 323 tokens ---
+First tokens: [128000, 9028, 7005, 4149, 6055, 374, 264, 1920, 1405, 4236]
+Last tokens:  [2237, 315, 2262, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Carpet Transitions is a process where students walk from their desks to the carpet (or another location) for the next activity. Expectations and directions are explicitly laid out, and we evaluate how our transitions go. As we perform these transitions more and more, we emphasize ou'
+Text ending:  'needs, allowing them to master a skill before moving on to the next level of content.<|end_of_text|>'
+
+--- Sequence 2 | 293 tokens ---
+First tokens: [128000, 2028, 17562, 5039, 6959, 220, 16, 4235, 17, 13]
+Last tokens:  [12, 12531, 364, 806, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>This preview shows pages 1–2. Sign up to view the full content.\nThis preview has intentionally blurred sections. Sign up to view the full version.View Full Document\nUnformatted text preview: the Selimiye Cami at Edirne? 3. Discuss how geometric, botanical and calligraphic motifs are'
+Text ending:  "101 taught by Professor Helm during the Spring '11 term at DeVry Austin.\n- Spring '11<|end_of_text|>"
+
+--- Sequence 3 | 939 tokens ---
+First tokens: [128000, 2028, 1957, 2643, 539, 387, 3284, 311, 29821, 13]
+Last tokens:  [3927, 3318, 7636, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>This action might not be possible to undo. Are you sure you want to continue?\nDefinition of synergy Pictorial representation of synergy Types of strategies Conclusion\nSYNERGY IN GROUP\nDefinition There are different definitions of synergy. Some of them are:\nSynergy is the difference '
+Text ending:  'ducing higher quality work and better decisions that can an individual working alone.<|end_of_text|>'
+
+--- Sequence 4 | 480 tokens ---
+First tokens: [128000, 55747, 287, 41613, 649, 3493, 499, 449, 58367, 11]
+Last tokens:  [279, 12688, 4038, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Planting tomatoes can provide you with lush, tasty fruits so unlike those found at the green grocer shop. Tomatoes which are commercially produced at harvest while green and gassed to ripen them. This results in tomatoes which are hard, tasteless, and often have large cores and litt'
+Text ending:  'k. Tomatoes can be preserved by canning or freezing for use during the winter months.<|end_of_text|>'
+
+================================================================================
+Detailed check: 00007_tokens (4,030,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 834 tokens ---
+First tokens: [128000, 33, 581, 32348, 78162, 9071, 1469, 337, 220, 6849]
+Last tokens:  [2626, 1180, 72, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Biblical worldview essay apol 104 (2 pages | 635 words) biblical worldview essay introduction before you can decide how to implement god’s image into your profession, you must understand what that image is ge. What is a worldview world view, and german weltanschauung) seems self-evi'
+Text ending:  'usiness it is hence evident that a christian will always carry out the business acti.<|end_of_text|>'
+
+--- Sequence 1 | 1021 tokens ---
+First tokens: [128000, 51240, 575, 3394, 60533, 9071, 198, 2520, 264, 892]
+Last tokens:  [19503, 3378, 313, 60, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Filipino nationalism essay\nFor a time, filipino businessmen and industrialists rallied around the banner of the filipino the lives of philippine heroes were taught but their nationalist teachings were glossed over the filipinos in the philippines and other essays. Filipino nationali'
+Text ending:  'enth among his contemporaries and future nationalists, the essay is worth. [APSNIP--]<|end_of_text|>'
+
+--- Sequence 2 | 1068 tokens ---
+First tokens: [128000, 41, 65, 28185, 3258, 596, 459, 45825, 6880, 40742]
+Last tokens:  [19451, 315, 813, 662, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: "<|begin_of_text|>Jb priestley's an inspector calls john boynton priestley was one of the most popular, versatile and greatest authors of his day his works of popular history and literary criticism are numerous, ending with the story of literature and the western woman. An inspector calls character n"
+Text ending:  'out personal responsibility, and his lines here provide the general attitude of his .<|end_of_text|>'
+
+--- Sequence 3 | 201 tokens ---
+First tokens: [128000, 40, 1097, 6975, 279, 432, 15840, 4221, 449, 3788]
+Last tokens:  [8830, 420, 7645, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>I am learning the R programming language with https://cran.r-project.org/doc/manuals/r-release/R-intro.pdf. The code below (p. 7, bottom of page) says 2*x will do 2.2 times, but what I can understand is 2*x says 2 multiplied with every element of X vector.\nBut the manual says 2.2 ti'
+Text ending:  'peated just once, and 1 repeated 11 times.\nPlease help understanding this expression.<|end_of_text|>'
+
+--- Sequence 4 | 1552 tokens ---
+First tokens: [128000, 82591, 4536, 1431, 20646, 49672, 369, 3938, 10182, 15635]
+Last tokens:  [311, 10977, 52041, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Arizona isn’t preparing adequately for future climate risks even as it deals well with current problems stemming from climate change, a new report says.\nThe state got a C- overall grade in the national report done by Climate Central, a nonprofit science and journalism organization b'
+Text ending:  'designed to provide an opportunity to assess wildfire risks to communities statewide.<|end_of_text|>'
+
+================================================================================
+Detailed check: 00008_tokens (4,030,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 923 tokens ---
+First tokens: [128000, 12978, 1285, 473, 21719, 1789, 24838, 362, 97280, 40388]
+Last tokens:  [11930, 30169, 27047, 11, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Helpful Hints For Writing A Comparative Evaluation Essay You probably have been asked to write a comparative essay by your tutor or supervisor, and if not, you will surely be asked to. Meanwhile, here are 25 captivating evaluation essay topics for your convenience – Thus, it is nece'
+Text ending:  'o Describe Your Services, Tragic Hero Nemesis, Your Physical Education Teacher Essay,<|end_of_text|>'
+
+--- Sequence 1 | 618 tokens ---
+First tokens: [128000, 11303, 13, 2684, 374, 459, 2362, 5605, 11, 330]
+Last tokens:  [1952, 9995, 351, 11, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Speed. There is an old saying, "The pen is mightier than the sword." Skimming. Advantages of reading books are immense to man. It carries information about politics, economy, entertainment, sports, business, industry, trade and commerce. Palani (2012) further added that, nowadays, r'
+Text ending:  'e Reading Comprehension,\nType Of Social Workers,\nFahrenheit 451 Influences On Montag,<|end_of_text|>'
+
+--- Sequence 2 | 462 tokens ---
+First tokens: [128000, 2127, 3062, 21070, 315, 264, 5333, 753, 2890, 374]
+Last tokens:  [12252, 374, 10887, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>An important indicator of a woman’s health is menstrual function. Very often, with improper nutrition, nervous diseases, infectious diseases and other pathologies, as a result of which the general condition is disturbed, various menstrual disorders can occur. This fairly common path'
+Text ending:  'd tumors. With heavy bleeding, surgical curettage of the uterine mucosa is performed.<|end_of_text|>'
+
+--- Sequence 3 | 161 tokens ---
+First tokens: [128000, 3438, 263, 1233, 66437, 28730, 77279, 13, 763, 279]
+Last tokens:  [323, 9678, 25112, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Phonics Sight Words Worksheets. In the first worksheet, students will find a word that matches each of eight pictures and write it under the picture. On this page, you will find many free printable worksheets and sight words activities for kindergarten.\nUnscramble the word, Complete'
+Text ending:  ' help your child get reading. Includes differentiated support and independent sheets.<|end_of_text|>'
+
+--- Sequence 4 | 165 tokens ---
+First tokens: [128000, 2903, 220, 23, 77279, 1789, 4203, 2184, 13, 1442]
+Last tokens:  [1057, 1396, 6959, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Number 8 Worksheets For Preschool. If you like this number eight worksheet, then make sure to get all the rest of our number pages. Download free math printables, worksheets and flashcards various math concepts like shapes, numbers, counting, measurement and more.\nCheck out our wide'
+Text ending:  ' this number eight worksheet, then make sure to get all the rest of our number pages.<|end_of_text|>'
+
+================================================================================
+Detailed check: 00009_tokens (4,040,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 2992 tokens ---
+First tokens: [128000, 91, 18, 13, 20696, 611, 93678, 11, 10170, 612]
+Last tokens:  [264, 51930, 3770, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>|3. Everything / Maths, Science & Technology / Mathematics|\nQuantum Mechanics is the branch of science that deals with extremely small particles. These particles are so incredibly small that they lie completely outside the realm of human experience. Fundamentally, this is why the id'
+Text ending:  'alert our Moderation Team. For any other comments, please start a Conversation below.<|end_of_text|>'
+
+--- Sequence 1 | 1573 tokens ---
+First tokens: [128000, 4438, 1690, 7634, 315, 13970, 2802, 304, 6890, 617]
+Last tokens:  [3925, 323, 28948, 570, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>How many places of historical interest in India have you visited till date? One or numerous? Ask this question to yourself and the answers may either enlighten your being or leave you frustrated. The term ‘enlighten’ in this context refers to ‘reliving the past glory’ and ‘treading '
+Text ending:  'that features India from past to present with special focus on history and heritage).<|end_of_text|>'
+
+--- Sequence 2 | 837 tokens ---
+First tokens: [128000, 1991, 8797, 27047, 2175, 2680, 311, 420, 3857, 311]
+Last tokens:  [10106, 18524, 1887, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Get Full Essay Get access to this section to get all help you need with your essay and educational issues. Get Access Enable Windows Active Directory and User Access Controls Essay Sample This lab provides students with the hands-on skills needed to create a new Active Directory dom'
+Text ending:  'ions and controls on objects and folders in a Windows Server Active Directory system.<|end_of_text|>'
+
+--- Sequence 3 | 574 tokens ---
+First tokens: [128000, 2028, 374, 49243, 505, 25647, 4438, 1271, 916, 627]
+Last tokens:  [4395, 36256, 13443, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>This is Stephanie from StatisticsHowTo.com.\nAnd in this video I will go over a few problems that involve the probability of something\nnot happening. I am going to go over three different question\ntypes. The first type of question you are likely\nto encounter is one like this. If the '
+Text ending:  'StatisticsHowTo.com for more\nvideos and articles on everything elementary statistics.<|end_of_text|>'
+
+--- Sequence 4 | 254 tokens ---
+First tokens: [128000, 81434, 922, 220, 19, 339, 24749, 77279, 706, 1027]
+Last tokens:  [2274, 1057, 3997, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Knowledge about 4th Grade Worksheets has been submitted by admin and tagged in this category. Home, residence or office is one of the places that we very often use to spend time in our life. its appearance really should cause us feel at home. Occasionally, we may have to slightly cu'
+Text ending:  'r. Do not forget to share and love our reference to help further develop our website.<|end_of_text|>'
+
+================================================================================
+Detailed check: 00010_tokens (4,040,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 548 tokens ---
+First tokens: [128000, 7927, 11276, 2643, 539, 387, 279, 1455, 13548, 961]
+Last tokens:  [2351, 3318, 10489, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: "<|begin_of_text|>Your windows might not be the most exciting part of your house, but they're essential for ventilation, cooling, and protection from the elements. Whether you're buying new vinyl windows or want to better understand your existing windows, figuring out how the weep holes work is an im"
+Text ending:  "es. Then pour a little water through the holes to make sure they're working properly.<|end_of_text|>"
+
+--- Sequence 1 | 503 tokens ---
+First tokens: [128000, 20799, 612, 24907, 20163, 512, 91, 35078, 62038, 25]
+Last tokens:  [43, 35784, 35664, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Payment & Shipping Terms:\n|Working Voltage:||21v||Voltage Range:||18-35v|\n|Fuel Efficiency:||≥42%||Working Temperature:||0℃--35℃|\n|Working Humidity:||30-90%||Hydrogen Quality:||99.99%|\nh2 fuel cell,\nhydrogen production for fuel cells\nBCH 200w CE cerfiticate light weight metallic hyd'
+Text ending:  'ydrogen storage tank can you provide?\nNow we can provide 5L and 9L hydrogen cylinder.<|end_of_text|>'
+
+--- Sequence 2 | 282 tokens ---
+First tokens: [128000, 87406, 706, 1027, 279, 56527, 315, 1057, 2128, 1618]
+Last tokens:  [19428, 49286, 9045, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Chelsea has been the backbone of our team here at INFINIT, keeping operations running smoothly for over 7 years. On August 1st, 2020, Chelsea was unexpectedly rushed to a local hospital. When she arrived, her team of doctors quickly discovered that her heart was failing. They began '
+Text ending:  'CoQ10 can boost energy and speed up the recovery time from intense endurance efforts.<|end_of_text|>'
+
+--- Sequence 3 | 620 tokens ---
+First tokens: [128000, 89167, 1188, 33589, 5468, 87473, 617, 6118, 1027, 264]
+Last tokens:  [304, 701, 79731, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Ancient Egyptian Pyramids have usually been a mystery in this international. Egypt is the maximum beautiful vicinity in the world and it preserves many monuments. Its interesting to peer so many lovely websites at a place which predominantly is a desert. If you visit this vicinity O'
+Text ending:  'monument in your camera for you to be the most memorable vacation in your lifestyles.<|end_of_text|>'
+
+--- Sequence 4 | 278 tokens ---
+First tokens: [128000, 15327, 52, 8612, 10170, 220, 17, 11988, 15330, 14881]
+Last tokens:  [3637, 369, 18539, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>BJU Press Science 2 Student Activity Manual 5th Edition, Grade 2\nYour Price Item*\nHelp your second-grade student develop essential critical thinking and analysis skills by using BJU Press Science 2 Student Activities Manual! Fun inquiry-based STEM hands-on activities include investi'
+Text ending:  'ot available in Mardel Stores.\nIn Store Only\nCheck your local store for availability.<|end_of_text|>'
+
+================================================================================
+Detailed check: 00011_tokens (4,040,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 241 tokens ---
+First tokens: [128000, 85103, 12523, 388, 1893, 32692, 477, 16003, 6302, 505]
+Last tokens:  [433, 20628, 29803, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Glass blowers create artistic or functional objects from glass.\nGlass blowers begin by creating designs on paper. For non-artistic glass products they may also make blueprints with specifications for measurements. They decide how much glass is required for the product.\nItems glass b'
+Text ending:  'Glass blowers weigh and measure the blown glass to make sure it meets specifications.<|end_of_text|>'
+
+--- Sequence 1 | 2623 tokens ---
+First tokens: [128000, 1548, 3629, 24465, 20343, 505, 279, 13444, 323, 1446]
+Last tokens:  [301, 9558, 37246, 11, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>He often drew inspiration from the beauty and serenity of nature, with the chrysanthemum being a frequent motif.\nIt depicts vibrant clusters of chrysanthemums blooming amid lush green leaves, and was painted using the mogu method. It is said that Tao Yuanming, a famous poet of the J'
+Text ending:  'le Instagram Captions, Nelson Lumumba Lee, Bpd Golden Child, Ellen Tressel Net Worth,<|end_of_text|>'
+
+--- Sequence 2 | 443 tokens ---
+First tokens: [128000, 4599, 499, 1781, 922, 433, 11, 1070, 527, 1690]
+Last tokens:  [3235, 279, 1648, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: "<|begin_of_text|>When you think about it, there are many fields of study that qualify as Master's degrees and many different ways to go about obtaining such a degree. The most popular is through an online program, but there are also Master's degrees in subjects such as business administration, law e"
+Text ending:  'hich you wish to attend, and what courses you would like to take. take along the way.<|end_of_text|>'
+
+--- Sequence 3 | 1151 tokens ---
+First tokens: [128000, 12, 10699, 374, 279, 7126, 315, 30903, 304, 279]
+Last tokens:  [2663, 3451, 17171, 24535, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>- Who is the father of chemistry in the world?\n- Who was the first chemist in India?\n- What are the first 10 elements?\n- Why was Mendeleev’s periodic table not accepted?\n- Who is the first father of chemistry?\n- Who is the mother of chemistry?\n- Who discovered periodic table?\n- What'
+Text ending:  'alled ‘periods’ and the vertical columns (going from up to down) are called ‘groups’.<|end_of_text|>'
+
+--- Sequence 4 | 4249 tokens ---
+First tokens: [128000, 4438, 433, 21785, 53297, 11, 39712, 34202, 323, 35962]
+Last tokens:  [42496, 17282, 24762, 4497, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>How it Works Crushers, Grinding Mills and Pulverizers Ken Thayer ampvert June 02, 2017 Crushers, grinding mills and pulverizers are types of grinding equipment used to transform or reduce a coarse material such as stone, coal, or slag into a smaller, finer material. Grinding equipme'
+Text ending:  'a grinding mill, in where the stirred effect is caused by rotating grindingLearn More<|end_of_text|>'
+
+================================================================================
+Detailed check: 00012_tokens (4,050,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 2174 tokens ---
+First tokens: [128000, 49, 4931, 3341, 2398, 689, 574, 264, 356, 359]
+Last tokens:  [11849, 32824, 12, 5383, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>RMS Carpathia was a Cunard Line transatlantic passenger steamship built by Swan Hunter & Wigham Richardson in their shipyard in Wallsend, England.\nThe Carpathia made her maiden voyage in 1903 from Liverpool to Boston, and continued on this route before being transferred to Mediterra'
+Text ending:  'ce: https://www.history.com/news/5-things-you-may-not-know-about-titanics-rescue-ship<|end_of_text|>'
+
+--- Sequence 1 | 1554 tokens ---
+First tokens: [128000, 644, 1023, 4339, 11, 279, 304, 36869, 374, 264]
+Last tokens:  [12, 47692, 29053, 13215, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>In other words, the inductor is a component that allows DC, but not AC, to flow through it. The inductor stores electrical energy in the form of magnetic energy. The inductor does not allow AC to flow through it, but does allow DC to flow through it.\nYou can get the answers you need'
+Text ending:  '37308/why-do-not-we-connect-inductor-in-dc-circuits-and-what-are-the-physical-signifi<|end_of_text|>'
+
+--- Sequence 2 | 1852 tokens ---
+First tokens: [128000, 791, 23641, 323, 6020, 5064, 11335, 264, 16595, 3560]
+Last tokens:  [1833, 1057, 3997, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>The banking and financial industry plays a vital role in our everyday lives. It is essential to manage our money and assets and supply us with credit and loans. Banks are at the heart of this sector. Knowing how they function, the many types of banks available, and how to pick the p'
+Text ending:  ' your money.\nFor the latest banking news and related information, follow our website.<|end_of_text|>'
+
+--- Sequence 3 | 286 tokens ---
+First tokens: [128000, 91, 6888, 8651, 25, 8651, 11916, 70858, 612, 10170]
+Last tokens:  [3156, 220, 6280, 22, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>|Category||:||Academic & Science » Units|\nWhat does A mean?\nAmpere (A), often shortened to amp, is the unit of electric current. It is named after Andre-Marie Ampere, a French mathematician, and physicist who is considered the father of electrodynamics.\nThe Ampere measures the flow '
+Text ending:  '| Vitamin A | Type A (Battery Size) | Helmholtz Energy | symbol for Argon, until 1957<|end_of_text|>'
+
+--- Sequence 4 | 231 tokens ---
+First tokens: [128000, 1507, 55, 11930, 1389, 4323, 24264, 20880, 2638, 1389]
+Last tokens:  [912, 8544, 3686, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>EDX Education – Geometric Volume Set – 5cm Blue – 17pcs\nR345.00 Vat Inclusive\n334 in stock\nThese blue green geometric solids are used to inspire the learning of geometric relationships between area, volume, shape, form and size.\nIncludes 17 different shapes: Cube, cylinder, triangul'
+Text ending:  'ng energy management.\n|Dimensions||262.0 × 192.0 × 66.0 mm|\nThere are no reviews yet.<|end_of_text|>'
+
+================================================================================
+Detailed check: 00013_tokens (4,050,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 564 tokens ---
+First tokens: [128000, 32, 3495, 5684, 6118, 84363, 264, 3230, 8712, 477]
+Last tokens:  [279, 4477, 1920, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>A research paper usually investigates a specific topic or maintain a particular point. Regardless of the type of research paper which you’re writing, your final research samedayessay promo paper needs to present your own opinion backed up from the thoughts, facts and opinions of oth'
+Text ending:  'er. Therefore, it ought to be produced with careful attention to the writing process.<|end_of_text|>'
+
+--- Sequence 1 | 324 tokens ---
+First tokens: [128000, 849, 18843, 2508, 9634, 519, 9601, 24507, 269, 198]
+Last tokens:  [612, 12053, 9303, 23298, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Exobiology Extant Life Surveyor\nNASA is developing a unique snake-like robot called Exobiology Extant Life Surveyor (EELS) to aid space exploration and potentially discover whether life exists beyond Earth. The robot will examine the icy features of Enceladus, one of Saturn’s moons,'
+Text ending:  'es.\nMonth: Current Affairs - May, 2023\nCategory: Science & Technology Current Affairs<|end_of_text|>'
+
+--- Sequence 2 | 654 tokens ---
+First tokens: [128000, 20397, 872, 12207, 5190, 3157, 44596, 304, 549, 815]
+Last tokens:  [53465, 10603, 4029, 2029, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Despite their significantly higher market penetration in U.S. homes, consumer electronics (CE) amazingly account for a lower percentage of electricity usage per household than three years ago, according to research conducted by the Fraunhofer Center for Sustainable Energy Systems on'
+Text ending:  'invaluable insight to both policymakers and the broader energy-efficiency community.”<|end_of_text|>'
+
+--- Sequence 3 | 1555 tokens ---
+First tokens: [128000, 6363, 36, 56047, 374, 304, 2539, 19336, 11469, 11775]
+Last tokens:  [15025, 1139, 6299, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>LoginEKO is in full swing developing novel plant-based foods that taste better, are reasonably priced, convenient, and represent a much healthier nutritional choice.\nDr. Luka Zevnik is about to finish his working day in LoginEKO’s food laboratory. He is testing the creamy structure '
+Text ending:  'time or alternatives, and that our good intentions can easily translate into actions.<|end_of_text|>'
+
+--- Sequence 4 | 1312 tokens ---
+First tokens: [128000, 2746, 499, 3207, 13126, 6376, 709, 459, 30619, 13863]
+Last tokens:  [279, 82339, 10474, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>If you’re considering setting up an indoor garden or engaging in horticulture, the primary tool you need is LED grow lighting. These lights emit specific light spectra, mainly red and blue wavelengths, which play a crucial role in influencing plant growth. While alternatives like fl'
+Text ending:  'owth stage and then switched to a warm, reddish-orange light for the flowering phase.<|end_of_text|>'
+
+================================================================================
+Detailed check: 00014_tokens (4,050,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 330 tokens ---
+First tokens: [128000, 35079, 311, 10873, 29888, 311, 2778, 198, 91, 29012]
+Last tokens:  [220, 2366, 17, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Jump to navigation Jump to search\n|Symptoms||Small or larger, dark brown colorless bump in eye|\n|Complications||Spread to lungs, liver, brain, and bone|\nConjunctival melanoma is a cancer in the lining of the inside of the eyelid or over the white of the eye. It may be a small or lar'
+Text ending:  '. 9 March 2022. Archived from the original on 8 March 2022. Retrieved 21 August 2022.<|end_of_text|>'
+
+--- Sequence 1 | 1531 tokens ---
+First tokens: [128000, 6854, 4240, 6425, 387, 21277, 30, 47145, 555, 25]
+Last tokens:  [374, 21277, 1534, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Can buffer solution be neutral?Asked by: Dr. Ericka Balistreri\nScore: 4.9/5 (38 votes)\nNeutral buffer solutions are formed by mixing weak acid or weak base. For example: - Ammonium hydroxide or acidic acid is an example of neutral buffer solution.\nIs buffer neutral?\nIn Summary: Buff'
+Text ending:  ' affected when we add an acid or base into it. The added acid or base is neutralized.<|end_of_text|>'
+
+--- Sequence 2 | 877 tokens ---
+First tokens: [128000, 29353, 374, 264, 27498, 5211, 430, 374, 7718, 311]
+Last tokens:  [220, 1049, 20, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Water is a precious resource that is essential to life. Unfortunately, the demand for water is growing rapidly, while the supply of fresh water is dwindling. As a result, it is becoming increasingly important to find ways to conserve water and reuse it whenever possible. One way to '
+Text ending:  'y into the Podcast Advertising Space as one of the first podcast advertisers in 2005.<|end_of_text|>'
+
+--- Sequence 3 | 137 tokens ---
+First tokens: [128000, 31078, 580, 482, 10180, 1115, 6017, 14262, 311, 279]
+Last tokens:  [2213, 538, 6875, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: "<|begin_of_text|>Preface - About This BookWelcome to the Programmer's Guide to MacApp.\nMacApp is an object-oriented application framework that provides many of the basic features of a standard Macintosh application. MacApp handles the details of working with the Macintosh Operating System and user i"
+Text ending:  'ses, methods, fields, and global variables and functions of the MacApp class library.<|end_of_text|>'
+
+--- Sequence 4 | 832 tokens ---
+First tokens: [128000, 791, 56180, 28232, 264, 4476, 25922, 323, 264, 4476]
+Last tokens:  [4595, 315, 25175, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>The Difference Between a Software Developer and a Software Engineer\nWhen it comes to making an informed decision, it is important to know the difference between a software developer and a software engineer. Both positions are crucial for software development, but there are many diff'
+Text ending:  've than other roles. They aren’t as physically demanding as other types of engineers.<|end_of_text|>'
+
+================================================================================
+Detailed check: 00015_tokens (4,060,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 1381 tokens ---
+First tokens: [128000, 791, 7434, 315, 7941, 3363, 706, 59477, 311, 387]
+Last tokens:  [520, 57193, 2237, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>The concept of smart city has ceased to be a technological fantasy and has evolved from fancy buzzword to become our hope for a better future. During the month of February we are going to cover in our blog some of the most remarkable examples of smart city implementation.\nSingapore,'
+Text ending:  'erefore it is important that they can participate in the changes at grassroots level.<|end_of_text|>'
+
+--- Sequence 1 | 1515 tokens ---
+First tokens: [128000, 791, 14298, 315, 8613, 12748, 374, 7086, 369, 11186]
+Last tokens:  [220, 4468, 19, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>The Town of Moraga is named for Joaquin Moraga, the grandson of Joseph Joaquin Moraga who was second in command of the Anza expedition of 1776, the founder of San Francisco, Mission Dolores and the founder and first commandant of the Presidio. Joaquin Moraga, who also served in the '
+Text ending:  'ent to their Town. This led to incorporation as the Town of Moraga in November, 1974.<|end_of_text|>'
+
+--- Sequence 2 | 685 tokens ---
+First tokens: [128000, 100574, 100299, 11, 107512, 61196, 11, 100293, 102871, 11]
+Last tokens:  [304, 45080, 4221, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>शव, बदन, लाश, कंकाल, धड़, ठाट, जिस्म, देह, ढांचा, खंडहर, ध्वंसावशेषठठरी, मृतशरीर, चौखट, आधार\nNoun(1) the dead body of an animal especially one slaughtered and dressed for food\n(1) Friends of mine were always commenting how I could class myself as an animal-lover when for feeding pur'
+Text ending:  'n Hindi, carcass definition, examples and pronunciation of carcass in Hindi language.<|end_of_text|>'
+
+--- Sequence 3 | 3119 tokens ---
+First tokens: [128000, 36, 1191, 7658, 17054, 6941, 67905, 389, 64231, 10734]
+Last tokens:  [527, 2294, 7526, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: "<|begin_of_text|>Election Law Professor David Schultz on Voting Rights\nIn this video, FindLaw's Richard Dahl interviews Election Law Professor David Schultz. Professor Schultz explains the history of voting rights, what voting rights are, and their significance. He also talks about the legal and pra"
+Text ending:  'oing to work. But early voting, day of election registration — those are great tools.<|end_of_text|>'
+
+--- Sequence 4 | 149 tokens ---
+First tokens: [128000, 5451, 40961, 93285, 198, 791, 220, 18, 12, 20]
+Last tokens:  [27871, 50, 18629, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>First Steps Nursery\nThe 3-5 Room has defined areas within the playroom where children learn through play.\nComfortable book corner with writing table attached.\nConstruction area where children are encouraged to work together to build and problem solve.\nNumeracy area for counting, sor'
+Text ending:  ' are given the opportunity to take part in STEM, lending library and PATHS programme.<|end_of_text|>'
+
+================================================================================
+Detailed check: 00016_tokens (4,060,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 326 tokens ---
+First tokens: [128000, 41348, 24874, 2490, 1789, 4073, 40996, 763, 12550, 198]
+Last tokens:  [627, 7816, 29461, 551, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Travel Advisories For Us Citizens In Mexico\nThe state department of the United States issues several travel alerts as well as the travel warnings in order to advise its citizens regarding the conditions that might be harmful to them or to their security. These travel alerts are mean'
+Text ending:  'asons.\n- April 2007: Travel warnings issued out of the drug violence.\nMore Articles :<|end_of_text|>'
+
+--- Sequence 1 | 825 tokens ---
+First tokens: [128000, 8989, 8363, 339, 1147, 617, 1317, 1027, 45877, 439]
+Last tokens:  [627, 22586, 264, 12535, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Neanderthals have long been portrayed as our mindless, thuggish cousins. Now, ground-breaking research has revealed surprising differences in the brain development of modern humans, even if it doesn’t confirm this stereotype. Neanderthals.\nThe research involved inserting the Neander'
+Text ending:  ' differences in brain development. “It’s an exciting story,” he said.\nLeave a Comment<|end_of_text|>'
+
+--- Sequence 2 | 2388 tokens ---
+First tokens: [128000, 17826, 701, 2015, 1457, 369, 264, 4528, 16720, 323]
+Last tokens:  [279, 2532, 9076, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Place your order now for a similar assignment and have exceptional work written by our team of experts, At affordable rates\nFor This or a Similar Paper Click To Order Now\nRemember, don’t write about the text as a whole (thinking broadly, especially to start, is fine). Instead, find '
+Text ending:  'This is free because we want you to be completely satisfied with the service offered.<|end_of_text|>'
+
+--- Sequence 3 | 358 tokens ---
+First tokens: [128000, 9, 4718, 15813, 374, 1633, 3062, 369, 18899, 279]
+Last tokens:  [3562, 11165, 349, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>* Your assessment is very important for improving the workof artificial intelligence, which forms the content of this project\nWeb Interface Design Basic GUI and Web layouts Fig H.12: Basic Layouts of Web and Graphic User Interfaces Web Interface Design Guidelines • The home page sho'
+Text ending:  'ar apart. • Select colors from a Web-safe color palate, or Browser-Safe Color Palate.<|end_of_text|>'
+
+--- Sequence 4 | 860 tokens ---
+First tokens: [128000, 35, 9188, 287, 1628, 51869, 198, 35, 9188, 287]
+Last tokens:  [505, 41769, 28447, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Dyeing And Printing\nDyeing and printing are two major wet processing techniques eventually for the coloration of fibers, yarns, and, fabrics in the industry. Consequently, only one color produces in the dyeing process but various types of colored designs produces on the fabric surfa'
+Text ending:  'one requires DYEING / PRINTING can contact M.8238822022 Kuldeep Singh from Ahmedabad.<|end_of_text|>'
+
+================================================================================
+Detailed check: 00017_tokens (4,060,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 300 tokens ---
+First tokens: [128000, 127527, 8148, 596, 4359, 374, 279, 1176, 2539, 30425]
+Last tokens:  [1304, 1124, 9621, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Ruskin\'s God is the first full-length study of the impact that John Ruskin\'s religion had on his many and varied writings. Part I, "The Author of Modern Painters," covers the first half of his career, when he was an Evangelical Christian and aimed to teach people how to see painting'
+Text ending:  'sections. If you would like to add content to them, you must first make them visible.<|end_of_text|>'
+
+--- Sequence 1 | 609 tokens ---
+First tokens: [128000, 791, 3925, 315, 69462, 1389, 323, 13118, 315, 279]
+Last tokens:  [220, 1049, 19, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>The history of Estonia – and indeed of the other Baltic States – has been one of constant struggle to maintain independence and national integrity against the predatory instincts of larger neighbors. The Vikings passed through the territory in the ninth century. Over the next few ce'
+Text ending:  'pecifically, securing membership of NATO and the European Union obtained in May 2004.<|end_of_text|>'
+
+--- Sequence 2 | 304 tokens ---
+First tokens: [128000, 46, 1031, 307, 2411, 5882, 84808, 372, 551, 55405]
+Last tokens:  [2411, 5882, 84808, 372, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Oncidium flexuosum : Orchid Species InformationGenus name : Oncidium\nSpecies : flexuosum\nA large cool growing species from Brazil and Argentina. Due to the climbing habit of this plant, it is best grown on a cork slab or tree fern mount. It quickly grows into a specimen sized plant '
+Text ending:  'Winding. Referring to the winding, arching inflorescence.\nPhoto of Oncidium flexuosum<|end_of_text|>'
+
+--- Sequence 3 | 374 tokens ---
+First tokens: [128000, 11076, 21431, 315, 6690, 83492, 15264, 198, 3947, 527]
+Last tokens:  [2435, 990, 1888, 304, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Common Types of Air Conditioning Systems\nThere are many types of air\nconditioners specifically designed\nfor different types of applications.\nListed on the right are some of\nmore common systems\nThe difference between a water-cooled air conditioner and an air-cooled system is in how t'
+Text ending:  'ed for anything from residential use to large industrial buildings. They work best in<|end_of_text|>'
+
+--- Sequence 4 | 524 tokens ---
+First tokens: [128000, 83834, 323, 5629, 11452, 80024, 676, 198, 1548, 7819]
+Last tokens:  [1667, 323, 7953, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Founder and First Headmistress\nHeads of School 1890-Present\n|While educating girls for college was a daring idea to most people in 1890, it wasn’t to Virginia Randolph Ellett. She knew that young women could handle the rigorous work of higher education—if they received the right pre'
+Text ending:  'o give its students the best possible preparation for their college years and beyond.<|end_of_text|>'
+
+================================================================================
+Detailed check: 00018_tokens (4,060,000 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 236 tokens ---
+First tokens: [128000, 51, 2757, 315, 9298, 14058, 1418, 21630, 30, 4800]
+Last tokens:  [220, 7529, 20, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Tired of seeing ads while studying? Now you can enjoy an "Ads Free" version of the site for as little as 10¢ a day.\nClick here to get started today!\nInternational Standard Bible Encyclopedia\nkrook´ed : With reference to the constellation round the North Pole, in Job 26:13 , the Revi'
+Text ending:  'pedia. https://www.studylight.org/encyclopedias/eng/isb/s/serpent-crooked.html. 1915.<|end_of_text|>'
+
+--- Sequence 1 | 783 tokens ---
+First tokens: [128000, 4897, 753, 279, 17102, 315, 264, 13945, 4756, 4007]
+Last tokens:  [10901, 84996, 2835, 25, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>That’s the conclusion of a newly published study we authored in JAMA Network Open. In it, we look at data from 44,000 patients hospitalized with the disease from January through Sept. 21, 2020. Unlike prior studies based on single health system data, our study examined a diverse set'
+Text ending:  'tly invest in these communities and their hospitals.\nWatch the latest Opinions video:<|end_of_text|>'
+
+--- Sequence 2 | 1439 tokens ---
+First tokens: [128000, 24374, 6417, 2617, 30241, 44741, 17586, 20562, 12, 777]
+Last tokens:  [3815, 872, 2683, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Discrimination Against Employees Without COVID-19 Antibodies\n(originally published in New York Law Journal)\nBy Debbie Kaminer\nProfessor of Law\nOver the last few weeks public discussion has focused on how an antibody test for COVID-19 could provide a way to reopen the country while k'
+Text ending:  'employees to use various forms of protective personal equipment when doing their job.<|end_of_text|>'
+
+--- Sequence 3 | 3390 tokens ---
+First tokens: [128000, 97740, 2269, 4088, 71573, 3085, 5199, 7296, 22934, 4245]
+Last tokens:  [70921, 220, 2031, 0, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Liquid-fuel reactors offer significant safety advantages due to their inherently stable "self-adjusting" reactor dynamics. Specifically, the fission product retention, composition and distribution within t, hese structures for TRISO fuel performance at normal and accident conditions'
+Text ending:  'quire further modeling or reconciliation will be Category II as defined in 10 CFR 70!<|end_of_text|>'
+
+--- Sequence 4 | 1151 tokens ---
+First tokens: [128000, 12, 3639, 527, 94241, 1274, 1093, 5380, 12, 3053]
+Last tokens:  [11, 220, 679, 23, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>- What are psychotic people like?\n- Can you tell if someone is psychotic?\n- What is the weirdest mental illness?\n- What is the difference between psychosis and psychotic?\n- Can someone with psychosis live a normal life?\n- What is considered psychotic behavior?\n- What are the 3 stage'
+Text ending:  'oesn’t make any sense! … Don’t take what they say personally.More items…•Aug 21, 2018<|end_of_text|>'
+
+================================================================================
+Detailed check: 00019_tokens (4,063,419 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 263 tokens ---
+First tokens: [128000, 12, 15634, 389, 198, 12, 555, 64571, 102215, 127883]
+Last tokens:  [922, 279, 19476, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>- Posted on\n- by Белов Григорий Данилович\nScientia, An examination of the returns of OTC stocks.\nFinancial speculation ostensibly entails a high degree of skill and knowledge, which helps explain why speculators are highly involved in skill-based forms of gambling. One of the first '
+Text ending:  'at gambling is dangerous and. It covers only a brief introduction about the concepts.<|end_of_text|>'
+
+--- Sequence 1 | 11363 tokens ---
+First tokens: [128000, 644, 813, 9601, 315, 12656, 31994, 320, 9714, 18]
+Last tokens:  [459, 17219, 311, 31994, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>In his Life of William Blake (1863) Alexander Gilchrist warned his readers that Blake "neither wrote nor drew for the many, hardly for work\'y-day men at all, rather for children and angels; himself \'a divine child,\' whose playthings were sun, moon, and stars, the heavens and the ear'
+Text ending:  '1\nE.D. Hirsch, Jr., an excerpt from innocence and experience an introduction to Blake<|end_of_text|>'
+
+--- Sequence 2 | 410 tokens ---
+First tokens: [128000, 2181, 596, 1027, 220, 868, 1667, 2533, 8254, 69522]
+Last tokens:  [220, 1049, 18, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: "<|begin_of_text|>It's been 15 years since seven astronauts aboard the Columbia space shuttle were killed when it shattered over East Texas.\nTo date, about 33% of the space shuttle has been recovered, 55% burned and melter as it entered Earth's atmosphere, and the rest is believed to be buried in pla"
+Text ending:  'e, remember, and learn about what happened in the East Texas sky on February 1, 2003.<|end_of_text|>'
+
+--- Sequence 3 | 159 tokens ---
+First tokens: [128000, 1682, 36549, 66041, 1789, 23338, 3011, 58338, 4946, 23485]
+Last tokens:  [4295, 449, 6980, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>29 FUN Crafts For Kids That Adults Will Enjoy Doing Too Balloon rockets! -- 29 creative crafts for kids that adults will actually enjoy doing, too! Want fantastic suggestions on arts and crafts?\nMinute to Win It: Puddle Jumper — fill three cups with water and line them up, setting a'
+Text ending:  'nnis makes a great indoor gross motor play idea. Balloons are always a hit with kids.<|end_of_text|>'
+
+--- Sequence 4 | 535 tokens ---
+First tokens: [128000, 34, 95705, 916, 220, 806, 14, 2304, 14, 679]
+Last tokens:  [36801, 374, 26225, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Celiac.com 11/05/2010 - To address study data suggesting that people with intellectual disabilities, especially men, suffer high rates of celiac disease, a team of researchers recently set out to assess rates of celiac disease in patients with intellectual disabilities.\nThey are aff'
+Text ending:  'ts, general celiac screening of people with intellectual disabilities is unnecessary.<|end_of_text|>'
+
+Round-trip summary: 0 / 200 sequences had non-zero delta
+END TIME: Fri Apr 24 17:06:56 CEST 2026
