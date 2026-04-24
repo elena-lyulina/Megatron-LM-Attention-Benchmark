@@ -9,6 +9,8 @@
 #SBATCH --gpus-per-node=1
 #SBATCH --cpus-per-task=72
 #SBATCH --no-requeue
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-user=clariden-jobs-elyulin-aaaauapxybdkdx42ppvef2c2eq@swissai-initiative.slack.com
 
 # Cross-document attention masking tests on a tiny model.
 #
@@ -35,7 +37,7 @@ export PYTHONPATH=$MEGATRON_LM_DIR:${PYTHONPATH:-}
 
 ### CONFIG ###
 ATTN=full
-IMPL=flash
+IMPL=torch
 
 ### PATHS ###
 PROJECT_NAME="cross-doc-attn"
@@ -66,7 +68,7 @@ export LOCAL_RANK=0
 ### MEGATRON ARGS ###
 
 TRANSFORMER_ENGINE_ARGS=(
-    --transformer-impl transformer_engine
+    --transformer-impl local
     --main-grads-dtype fp32
 )
 
@@ -140,7 +142,7 @@ DISTRIBUTED_ARGS=(
 DATA_ARGS=(
     --mock-data
     --tokenizer-type HuggingFaceTokenizer
-    --tokenizer-model meta-llama/Llama-3.2-1B
+    --tokenizer-model /users/elyulina/scratch/tokenizers/llama-3.2-1b
     --make-vocab-size-divisible-by 128
     --seq-length $SEQ_LEN
     --split "100,0,0"

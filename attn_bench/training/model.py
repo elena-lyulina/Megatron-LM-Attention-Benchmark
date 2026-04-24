@@ -10,8 +10,9 @@ from __future__ import annotations
 from typing import Any, Optional
 
 from megatron.core.extensions.transformer_engine_spec_provider import TESpecProvider
-from megatron.core.models.backends import BackendSpecProvider
+from megatron.core.models.backends import BackendSpecProvider, LocalSpecProvider
 from megatron.core.models.gpt.gpt_layer_specs import (
+    get_gpt_layer_local_spec,
     get_gpt_layer_with_transformer_engine_spec,
 )
 from megatron.core.models.gpt.gpt_model import GPTModel
@@ -61,23 +62,35 @@ def build_model(
     vp_stage: Optional[int] = None, # virtual pipeline stage index
     pg_collection: Optional[ProcessGroupCollection] = None, #process group collection
 ) -> GPTModel:
-    # Start from the standard TE layer spec — same as a normal Megatron run.
+    # Build the base layer spec; local uses pure PyTorch modules, TE uses fused kernels.
     # We use the minimal set of config flags relevant to our benchmark so the spec stays simple.
-    layer_spec = get_gpt_layer_with_transformer_engine_spec(
-        num_experts=None,
-        moe_grouped_gemm=False,
-        qk_layernorm=getattr(config, 'qk_layernorm', False),
-        multi_latent_attention=False,
-        qk_l2_norm=getattr(config, 'qk_l2_norm', False),
-    )
+    qk_layernorm = getattr(config, 'qk_layernorm', False)
+    if args.transformer_impl == "local":
+        layer_spec = get_gpt_layer_local_spec(
+            num_experts=None,
+            moe_grouped_gemm=False,
+            qk_layernorm=qk_layernorm,
+            multi_latent_attention=False,
+            qk_l2_norm=getattr(config, 'qk_l2_norm', False),
+        )
+        backend = LocalSpecProvider()
+    else:
+        layer_spec = get_gpt_layer_with_transformer_engine_spec(
+            num_experts=None,
+            moe_grouped_gemm=False,
+            qk_layernorm=qk_layernorm,
+            multi_latent_attention=False,
+            qk_l2_norm=getattr(config, 'qk_l2_norm', False),
+        )
+        backend = TESpecProvider()
 
     # Replace only self_attention with our custom kernel.
     # All other slots (input_layernorm, mlp, mlp_bda, etc.) stay as-is.
     layer_spec.submodules.self_attention = build_attn_module_spec(
         attn=attn,
         impl=impl,
-        backend=TESpecProvider(),
-        qk_layernorm=getattr(config, 'qk_layernorm', False),
+        backend=backend,
+        qk_layernorm=qk_layernorm,
         attn_kwargs=attn_kwargs,
     )
 

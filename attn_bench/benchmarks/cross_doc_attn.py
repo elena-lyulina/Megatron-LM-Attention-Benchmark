@@ -171,7 +171,7 @@ def test_mask_structure():
     _print_attn_mask(attn_mask, tokens, doc_ids, bos_id, eos_id)
     print_rank_0(f"\nloss_mask:\n  {loss_mask.tolist()}")
 
-    errors = _check_mask_errors(attn_mask, tokens, doc_ids, loss_mask, position_ids, bos_id, eos_id)
+    errors = _check_mask_errors(attn_mask, loss_mask, tokens, doc_ids, position_ids, bos_id, eos_id)
     if errors:
         print_rank_0(f"\n[FAIL] mask_structure  ({len(errors)} errors):")
         for e in errors[:10]:

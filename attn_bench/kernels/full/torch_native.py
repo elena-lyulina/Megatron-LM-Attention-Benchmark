@@ -51,10 +51,6 @@ class TorchFullAttention(nn.Module):
             "TorchFullAttention does not support packed sequences. "
             "Do not use --use-packed-seq-params with this kernel."
         )
-        assert attn_mask_type.name == "causal", (
-            f"TorchFullAttention only supports causal masking, got {attn_mask_type.name!r}."
-        )
-
         sq, b, np, hn = query.shape
 
         # GQA: repeat KV heads to match query heads
@@ -68,13 +64,23 @@ class TorchFullAttention(nn.Module):
         k = key.permute(1, 2, 0, 3)
         v = value.permute(1, 2, 0, 3)
 
-        out = F.scaled_dot_product_attention(
-            q, k, v,
-            attn_mask=None,
-            dropout_p=self.dropout_p if self.training else 0.0,
-            is_causal=True,
-            scale=self.softmax_scale,
-        )
+        if attention_mask is not None:
+            # Megatron mask: True=blocked; SDPA boolean mask: True=attend — invert
+            out = F.scaled_dot_product_attention(
+                q, k, v,
+                attn_mask=~attention_mask,
+                dropout_p=self.dropout_p if self.training else 0.0,
+                is_causal=False,
+                scale=self.softmax_scale,
+            )
+        else:
+            out = F.scaled_dot_product_attention(
+                q, k, v,
+                attn_mask=None,
+                dropout_p=self.dropout_p if self.training else 0.0,
+                is_causal=True,
+                scale=self.softmax_scale,
+            )
 
         # [b, np, sq, hn] -> [sq, b, np * hn]
         return out.permute(2, 0, 1, 3).reshape(sq, b, np * hn)
