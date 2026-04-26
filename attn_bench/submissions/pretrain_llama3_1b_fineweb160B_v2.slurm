@@ -8,6 +8,8 @@
 #SBATCH --ntasks-per-node=4
 #SBATCH --cpus-per-task=72
 #SBATCH --no-requeue
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-user=clariden-jobs-elyulin-aaaauapxybdkdx42ppvef2c2eq@swissai-initiative.slack.com
 
 # Train a standard LLaMA 3.2 1B model on 160B FineWeb Edu Dedup
 # Used to obtain a model for perplexity-based dataset curation
@@ -58,8 +60,9 @@ MBS=2 # Micro batch size, 4 causes OOM
 #   seq_length * MBS * Nodes * GPUs/Node * GAS = 8192 * 2 * 14 * 4 = 0.92M
 # This gives us GBS = MBS * Nodes * GPUs/Node = 2 * 14 * 4 = 112
 GBS=112  # Global batch size, must be divisible by MBS * num_gpus; Gradient Accumulation Steps (GAS) = 1
-TARGET_TOKENS=160153550653 # 160B
+TARGET_TOKENS=160159943902 # 160B
 CHECKPOINT_STEPS=2000
+CHECKPOINT_RETAIN_STEPS=50000
 TRAINING_STEPS=$((TARGET_TOKENS / (GBS * SEQ_LEN)))
 # ~174,000 steps
 TRAINING_STEPS=$((((TRAINING_STEPS + CHECKPOINT_STEPS/2) / CHECKPOINT_STEPS) * CHECKPOINT_STEPS)) # Round to nearest multiple of CHECKPOINT_STEPS
@@ -77,7 +80,7 @@ PYTHON_CACHE_DIR=/tmp/.python_cache
 # Logging directories & artifacts
 PROJECT_NAME="fineweb-160B"
 PROJECT_DIR=$MEGATRON_LM_DIR/attn_bench/results/pretrain/$PROJECT_NAME
-EXP_NAME=llama3-1b-fineweb160B
+EXP_NAME="llama3-1b-fineweb160B"
 EXP_DIR=$PROJECT_DIR/$EXP_NAME
 CKPT_DIR=$EXP_DIR/checkpoints
 TRIGGER_DIR=$EXP_DIR/triggers
@@ -203,11 +206,11 @@ CHECKPOINTING_ARGS=(
     --load $CKPT_DIR  # delete this to NOT reload from the latest checkpoint
     --save $CKPT_DIR
     --save-interval $CHECKPOINT_STEPS
+    --save-retain-interval $CHECKPOINT_RETAIN_STEPS
     --ckpt-format torch_dist
     --async-save
     --ckpt-fully-parallel-load # all ranks load checkpoint shards in parallel instead of sequentially
     --dist-ckpt-strictness assume_ok_unexpected # suppresses errors when checkpoint has keys not in the current model (in case of minor model changes)
-
 )
 
 
@@ -243,8 +246,9 @@ DATA_ARGS=(
     --dataloader-type single
     --seq-length $SEQ_LEN
     --reset-position-ids
-    --reset-attention-mask
     --eod-mask-loss
+    --use-packed-seq-params
+    --no-create-attention-mask-in-dataloader
     --num-workers 2
     --num-dataset-builder-threads 4
     --data-path $DATA_PATH_STR
