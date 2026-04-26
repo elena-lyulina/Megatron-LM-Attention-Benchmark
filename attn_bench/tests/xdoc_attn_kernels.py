@@ -31,8 +31,8 @@ from megatron.core.enums import ModelType
 from megatron.core.utils import get_attr_wrapped_model
 from megatron.training import get_args, get_tokenizer, pretrain, print_rank_0
 
-from attn_bench.benchmarks.args import add_benchmark_args
-from attn_bench.benchmarks.common import get_batch, loss_func, model_provider, train_valid_test_datasets_provider
+from attn_bench.tests.args import add_benchmark_args
+from attn_bench.tests.common import get_batch, loss_func, model_provider, train_valid_test_datasets_provider
 
 
 # ─── Test 1: mask structure ───────────────────────────────────────────────────

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Runs the correctness benchmark with parallelism args set as env vars (see submissions/submit_correctness_1node_1gpu.slurm)
+# Runs the correctness benchmark with parallelism args set as env vars (see submissions/test_correctness_1node_1gpu.slurm)
 # All the default args about the model and the training are set here.
 
 # Args:

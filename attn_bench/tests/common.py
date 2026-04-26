@@ -1,4 +1,4 @@
-"""Shared utilities for attn_bench benchmarks."""
+"""Shared utilities for attn_bench tests."""
 
 from functools import partial
 
@@ -36,7 +36,7 @@ def model_provider(pre_process=True, post_process=True, config=None, vp_stage=No
         pg_collection=pg_collection,
     )
 
-# Simplified for benchmarks
+# Simplified for tests
 def get_batch(data_iterator, vp_stage=None):
     if not is_first_or_last_pipeline_stage(vp_stage):
         return None, None, None, None, None, None
