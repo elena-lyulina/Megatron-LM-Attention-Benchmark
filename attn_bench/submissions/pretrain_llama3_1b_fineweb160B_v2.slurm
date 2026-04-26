@@ -4,7 +4,7 @@
 #SBATCH --job-name=pretrain-llama1B-fineweb160B
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
-#SBATCH --nodes=14
+#SBATCH --nodes=10
 #SBATCH --ntasks-per-node=4
 #SBATCH --cpus-per-task=72
 #SBATCH --no-requeue
@@ -56,15 +56,15 @@ MBS=2 # Micro batch size, 4 causes OOM
 # following https://arxiv.org/html/2412.01505v1, the optimal batch can be calculated as
 #   B = 3.24 * 10^3 * (160 * 10^9)^0.264 = 2.94 M tokens/step
 # TinyLlama use 1.8M to 2M https://arxiv.org/pdf/2401.02385
-# The closest config with seq_len = 8192 and GAS=1 could be:
-#   seq_length * MBS * Nodes * GPUs/Node * GAS = 8192 * 2 * 14 * 4 = 0.92M
-# This gives us GBS = MBS * Nodes * GPUs/Node = 2 * 14 * 4 = 112
-GBS=112  # Global batch size, must be divisible by MBS * num_gpus; Gradient Accumulation Steps (GAS) = 1
+# The closest config with seq_len = 8192 and GAS=4 could be:
+#   seq_length * MBS * Nodes * GPUs/Node * GAS = 8192 * 2 * 10 * 4 * 4 = 2.6M
+# This gives us GBS = MBS * Nodes * GPUs/Node * GAS = 2 * 10 * 4 * 4 = 320
+GBS=320  # Global batch size, must be divisible by MBS * num_gpus; Gradient Accumulation Steps (GAS) = 4
 TARGET_TOKENS=160159943902 # 160B
 CHECKPOINT_STEPS=2000
 CHECKPOINT_RETAIN_STEPS=50000
 TRAINING_STEPS=$((TARGET_TOKENS / (GBS * SEQ_LEN)))
-# ~174,000 steps
+# ~62,000 steps
 TRAINING_STEPS=$((((TRAINING_STEPS + CHECKPOINT_STEPS/2) / CHECKPOINT_STEPS) * CHECKPOINT_STEPS)) # Round to nearest multiple of CHECKPOINT_STEPS
 
 
