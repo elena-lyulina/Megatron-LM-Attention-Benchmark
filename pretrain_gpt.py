@@ -29,10 +29,13 @@ from megatron.core.enums import ModelType
 from megatron.core.models.gpt import GPTModel
 from megatron.core.rerun_state_machine import get_rerun_state_machine
 from megatron.core.tokenizers.utils.build_tokenizer import build_tokenizer
-from megatron.core.utils import get_attr_wrapped_model, get_thd_batch_on_this_cp_rank, get_batch_on_this_hybrid_cp_rank, StragglerDetector
+from megatron.core.packed_seq_params import PackedSeqParams
+from megatron.core.utils import get_attr_wrapped_model, StragglerDetector, get_batch_on_this_hybrid_cp_rank, \
+    get_thd_batch_on_this_cp_rank
 from megatron.training import (
     get_args,
     get_timers,
+    get_tokenizer,
     inprocess_restart,
     pretrain,
     print_rank_0,
@@ -61,10 +64,51 @@ except ImportError:
 stimer = StragglerDetector()
 
 
+def tokens_to_packed_seq_params(input_ids, eod_token, orig_seq_len, qkv_format='thd', cu_seqlens_padded=None):
+    """
+    Compute PackedSeqParams from input tokens using EOD token boundaries.
+
+    Args:
+        input_ids: Input token IDs, shape assumed flattened (1, tokens) or (tokens)
+        eod_token: End-of-Document token ID (from tokenizer.eod)
+        orig_seq_len: Original sequence length for fixed boundaries
+        qkv_format: QKV format - 'sbhd' (default) or 'thd' (for CP with padding)
+        cu_seqlens_padded: Optional padded cumulative lengths for context parallelism
+
+    Returns:
+        PackedSeqParams with cu_seqlens respecting both EOD and orig_seq_len boundaries
+    """
+    from megatron.core.packed_seq_params import PackedSeqParams
+
+    # Create boundaries at fixed intervals (based on orig_seq_len)
+    # Find EOD token positions (+1 to mark position AFTER eod)
+    # Concatenate and sort to get all boundaries (fixed + EOD)
+    cu_seq, _ = torch.sort(torch.cat((
+        torch.arange(0, input_ids.size(-1) + orig_seq_len, orig_seq_len, device=input_ids.device, dtype=torch.int32),
+        (input_ids.flatten() == eod_token).nonzero()[:, 0].int() + 1,
+    )))
+
+    # deduplicate: if an EOD falls exactly on a fixed boundary (the seq_length boundaries), we'll get zero-length segments
+    cu_seq = torch.unique(cu_seq)
+
+    # Compute max sequence length between boundaries
+    max_len = (cu_seq[1:] - cu_seq[:-1]).max()
+
+    return PackedSeqParams(
+        cu_seqlens_q=cu_seq,
+        cu_seqlens_kv=cu_seq,
+        max_seqlen_q=max_len,
+        max_seqlen_kv=max_len,
+        qkv_format=qkv_format,
+        cu_seqlens_q_padded=cu_seqlens_padded,
+        cu_seqlens_kv_padded=cu_seqlens_padded,
+    )
+
 def get_batch(data_iterator, vp_stage: Optional[int] = None):
     """Generate a batch."""
     args = get_args()
     config = core_transformer_config_from_args(args)
+
     # TODO: this is pretty hacky, find a better way
     if not is_first_or_last_pipeline_stage(vp_stage) and (
     (not mtp_on_this_rank(config, ignore_virtual=False, vp_stage=vp_stage))):
@@ -76,24 +120,41 @@ def get_batch(data_iterator, vp_stage: Optional[int] = None):
         mtp_on_this_rank=mtp_on_this_rank(config, ignore_virtual=False, vp_stage=vp_stage)
         )
 
+    # get_batch_on_this_tp_rank always adds these keys (None if dataset doesn't produce them);
+    # we must pop them regardless to keep batch.values() to the expected 5 fields.
+    # GPTDataset never produces these — assert to catch accidental use of a different dataset.
     cu_seqlens = batch.pop('cu_seqlens', None)
     cu_seqlens_padded = batch.pop('cu_seqlens_padded', None)
     max_seqlen = batch.pop('max_seqlen', None)
     local_cp_size = batch.pop('local_cp_size', None)
-    if local_cp_size is not None:
-        local_cp_size = int(local_cp_size.item())
 
-    if cu_seqlens is None and local_cp_size is None:
-        # slice batch along sequence dimension for context parallelism
-        batch = get_batch_on_this_cp_rank(batch)  # The implementation of this function is in MCore
-        packed_seq_params = None
-    elif local_cp_size is None:  # Packed THD format
+    if local_cp_size is not None: # Hybrid CP format
+        local_cp_size = int(local_cp_size.item())
+        batch, packed_seq_params = get_batch_on_this_hybrid_cp_rank(batch, local_cp_size)
+        return *batch.values(), packed_seq_params
+
+    if cu_seqlens is not None:  # Packed THD format
         assert max_seqlen.dim() == 1
         batch, packed_seq_params = get_thd_batch_on_this_cp_rank(batch, cu_seqlens, cu_seqlens_padded, max_seqlen)
-    else: # Hybrid CP format
-        batch, packed_seq_params = get_batch_on_this_hybrid_cp_rank(batch, local_cp_size)
-    
-    return (*batch.values(), packed_seq_params)
+        return *batch.values(), packed_seq_params
+
+    # if both are None, check for args.use_packed_seq_params
+    if args.use_packed_seq_params:
+        assert parallel_state.get_context_parallel_world_size() == 1, (
+            "--use-packed-seq-params with context_parallel_size > 1 is not supported yet."
+        )
+        packed_seq_params = tokens_to_packed_seq_params(
+            batch['tokens'].view(1, -1), eod_token=get_tokenizer().eod,
+            orig_seq_len=args.seq_length, qkv_format='thd',
+        )
+        for key in ('tokens', 'labels', 'loss_mask', 'position_ids'):
+            batch[key] = batch[key].view(1, -1)
+        return *batch.values(), packed_seq_params
+
+
+    # slice batch along sequence dimension for context parallelism
+    batch, packed_seq_params = get_batch_on_this_cp_rank(batch), None  # The implementation of this function is in MCore
+    return *batch.values(), packed_seq_params
 
 
 # define spiky loss as a loss that's 10x the max loss observed
@@ -183,18 +244,21 @@ def forward_step(data_iterator, model: GPTModel, return_schedule_plan: bool = Fa
 
     with stimer:
         if args.use_legacy_models:
-            output_tensor = model(tokens, position_ids, attention_mask, labels=labels)
+            output_tensor = model(tokens, position_ids, attention_mask, labels=labels,
+                                  packed_seq_params=packed_seq_params)
         else:
             if return_schedule_plan:
                 assert args.overlap_moe_expert_parallel_comm, \
                     "overlap_moe_expert_parallel_comm must be enabled to return the schedule plan"
                 schedule_plan = model.build_schedule_plan(
-                    tokens, position_ids, attention_mask, labels=labels, loss_mask=loss_mask
+                    tokens, position_ids, attention_mask, labels=labels, loss_mask=loss_mask,
+                    packed_seq_params=packed_seq_params
                 )
                 return schedule_plan, partial(loss_func, loss_mask, model=model)
             else:
                 output_tensor = model(
-                    tokens, position_ids, attention_mask, labels=labels, loss_mask=loss_mask, packed_seq_params=packed_seq_params
+                    tokens, position_ids, attention_mask, labels=labels, loss_mask=loss_mask,
+                    packed_seq_params=packed_seq_params
                 )
 
     # [ModelOpt]: model is needed to access ModelOpt distillation losses
