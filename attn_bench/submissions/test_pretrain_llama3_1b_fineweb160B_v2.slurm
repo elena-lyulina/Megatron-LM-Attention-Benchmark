@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --account=infra01
-#SBATCH --time=00:15:00
+#SBATCH --time=01:00:00
 #SBATCH --job-name=test-pretrain-llama1B-fineweb160B
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
@@ -8,6 +8,9 @@
 #SBATCH --ntasks-per-node=4
 #SBATCH --cpus-per-task=72
 #SBATCH --no-requeue
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-user=clariden-jobs-elyulin-aaaauapxybdkdx42ppvef2c2eq@swissai-initiative.slack.com
+
 
 # Train a standard LLaMA 3.2 1B model on 160B FineWeb Edu Dedup
 # Used to obtain a model for perplexity-based dataset curation
@@ -53,8 +56,8 @@ SEQ_LEN=8192
 # Test values
 MBS=2
 GBS=16  # Global batch size, must be divisible by MBS * num_gpus; Gradient Accumulation Steps (GAS) = 1
-TARGET_TOKENS=1000000 # 1M
-CHECKPOINT_STEPS=10
+TARGET_TOKENS=262144000 # 2000 steps with GBS=16, SEQ_LEN=8192
+CHECKPOINT_STEPS=500
 TRAINING_STEPS=$((TARGET_TOKENS / (GBS * SEQ_LEN)))
 TRAINING_STEPS=$((((TRAINING_STEPS + CHECKPOINT_STEPS/2) / CHECKPOINT_STEPS) * CHECKPOINT_STEPS)) # Round to nearest multiple of CHECKPOINT_STEPS
 
@@ -69,9 +72,9 @@ TRITON_HOME_DIR=/tmp/.triton
 PYTHON_CACHE_DIR=/tmp/.python_cache
 
 # Logging directories & artifacts
-PROJECT_NAME="fineweb-160B-test"
+PROJECT_NAME="test"
 PROJECT_DIR=$MEGATRON_LM_DIR/attn_bench/results/pretrain/$PROJECT_NAME
-EXP_NAME=llama3-1b-fineweb160B
+EXP_NAME="llama3-1b-fineweb160B"
 EXP_DIR=$PROJECT_DIR/$EXP_NAME
 CKPT_DIR=$EXP_DIR/checkpoints
 TRIGGER_DIR=$EXP_DIR/triggers
@@ -189,7 +192,7 @@ LEARNING_RATE_ARGS=(
     --lr 0.0004 # 4 × 10^−4 -- following Tiny llama
     --min-lr 0.00004  # 4 × 10^−5 -- following Tiny llama
     --lr-decay-style cosine # cosine -- following LLama3 paper
-    --lr-warmup-iters 2 # test value
+    --lr-warmup-iters 500
 )
 
 
@@ -239,8 +242,9 @@ DATA_ARGS=(
     --num-workers 2
     --num-dataset-builder-threads 4
     --reset-position-ids
-    --reset-attention-mask
     --eod-mask-loss
+    --use-packed-seq-params
+    --no-create-attention-mask-in-dataloader
     --data-path $DATA_PATH_STR
     --data-cache-path $DATASET_CACHE_DIR
 )

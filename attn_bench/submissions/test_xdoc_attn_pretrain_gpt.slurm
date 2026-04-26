@@ -143,8 +143,10 @@ DATA_ARGS=(
     --tokenizer-model /users/elyulina/scratch/tokenizers/llama-3.2-1b
     --make-vocab-size-divisible-by 128
     --reset-position-ids
-    --reset-attention-mask
+    #--reset-attention-mask builds block-diagonal mask but TE ignores it; use --use-packed-seq-params instead
     --eod-mask-loss
+    --no-create-attention-mask-in-dataloader # since attention mask is ignored either way, no need to spend compute on building it
+    --use-packed-seq-params
     --mock-data
 )
 
