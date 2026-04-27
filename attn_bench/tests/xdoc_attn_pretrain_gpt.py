@@ -103,9 +103,10 @@ def test_loss_isolation_pretrain_gpt(model):
     if was_training:
         model.train()
 
-    # output_tensor is per-token losses; with batch size = 1, view(-1) gives [seq_len] in sequence order
-    losses_A = out_A.view(-1).float()[target_start:]
-    losses_B = out_B.view(-1).float()[target_start:]
+    # output_tensor is per-token losses; slice to first copy only (positions 0..seq_len-1)
+    # since get_batch flattens mbs copies, we must not compare beyond seq_len
+    losses_A = out_A.view(-1).float()[target_start:seq_len]
+    losses_B = out_B.view(-1).float()[target_start:seq_len]
     max_diff = (losses_A - losses_B).abs().max().item()
     mean_diff = (losses_A - losses_B).abs().mean().item()
 
