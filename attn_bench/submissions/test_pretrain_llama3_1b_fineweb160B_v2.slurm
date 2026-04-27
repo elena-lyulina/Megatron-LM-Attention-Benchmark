@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --account=infra01
-#SBATCH --time=01:00:00
-#SBATCH --job-name=test-pretrain-llama1B-fineweb160B
+#SBATCH --time=00:30:00
+#SBATCH --job-name=test-1node-packed-seq-pretrain-llama1B-fineweb160B
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
-#SBATCH --nodes=2
+#SBATCH --nodes=1
 #SBATCH --ntasks-per-node=4
 #SBATCH --cpus-per-task=72
 #SBATCH --no-requeue
@@ -55,11 +55,12 @@ SEQ_LEN=8192
 
 # Test values
 MBS=2
-GBS=16  # Global batch size, must be divisible by MBS * num_gpus; Gradient Accumulation Steps (GAS) = 1
+GBS=8  # Global batch size, must be divisible by MBS * num_gpus; Gradient Accumulation Steps (GAS) = 1
 TARGET_TOKENS=262144000 # 2000 steps with GBS=16, SEQ_LEN=8192
 CHECKPOINT_STEPS=500
 TRAINING_STEPS=$((TARGET_TOKENS / (GBS * SEQ_LEN)))
 TRAINING_STEPS=$((((TRAINING_STEPS + CHECKPOINT_STEPS/2) / CHECKPOINT_STEPS) * CHECKPOINT_STEPS)) # Round to nearest multiple of CHECKPOINT_STEPS
+TRAINING_STEPS=200
 
 
 #### Debugging ####
@@ -74,7 +75,7 @@ PYTHON_CACHE_DIR=/tmp/.python_cache
 # Logging directories & artifacts
 PROJECT_NAME="test"
 PROJECT_DIR=$MEGATRON_LM_DIR/attn_bench/results/pretrain/$PROJECT_NAME
-EXP_NAME="llama3-1b-fineweb160B"
+EXP_NAME=$SLURM_JOB_NAME
 EXP_DIR=$PROJECT_DIR/$EXP_NAME
 CKPT_DIR=$EXP_DIR/checkpoints
 TRIGGER_DIR=$EXP_DIR/triggers
@@ -153,6 +154,7 @@ LOGGING_ARGS=(
     --log-interval 1
     --tensorboard-dir $TENSORBOARD_DIR
     --log-timers-to-tensorboard
+    --timing-log-level 2 # level 1 = forward-backward + optimizer; level 2 adds forward-compute + backward-compute
     --no-log-loss-scale-to-tensorboard
     --log-memory-to-tensorboard
 )
@@ -192,7 +194,7 @@ LEARNING_RATE_ARGS=(
     --lr 0.0004 # 4 × 10^−4 -- following Tiny llama
     --min-lr 0.00004  # 4 × 10^−5 -- following Tiny llama
     --lr-decay-style cosine # cosine -- following LLama3 paper
-    --lr-warmup-iters 500
+    --lr-warmup-iters 50
 )
 
 
