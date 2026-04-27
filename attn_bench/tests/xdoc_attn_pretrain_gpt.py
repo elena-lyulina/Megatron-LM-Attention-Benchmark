@@ -43,7 +43,7 @@ _TESTS_DONE = False
 ### Loss isolation test helpers ###
 
 def _make_test_iter(token_seq, eos_id, args):
-    """Wrap a 1D token sequence into a single-sample batch dict iterator."""
+    """Wrap a 1D token sequence into a batch dict iterator matching micro_batch_size."""
     seq_len = args.seq_length
     tokens_1d = token_seq[:seq_len]
     labels_1d = token_seq[1:seq_len + 1]
@@ -55,11 +55,12 @@ def _make_test_iter(token_seq, eos_id, args):
         eod_mask_loss=args.eod_mask_loss,
         create_attention_mask=False,
     )
+    mbs = args.micro_batch_size
     batch = {
-        'tokens': tokens_1d.unsqueeze(0),        # [1, seq_len]
-        'labels': labels_1d.unsqueeze(0),        # [1, seq_len]
-        'loss_mask': loss_mask_1d.unsqueeze(0),  # [1, seq_len]
-        'position_ids': pos_ids_1d.unsqueeze(0), # [1, seq_len]
+        'tokens': tokens_1d.unsqueeze(0).repeat(mbs, 1),        # [mbs, seq_len]
+        'labels': labels_1d.unsqueeze(0).repeat(mbs, 1),        # [mbs, seq_len]
+        'loss_mask': loss_mask_1d.unsqueeze(0).repeat(mbs, 1),  # [mbs, seq_len]
+        'position_ids': pos_ids_1d.unsqueeze(0).repeat(mbs, 1), # [mbs, seq_len]
     }
     return iter([batch])
 
