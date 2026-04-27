@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --account=infra01
 #SBATCH --time=12:00:00
-#SBATCH --job-name=pretrain-llama1B-fineweb160B
+#SBATCH --job-name=pretrain-llama1B-fineweb160B-final
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
-#SBATCH --nodes=10
+#SBATCH --nodes=14
 #SBATCH --ntasks-per-node=4
 #SBATCH --cpus-per-task=72
 #SBATCH --no-requeue
@@ -52,19 +52,19 @@ TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b  # Assumes t
 
 SEQ_LEN=8192
 
-MBS=2 # Micro batch size, 4 causes OOM
+MBS=4 # Micro batch size, 4 works if TP=2, otherwise causes OOM
 # following https://arxiv.org/html/2412.01505v1, the optimal batch can be calculated as
 #   B = 3.24 * 10^3 * (160 * 10^9)^0.264 = 2.94 M tokens/step
 # TinyLlama use 1.8M to 2M https://arxiv.org/pdf/2401.02385
-# The closest config with seq_len = 8192 and GAS=4 could be:
-#   seq_length * MBS * Nodes * GPUs/Node * GAS = 8192 * 2 * 10 * 4 * 4 = 2.6M
-# This gives us GBS = MBS * Nodes * GPUs/Node * GAS = 2 * 10 * 4 * 4 = 320
-GBS=320  # Global batch size, must be divisible by MBS * num_gpus; Gradient Accumulation Steps (GAS) = 4
+# The closest config with seq_len = 8192 and GAS=3 could be:
+#   seq_length * MBS * DP * GAS = 8192 * 4 * 28 * 3 = 2.75 M
+# This gives us GBS = MBS * DP * GAS = 4 * 28 * 3 = 336
+GBS=336  # Global batch size, must be divisible by MBS * num_gpus; Gradient Accumulation Steps (GAS) = 3
 TARGET_TOKENS=160159943902 # 160B
 CHECKPOINT_STEPS=2000
 CHECKPOINT_RETAIN_STEPS=50000
 TRAINING_STEPS=$((TARGET_TOKENS / (GBS * SEQ_LEN)))
-# ~62,000 steps
+# ~ 58 000 steps
 TRAINING_STEPS=$((((TRAINING_STEPS + CHECKPOINT_STEPS/2) / CHECKPOINT_STEPS) * CHECKPOINT_STEPS)) # Round to nearest multiple of CHECKPOINT_STEPS
 
 
@@ -159,6 +159,7 @@ LOGGING_ARGS=(
     --log-interval 1
     --tensorboard-dir $TENSORBOARD_DIR
     --log-timers-to-tensorboard
+    --timing-log-level 2 # level 1 = forward-backward + optimizer; level 2 adds forward-compute + backward-compute
     --no-log-loss-scale-to-tensorboard
     --log-memory-to-tensorboard
 )
@@ -226,9 +227,10 @@ VOCAB_ARGS=(
 
 
 DISTRIBUTED_ARGS=(
-    --tensor-model-parallel-size 1
+    --tensor-model-parallel-size 2
     --pipeline-model-parallel-size 1
     --context-parallel-size 1
+    --sequence-parallel
     --use-distributed-optimizer
     --overlap-grad-reduce
     --overlap-param-gather
@@ -245,12 +247,13 @@ DATA_ARGS=(
     --split "100,0,0"
     --dataloader-type single
     --seq-length $SEQ_LEN
+    --num-workers 2
+    --num-dataset-builder-threads 4
     --reset-position-ids
+    #    --reset-attention-mask
     --eod-mask-loss
     --use-packed-seq-params
     --no-create-attention-mask-in-dataloader
-    --num-workers 2
-    --num-dataset-builder-threads 4
     --data-path $DATA_PATH_STR
     --data-cache-path $DATASET_CACHE_DIR
 )
