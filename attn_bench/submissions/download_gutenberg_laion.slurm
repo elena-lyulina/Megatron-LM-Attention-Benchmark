@@ -28,7 +28,7 @@ echo "START TIME: $(date)"
 ### PATHS ###
 
 MEGATRON_DIR=/iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark
-BASE_DIR=/iopsstor/scratch/cscs/$USER/datasets/gutenberg-laion
+BASE_DIR=/iopsstor/scratch/cscs/$USER/datasets/raw/gutenberg-laion
 
 mkdir -p /iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark/attn_bench/logs
 mkdir -p $BASE_DIR

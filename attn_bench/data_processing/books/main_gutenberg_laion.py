@@ -227,9 +227,9 @@ def _clear_stats(stats_dir: Path, ckpt_dir: Path | None):
         shutil.rmtree(stats_dir)
 
 
-def pipeline(dataset_dir: Path, output_dir: Path, tokenizer_path: str, ckpt_dir: Path | None, stats_dir: Path | None, megatron_ckpt_dir: str | None = None):
+def pipeline(dataset_dir: Path, output_dir: Path, tokenizer_path: str, ckpt_dir: Path | None, stats_dir: Path | None, megatron_ckpt_dir: str | None = None, num_workers: int | None = None):
     t_start = time.time()
-    num_proc = os.cpu_count()
+    num_proc = num_workers or os.cpu_count()
 
     if stats_dir and stats_dir.exists():
         _clear_stats(stats_dir, ckpt_dir)
@@ -298,6 +298,8 @@ def main():
     parser.add_argument("--no-stats", action="store_true", help="skip writing stats")
     parser.add_argument("--megatron-ckpt-dir", type=str, default=None,
                         help="path to FineWeb LLaMA 1B Megatron checkpoint dir for step 20 perplexity scoring (requires GPU)")
+    parser.add_argument("--num-workers", type=int, default=None,
+                        help="number of parallel workers for dataset.map() steps (default: os.cpu_count())")
     args = parser.parse_args()
     output_dir = Path(args.output_dir)
     ckpt_dir = output_dir / "checkpoints" if args.checkpoint else None
@@ -309,6 +311,7 @@ def main():
         ckpt_dir=ckpt_dir,
         stats_dir=stats_dir,
         megatron_ckpt_dir=args.megatron_ckpt_dir,
+        num_workers=args.num_workers,
     )
 
 
