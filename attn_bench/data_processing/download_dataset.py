@@ -14,7 +14,9 @@ import shutil
 import sys
 from pathlib import Path
 
-from huggingface_hub import snapshot_download
+import fnmatch
+
+from huggingface_hub import hf_hub_download, list_repo_files, snapshot_download
 
 logging.basicConfig(
     level=logging.INFO,
@@ -62,15 +64,27 @@ def main(args):
     ext = cfg["extension"]
     output_dir = Path(args.raw_dir) / args.dataset
     output_dir.mkdir(parents=True, exist_ok=True)
+    token = os.environ.get("HF_TOKEN")
 
     logger.info(f"Downloading {cfg['repo_id']} to {output_dir} ...")
-    snapshot_download(
-        repo_id=cfg["repo_id"],
-        repo_type="dataset",
-        allow_patterns=cfg["allow_patterns"],
-        local_dir=str(output_dir),
-        token=os.environ.get("HF_TOKEN"),
-    )
+
+    if args.n_percent < 100:
+        all_files = [
+            f for f in list_repo_files(cfg["repo_id"], repo_type="dataset", token=token)
+            if fnmatch.fnmatch(f, cfg["allow_patterns"])
+        ]
+        n = max(1, int(len(all_files) * args.n_percent / 100))
+        logger.info(f"Downloading {n}/{len(all_files)} files ({args.n_percent}%) ...")
+        for filename in all_files[:n]:
+            hf_hub_download(cfg["repo_id"], filename, repo_type="dataset", local_dir=str(output_dir), token=token)
+    else:
+        snapshot_download(
+            repo_id=cfg["repo_id"],
+            repo_type="dataset",
+            allow_patterns=cfg["allow_patterns"],
+            local_dir=str(output_dir),
+            token=token,
+        )
 
     logger.info(f"Flattening {ext} files ...")
     flatten_files(output_dir, ext)
@@ -83,5 +97,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Download a raw dataset from HuggingFace")
     parser.add_argument("--dataset", choices=list(DATASETS), required=True)
     parser.add_argument("--raw-dir", type=str, required=True)
+    parser.add_argument("--n-percent", type=int, default=100,
+                        help="Download only this percentage of files (1-100)")
     args = parser.parse_args()
     main(args)
