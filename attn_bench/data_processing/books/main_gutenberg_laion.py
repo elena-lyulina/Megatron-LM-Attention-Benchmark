@@ -51,7 +51,7 @@ from pathlib import Path
 from inscriptis import get_text as html_to_text
 from datasets import load_dataset
 
-from .checkpoint import run_step
+from .checkpoint import find_and_load_latest_ckpt, run_step
 from .columns import Col, DEFAULTS
 from .dedup_cluster_titles import add_title_embeddings, build_title_clusters, write_clusters_stats
 from .dedup_id_title import dedup_id, dedup_title, write_dedup_id_stats, write_dedup_title_stats
@@ -210,80 +210,80 @@ def write_tokenized_excerpts(ds, output_dir: Path, num_proc: int):
 
 ### PIPELINE ###
 
-def _clear_stats(stats_dir: Path, ckpt_dir: Path | None):
+def _clear_stats(stats_dir: Path):
     import shutil
-    # steps 13 and 18 write stats internally (not via stats_fn) so they must be preserved
-    # when their checkpoint exists — otherwise stats are lost and never regenerated
-    preserved = set()
-    for step_name in ("13_dedup_content_minhash", "19_dedup_excerpts_minhash"):
-        ckpt = ckpt_dir / step_name if ckpt_dir else None
-        if ckpt and ckpt.exists():
-            preserved.add(step_name)
-    if preserved:
-        for child in stats_dir.iterdir():
-            if child.name not in preserved:
-                (shutil.rmtree if child.is_dir() else child.unlink)(child)
-    else:
-        shutil.rmtree(stats_dir)
+    shutil.rmtree(stats_dir)
 
 
 def pipeline(dataset_dir: Path, output_dir: Path, tokenizer_path: str, ckpt_dir: Path | None, stats_dir: Path | None, megatron_ckpt_dir: str | None = None, num_workers: int | None = None):
+    import torch.distributed as dist
+    is_rank0 = not dist.is_initialized() or dist.get_rank() == 0
+
     t_start = time.time()
     num_proc = num_workers or os.cpu_count()
 
-    if stats_dir and stats_dir.exists():
-        _clear_stats(stats_dir, ckpt_dir)
+    # Fast-forward to the latest saved checkpoint if one exists.
+    fast_forward = find_and_load_latest_ckpt(ckpt_dir)
+    fast_forward_name = fast_forward[0] if fast_forward else None
+
+    if is_rank0 and stats_dir and stats_dir.exists() and not fast_forward:
+        _clear_stats(stats_dir)
 
     punkt = load_punkt()
     tokenizer, bos_id, eos_id = load_tokenizer(tokenizer_path)
 
-    print(f"Loading dataset from {dataset_dir}...")
-    arrow_files = sorted(str(f) for f in dataset_dir.glob("*.arrow") if not f.name.startswith("cache"))
-    ds = load_dataset("arrow", data_files={"train": arrow_files}, split="train")
-    print(f"Loaded: {len(ds):,} books, columns: {ds.column_names}")
+    if fast_forward:
+        ds = fast_forward[1]
+        print(f"Resumed: {len(ds):,} books")
+    else:
+        print(f"Loading dataset from {dataset_dir}...")
+        arrow_files = sorted(str(f) for f in dataset_dir.glob("*.arrow") if not f.name.startswith("cache"))
+        ds = load_dataset("arrow", data_files={"train": arrow_files}, split="train")
+        print(f"Loaded: {len(ds):,} books, columns: {ds.column_names}")
 
     step_ckpt_sizes = {}
 
     def step(step_name, step_fn, stats_fn=None, save_ckpt=True):
         nonlocal ds
+        if fast_forward_name and step_name <= fast_forward_name:
+            return
         ckpt_path = ckpt_dir / step_name if (ckpt_dir and save_ckpt) else None
         ds, size = run_step(step_fn, ds, ckpt_path)
         if ckpt_dir:
             step_ckpt_sizes[step_name] = size
-        if stats_dir and stats_fn:
+        if is_rank0 and stats_dir and stats_fn:
             stats_path = stats_dir / step_name
             stats_fn(ds, stats_path)
 
     step("01_init_columns", lambda d: d.map(init_columns_laion, num_proc=num_proc, load_from_cache_file=HF_CACHE_RESULTS, desc="init columns"), stats_fn=write_init_columns_stats, save_ckpt=False)
-    step("02_extract_text", lambda d: d.map(extract_text, num_proc=num_proc, load_from_cache_file=HF_CACHE_RESULTS, desc="extract text"), stats_fn=write_extract_text_stats)
+    step("02_extract_text", lambda d: d.map(extract_text, num_proc=num_proc, load_from_cache_file=HF_CACHE_RESULTS, desc="extract text"), stats_fn=write_extract_text_stats, save_ckpt=False)
     step("03_dedup_id", dedup_id, stats_fn=write_dedup_id_stats, save_ckpt=False)
     step("04_dedup_title", dedup_title, stats_fn=write_dedup_title_stats, save_ckpt=False)
-    step("05_add_title_embeddings", add_title_embeddings)
+    step("05_add_title_embeddings", add_title_embeddings, save_ckpt=False)
     step("06_build_title_clusters", build_title_clusters, stats_fn=write_clusters_stats, save_ckpt=False)
     step("07_strip_gutenberg", lambda d: d.map(strip_gutenberg_markers, num_proc=num_proc, load_from_cache_file=HF_CACHE_RESULTS, desc="strip gutenberg"), stats_fn=write_gutenberg_strip_stats, save_ckpt=False)
-    step("08_normalize_text", lambda d: d.map(normalize_text, num_proc=num_proc, load_from_cache_file=HF_CACHE_RESULTS, desc="normalize text"))
+    step("08_normalize_text", lambda d: d.map(normalize_text, num_proc=num_proc, load_from_cache_file=HF_CACHE_RESULTS, desc="normalize text"), save_ckpt=False)
     step("09_set_content_bounds", lambda d: d.map(set_content_bounds, num_proc=num_proc, load_from_cache_file=HF_CACHE_RESULTS, desc="set content bounds"), stats_fn=write_content_bounds_samples, save_ckpt=False)
     step("10_mark_too_short", lambda d: d.map(mark_too_short, num_proc=num_proc, load_from_cache_file=HF_CACHE_RESULTS, desc="mark too short"), stats_fn=write_too_short_stats, save_ckpt=False)
     step("11_verify_no_gutenberg", lambda d: d.map(verify_no_project_gutenberg, num_proc=num_proc, load_from_cache_file=HF_CACHE_RESULTS, desc="verify no gutenberg"), stats_fn=write_gutenberg_occurrences, save_ckpt=False)
-    step("12_compute_content_chunk_sigs", lambda d: d.map(compute_content_chunk_signatures, num_proc=num_proc, load_from_cache_file=HF_CACHE_RESULTS, desc="compute content chunk sigs"))
+    step("12_compute_content_chunk_sigs", lambda d: d.map(compute_content_chunk_signatures, num_proc=num_proc, load_from_cache_file=HF_CACHE_RESULTS, desc="compute content chunk sigs"), save_ckpt=False)
     step("13_dedup_content_minhash", lambda d: dedup_content_minhash(d, stats_dir=stats_dir / "13_dedup_content_minhash" if stats_dir else None))
-    step("14_sample_window", lambda d: d.map(sample_window, num_proc=num_proc, load_from_cache_file=HF_CACHE_RESULTS, desc="sample window"))
-    step("15_find_excerpt_start", lambda d: d.map(partial(find_excerpt_start, punkt=punkt), num_proc=num_proc, load_from_cache_file=HF_CACHE_RESULTS, desc="find excerpt start"), stats_fn=write_no_excerpt_start_stats)
-    step("16_tokenize_excerpt", lambda d: d.map(partial(tokenize_excerpt, tokenizer=tokenizer, bos_id=bos_id, eos_id=eos_id), num_proc=num_proc, load_from_cache_file=HF_CACHE_RESULTS, desc="tokenize excerpt"), stats_fn=write_tokenize_stats)
+    step("14_sample_window", lambda d: d.map(sample_window, num_proc=num_proc, load_from_cache_file=HF_CACHE_RESULTS, desc="sample window"), save_ckpt=False)
+    step("15_find_excerpt_start", lambda d: d.map(partial(find_excerpt_start, punkt=punkt), num_proc=num_proc, load_from_cache_file=HF_CACHE_RESULTS, desc="find excerpt start"), stats_fn=write_no_excerpt_start_stats, save_ckpt=False)
+    step("16_tokenize_excerpt", lambda d: d.map(partial(tokenize_excerpt, tokenizer=tokenizer, bos_id=bos_id, eos_id=eos_id), num_proc=num_proc, load_from_cache_file=HF_CACHE_RESULTS, desc="tokenize excerpt"), stats_fn=write_tokenize_stats, save_ckpt=False)
     step("17_verify_tokenization", lambda d: d.map(partial(verify_tokenization, tokenizer=tokenizer, bos_id=bos_id, eos_id=eos_id), num_proc=num_proc, load_from_cache_file=HF_CACHE_RESULTS, desc="verify tokenization"), stats_fn=partial(write_verify_stats, tokenizer=tokenizer), save_ckpt=False)
-    step("18_compute_excerpt_chunk_sigs", lambda d: d.map(compute_excerpt_chunk_signatures, num_proc=num_proc, load_from_cache_file=HF_CACHE_RESULTS, desc="compute excerpt chunk sigs"))
+    step("18_compute_excerpt_chunk_sigs", lambda d: d.map(compute_excerpt_chunk_signatures, num_proc=num_proc, load_from_cache_file=HF_CACHE_RESULTS, desc="compute excerpt chunk sigs"), save_ckpt=False)
     step("19_dedup_excerpts_minhash", lambda d: dedup_excerpts_minhash(d, stats_dir=stats_dir / "19_dedup_excerpts_minhash" if stats_dir else None))
 
     if megatron_ckpt_dir:
         ppl_model = load_model(megatron_ckpt_dir, tokenizer_path)
         step("20_score_perplexity", lambda d: score_perplexity(d, ppl_model), stats_fn=write_perplexity_stats)
 
-    print_stats(ds)
-
-    output_dir.mkdir(parents=True, exist_ok=True)
-    write_tokenized_excerpts(ds, output_dir, num_proc)
-
-    print(f"\nTime: {(time.time() - t_start) / 60:.1f}min  output: {output_dir}")
+    if is_rank0:
+        print_stats(ds)
+        output_dir.mkdir(parents=True, exist_ok=True)
+        write_tokenized_excerpts(ds, output_dir, num_proc)
+        print(f"\nTime: {(time.time() - t_start) / 60:.1f}min  output: {output_dir}")
 
 
 def main():

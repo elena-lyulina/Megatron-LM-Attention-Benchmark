@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import sys
 import time
 from functools import partial
@@ -7,6 +8,7 @@ from pathlib import Path
 
 import numpy as np
 import torch
+import torch.distributed as dist
 
 from .columns import Col
 from .tokenize_excerpts import SEQ_LEN
@@ -19,8 +21,13 @@ def load_model(ckpt_dir: str, tokenizer_path: str, batch_size: int = INFERENCE_B
 
     Architecture args (num_layers, hidden_size, swiglu, RoPE params, etc.) are loaded directly
     from the checkpoint via --use-checkpoint-args.  The only thing we override is TP/PP:
-    the checkpoint was saved with TP=2, but we run inference with TP=1 (single GPU);
-    Megatron's DCP resharding merges the two shards automatically during load_checkpoint.
+    the checkpoint was saved with TP=2, but we run inference with TP=1 so each GPU holds a
+    full model replica; Megatron's DCP resharding merges the two shards automatically.
+
+    With DP>1 (multiple GPUs), each rank loads an independent model copy and scores a disjoint
+    slice of books — zero inter-GPU communication during forward passes.
+    global-batch-size = batch_size * world_size satisfies Megatron's GBS % (MBS * DP) == 0
+    validation for any world_size with TP=1 (DP=world_size, GAS=1).
     """
     from gpt_builders import gpt_builder
     from model_provider import model_provider
@@ -28,18 +35,19 @@ def load_model(ckpt_dir: str, tokenizer_path: str, batch_size: int = INFERENCE_B
     from megatron.training.checkpointing import load_checkpoint
     from megatron.training.initialize import initialize_megatron
 
+    world_size = int(os.environ.get('WORLD_SIZE', '1'))
     saved_argv = sys.argv[:]
     sys.argv = [
         'score_perplexity',
         # Architecture is read from checkpoint -- no need to repeat it here
         '--use-checkpoint-args',
-        # TP=1 for single-GPU inference; NOT loaded from checkpoint (would be TP=2)
+        # TP=1: each GPU holds a full model replica; DCP resharding merges the TP=2 checkpoint shards
         '--tensor-model-parallel-size', '1',
         '--pipeline-model-parallel-size', '1',
         '--context-parallel-size', '1',
         # Megatron requires these even for inference
         '--micro-batch-size', str(batch_size),
-        '--global-batch-size', str(batch_size),
+        '--global-batch-size', str(batch_size * world_size),
         '--train-iters', '1',
         '--tokenizer-type', 'HuggingFaceTokenizer',
         '--tokenizer-model', tokenizer_path,
@@ -81,30 +89,54 @@ def _score_batch(model, token_ids_batch: list[list[int]]) -> list[float]:
 
 
 def score_perplexity(ds, model, batch_size: int = INFERENCE_BATCH_SIZE):
-    """Score kept books and add Col.PERPLEXITY; skipped books get None."""
-    keep_indices = [i for i, keep in enumerate(ds[Col.KEEP]) if keep]
-    perplexities: list[float | None] = [None] * len(ds)
+    """Score kept books and add Col.PERPLEXITY; skipped books get None.
 
+    With TP=1 and DP>1, each rank scores a disjoint slice of kept books (no inter-GPU
+    communication during forward passes). Results are gathered to rank 0 at the end.
+    Only rank 0 returns a dataset with the perplexity column added; callers must guard
+    downstream writes with rank == 0.
+    """
+    is_dist = dist.is_initialized()
+    rank = dist.get_rank() if is_dist else 0
+    world_size = dist.get_world_size() if is_dist else 1
+
+    keep_indices = [i for i, keep in enumerate(ds[Col.KEEP]) if keep]
+    my_indices = keep_indices[rank::world_size]
+
+    local_scores: dict[int, float] = {}
     t0 = time.time()
-    for start in range(0, len(keep_indices), batch_size):
-        batch_idx = keep_indices[start:start + batch_size]
+    for start in range(0, len(my_indices), batch_size):
+        batch_idx = my_indices[start:start + batch_size]
         batch_tokens = [ds[i][Col.TOKEN_IDS] for i in batch_idx]
         scores = _score_batch(model, batch_tokens)
         for idx, ppl in zip(batch_idx, scores):
-            perplexities[idx] = ppl
+            local_scores[idx] = ppl
         done = start + len(batch_idx)
-        if done % max(batch_size * 10, 1) == 0 or done == len(keep_indices):
-            print(f"  perplexity scoring: {done}/{len(keep_indices)}  ({time.time() - t0:.0f}s)")
+        if done % max(batch_size * 10, 1) == 0 or done == len(my_indices):
+            prefix = f"[rank {rank}/{world_size}] " if is_dist else ""
+            print(f"  {prefix}perplexity scoring: {done}/{len(my_indices)}  ({time.time() - t0:.0f}s)")
 
+    if is_dist:
+        all_scores: list[dict] = [None] * world_size
+        dist.all_gather_object(all_scores, local_scores)
+    else:
+        all_scores = [local_scores]
+
+    if rank != 0:
+        return ds
+
+    merged = {k: v for d in all_scores for k, v in d.items()}
+    perplexities: list[float | None] = [merged.get(i) for i in range(len(ds))]
     return ds.add_column(Col.PERPLEXITY, perplexities)
 
 
 def write_perplexity_stats(ds, stats_dir: Path):
     import matplotlib.pyplot as plt
 
-    values = [r[Col.PERPLEXITY] for r in ds if r[Col.KEEP] and r[Col.PERPLEXITY] is not None]
-    if not values:
+    kept = [r for r in ds if r[Col.KEEP] and r[Col.PERPLEXITY] is not None]
+    if not kept:
         return
+    values = [r[Col.PERPLEXITY] for r in kept]
 
     stats_dir.mkdir(parents=True, exist_ok=True)
     arr = np.array(values, dtype=np.float64)
@@ -146,3 +178,13 @@ def write_perplexity_stats(ds, stats_dir: Path):
     fig.savefig(path_png, dpi=120)
     plt.close(fig)
     print(f"Perplexity plot -> {path_png}")
+
+    sorted_kept = sorted(kept, key=lambda r: r[Col.PERPLEXITY])
+    for fname, rows in [("perplexity_low.txt", sorted_kept[:100]),
+                        ("perplexity_high.txt", sorted_kept[-100:][::-1])]:
+        path_ex = stats_dir / fname
+        with open(path_ex, "w") as f:
+            for r in rows:
+                f.write(f"ppl={r[Col.PERPLEXITY]:.1f}  id={r[Col.BOOK_ID]}  title={r[Col.BOOK_TITLE]!r}\n")
+                f.write(f"{r[Col.TEXT_EXCERPT]}\n\n")
+        print(f"Perplexity examples -> {path_ex}")
