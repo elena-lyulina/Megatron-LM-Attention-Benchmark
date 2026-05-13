@@ -4,8 +4,7 @@
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node=8
-#SBATCH --gpus-per-node=8
+#SBATCH --ntasks-per-node=4
 #SBATCH --cpus-per-task=8
 #SBATCH --time=0:15:00
 #SBATCH --no-requeue
@@ -14,7 +13,7 @@
 
 # Score perplexity for the 7k Gutenberg LAION sample (step 20).
 # Resumes from the step-19 checkpoint and runs only step 20.
-# TP=1, DP=8: each GPU scores an independent slice of books, results gathered to rank 0.
+# TP=1, DP=4: each GPU scores an independent slice of books, results gathered to rank 0.
 #
 # Usage:
 #   sbatch attn_bench/submissions/score_perplexity_gutenberg_laion_7k.slurm
