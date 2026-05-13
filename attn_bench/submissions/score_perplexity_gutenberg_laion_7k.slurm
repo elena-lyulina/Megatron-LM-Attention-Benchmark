@@ -7,6 +7,7 @@
 #SBATCH --ntasks-per-node=4
 #SBATCH --cpus-per-task=8
 #SBATCH --time=0:15:00
+#SBATCH --environment=nemo
 #SBATCH --no-requeue
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=clariden-jobs-elyulin-aaaauapxybdkdx42ppvef2c2eq@swissai-initiative.slack.com
@@ -17,8 +18,6 @@
 #
 # Usage:
 #   sbatch attn_bench/submissions/score_perplexity_gutenberg_laion_7k.slurm
-
-CONTAINER_ENV=nemo
 
 echo "START TIME: $(date)"
 
@@ -38,15 +37,12 @@ export WORLD_SIZE=$SLURM_NTASKS
 
 ### INSTALL DEPS ###
 
-srun --ntasks=1 --environment=$CONTAINER_ENV \
-    pip install --quiet -e "$MEGATRON_DIR/attn_bench[data]"
+pip install --quiet -e "$MEGATRON_DIR/attn_bench[data]"
 
 
 ### STEP 20: PERPLEXITY SCORING ###
 
-srun \
-    --environment=$CONTAINER_ENV \
-    bash -c "
+srun bash -c "
 export RANK=\$SLURM_PROCID
 export LOCAL_RANK=\$SLURM_LOCALID
 python3 -m attn_bench.data_processing.books.main_gutenberg_laion \
