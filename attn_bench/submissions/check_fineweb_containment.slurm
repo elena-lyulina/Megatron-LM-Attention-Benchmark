@@ -13,7 +13,7 @@
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=clariden-jobs-elyulin-aaaauapxybdkdx42ppvef2c2eq@swissai-initiative.slack.com
 
-e# Check which Gutenberg excerpts (7k pilot) have ≥1 word-level 13-gram match
+# Check which Gutenberg excerpts (7k pilot) have ≥1 word-level 13-gram match
 # in FineWeb-Edu 160B. 200 parquets × 96 workers, ~5 min expected.
 #
 # Usage:
