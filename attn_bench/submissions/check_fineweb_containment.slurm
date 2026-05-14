@@ -5,21 +5,19 @@
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=10
-#SBATCH --time=00:10:00
+#SBATCH --cpus-per-task=96
+#SBATCH --time=00:30:00
 #SBATCH --environment=nemo
 #SBATCH --partition=normal
 #SBATCH --no-requeue
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=clariden-jobs-elyulin-aaaauapxybdkdx42ppvef2c2eq@swissai-initiative.slack.com
 
-# Check which Gutenberg excerpts have ≥1 word-level 13-gram match in FineWeb-Edu 160B.
-# Parallelises across parquet files (one worker per file).
-# Runs on the 7k pilot to validate perplexity/min-k%++ thresholds before the full run.
+e# Check which Gutenberg excerpts (7k pilot) have ≥1 word-level 13-gram match
+# in FineWeb-Edu 160B. 200 parquets × 96 workers, ~5 min expected.
 #
-# This is a TEST run: 10 parquets, 10 CPUs, 10 min limit — for timing and correctness.
-# For the full run: set cpus-per-task=96, time=04:00:00, remove --max-parquets.
-# For the full 26k run: also swap SAMPLED/OUTPUT/STATS_DIR to hf-full-output.
+# Usage:
+#   cd attn_bench && sbatch submissions/check_fineweb_containment.slurm
 
 echo "START TIME: $(date)"
 
@@ -49,8 +47,14 @@ python3 -u attn_bench/data_processing/books/check_fineweb_containment.py \
     --raw-dir       $RAW_DIR \
     --output        $OUTPUT \
     --stats-dir     $STATS_DIR \
-    --workers       $SLURM_CPUS_PER_TASK \
-    --max-parquets  10
+    --workers       $SLURM_CPUS_PER_TASK
+
+
+### PLOT RESULTS ###
+
+python3 -u attn_bench/data_processing/books/plot_fineweb_containment_thresholds.py \
+    --input      $OUTPUT \
+    --output-dir $STATS_DIR
 
 
 echo "END TIME: $(date)"

@@ -36,9 +36,7 @@ def load_tokenizer(tokenizer_path: str):
 
 
 SEQ_LEN = 8192
-# Megatron reads seq_length+1 tokens and splits into input[:-1] / labels[1:]
-# (megatron/core/datasets/gpt_dataset.py:242-243, gpt_dataset.py:341-343), so we store SEQ_LEN+1 tokens
-_TOKENS_PER_EXCERPT = SEQ_LEN + 1
+_TOKENS_PER_EXCERPT = SEQ_LEN
 
 
 def tokenize_excerpt(book, tokenizer, bos_id, eos_id):
