@@ -21,7 +21,7 @@ Pipeline:
   17. verify_tokenization    — verify round-trip tokenization
   18. compute_excerpt_chunk_sigs — compute per-chunk minhash signatures over TEXT_EXCERPT
   19. dedup_excerpts_minhash     — mark near-duplicate excerpts by exact chunk Jaccard (sequential LSH)
-  20. score_perplexity       — score each excerpt with FineWeb-Edu LLaMA 1B (GPU, optional)
+  20. score_perplexity_min_k_pp — perplexity + Min-K%++ membership score (Zhang et al. 2024) in one pass (GPU, optional)
 
 Usage:
   python -m attn_bench.data_processing.books.main_gutenberg_laion \
@@ -48,7 +48,6 @@ from collections import Counter
 from functools import partial
 from pathlib import Path
 
-from inscriptis import get_text as html_to_text
 from datasets import load_dataset
 
 from .checkpoint import find_and_load_latest_ckpt, run_step
@@ -59,7 +58,7 @@ from .dedup_minhash import compute_content_chunk_signatures, dedup_content_minha
 from .find_excerpt_start import load_punkt, find_excerpt_start, write_no_excerpt_start_stats
 from .normalize import normalize_text
 from .sample_excerpt import sample_window
-from .score_perplexity import load_model, score_perplexity, write_perplexity_stats
+from .score_perplexity import load_model, score_perplexity_and_min_k_pp, write_scoring_stats
 from .set_content_bounds import set_content_bounds, mark_too_short, write_content_bounds_samples, write_too_short_stats
 from .strip_gutenberg import strip_gutenberg_markers, verify_no_project_gutenberg, write_gutenberg_occurrences, write_gutenberg_strip_stats
 from .tokenize_excerpts import TOKENIZER_ID, load_tokenizer, tokenize_excerpt, verify_tokenization, write_tokenize_stats, write_verify_stats
@@ -125,6 +124,7 @@ def write_init_columns_stats(ds, stats_dir: Path):
 ### EXTRACT TEXT ###
 
 def _epub_to_text(epub_bytes: bytes) -> str:
+    from inscriptis import get_text as html_to_text
     try:
         with zipfile.ZipFile(io.BytesIO(epub_bytes)) as z:
             container = z.read("META-INF/container.xml").decode("utf-8", errors="replace")
@@ -204,6 +204,8 @@ def write_tokenized_excerpts(ds, output_dir: Path, num_proc: int):
     cols = [Col.BOOK_ID, Col.TOKEN_IDS, Col.TEXT_EXCERPT]
     if any(r[Col.PERPLEXITY] is not None for r in ds_kept):
         cols.append(Col.PERPLEXITY)
+    if any(r[Col.MIN_K_PP] is not None for r in ds_kept):
+        cols.append(Col.MIN_K_PP)
     ds_kept.select_columns(cols).to_json(str(path), lines=True)
     print("Done")
 
@@ -216,9 +218,6 @@ def _clear_stats(stats_dir: Path):
 
 
 def pipeline(dataset_dir: Path, output_dir: Path, tokenizer_path: str, ckpt_dir: Path | None, stats_dir: Path | None, megatron_ckpt_dir: str | None = None, num_workers: int | None = None):
-    import torch.distributed as dist
-    is_rank0 = not dist.is_initialized() or dist.get_rank() == 0
-
     t_start = time.time()
     num_proc = num_workers or os.cpu_count()
 
@@ -226,7 +225,7 @@ def pipeline(dataset_dir: Path, output_dir: Path, tokenizer_path: str, ckpt_dir:
     fast_forward = find_and_load_latest_ckpt(ckpt_dir)
     fast_forward_name = fast_forward[0] if fast_forward else None
 
-    if is_rank0 and stats_dir and stats_dir.exists() and not fast_forward:
+    if stats_dir and stats_dir.exists() and not fast_forward:
         _clear_stats(stats_dir)
 
     punkt = load_punkt()
@@ -251,7 +250,7 @@ def pipeline(dataset_dir: Path, output_dir: Path, tokenizer_path: str, ckpt_dir:
         ds, size = run_step(step_fn, ds, ckpt_path)
         if ckpt_dir:
             step_ckpt_sizes[step_name] = size
-        if is_rank0 and stats_dir and stats_fn:
+        if stats_dir and stats_fn:
             stats_path = stats_dir / step_name
             stats_fn(ds, stats_path)
 
@@ -277,13 +276,12 @@ def pipeline(dataset_dir: Path, output_dir: Path, tokenizer_path: str, ckpt_dir:
 
     if megatron_ckpt_dir:
         ppl_model = load_model(megatron_ckpt_dir, tokenizer_path)
-        step("20_score_perplexity", lambda d: score_perplexity(d, ppl_model), stats_fn=write_perplexity_stats)
+        step("20_score_perplexity_min_k_pp", lambda d: score_perplexity_and_min_k_pp(d, ppl_model), stats_fn=write_scoring_stats)
 
-    if is_rank0:
-        print_stats(ds)
-        output_dir.mkdir(parents=True, exist_ok=True)
-        write_tokenized_excerpts(ds, output_dir, num_proc)
-        print(f"\nTime: {(time.time() - t_start) / 60:.1f}min  output: {output_dir}")
+    print_stats(ds)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    write_tokenized_excerpts(ds, output_dir, num_proc)
+    print(f"\nTime: {(time.time() - t_start) / 60:.1f}min  output: {output_dir}")
 
 
 def main():
@@ -297,7 +295,7 @@ def main():
                         help="save/load per-step checkpoints under <output-dir>/checkpoints/")
     parser.add_argument("--no-stats", action="store_true", help="skip writing stats")
     parser.add_argument("--megatron-ckpt-dir", type=str, default=None,
-                        help="path to FineWeb LLaMA 1B Megatron checkpoint dir for step 20 perplexity scoring (requires GPU)")
+                        help="path to FineWeb LLaMA 1B Megatron checkpoint dir for step 20 perplexity + Min-K%++ scoring (requires GPU)")
     parser.add_argument("--num-workers", type=int, default=None,
                         help="number of parallel workers for dataset.map() steps (default: os.cpu_count())")
     args = parser.parse_args()

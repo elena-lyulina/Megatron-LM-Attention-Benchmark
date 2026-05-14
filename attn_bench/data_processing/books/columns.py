@@ -33,6 +33,7 @@ class Col:
     LINE_SNIPPET_OFFSET = "line_snippet_offset"
     EXCERPT_TOKEN_COUNT = "excerpt_token_count"
     PERPLEXITY = "perplexity"
+    MIN_K_PP = "min_k_pp"
 
 
 DEFAULTS = {
@@ -65,6 +66,7 @@ DEFAULTS = {
     Col.LINE_SNIPPET_OFFSET: None,
     Col.EXCERPT_TOKEN_COUNT: 0,
     Col.PERPLEXITY: None,
+    Col.MIN_K_PP: None,
 }
 
 

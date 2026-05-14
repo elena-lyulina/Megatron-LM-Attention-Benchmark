@@ -31,14 +31,11 @@ def run_step(fn, ds, ckpt_path: Path | None):
         return ds, dir_size_gb(ckpt_path)
     ds = fn(ds)
     if ckpt_path:
-        import torch.distributed as dist
-        is_rank0 = not dist.is_initialized() or dist.get_rank() == 0
-        if is_rank0:
-            ckpt_path.parent.mkdir(parents=True, exist_ok=True)
-            disable_progress_bars()
-            ds.save_to_disk(str(ckpt_path))
-            enable_progress_bars()
-            size = dir_size_gb(ckpt_path)
-            print(f"  [{ckpt_path.name}] checkpoint saved ({size:.2f} GB)")
-            return ds, size
+        ckpt_path.parent.mkdir(parents=True, exist_ok=True)
+        disable_progress_bars()
+        ds.save_to_disk(str(ckpt_path))
+        enable_progress_bars()
+        size = dir_size_gb(ckpt_path)
+        print(f"  [{ckpt_path.name}] checkpoint saved ({size:.2f} GB)")
+        return ds, size
     return ds, None
