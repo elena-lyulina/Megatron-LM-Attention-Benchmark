@@ -200,6 +200,7 @@ SEP=$(printf '=%.0s' {1..100})
 
 ### LAUNCH ###
 echo "xdoc attn sink/te test: seq_len=$SEQ_LEN"
+srun --ntasks=1 --environment=$CONTAINER_ENV bash -c "python3 -c 'import transformer_engine; print(\"TE version:\", transformer_engine.__version__)'"
 echo "[$(date)] Launching..."
 
 srun \

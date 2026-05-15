@@ -214,7 +214,7 @@ BENCHMARK_ARGS=(
 # CMD_PREFIX="numactl --membind=0-3"  # bind memory to NUMA nodes for better locality (disabled until node NUMA topology is verified)
 CMD_PREFIX=""
 
-TRAINING_CMD="torchrun ${TORCHRUN_ARGS[*]} ${ATTN_BENCH_ROOT}/benchmarks/correctness.py \
+TRAINING_CMD="torchrun ${TORCHRUN_ARGS[*]} ${ATTN_BENCH_ROOT}/tests/correctness.py \
     ${BENCHMARK_ARGS[*]} \
     ${TRANSFORMER_ENGINE_ARGS[*]} \
     ${DISTRIBUTED_ARGS[*]} \

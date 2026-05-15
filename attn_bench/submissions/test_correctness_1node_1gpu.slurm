@@ -6,7 +6,7 @@
 #SBATCH --gpus-per-node=1
 #SBATCH --cpus-per-task=72
 #SBATCH --mem=200GB
-#SBATCH --time=00:10:00
+#SBATCH --time=00:30:00
 #SBATCH --environment=nemo # in my ~/.edf
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
@@ -29,7 +29,7 @@ IMPL="${2:?usage: sbatch submit_correctness_1node.slurm <attn> <impl>}"
 
 # W&B
 export LOG_WANDB=true  # Set to false to disable W&B logging
-export WANDB_PROJECT="Megatron-LM-Attention-Benchmark"
+export WANDB_PROJECT="attn-correctness-500steps"
 export WANDB_EXP_NAME="correctness_${ATTN}_${IMPL}_1node_1gpu_tp${TP_SIZE}_pp${PP_SIZE}_${SLURM_JOB_ID}"
 
 # create log directory if it doesn't exist
