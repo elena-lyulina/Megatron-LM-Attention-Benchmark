@@ -9,7 +9,11 @@ DataTrove task logs), scans each parquet for matches, writes output JSONL with a
   fineweb_total_ngrams    distinct 13-grams in the excerpt
   fineweb_matched_ngrams  distinct excerpt 13-grams found in FineWeb
   contamination_fraction  matched / total
-  fineweb_ngram_hits      list of per-matched-ngram FineWeb hit counts (sorted ascending)
+  fineweb_max_ngram_hits  max FineWeb hit count among matched ngrams
+
+Also writes hash_to_ngram.json to --stats-dir:
+  {hash: {text, total_hits, sample_ids, sample_urls}}
+for all matched ngrams, sorted by total_hits descending.
 
 Usage:
     python -m attn_bench.data_processing.books.check_fineweb_containment \\
@@ -29,44 +33,79 @@ import time
 from multiprocessing import Pool
 from pathlib import Path
 
-import numpy as np
 import xxhash
 import pyarrow.parquet as pq
 
 NGRAM_SIZE = 13
+MAX_SAMPLE_DOCS = 20
 
 # Populated in main() before Pool is created; inherited copy-on-write by all workers.
 _HASH_TO_BOOKS: dict[int, list[int]] = {}
+_HASH_TO_TEXT: dict[int, str] = {}
 
 
-def _ngram_hashes(text: str) -> set[int]:
+
+def _hash(ngram: str) -> int:
+    return xxhash.xxh64(ngram).intdigest()
+
+
+def _ngram_hash_text_pairs(text: str) -> dict[int, str]:
     words = text.lower().split()
-    return {
-        xxhash.xxh64(' '.join(words[i:i + NGRAM_SIZE])).intdigest()
-        for i in range(len(words) - NGRAM_SIZE + 1)
-    }
+    # contains all unique ngrams: hashes with texts
+    result = {}
+    for i in range(len(words) - NGRAM_SIZE + 1):
+        ngram = ' '.join(words[i:i + NGRAM_SIZE])
+        result[_hash(ngram)] = ngram
+    return result
 
 
-def _scan_parquet(parquet_path: str) -> dict[int, dict[int, int]]:
-    """Return {excerpt_idx: {ngram_hash: hit_count}} for one parquet file."""
+def _extract_url(meta) -> str:
+    if meta is None:
+        return ''
+    if isinstance(meta, dict):
+        return meta.get('url', '')
+    if isinstance(meta, str):
+        try:
+            return json.loads(meta).get('url', '')
+        except Exception:
+            return ''
+    return ''
+
+
+def _scan_parquet(parquet_path: str) -> tuple[dict[int, dict[int, int]], dict[int, list]]:
+    """Return ({excerpt_idx: {ngram_hash: hit_count}}, {ngram_hash: [(id, url)]}) for one parquet."""
     h2b = _HASH_TO_BOOKS
     matches: dict[int, dict[int, int]] = {}
-    table = pq.read_table(parquet_path, columns=['text'])
-    for text in table.column('text').to_pylist():
-        if not text:
-            continue
-        words = text.lower().split()
-        for i in range(len(words) - NGRAM_SIZE + 1):
-            h = xxhash.xxh64(' '.join(words[i:i + NGRAM_SIZE])).intdigest()
-            idxs = h2b.get(h)
-            if idxs is not None:
-                for idx in idxs:
-                    book = matches.get(idx)
-                    if book is None:
-                        matches[idx] = {h: 1}
-                    else:
-                        book[h] = book.get(h, 0) + 1
-    return matches
+    samples: dict[int, list] = {}
+    pf = pq.ParquetFile(parquet_path)
+    for batch in pf.iter_batches(batch_size=50_000, columns=['text', 'id', 'metadata']):
+        texts = batch.column('text').to_pylist()
+        ids = batch.column('id').to_pylist()
+        metas = batch.column('metadata').to_pylist()
+        for text, doc_id, meta in zip(texts, ids, metas):
+            if not text:
+                continue
+            url = _extract_url(meta)
+            words = text.lower().split()
+            # iterate over all ngrams in text
+            for i in range(len(words) - NGRAM_SIZE + 1):
+                h = _hash(' '.join(words[i:i + NGRAM_SIZE]))
+                # h2b contains all excerpts ngrams
+                idxs = h2b.get(h)
+                if idxs is not None:
+                    for idx in idxs:
+                        # a reference -- can mutate
+                        book_hit_count = matches.get(idx)
+                        if book_hit_count is None:
+                            matches[idx] = {h: 1}
+                        else:
+                            book_hit_count[h] = book_hit_count.get(h, 0) + 1
+                    s = samples.get(h)
+                    if s is None:
+                        samples[h] = [(str(doc_id), url)]
+                    elif len(s) < MAX_SAMPLE_DOCS:
+                        s.append((str(doc_id), url))
+    return matches, samples
 
 
 def _collect_parquet_paths(parquets_file: Path, raw_dir: Path) -> list[str]:
@@ -80,76 +119,135 @@ def _collect_parquet_paths(parquets_file: Path, raw_dir: Path) -> list[str]:
     return paths
 
 
-def write_contamination_stats(excerpts: list[dict], stats_dir: Path):
-    stats_dir.mkdir(parents=True, exist_ok=True)
+def load_excerpts(path: str) -> list[dict]:
+    # excerpts is a list of dict -- each row becomes a dictionary with text_excerpt fields and others
+    excerpts = []
+    with open(path) as f:
+        for line in f:
+            if line.strip():
+                excerpts.append(json.loads(line))
+    print(f"Loaded {len(excerpts)} excerpts")
+    return excerpts
+
+
+def build_query_index(excerpts: list[dict]) -> list[int]:
+    """Populate _HASH_TO_BOOKS and _HASH_TO_TEXT from excerpts. Returns excerpt_total_ngrams."""
+    global _HASH_TO_BOOKS, _HASH_TO_TEXT
+    # for each row
+    excerpt_total_ngrams: list[int] = []
+    # r -- a row in the table of excerpts
+    for idx, r in enumerate(excerpts):
+        h2t = _ngram_hash_text_pairs(r['text_excerpt'])
+        # holds a number of unique ngrams (total) for each book
+        excerpt_total_ngrams.append(len(h2t))
+        for h, ngram_text in h2t.items():
+            _HASH_TO_BOOKS.setdefault(h, []).append(idx)
+            _HASH_TO_TEXT[h] = ngram_text
+    print(f"Query: {len(_HASH_TO_BOOKS):,} unique 13-gram hashes from {len(excerpts)} excerpts")
+    return excerpt_total_ngrams
+
+
+def scan_all_parquets(
+    parquet_paths: list[str], workers: int
+) -> tuple[dict[int, dict[int, int]], dict[int, list]]:
+    """Scan parquets in parallel. Returns (matching, global_samples).
+
+    matching[idx] = {ngram_hash: cumulative hit count across all parquets}
+    global_samples[hash] = [(doc_id, url), ...] up to MAX_SAMPLE_DOCS examples per matched ngram
+    Workers inherit _HASH_TO_BOOKS and _HASH_TO_TEXT via fork.
+    """
+    global_matching: dict[int, dict[int, int]] = {}
+    global_samples: dict[int, list] = {}
+    t0 = time.time()
+    print_every = max(1, len(parquet_paths) // 10)
+    with Pool(workers) as pool:
+        for done, (result, par_samples) in enumerate(
+            pool.imap_unordered(_scan_parquet, parquet_paths, chunksize=1), 1
+        ):
+            # update the global matching with the results from 1 parquet scanning
+            for idx, ngram_counts in result.items():
+                if idx in global_matching:
+                    book = global_matching[idx]
+                    for h, count in ngram_counts.items():
+                        book[h] = book.get(h, 0) + count
+                else:
+                    global_matching[idx] = ngram_counts
+            for h, samps in par_samples.items():
+                existing = global_samples.get(h)
+                if existing is None:
+                    global_samples[h] = samps[:MAX_SAMPLE_DOCS]
+                elif len(existing) < MAX_SAMPLE_DOCS:
+                    existing.extend(samps[:MAX_SAMPLE_DOCS - len(existing)])
+            if done % print_every == 0 or done == len(parquet_paths):
+                elapsed = time.time() - t0
+                rate = done / elapsed
+                eta = (len(parquet_paths) - done) / rate if rate > 0 else 0
+                print(f"  {done}/{len(parquet_paths)} parquets  {len(global_matching)} contaminated"
+                      f"  {elapsed:.0f}s elapsed  ~{eta:.0f}s remaining"
+                      f"  ({rate:.2f} parquets/s)")
+    return global_matching, global_samples
+
+
+def build_global_hits(matching: dict[int, dict[int, int]]) -> dict[int, int]:
+    """Derive total FineWeb hit count per ngram hash from per-book matching results.
+
+    All books containing the same ngram see the same hit count, so we take the first
+    occurrence per hash.
+    """
+    global_hits: dict[int, int] = {}
+    for ngram_counts in matching.values():
+        for h, count in ngram_counts.items():
+            if h not in global_hits:
+                global_hits[h] = count
+    return global_hits
+
+
+def write_output(
+    excerpts: list[dict],
+    matching: dict[int, dict[int, int]],
+    excerpt_total_ngrams: list[int],
+    out_path: Path,
+):
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(out_path, 'w') as f:
+        for idx, r in enumerate(excerpts):
+            hits = list(matching.get(idx, {}).values())
+            total = excerpt_total_ngrams[idx]
+            r['in_fineweb'] = bool(hits)
+            r['fineweb_total_ngrams'] = total
+            r['fineweb_matched_ngrams'] = len(hits)
+            r['contamination_fraction'] = len(hits) / total if total > 0 else 0.0
+            r['fineweb_max_ngram_hits'] = max(hits) if hits else 0
+            f.write(json.dumps(r) + '\n')
+
+    print(f"Output: {out_path}")
+
+
+def print_coverage_summary(excerpts: list[dict]):
     n_total = len(excerpts)
-    contaminated = [r for r in excerpts if r['in_fineweb']]
-    n_contaminated = len(contaminated)
-
-    path = stats_dir / 'fineweb_containment_stats.txt'
-    with open(path, 'w') as f:
-        f.write(f"n={n_total}\n")
-        f.write(f"contaminated={n_contaminated} ({n_contaminated / n_total * 100:.1f}%)\n")
-        f.write(f"clean={n_total - n_contaminated} ({(n_total - n_contaminated) / n_total * 100:.1f}%)\n")
-        if contaminated:
-            matched = np.array([r['fineweb_matched_ngrams'] for r in contaminated])
-            fractions = np.array([r['contamination_fraction'] for r in contaminated])
-            total_hits = np.array([sum(r['fineweb_ngram_hits']) for r in contaminated])
-            f.write(
-                f"matched_ngrams (contaminated only): "
-                f"min={matched.min()}  median={int(np.median(matched))}  max={matched.max()}\n"
-            )
-            f.write(
-                f"contamination_fraction (contaminated only): "
-                f"min={fractions.min():.4f}  median={np.median(fractions):.4f}  max={fractions.max():.4f}\n"
-            )
-            f.write(
-                f"total_hits (contaminated only): "
-                f"min={total_hits.min()}  median={int(np.median(total_hits))}  max={total_hits.max()}\n"
-            )
-    print(f"Containment stats -> {path}")
+    print(f"\nContamination by coverage threshold (fraction of excerpt ngrams matched):")
+    for frac in [0, 0.01, 0.05, 0.10, 0.25, 0.50]:
+        n = sum(1 for r in excerpts if r.get('contamination_fraction', 0.0) > frac)
+        label = "any match" if frac == 0 else f">{frac*100:.0f}% of ngrams"
+        print(f"  {label:<20s}  {n:>5,} / {n_total:,}  ({n / n_total * 100:.1f}%)")
 
 
-def write_containment_scatter(excerpts: list[dict], stats_dir: Path):
-    """Perplexity vs Min-K%++ colored by FineWeb containment. Skipped if scores absent."""
-    import matplotlib.pyplot as plt
-
-    scored = [
-        r for r in excerpts
-        if r.get('perplexity') is not None and r.get('min_k_pp') is not None
-    ]
-    if not scored:
-        print("No perplexity/min_k_pp scores found — skipping containment scatter.")
-        return
-
-    log_ppl = np.log10([r['perplexity'] for r in scored])
-    min_k_pp_vals = np.array([r['min_k_pp'] for r in scored])
-    in_fw = np.array([r['in_fineweb'] for r in scored])
-
+def write_hash_to_ngram(global_hits: dict[int, int], global_samples: dict[int, list], stats_dir: Path):
     stats_dir.mkdir(parents=True, exist_ok=True)
-    fig, ax = plt.subplots(figsize=(8, 5))
-
-    for label, mask, color, marker in [
-        ('in FineWeb', in_fw, 'red', 'x'),
-        ('not in FineWeb', ~in_fw, 'steelblue', 'o'),
-    ]:
-        ax.scatter(
-            log_ppl[mask], min_k_pp_vals[mask],
-            c=color, marker=marker, s=8, alpha=0.5, linewidths=0.5,
-            label=f"{label} (n={mask.sum():,})",
-        )
-
-    ax.set_xlabel("Perplexity (log₁₀ scale)")
-    ax.set_ylabel("Min-K%++ z-score")
-    ax.set_title(f"Perplexity vs Min-K%++  n={len(scored):,}  colored by FineWeb-Edu containment")
-    ax.xaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f"{10 ** x:.0f}"))
-    ax.legend(fontsize=8)
-    fig.tight_layout()
-
-    path = stats_dir / 'containment_ppl_min_k_pp.png'
-    fig.savefig(path, dpi=120)
-    plt.close(fig)
-    print(f"Containment scatter -> {path}")
+    h2t = _HASH_TO_TEXT
+    data = {}
+    for h, total_hits in sorted(global_hits.items(), key=lambda x: -x[1]):
+        samps = global_samples.get(h, [])
+        data[str(h)] = {
+            'text': h2t.get(h, ''),
+            'total_hits': total_hits,
+            'sample_ids': [s[0] for s in samps],
+            'sample_urls': [s[1] for s in samps],
+        }
+    path = stats_dir / 'hash_to_ngram.json'
+    with open(path, 'w') as f:
+        json.dump(data, f, indent=2)
+    print(f"Hash-to-ngram -> {path}  ({len(data):,} matched ngrams)")
 
 
 def main():
@@ -167,84 +265,26 @@ def main():
                         help='Scan only the first N parquets (for timing tests)')
     args = parser.parse_args()
 
-    # Load excerpts
-    excerpts = []
-    with open(args.sampled) as f:
-        for line in f:
-            if line.strip():
-                excerpts.append(json.loads(line))
-    print(f"Loaded {len(excerpts)} excerpts")
+    out_path = Path(args.output)
+    if out_path.exists():
+        print(f"Output already exists, skipping scan: {out_path}")
+        return
 
-    # Build query: hash → list of excerpt indices (distinct hashes per excerpt)
-    global _HASH_TO_BOOKS
-    excerpt_total_ngrams: list[int] = []
-    for idx, r in enumerate(excerpts):
-        hashes = _ngram_hashes(r['text_excerpt'])
-        excerpt_total_ngrams.append(len(hashes))
-        for h in hashes:
-            _HASH_TO_BOOKS.setdefault(h, []).append(idx)
-    print(f"Query: {len(_HASH_TO_BOOKS):,} unique 13-gram hashes from {len(excerpts)} excerpts")
+    excerpts = load_excerpts(args.sampled)
+    excerpt_total_ngrams = build_query_index(excerpts)
 
-    # Collect parquet paths from the pre-parsed list
-    parquet_paths = _collect_parquet_paths(
-        Path(args.parquets_file), Path(args.raw_dir)
-    )
+    parquet_paths = _collect_parquet_paths(Path(args.parquets_file), Path(args.raw_dir))
     if args.max_parquets is not None:
         parquet_paths = parquet_paths[:args.max_parquets]
         print(f"[test mode] limited to {len(parquet_paths)} parquets")
     print(f"Scanning {len(parquet_paths)} parquet files with {args.workers} workers")
 
-    # Scan parquets in parallel; workers inherit _HASH_TO_BOOKS via fork.
-    # matching[idx] = {ngram_hash: cumulative hit count across all parquets}
-    matching: dict[int, dict[int, int]] = {}
-    t0 = time.time()
-    print_every = max(1, len(parquet_paths) // 10)
-    with Pool(args.workers) as pool:
-        for done, result in enumerate(
-            pool.imap_unordered(_scan_parquet, parquet_paths, chunksize=1), 1
-        ):
-            for idx, ngram_counts in result.items():
-                if idx in matching:
-                    book = matching[idx]
-                    for h, count in ngram_counts.items():
-                        book[h] = book.get(h, 0) + count
-                else:
-                    matching[idx] = ngram_counts
-            if done % print_every == 0 or done == len(parquet_paths):
-                elapsed = time.time() - t0
-                rate = done / elapsed
-                eta = (len(parquet_paths) - done) / rate if rate > 0 else 0
-                print(f"  {done}/{len(parquet_paths)} parquets  {len(matching)} contaminated"
-                      f"  {elapsed:.0f}s elapsed  ~{eta:.0f}s remaining"
-                      f"  ({rate:.2f} parquets/s)")
-
-    # Write output
-    out_path = Path(args.output)
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(out_path, 'w') as f:
-        for idx, r in enumerate(excerpts):
-            ngram_counts = matching.get(idx, {})
-            hits = sorted(ngram_counts.values())
-            total = excerpt_total_ngrams[idx]
-            r['in_fineweb'] = bool(hits)
-            r['fineweb_total_ngrams'] = total
-            r['fineweb_matched_ngrams'] = len(hits)
-            r['contamination_fraction'] = len(hits) / total if total > 0 else 0.0
-            r['fineweb_ngram_hits'] = hits
-            f.write(json.dumps(r) + '\n')
-
-    n_total = len(excerpts)
-    print(f"\nContamination by coverage threshold (fraction of excerpt ngrams matched):")
-    for frac in [0, 0.01, 0.05, 0.10, 0.25, 0.50]:
-        n = sum(1 for r in excerpts if r.get('contamination_fraction', 0.0) > frac)
-        label = "any match" if frac == 0 else f">{frac*100:.0f}% of ngrams"
-        print(f"  {label:<20s}  {n:>5,} / {n_total:,}  ({n / n_total * 100:.1f}%)")
-    print(f"Output: {out_path}")
+    matching, global_samples = scan_all_parquets(parquet_paths, args.workers)
+    write_output(excerpts, matching, excerpt_total_ngrams, out_path)
+    print_coverage_summary(excerpts)
 
     if args.stats_dir:
-        stats_dir = Path(args.stats_dir)
-        write_contamination_stats(excerpts, stats_dir)
-        write_containment_scatter(excerpts, stats_dir)
+        write_hash_to_ngram(build_global_hits(matching), global_samples, Path(args.stats_dir))
 
 
 if __name__ == '__main__':
