@@ -38,3 +38,18 @@ With 20 workers, it is at most 200M, or just ~0.125% of the 160B target.
 - [`../../submissions/tokenize_fineweb_edu_datatrove.slurm`](../../submissions/tokenize_fineweb_edu_datatrove.slurm) — slurm job script
 
 **Results CSV:** [`../../results/tokenization.csv`](../../results/tokenization.csv)
+
+## Step 2: Split FineWeb-Edu into a 40B partition
+
+Splits the 160B tokenized dataset into a 40B partition (ratio 0.25) for training alongside a smaller dataset, and a 120B remainder.
+Documents are randomly assigned per shard using Megatron's greedy blending sampler (`build_blending_indices`), preserving the dump structure.
+
+**Stats (job 2256031, 2026-05-15):**
+- ratio 0.25 → 40,038,865,413 tokens (40.039B) — `fineweb-edu-dedup-160B-datatrove_0.25/`
+- ratio 0.75 → 120,121,078,489 tokens (120.121B) — `fineweb-edu-dedup-160B-datatrove_0.75/`
+- total → 160,159,943,902 tokens (160.160B)
+- Workers: 16, time: 4min
+
+**Scripts:**
+- [`../../../attn_bench/utils/tools/separate_binary.py`](../../utils/tools/separate_binary.py) — splitting script
+- [`../../submissions/separate_fineweb_edu_40B.slurm`](../../submissions/separate_fineweb_edu_40B.slurm) — slurm job script
