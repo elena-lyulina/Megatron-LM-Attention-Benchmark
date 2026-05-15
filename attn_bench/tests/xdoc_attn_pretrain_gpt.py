@@ -1,15 +1,19 @@
 """
-Cross-document attention masking test for pretrain_gpt's standard model path.
+Cross-document attention masking test using pretrain_gpt's forward_step.
 
-Wraps pretrain_gpt.py's forward_step to inject three tests on the first iteration,
+Wraps pretrain_gpt.py's forward_step to inject tests on the first iteration,
 then delegates everything else to the real pretrain_gpt code.
 
+Supports both the standard pretrain_gpt model and custom attn_bench kernels:
+  - Standard TE path (default): no --attn/--impl args needed
+  - Custom kernel (e.g. gated/te): pass --attn gated --impl te
+
 Tests:
-  1. mask_structure             -- verifies _get_ltor_masks_and_position_ids produces the
-                                   correct block-diagonal mask (does not depend on kernel).
-  2. loss_isolation_pretrain_gpt -- goes through the real forward_step with fake iterators;
-                                   FAIL means cross-doc attn leaks end-to-end through pretrain_gpt.
-                                   With --use-packed-seq-params this should PASS.
+  1. mask_structure               -- verifies _get_ltor_masks_and_position_ids produces the
+                                     correct block-diagonal mask (does not depend on kernel).
+  2. loss_isolation_pretrain_gpt  -- goes through the real forward_step with fake iterators;
+                                     FAIL means cross-doc attn leaks end-to-end.
+                                     With --use-packed-seq-params this should PASS.
 
 Usage: see attn_bench/submissions/test_xdoc_attn_pretrain_gpt.slurm
 """
@@ -17,19 +21,19 @@ Usage: see attn_bench/submissions/test_xdoc_attn_pretrain_gpt.slurm
 import time
 _PROGRAM_START_TIME = time.time()
 
-from functools import partial
-
 import torch
 
-from gpt_builders import gpt_builder
 from megatron.core.datasets.gpt_dataset import _get_ltor_masks_and_position_ids
 from megatron.core.enums import ModelType
 from megatron.training import get_args, get_tokenizer, inprocess_restart, pretrain, print_rank_0, set_startup_timestamps
-from model_provider import model_provider
+from megatron.training.arguments import core_transformer_config_from_args
 
 from pretrain_gpt import forward_step as _base_forward_step
 from pretrain_gpt import get_embedding_ranks, train_valid_test_datasets_provider
+from attn_bench.kernels.attn_registry import parse_attn_kwargs, validate_attn_kwargs
+from attn_bench.tests.args import add_benchmark_args
 from attn_bench.tests.xdoc_attn_kernels import test_mask_structure, _build_isolation_seqs
+from attn_bench.training.model import build_model
 
 try:
     from megatron.post_training.arguments import add_modelopt_args
@@ -38,6 +42,24 @@ except ImportError:
     has_nvidia_modelopt = False
 
 _TESTS_DONE = False
+
+
+def _model_provider(pre_process=True, post_process=True, vp_stage=None, config=None, pg_collection=None):
+    args = get_args()
+    if config is None:
+        config = core_transformer_config_from_args(args)
+    attn_kwargs = validate_attn_kwargs(args.attn, args.impl, parse_attn_kwargs(args.attn_kwargs))
+    return build_model(
+        args=args,
+        config=config,
+        attn=args.attn,
+        impl=args.impl,
+        attn_kwargs=attn_kwargs,
+        pre_process=pre_process,
+        post_process=post_process,
+        vp_stage=vp_stage,
+        pg_collection=pg_collection,
+    )
 
 
 ### Loss isolation test helpers ###
@@ -159,13 +181,19 @@ if __name__ == "__main__":
     # Optionally enable inprocess restart on pretrain
     pretrain, store = inprocess_restart.maybe_wrap_for_inprocess_restart(pretrain)
 
+    def extra_args_provider(parser):
+        parser = add_benchmark_args(parser)
+        if has_nvidia_modelopt:
+            parser = add_modelopt_args(parser)
+        return parser
+
     pretrain(
         train_valid_test_datasets_provider,
-        partial(model_provider, gpt_builder),
+        _model_provider,
         ModelType.encoder_or_decoder,
         forward_step,
         args_defaults={'tokenizer_type': 'GPT2BPETokenizer'},
-        extra_args_provider=add_modelopt_args if has_nvidia_modelopt else None,
+        extra_args_provider=extra_args_provider,
         store=store,
         get_embedding_ranks=get_embedding_ranks,
     )
