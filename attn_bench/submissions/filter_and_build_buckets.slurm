@@ -27,7 +27,7 @@ echo "START TIME: $(date)"
 
 MEGATRON_DIR=/iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark
 INPUT=/iopsstor/scratch/cscs/$USER/datasets/preprocessing/gutenberg-laion/hf-full-output/sampled_containment.jsonl
-OUTPUT=/iopsstor/scratch/cscs/$USER/datasets/preprocessing/gutenberg-laion/hf-full-output/filtered_buckets.jsonl
+OUTPUT=/iopsstor/scratch/cscs/$USER/datasets/preprocessing/gutenberg-laion/hf-full-output/repetition_buckets.jsonl
 STATS_DIR=/iopsstor/scratch/cscs/$USER/datasets/preprocessing/gutenberg-laion/hf-full-output/stats/repetition-buckets
 
 export PYTHONPATH=$MEGATRON_DIR:${PYTHONPATH:-}
