@@ -54,25 +54,26 @@ def fill_subplot(
     max_hit_vals: list,
 ):
     im = ax.imshow(grid, aspect='auto', cmap='Blues')
-    plt.colorbar(im, ax=ax, label='books surviving')
+    cbar = plt.colorbar(im, ax=ax, label='books surviving')
+    cbar.ax.yaxis.label.set_fontsize(10)
 
     vmax = grid.max()
     for i in range(grid.shape[0]):
         for j in range(grid.shape[1]):
             val = grid[i, j]
             color = 'white' if val > vmax * 0.6 else 'black'
-            ax.text(j, i, f'{val:,}', ha='center', va='center', fontsize=8, color=color)
+            ax.text(j, i, f'{val:,}', ha='center', va='center', fontsize=10, color=color)
 
     ax.set_xticks(range(len(coverage_vals)))
-    ax.set_xticklabels([f'{v:.0%}' for v in coverage_vals], fontsize=8)
+    ax.set_xticklabels([f'{v:.0%}' for v in coverage_vals], fontsize=10)
     ax.set_yticks(range(len(max_hit_vals)))
-    ax.set_yticklabels([str(v) for v in max_hit_vals], fontsize=8)
-    ax.set_xlabel('coverage_max  (contamination_fraction ≤ x)', fontsize=8)
-    ax.set_ylabel('max_hit_max  (fineweb_max_ngram_hits ≤ x)', fontsize=8)
+    ax.set_yticklabels([str(v) for v in max_hit_vals], fontsize=10)
+    ax.set_xlabel('coverage_max  (contamination_fraction ≤ x)', fontsize=10)
+    ax.set_ylabel('max_hit_max  (fineweb_max_ngram_hits ≤ x)', fontsize=10)
     ax.set_title(
         f'PPL cut  p{ppl_lo_q}/p{ppl_hi_q}  ({ppl_lo_val:.1f} – {ppl_hi_val:.1f})\n'
         f'after PPL cut: {n_after_ppl:,} / {n_total:,}  ({n_after_ppl / n_total * 100:.1f}%)',
-        fontsize=9,
+        fontsize=11,
     )
 
 
@@ -96,8 +97,8 @@ def main():
     valid_ppl = ~np.isnan(ppls)
 
     n_rows = (len(PPL_PAIRS) + N_COLS - 1) // N_COLS
-    cell_w = len(COVERAGE_MAX_VALUES) * 1.5 + 2.0
-    cell_h = len(MAX_HIT_MAX_VALUES) * 1.2 + 2.0
+    cell_w = len(COVERAGE_MAX_VALUES) * 1.1 + 1.5
+    cell_h = len(MAX_HIT_MAX_VALUES) * 0.9 + 1.5
     fig, axes = plt.subplots(n_rows, N_COLS, figsize=(N_COLS * cell_w, n_rows * cell_h))
 
     for idx, (ppl_lo_q, ppl_hi_q) in enumerate(PPL_PAIRS):
@@ -132,8 +133,8 @@ def main():
     for idx in range(len(PPL_PAIRS), n_rows * N_COLS):
         axes[idx // N_COLS][idx % N_COLS].set_visible(False)
 
-    fig.suptitle('Gutenberg filtering threshold exploration', fontsize=12)
-    fig.tight_layout()
+    fig.suptitle('Gutenberg filtering threshold exploration', fontsize=14)
+    fig.tight_layout(rect=[0, 0, 1, 0.96])
 
     out_path = out_dir / 'threshold_exploration.png'
     fig.savefig(out_path, dpi=150)
