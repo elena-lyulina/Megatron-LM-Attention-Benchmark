@@ -35,6 +35,8 @@ STATS_DIR=/iopsstor/scratch/cscs/$USER/datasets/preprocessing/gutenberg-laion/hf
 export PYTHONPATH=$MEGATRON_DIR:${PYTHONPATH:-}
 cd $MEGATRON_DIR
 
+pip install --quiet datatrove
+
 
 ### WRITE MEGATRON FORMAT ###
 

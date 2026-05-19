@@ -1,0 +1,17 @@
+START TIME: Mon May 11 21:03:24 CEST 2026
+Fast-forward: loading checkpoint 18_compute_excerpt_chunk_sigs
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Resumed: 56,982 books
+excerpt_dedup: 1863 duplicates  lsh_candidates=43,164,665  jaccard_matches=3,570 (0.0%)  (lsh=0.04  jaccard=0.05)
+Excerpt dedup stats -> /iopsstor/scratch/cscs/elyulina/datasets/preprocessing/gutenberg-laion/hf-full-output/stats/19_dedup_excerpts_minhash/excerpt_dedup_stats.txt
+Similarity plot -> /iopsstor/scratch/cscs/elyulina/datasets/preprocessing/gutenberg-laion/hf-full-output/stats/19_dedup_excerpts_minhash/text_similarity.png
+Excerpt match HTML files -> /iopsstor/scratch/cscs/elyulina/datasets/preprocessing/gutenberg-laion/hf-full-output/stats/19_dedup_excerpts_minhash/matches
+  [19_dedup_excerpts_minhash] checkpoint saved (40.49 GB)
+
+STATS  total=56,982  kept=26,814  dedup_title_cluster=14,516  too_short=8,594  content_minhash_duplicate=3,261  excerpt_minhash_duplicate=1,863  duplicate_title=923  duplicate_id=767  not_enough_tokens=119  project_gutenberg=56  no_excerpt_start=42  token_round_trip=24  empty_text=2  non_english=1
+Writing 26,814 kept books -> /iopsstor/scratch/cscs/elyulina/datasets/preprocessing/gutenberg-laion/hf-full-output/sampled.jsonl
+Done
+
+Time: 25.2min  output: /iopsstor/scratch/cscs/elyulina/datasets/preprocessing/gutenberg-laion/hf-full-output
+END TIME: Mon May 11 21:30:20 CEST 2026
+Done. Output in /iopsstor/scratch/cscs/elyulina/datasets/preprocessing/gutenberg-laion/hf-full-output
