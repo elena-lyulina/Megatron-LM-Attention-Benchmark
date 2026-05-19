@@ -1,0 +1,27 @@
+Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+[W415 11:18:16.158181955 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+Stack (most recent call first):
+Stack (most recent call first):
+  File   File ""/usr/lib/python3.12/threading.py/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py"", line , line 359266 in  in wait_reduce_any
+
+  File   File ""/usr/lib/python3.12/threading.py/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py"", line , line 655327 in  in waitshould_run_forward_backward
+
+  File   File ""/usr/lib/python3.12/multiprocessing/managers.py/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py"", line , line 1761691 in  in serve_forevertrain_step
+
+  File   File ""/usr/lib/python3.12/multiprocessing/managers.py/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py"", line 599 in _run_server
+  File ", line /usr/lib/python3.12/multiprocessing/process.py2926" in , line train108
+ in   File run"
+/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py  File ""/usr/lib/python3.12/multiprocessing/process.py", line 314 in , line _bootstrap1077
+ in   File pretrain"
+/usr/lib/python3.12/multiprocessing/spawn.py  File "", line /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py135" in , line _main338
+ in   File <module>"
+/usr/lib/python3.12/multiprocessing/spawn.py", line 122 in Stack (most recent call first):
+spawn_main  File 
+"  File /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py""<string>, line "266, line  in 1_reduce_any in 
+<module>  File 
+"/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 327 in should_run_forward_backward
+  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1691 in train_step
+  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 2926 in train
+  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1077 in pretrain
+  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338 in <module>

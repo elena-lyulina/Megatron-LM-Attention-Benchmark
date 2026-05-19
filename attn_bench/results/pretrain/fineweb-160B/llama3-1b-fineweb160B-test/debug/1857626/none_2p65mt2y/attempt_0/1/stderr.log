@@ -1,0 +1,23 @@
+Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+[W414 23:34:09.702703535 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+[rank25]: Traceback (most recent call last):
+[rank25]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+[rank25]:     pretrain(
+[rank25]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+[rank25]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+[rank25]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+[rank25]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+[rank25]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank25]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+[rank25]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+[rank25]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank25]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+[rank25]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+[rank25]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank25]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+[rank25]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+[rank25]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+[rank25]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+[rank25]:[W414 23:34:40.420061652 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+Stack (most recent call first):
+  <no Python frame>

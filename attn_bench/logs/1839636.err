@@ -1,0 +1,5 @@
+usage: tokenize_fineweb_edu_parallel.py [-h] --tokenizer-path TOKENIZER_PATH
+                                        --output-dir OUTPUT_DIR
+                                        [--token-budget TOKEN_BUDGET]
+                                        [--num-workers NUM_WORKERS]
+tokenize_fineweb_edu_parallel.py: error: argument --num-workers: expected one argument

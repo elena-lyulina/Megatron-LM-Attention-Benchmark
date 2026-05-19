@@ -1,0 +1,18 @@
+INFO 04-14 18:53:31 [__init__.py:241] Automatically detected platform cuda.
+LANG_RL Log directory: None
+> setting tensorboard ...
+WARNING: one_logger package is required to enable e2e metrics tracking. please go to https://confluence.nvidia.com/display/MLWFO/Package+Repositories for details to install it
+[Gloo] Rank 3 is connected to 3 peer ranks. Expected number of connected peer ranks is : 3
+[Gloo] Rank 3 is connected to 3 peer ranks. Expected number of connected peer ranks is : 3
+[Gloo] Rank 3 is connected to 3 peer ranks. Expected number of connected peer ranks is : 3
+INFO:megatron.core.timers:(min, max) time across ranks (ms):
+    startup-program-entry-spread ...................: (0.14, 0.87)
+    startup-library-setup ..........................: (31145.77, 31146.63)
+    startup-program-setup ..........................: (55.10, 363.38)
+    startup-in-process-setup .......................: (0.00, 0.00)
+    startup-in-job-setup ...........................: (38.18, 41.14)
+    startup-initialize-megatron ....................: (5928.53, 6239.90)
+    startup-set-jit-fusion-options .................: (3071.67, 3073.56)
+    all-reduce-start-timestamps-tensor .............: (0.77, 2.56)
+    startup-megatron-init-local ....................: (9044.00, 9352.31)
+    startup-megatron-init-global ...................: (40554.05, 40554.10)

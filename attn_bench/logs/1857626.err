@@ -1,0 +1,1421 @@
+cat: nemo: No such file or directory
+8: [default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+8: [default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+8: [default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+8: [default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+4: [default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+4: [default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+4: [default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+4: [default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+5: [default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+5: [default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+5: [default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+5: [default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+6: [default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+6: [default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+6: [default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+6: [default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: [default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: [default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: [default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: [default0]:/opt/TensorRT-Model-Optimizer/modelopt/torch/utils/import_utils.py:32: UserWarning: Failed to import diffusers plugin due to: ImportError('peft>=0.17.0 is required for a normal functioning of this module, but found peft==0.13.2.'). You may ignore this warning if you do not need this plugin.
+0: [default0]:  warnings.warn(
+0: [default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+7: [default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+7: [default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+7: [default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+7: [default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+1: [default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+1: [default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+1: [default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+1: [default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+3: [default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+3: [default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+3: [default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+3: [default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+2: [default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+2: [default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+2: [default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+2: [default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: [default0]:/opt/TensorRT-Model-Optimizer/modelopt/torch/utils/import_utils.py:32: UserWarning: Failed to import peft plugin due to: ImportError("cannot import name 'ParamWrapper' from 'peft.tuners.lora.layer' (/opt/venv/lib/python3.12/site-packages/peft/tuners/lora/layer.py)"). You may ignore this warning if you do not need this plugin.
+0: [default0]:  warnings.warn(
+0: [default0]:/opt/TensorRT-Model-Optimizer/modelopt/torch/__init__.py:36: UserWarning: transformers version 4.57.3 is incompatible with nvidia-modelopt and may cause issues. Please install recommended version with `pip install nvidia-modelopt[hf]` if working with HF models.
+0: [default0]:  _warnings.warn(
+9: [default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+9: [default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+9: [default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+9: [default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: [default0]:/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: Overriding default arguments for tokenizer_type:GPT2BPETokenizer with tokenizer_type:HuggingFaceTokenizer
+0: [default0]:  warnings.warn(message)
+0: [default0]:/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --async-save is not supported without --use-persistent-ckpt-worker. Disabling --async-save.
+0: [default0]:  warnings.warn(message)
+0: [default0]:/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-use-fast argument is deprecated and will be removed soon. `use_fast` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-use-fast if you want to disable `use_fast`.
+0: [default0]:  warnings.warn(message)
+0: [default0]:/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-include-special-tokens argument is deprecated and will be removed soon. `include_special_tokens` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-include-special-tokens if you want to disable `include_special_tokens`.
+0: [default0]:  warnings.warn(message)
+5: [default3]:[W414 23:34:09.813676974 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+8: [default1]:[W414 23:34:08.692671732 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+8: [default0]:[W414 23:34:08.692671668 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+5: [default0]:[W414 23:34:09.814327226 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+5: [default1]:[W414 23:34:09.815406712 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+5: [default2]:[W414 23:34:09.816487446 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+3: [default1]:[W414 23:34:09.736540176 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+3: [default2]:[W414 23:34:09.737129503 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+3: [default3]:[W414 23:34:09.717944326 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+3: [default0]:[W414 23:34:09.717944102 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+8: [default3]:[W414 23:34:09.914432789 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+8: [default2]:[W414 23:34:09.911091952 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+7: [default0]:[W414 23:34:09.508934029 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+7: [default1]:[W414 23:34:09.507185121 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+7: [default2]:[W414 23:34:09.507185057 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+4: [default3]:[W414 23:34:09.186429919 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+4: [default1]:[W414 23:34:09.205035415 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+4: [default2]:[W414 23:34:09.217882415 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+4: [default0]:[W414 23:34:09.220644578 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+7: [default3]:[W414 23:34:09.507185537 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+2: [default0]:[W414 23:34:09.500775040 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+2: [default3]:[W414 23:34:09.516613189 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+2: [default2]:[W414 23:34:09.481806200 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+1: [default1]:[W414 23:34:09.288956448 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+1: [default3]:[W414 23:34:09.292656312 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+2: [default1]:[W414 23:34:09.528962739 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+6: [default1]:[W414 23:34:09.702703535 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+6: [default0]:[W414 23:34:09.702768077 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+6: [default2]:[W414 23:34:09.702703471 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+6: [default3]:[W414 23:34:09.702703535 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+1: [default2]:[W414 23:34:09.296752708 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+1: [default0]:[W414 23:34:09.233934098 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+0: [default3]:[W414 23:34:09.320287162 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+0: [default2]:[W414 23:34:09.384798474 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+0: [default0]:[W414 23:34:09.393029563 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+0: [default1]:[W414 23:34:09.557312285 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+9: [default1]:[W414 23:34:11.714696340 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+9: [default0]:[W414 23:34:11.667342888 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+9: [default2]:[W414 23:34:11.667342920 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+9: [default3]:wandb: Currently logged in as: elyulina (elyulina-thesis) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+9: [default3]:wandb: setting up run 5dapsuj5
+9: [default3]:wandb: Tracking run with wandb version 0.23.1
+9: [default3]:wandb: Run data is saved locally in /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/results/pretrain/fineweb-160B/llama3-1b-fineweb160B-test/logging/wandb/run-20260414_233411-5dapsuj5
+9: [default3]:wandb: Run `wandb offline` to turn off syncing.
+9: [default3]:wandb: Syncing run llama3-1b-fineweb160B-test-1857626
+9: [default3]:wandb: ⭐️ View project at https://wandb.ai/elyulina-thesis/fineweb-160B
+9: [default3]:wandb: 🚀 View run at https://wandb.ai/elyulina-thesis/fineweb-160B/runs/5dapsuj5
+9: [default3]:wandb: Detected [openai] in use.
+9: [default3]:wandb: Use W&B Weave for improved LLM call tracing. Install Weave with `pip install weave` then add `import weave` to the top of your script.
+9: [default3]:wandb: For more information, check out the docs at: https://weave-docs.wandb.ai/
+9: [default3]:[W414 23:34:14.751311243 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+0: [default3]:[rank3]: Traceback (most recent call last):
+0: [default3]:[rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+0: [default2]:[rank2]: Traceback (most recent call last):
+0: [default2]:[rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+0: [default2]:[rank2]:     pretrain(
+0: [default2]:[rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+0: [default2]:[rank2]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+0: [default3]:[rank3]:     pretrain(
+0: [default3]:[rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+0: [default3]:[rank3]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+0: [default3]:[rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+0: [default2]:[rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+0: [default2]:[rank2]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+0: [default2]:[rank2]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default2]:[rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+0: [default2]:[rank2]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+0: [default2]:[rank2]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default3]:[rank3]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+0: [default3]:[rank3]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default3]:[rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+0: [default3]:[rank3]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+0: [default3]:[rank3]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default2]:[rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+0: [default2]:[rank2]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+0: [default2]:[rank2]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default2]:[rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+0: [default2]:[rank2]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+0: [default2]:[rank2]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+0: [default2]:[rank2]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+0: [default3]:[rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+0: [default3]:[rank3]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+0: [default3]:[rank3]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default3]:[rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+0: [default3]:[rank3]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+0: [default3]:[rank3]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+0: [default3]:[rank3]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+0: [default1]:[rank1]: Traceback (most recent call last):
+0: [default1]:[rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+0: [default0]:[rank0]: Traceback (most recent call last):
+0: [default0]:[rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+0: [default0]:[rank0]:     pretrain(
+0: [default0]:[rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+0: [default0]:[rank0]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+0: [default1]:[rank1]:     pretrain(
+0: [default1]:[rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+0: [default1]:[rank1]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+0: [default0]:[rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+0: [default1]:[rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+0: [default1]:[rank1]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+0: [default0]:[rank0]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+0: [default0]:[rank0]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default0]:[rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+0: [default0]:[rank0]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+0: [default0]:[rank0]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default1]:[rank1]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default1]:[rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+0: [default1]:[rank1]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+0: [default1]:[rank1]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default0]:[rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+0: [default0]:[rank0]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+0: [default0]:[rank0]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default0]:[rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+0: [default0]:[rank0]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+0: [default0]:[rank0]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+0: [default1]:[rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+0: [default1]:[rank1]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+0: [default1]:[rank1]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default1]:[rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+0: [default1]:[rank1]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+0: [default1]:[rank1]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+0: [default1]:[rank1]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+0: [default0]:[rank0]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+5: [default2]:[rank22]: Traceback (most recent call last):
+5: [default2]:[rank22]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+5: [default2]:[rank22]:     pretrain(
+5: [default2]:[rank22]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+5: [default2]:[rank22]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+5: [default2]:[rank22]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+5: [default2]:[rank22]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+5: [default2]:[rank22]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+5: [default2]:[rank22]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in buil
+5: d_train_valid_test_data_loaders
+5: [default2]:[rank22]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+5: [default2]:[rank22]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+5: [default2]:[rank22]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+5: [default2]:[rank22]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+5: [default2]:[rank22]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+5: [default2]:[rank22]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+5: [default2]:[rank22]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+5: [default2]:[rank22]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+5: [default2]:[rank22]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+5: [default1]:[rank21]: Traceback (most recent call last):
+5: [default1]:[rank21]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+5: [default1]:[rank21]:     pretrain(
+5: [default1]:[rank21]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+5: [default1]:[rank21]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+5: [default1]:[rank21]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+5: [default1]:[rank21]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+5: [default1]:[rank21]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+5: [default1]:[rank21]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+5: [default1]:[rank21]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+5: [default1]:[rank21]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+5: [default1]:[rank21]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+5: [default0]:[rank20]: Traceback (most recent call last):
+5: [default0]:[rank20]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+5: [default0]:[rank20]:     pretrain(
+5: [default1]:[rank21]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+5: [default1]:[rank21]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+5: [default0]:[rank20]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+5: [default0]:[rank20]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+5: [default0]:[rank20]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+5: [default1]:[rank21]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+5: [default0]:[rank20]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+5: [default0]:[rank20]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+5: [default1]:[rank21]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+5: [default0]:[rank20]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+5: [default0]:[rank20]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+5: [default1]:[rank21]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+5: [default0]:[rank20]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+5: [default0]:[rank20]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+5: [default1]:[rank21]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+5: [default0]:[rank20]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+5: [default0]:[rank20]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+5: [default0]:[rank20]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+5: [default0]:[rank20]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+5: [default0]:[rank20]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+5: [default0]:[rank20]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+8: [default0]:[rank32]: Traceback (most recent call last):
+8: [default0]:[rank32]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+8: [default0]:[rank32]:     pretrain(
+8: [default3]:[rank35]: Traceback (most recent call last):
+8: [default3]:[rank35]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+8: [default3]:[rank35]:     pretrain(
+8: [default3]:[rank35]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+8: [default3]:[rank35]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+8: [default0]:[rank32]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+8: [default1]:[rank33]: Traceback (most recent call last):
+8: [default1]:[rank33]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+8: [default3]:[rank35]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+8: [default0]:[rank32]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+8: [default3]:[rank35]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+8: [default3]:[rank35]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+8: [default1]:[rank33]:     pretrain(
+8: [default1]:[rank33]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+8: [default1]:[rank33]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+8: [default0]:[rank32]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+8: [default0]:[rank32]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+8: [default3]:[rank35]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+8: [default0]:[rank32]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+8: [default0]:[rank32]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+8: [default3]:[rank35]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+8: [default3]:[rank35]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+8: [default3]:[rank35]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+8: [default0]:[rank32]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+8: [default3]:[rank35]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+8: [default1]:[rank33]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+8: [default1]:[rank33]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+8: [default3]:[rank35]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+8: [default3]:[rank35]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+8: [default3]:[rank35]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+8: [default3]:[rank35]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+8: [default1]:[rank33]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+8: [default0]:[rank32]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+8: [default3]:[rank35]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+8: [default1]:[rank33]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+8: [default1]:[rank33]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+8: [default1]:[rank33]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+8: [default1]:[rank33]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+8: [default1]:[rank33]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+8: [default1]:[rank33]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+8: [default0]:[rank32]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+8: [default1]:[rank33]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+8: [default0]:[rank32]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+8: [default0]:[rank32]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+8: [default0]:[rank32]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+8: [default1]:[rank33]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+8: [default1]:[rank33]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+8: [default1]:[rank33]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+8: [default0]:[rank32]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+8: [default0]:[rank32]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+8: [default0]:[rank32]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+9: [default1]:[rank37]: Traceback (most recent call last):
+9: [default0]:[rank36]: Traceback (most recent call last):
+9: [default0]:[rank36]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+9: [default3]:[rank39]: Traceback (most recent call last):
+9: [default3]:[rank39]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+9: [default2]:[rank38]: Traceback (most recent call last):
+9: [default2]:[rank38]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+9: [default3]:[rank39]:     pretrain(
+9: [default1]:[rank37]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+9: [default1]:[rank37]:     pretrain(
+9: [default0]:[rank36]:     pretrain(
+9: [default0]:[rank36]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+9: [default1]:[rank37]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+9: [default3]:[rank39]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+9: [default2]:[rank38]:     pretrain(
+9: [default2]:[rank38]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+9: [default2]:[rank38]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+9: [default1]:[rank37]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+9: [default0]:[rank36]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+9: [default2]:[rank38]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+9: [default1]:[rank37]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+9: [default0]:[rank36]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+9: [default1]:[rank37]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+9: [default2]:[rank38]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+9: [default1]:[rank37]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+9: [default0]:[rank36]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+9: [default2]:[rank38]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+9: [default2]:[rank38]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+9: [default0]:[rank36]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+9: [default0]:[rank36]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+9: [default2]:[rank38]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+9: [default1]:[rank37]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+9: [default1]:[rank37]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+9: [default0]:[rank36]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+9: [default3]:[rank39]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+9: [default3]:[rank39]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+9: [default0]:[rank36]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+9: [default3]:[rank39]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+9: [default2]:[rank38]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+9: [default1]:[rank37]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+9: [default1]:[rank37]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+9: [default3]:[rank39]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+9: [default2]:[rank38]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+9: [default2]:[rank38]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+9: [default2]:[rank38]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+9: [default1]:[rank37]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+9: [default1]:[rank37]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+9: [default0]:[rank36]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+9: [default0]:[rank36]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+9: [default3]:[rank39]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+9: [default3]:[rank39]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+9: [default0]:[rank36]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+9: [default0]:[rank36]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+9: [default1]:[rank37]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+9: [default1]:[rank37]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+9: [default3]:[rank39]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+9: [default3]:[rank39]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+9: [default0]:[rank36]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+9: [default0]:[rank36]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+9: [default1]:[rank37]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+9: [default3]:[rank39]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+9: [default0]:[rank36]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+9: [default3]:[rank39]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+9: [default1]:[rank37]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+9: [default3]:[rank39]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+9: [default3]:[rank39]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+9: [default2]:[rank38]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+9: [default2]:[rank38]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+9: [default3]:[rank39]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+9: [default3]:[rank39]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+9: [default2]:[rank38]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+9: [default2]:[rank38]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+3: [default2]:[rank14]: Traceback (most recent call last):
+3: [default2]:[rank14]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+3: [default1]:[rank13]: Traceback (most recent call last):
+3: [default1]:[rank13]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+3: [default1]:[rank13]:     pretrain(
+3: [default1]:[rank13]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+3: [default1]:[rank13]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+3: [default2]:[rank14]:     pretrain(
+3: [default2]:[rank14]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+3: [default2]:[rank14]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+3: [default1]:[rank13]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+3: [default2]:[rank14]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+3: [default2]:[rank14]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+3: [default2]:[rank14]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+3: [default2]:[rank14]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+3: [default2]:[rank14]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+3: [default2]:[rank14]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+3: [default2]:[rank14]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+3: [default2]:[rank14]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+3: [default2]:[rank14]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+3: [default2]:[rank14]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+3: [default2]:[rank14]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+3: [default2]:[rank14]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+3: [default2]:[rank14]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+3: [default1]:[rank13]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+3: [default1]:[rank13]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+3: [default1]:[rank13]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+3: [default1]:[rank13]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+3: [default1]:[rank13]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+3: [default1]:[rank13]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+3: [default1]:[rank13]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+3: [default1]:[rank13]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+3: [def
+3: ault1]:[rank13]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+3: [default1]:[rank13]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+3: [default1]:[rank13]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+3: [default1]:[rank13]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+7: [default1]:[rank29]: Traceback (most recent call last):
+7: [default1]:[rank29]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+2: [default2]:[rank10]: Traceback (most recent call last):
+7: [default0]:[rank28]: Traceback (most recent call last):
+7: [default0]:[rank28]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+2: [default3]:[rank11]: Traceback (most recent call last):
+7: [default1]:[rank29]:     pretrain(
+7: [default1]:[rank29]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+7: [default1]:[rank29]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+2: [default3]:[rank11]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+2: [default2]:[rank10]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+2: [default2]:[rank10]:     pretrain(
+2: [default2]:[rank10]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+2: [default0]:[rank8]: Traceback (most recent call last):
+7: [default0]:[rank28]:     pretrain(
+7: [default0]:[rank28]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+7: [default0]:[rank28]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+2: [default0]:[rank8]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+7: [default1]:[rank29]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+2: [default2]:[rank10]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+7: [default0]:[rank28]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+7: [default1]:[rank29]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+2: [default3]:[rank11]:     pretrain(
+7: [default1]:[rank29]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+7: [default0]:[rank28]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+7: [default0]:[rank28]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2: [default0]:[rank8]:     pretrain(
+2: [default3]:[rank11]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+2: [default2]:[rank10]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+2: [default3]:[rank11]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+7: [default0]:[rank28]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+7: [default0]:[rank28]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+7: [default0]:[rank28]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+7: [default1]:[rank29]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+7: [default0]:[rank28]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+2: [default0]:[rank8]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+7: [default1]:[rank29]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+2: [default3]:[rank11]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+2: [default2]:[rank10]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+2: [default0]:[rank8]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+2: [default2]:[rank10]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+7: [default0]:[rank28]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+7: [default0]:[rank28]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2: [default3]:[rank11]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+7: [default1]:[rank29]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+7: [default1]:[rank29]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+2: [default0]:[rank8]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+2: [default3]:[rank11]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+7: [default1]:[rank29]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+7: [default1]:[rank29]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+7: [default1]:[rank29]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+7: [default0]:[rank28]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+2: [default0]:[rank8]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+2: [default2]:[rank10]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+7: [default0]:[rank28]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+2: [default2]:[rank10]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+2: [default3]:[rank11]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+2: [default3]:[rank11]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+5: [default3]:[rank23]: Traceback (most recent call last):
+7: [default0]:[rank28]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+7: [default0]:[rank28]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+5: [default3]:[rank23]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+7: [default1]:[rank29]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+7: [default1]:[rank29]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+7: [default1]:[rank29]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+2: [default0]:[rank8]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2: [default3]:[rank11]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+5: [default3]:[rank23]:     pretrain(
+5: [default3]:[rank23]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+5: [default3]:[rank23]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+5: [default3]:[rank23]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+2: [default2]:[rank10]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+5: [default3]:[rank23]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+5: [default3]:[rank23]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+5: [default3]:[rank23]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+5: [default3]:[rank23]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+5: [default3]:[rank23]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2: [default3]:[rank11]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+5: [default3]:[rank23]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+5: [default3]:[rank23]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+5: [default3]:[rank23]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+5: [default3]:[rank23]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+5: [default3]:[rank23]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+5: [default3]:[rank23]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+2: [default0]:[rank8]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+2: [default3]:[rank11]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+8: [default2]:[rank34]: Traceback (most recent call last):
+8: [default2]:[rank34]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+8: [default2]:[rank34]:     pretrain(
+8: [default2]:[rank34]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+8: [default2]:[rank34]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+8: [default2]:[rank34]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+5: [default3]:[rank23]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+8: [default2]:[rank34]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+8: [default2]:[rank34]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2: [default2]:[rank10]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+2: [default3]:[rank11]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+8: [default2]:[rank34]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+8: [default2]:[rank34]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+8: [default2]:[rank34]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+8: [default2]:[rank34]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+8: [default2]:[rank34]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+8: [default2]:[rank34]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+8: [default2]:[rank34]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+2: [default0]:[rank8]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+2: [default0]:[rank8]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2: [default2]:[rank10]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+2: [default0]:[rank8]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+8: [default2]:[rank34]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+8: [default2]:[rank34]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+2: [default0]:[rank8]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+8: [default2]:[rank34]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+7: [default2]:[rank30]: Traceback (most recent call last):
+7: [default2]:[rank30]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+7: [default2]:[rank30]:     pretrain(
+7: [default2]:[rank30]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+2: [default2]:[rank10]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+7: [default2]:[rank30]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+2: [default0]:[rank8]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+7: [default2]:[rank30]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+7: [default2]:[rank30]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+7: [default2]:[rank30]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+7: [default2]:[rank30]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+7: [default2]:[rank30]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+7: [default2]:[rank30]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+7: [default2]:[rank30]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+7: [default2
+2: [default3]:[rank11]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+2: [default2]:[rank10]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+2: [default2]:[rank10]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+7: ]:[rank30]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+2: [default0]:[rank8]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+7: [default2]:[rank30]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+7: [default2]:[rank30]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+7: [default2]:[rank30]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+7: [default2]:[rank30]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+7: [default2]:[rank30]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+2: [default3]:[rank11]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+2: [default0]:[rank8]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+2: [default3]:[rank11]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+2: [default0]:[rank8]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+2: [default2]:[rank10]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+2: [default0]:[rank8]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+2: [default3]:[rank11]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+2: [default2]:[rank10]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+4: [default2]:[rank18]: Traceback (most recent call last):
+4: [default2]:[rank18]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+4: [default2]:[rank18]:     pretrain(
+4: [default2]:[rank18]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+4: [default2]:[rank18]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+4: [default2]:[rank18]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+4: [default2]:[rank18]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+4: [default2]:[rank18]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+4: [default2]:[rank18]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in buil
+4: d_train_valid_test_data_loaders
+4: [default2]:[rank18]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+4: [default2]:[rank18]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+4: [default2]:[rank18]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+4: [default2]:[rank18]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+4: [default2]:[rank18]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+4: [default2]:[rank18]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+4: [default2]:[rank18]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+4: [default2]:[rank18]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+4: [default2]:[rank18]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+4: [default1]:[rank17]: Traceback (most recent call last):
+4: [default1]:[rank17]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+4: [default1]:[rank17]:     pretrain(
+4: [default1]:[rank17]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+4: [default1]:[rank17]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+4: [default0]:[rank16]: Traceback (most recent call last):
+4: [default0]:[rank16]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+4: [default0]:[rank16]:     pretrain(
+4: [default0]:[rank16]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+4: [default0]:[rank16]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+4: [default1]:[rank17]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+4: [default1]:[rank17]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+4: [default1]:[rank17]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+4: [default0]:[rank16]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+4: [default0]:[rank16]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+4: [default1]:[rank17]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+4: [default3]:[rank19]: Traceback (most recent call last):
+4: [default3]:[rank19]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+4: [default0]:[rank16]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+4: [default3]:[rank19]:     pretrain(
+4: [default0]:[rank16]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+4: [default3]:[rank19]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+4: [default3]:[rank19]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+4: [default0]:[rank16]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+4: [default0]:[rank16]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+4: [default3]:[rank19]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+4: [default3]:[rank19]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+4: [default0]:[rank16]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+4: [default0]:[rank16]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+4: [default3]:[rank19]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+4: [default0]:[rank16]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+4: [default1]:[rank17]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+4: [default0]:[rank16]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+4: [default0]:[rank16]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+3: [default3]:[rank15]: Traceback (most recent call last):
+4: [default1]:[rank17]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+4: [default1]:[rank17]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+4: [default0]:[rank16]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+4: [default0]:[rank16]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+4: [default1]:[rank17]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+4: [default3]:[rank19]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+3: [default3]:[rank15]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+3: [default0]:[rank12]: Traceback (most recent call last):
+4: [default3]:[rank19]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+4: [default3]:[rank19]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+4: [default3]:[rank19]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+4: [default3]:[rank19]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+3: [default0]:[rank12]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+3: [default0]:[rank12]:     pretrain(
+4: [default3]:[rank19]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+4: [default3]:[rank19]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+4: [default3]:[rank19]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+4: [default3]:[rank19]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+3: [default0]:[rank12]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+3: [default0]:[rank12]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+4: [default3]:[rank19]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+4: [default1]:[rank17]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+4: [default1]:[rank17]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+4: [default1]:[rank17]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+4: [default1]:[rank17]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+3: [default3]:[rank15]:     pretrain(
+3: [default3]:[rank15]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+3: [default3]:[rank15]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+4: [default1]:[rank17]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+3: [default0]:[rank12]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+3: [default3]:[rank15]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+3: [default0]:[rank12]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+3: [default0]:[rank12]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+3: [default0]:[rank12]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+3: [default0]:[rank12]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+3: [default0]:[rank12]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+3: [default3]:[rank15]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+3: [default3]:[rank15]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+3: [default3]:[rank15]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+3: [default3]:[rank15]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+3: [default0]:[rank12]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+3: [default0]:[rank12]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+3: [default0]:[rank12]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+3: [default3]:[rank15]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+3: [default3]:[rank15]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+3: [default3]:[rank15]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+3: [default3]:[rank15]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+3: [default3]:[rank15]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+3: [default0]:[rank12]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+3: [default0]:[rank12]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+3: [default3]:[rank15]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+3: [default3]:[rank15]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+3: [default3]:[rank15]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+3: [default0]:[rank12]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+3: [default0]:[rank12]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+6: [default1]:[rank25]: Traceback (most recent call last):
+6: [default1]:[rank25]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+6: [default1]:[rank25]:     pretrain(
+6: [default1]:[rank25]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+6: [default1]:[rank25]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+6: [default1]:[rank25]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+6: [default1]:[rank25]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+6: [default1]:[rank25]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+6: [default1]:[rank25]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+6: [default1]:[rank25]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+6: [default1]:[rank25]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+6: [default1]:[rank25]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+6: [default1]:[rank25]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+6: [default1]:[rank25]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+6: [def
+6: ault1]:[rank25]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+6: [default1]:[rank25]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+6: [default1]:[rank25]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+6: [default1]:[rank25]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+1: [default1]:[rank5]: Traceback (most recent call last):
+1: [default1]:[rank5]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+1: [default3]:[rank7]: Traceback (most recent call last):
+1: [default3]:[rank7]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+1: [default1]:[rank5]:     pretrain(
+1: [default1]:[rank5]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+1: [default3]:[rank7]:     pretrain(
+1: [default1]:[rank5]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+1: [default1]:[rank5]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+1: [default1]:[rank5]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+1: [default3]:[rank7]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+1: [default3]:[rank7]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+1: [default3]:[rank7]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+1: [default1]:[rank5]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1: [default1]:[rank5]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+1: [default1]:[rank5]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+1: [default1]:[rank5]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1: [default1]:[rank5]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+1: [default1]:[rank5]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+1: [default1]:[rank5]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1: [default3]:[rank7]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+1: [default3]:[rank7]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1: [default1]:[rank5]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+1: [default1]:[rank5]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+1: [default1]:[rank5]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+1: [default3]:[rank7]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+1: [default3]:[rank7]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+1: [default3]:[rank7]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1: [default3]:[rank7]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+1: [default3]:[rank7]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+1: [default3]:[rank7]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1: [default1]:[rank5]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+1: [default3]:[rank7]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+1: [default3]:[rank7]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+1: [default3]:[rank7]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+1: [default3]:[rank7]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+7: [default3]:[rank31]: Traceback (most recent call last):
+7: [default3]:[rank31]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+7: [default3]:[rank31]:     pretrain(
+7: [default3]:[rank31]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+7: [default3]:[rank31]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+7: [default3]:[rank31]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+7: [default3]:[rank31]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+7: [default3]:[rank31]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+7: [default3]:[rank31]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+7: [default3]:[rank31]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+7: [default3]:[rank31]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+7: [default3]:[rank31]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+7: [default3]:[rank31]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+7: [default3]:[rank31]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+7: [default3]:[rank31]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+7: [default3]:[rank31]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+7: [default3]:[rank31]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+7: [default3]:[rank31]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+1: [default0]:[rank4]: Traceback (most recent call last):
+1: [default2]:[rank6]: Traceback (most recent call last):
+1: [default2]:[rank6]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+1: [default0]:[rank4]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+1: [default0]:[rank4]:     pretrain(
+1: [default0]:[rank4]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+1: [default2]:[rank6]:     pretrain(
+1: [default2]:[rank6]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+1: [default0]:[rank4]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+6: [default2]:[rank26]: Traceback (most recent call last):
+1: [default2]:[rank6]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+1: [default0]:[rank4]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+1: [default2]:[rank6]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+1: [default0]:[rank4]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+1: [default0]:[rank4]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+6: [default0]:[rank24]: Traceback (most recent call last):
+1: [default0]:[rank4]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+1: [default2]:[rank6]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+1: [default2]:[rank6]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1: [default0]:[rank4]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+1: [default2]:[rank6]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+1: [default2]:[rank6]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+6: [default2]:[rank26]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+1: [default2]:[rank6]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1: [default2]:[rank6]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+1: [default2]:[rank6]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+1: [default2]:[rank6]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1: [default2]:[rank6]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+1: [default2]:[rank6]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+6: [default3]:[rank27]: Traceback (most recent call last):
+1: [default0]:[rank4]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1: [default0]:[rank4]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+1: [default0]:[rank4]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+1: [default0]:[rank4]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1: [default0]:[rank4]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+1: [default2]:[rank6]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+1: [default2]:[rank6]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+1: [default0]:[rank4]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+1: [default0]:[rank4]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+1: [default0]:[rank4]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+6: [default3]:[rank27]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+6: [default2]:[rank26]:     pretrain(
+6: [default2]:[rank26]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+6: [default2]:[rank26]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+6: [default0]:[rank24]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+6: [default3]:[rank27]:     pretrain(
+6: [default2]:[rank26]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+6: [default2]:[rank26]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+6: [default3]:[rank27]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+6: [default0]:[rank24]:     pretrain(
+6: [default2]:[rank26]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+6: [default2]:[rank26]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+6: [default3]:[rank27]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+6: [default2]:[rank26]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+6: [default2]:[rank26]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+6: [default2]:[rank26]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+6: [default0]:[rank24]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+6: [default0]:[rank24]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+6: [default3]:[rank27]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+6: [default0]:[rank24]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+6: [default2]:[rank26]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+6: [default2]:[rank26]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+6: [default0]:[rank24]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+6: [default2]:[rank26]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+6: [default0]:[rank24]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+6: [default2]:[rank26]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+6: [default3]:[rank27]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+6: [default3]:[rank27]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+6: [default0]:[rank24]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+6: [default0]:[rank24]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+6: [default3]:[rank27]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+6: [default0]:[rank24]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+6: [default0]:[rank24]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+6: [default3]:[rank27]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+6: [default2]:[rank26]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+6: [default2]:[rank26]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+6: [default0]:[rank24]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+6: [default0]:[rank24]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+6: [default3]:[rank27]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+6: [default3]:[rank27]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+6: [default3]:[rank27]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+6: [default3]:[rank27]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+6: [default0]:[rank24]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+6: [default0]:[rank24]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+6: [default0]:[rank24]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+6: [default0]:[rank24]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+6: [default3]:[rank27]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+6: [default3]:[rank27]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+6: [default3]:[rank27]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+6: [default3]:[rank27]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+2: [default1]:[rank9]: Traceback (most recent call last):
+2: [default1]:[rank9]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+2: [default1]:[rank9]:     pretrain(
+2: [default1]:[rank9]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1040, in pretrain
+2: [default1]:[rank9]:     build_train_valid_test_data_iterators(train_valid_test_dataset_provider)
+2: [default1]:[rank9]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3572, in build_train_valid_test_data_iterators
+2: [default1]:[rank9]:     train_dataloader, valid_dataloaders, test_dataloader = build_train_valid_test_data_loaders(
+2: [default1]:[rank9]:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2: [default1]:[rank9]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3529, in build_train_valid_test_data_loaders
+2: [default1]:[rank9]:     train_ds, valid_ds, test_ds = build_train_valid_test_datasets(build_train_valid_test_datasets_provider)
+2: [default1]:[rank9]:                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2: [default1]:[rank9]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3474, in build_train_valid_test_datasets
+2: [default1]:[rank9]:     train_valid_test_num_samples = get_train_valid_test_num_samples()
+2: [default1]:[rank9]:                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2: [default1]:[rank9]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 3454, in get_train_valid_test_num_samples
+2: [default1]:[rank9]:     eval_iters = (args.train_iters // args.eval_interval + 1) * args.eval_iters
+2: [default1]:[rank9]:                   ~~~~~~~~~~~~~~~~~^^~~~~~~~~~~~~~~~~~~~
+2: [default1]:[rank9]: TypeError: unsupported operand type(s) for //: 'int' and 'NoneType'
+3: [default0]:[rank12]:[W414 23:34:37.462491111 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+5: [default0]:[rank20]:[W414 23:34:37.640152139 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+9: [default0]:[rank36]:[W414 23:34:37.549672210 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+4: [default0]:[rank16]:[W414 23:34:37.830829768 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+6: [default0]:[rank24]:[W414 23:34:37.249942068 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [default0]:[rank0]:[W414 23:34:37.887459663 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+8: [default0]:[rank32]:[W414 23:34:37.695597908 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+7: [default0]:[rank28]:[W414 23:34:37.153088390 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+2: [default0]:[rank8]:[W414 23:34:37.112025103 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+1: [default0]:[rank4]:[W414 23:34:38.922955187 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [default2]:[rank2]:[W414 23:34:39.708191253 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [default3]:[rank3]:[W414 23:34:39.728310701 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [default1]:[rank1]:[W414 23:34:39.708148566 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+2: [default2]:[rank10]:[W414 23:34:39.935216942 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+2: [default3]:[rank11]:[W414 23:34:39.953002136 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+3: [default2]:[rank14]:[W414 23:34:39.534790869 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+1: [default1]:[rank5]:[W414 23:34:39.649481997 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+2: [default1]:[rank9]:[W414 23:34:39.925162300 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+4: [default2]:[rank18]:[W414 23:34:40.943737741 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+4: [default3]:[rank19]:[W414 23:34:40.953954446 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+4: [default1]:[rank17]:[W414 23:34:40.933896417 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+1: [default3]:[rank7]:[W414 23:34:39.879010141 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+1: [default2]:[rank6]:[W414 23:34:39.868946521 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+5: [default2]:[rank22]:[W414 23:34:40.869238413 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+5: [default1]:[rank21]:[W414 23:34:40.859036076 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+7: [default1]:[rank29]:[W414 23:34:40.343793576 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+5: [default3]:[rank23]:[W414 23:34:40.879221589 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+6: [default1]:[rank25]:[W414 23:34:40.420061652 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+6: [default2]:[rank26]:[W414 23:34:40.430026423 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+6: [default3]:[rank27]:[W414 23:34:40.439970876 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+8: [default3]:[rank35]:[W414 23:34:40.925576950 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+8: [default1]:[rank33]:[W414 23:34:40.895680966 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+9: [default1]:[rank37]:[W414 23:34:40.862893171 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+9: [default2]:[rank38]:[W414 23:34:40.862635804 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+7: [default2]:[rank30]:[W414 23:34:40.353812731 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+8: [default2]:[rank34]:[W414 23:34:40.915511402 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+7: [default3]:[rank31]:[W414 23:34:40.363853101 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+3: [default1]:[rank13]:[W414 23:34:40.168621474 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+3: [default3]:[rank15]:[W414 23:34:40.168493574 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+5: W0414 23:34:50.599000 133110 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 133530 closing signal SIGTERM
+5: W0414 23:34:50.601000 133110 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 133532 closing signal SIGTERM
+6: W0414 23:34:50.600000 247671 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 248106 closing signal SIGTERM
+6: W0414 23:34:50.602000 247671 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 248107 closing signal SIGTERM
+5: W0414 23:34:50.602000 133110 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 133533 closing signal SIGTERM
+6: W0414 23:34:50.602000 247671 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 248115 closing signal SIGTERM
+3: W0414 23:34:50.603000 166959 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 167400 closing signal SIGTERM
+3: W0414 23:34:50.605000 166959 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 167401 closing signal SIGTERM
+3: W0414 23:34:50.605000 166959 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 167403 closing signal SIGTERM
+5: [default2]:Stack (most recent call first):
+5: [default2]:  <no Python frame>
+5: [default0]:Stack (most recent call first):
+5: [default0]:  <no Python frame>
+3: [default1]:Stack (most recent call first):
+3: [default1]:  <no Python frame>
+5: [default3]:Stack (most recent call first):
+5: [default3]:  <no Python frame>
+6: [default1]:Stack (most recent call first):
+6: [default1]:  <no Python frame>
+3: [default0]:Stack (most recent call first):
+3: [default3]:Stack (most recent call first):
+3: [default3]:  <no Python frame>
+3: [default0]:  <no Python frame>
+6: [default0]:Stack (most recent call first):
+6: [default0]:  <no Python frame>
+6: [default3]:Stack (most recent call first):
+6: [default3]:  <no Python frame>
+0: W0414 23:34:50.908000 44277 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 44744 closing signal SIGTERM
+0: W0414 23:34:50.909000 44277 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 44745 closing signal SIGTERM
+0: W0414 23:34:50.910000 44277 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 44746 closing signal SIGTERM
+5: E0414 23:34:50.963000 133110 torch/distributed/elastic/multiprocessing/api.py:880] failed (exitcode: 1) local_rank: 1 (pid: 133531) of binary: /opt/venv/bin/python
+6: E0414 23:34:50.969000 247671 torch/distributed/elastic/multiprocessing/api.py:880] failed (exitcode: 1) local_rank: 2 (pid: 248114) of binary: /opt/venv/bin/python
+3: E0414 23:34:50.970000 166959 torch/distributed/elastic/multiprocessing/api.py:880] failed (exitcode: 1) local_rank: 2 (pid: 167402) of binary: /opt/venv/bin/python
+2: W0414 23:34:50.990000 238501 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 238941 closing signal SIGTERM
+2: W0414 23:34:50.991000 238501 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 238942 closing signal SIGTERM
+2: W0414 23:34:50.992000 238501 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 238944 closing signal SIGTERM
+5: Traceback (most recent call last):
+5:   File "/usr/local/bin/torchrun", line 7, in <module>
+5:     sys.exit(main())
+5:              ^^^^^^
+5:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 357, in wrapper
+5:     return f(*args, **kwargs)
+5:            ^^^^^^^^^^^^^^^^^^
+5:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 936, in main
+5:     run(args)
+5:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 927, in run
+5:     elastic_launch(
+5:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 151, in __call__
+5:     return launch_agent(self._config, self._entrypoint, list(args))
+5:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+5:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 288, in launch_agent
+5:     raise ChildFailedError(
+5: torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+5: ============================================================
+5: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py FAILED
+5: ------------------------------------------------------------
+5: Failures:
+5:   <NO_OTHER_FAILURES>
+5: ------------------------------------------------------------
+5: Root Cause (first observed failure):
+5: [0]:
+5:   time      : 2026-04-14_23:34:50
+5:   host      : nid006659
+5:   rank      : 21 (local_rank: 1)
+5:   exitcode  : 1 (pid: 133531)
+5:   error_file: <N/A>
+5:   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+5: ============================================================
+1: W0414 23:34:51.003000 147037 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 147479 closing signal SIGTERM
+1: W0414 23:34:51.004000 147037 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 147480 closing signal SIGTERM
+3: Traceback (most recent call last):
+3:   File "/usr/local/bin/torchrun", line 7, in <module>
+3:     sys.exit(main())
+3:              ^^^^^^
+3:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 357, in wrapper
+3:     return f(*args, **kwargs)
+3:            ^^^^^^^^^^^^^^^^^^
+3:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 936, in main
+3:     run(args)
+3:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 927, in run
+3:     elastic_launch(
+3:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 151, in __call__
+3:     return launch_agent(self._config, self._entrypoint, list(args))
+3:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+3:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 288, in launch_agent
+6: Traceback (most recent call last):
+6:   File "/usr/local/bin/torchrun", line 7, in <module>
+3:     raise ChildFailedError(
+3: torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+3: ============================================================
+3: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py FAILED
+3: ------------------------------------------------------------
+3: Failures:
+3:   <NO_OTHER_FAILURES>
+3: ------------------------------------------------------------
+3: Root Cause (first observed failure):
+3: [0]:
+3:   time      : 2026-04-14_23:34:50
+3:   host      : nid006649
+3:   rank      : 14 (local_rank: 2)
+3:   exitcode  : 1 (pid: 167402)
+3:   error_file: <N/A>
+3:   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+3: ============================================================
+3: 
+6:     sys.exit(main())
+6:              ^^^^^^
+6:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 357, in wrapper
+6:     return f(*args, **kwargs)
+6:            ^^^^^^^^^^^^^^^^^^
+6:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 936, in main
+6:     run(args)
+6:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 927, in run
+6:     elastic_launch(
+6:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 151, in __call__
+6:     return launch_agent(self._config, self._entrypoint, list(args))
+6:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+6:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 288, in launch_agent
+6:     raise ChildFailedError(
+6: torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+6: ============================================================
+6: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py FAILED
+6: ------------------------------------------------------------
+6: Failures:
+6:   <NO_OTHER_FAILURES>
+6: ------------------------------------------------------------
+6: Root Cause (first observed failure):
+6: [0]:
+6:   time      : 2026-04-14_23:34:50
+6:   host      : nid006669
+6:   rank      : 26 (local_rank: 2)
+6:   exitcode  : 1 (pid: 248114)
+6:   error_file: <N/A>
+6:   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+6: ============================================================
+1: [default2]:Stack (most recent call first):
+1: [default2]:  <no Python frame>
+8: W0414 23:34:51.202000 154728 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 155183 closing signal SIGTERM
+0: E0414 23:34:51.203000 44277 torch/distributed/elastic/multiprocessing/api.py:880] failed (exitcode: 1) local_rank: 0 (pid: 44743) of binary: /opt/venv/bin/python
+8: W0414 23:34:51.204000 154728 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 155184 closing signal SIGTERM
+8: W0414 23:34:51.210000 154728 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 155186 closing signal SIGTERM
+0: Traceback (most recent call last):
+0:   File "/usr/local/bin/torchrun", line 7, in <module>
+0:     sys.exit(main())
+0:              ^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 357, in wrapper
+0:     return f(*args, **kwargs)
+0:            ^^^^^^^^^^^^^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 936, in main
+0:     run(args)
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 927, in run
+0:     elastic_launch(
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 151, in __call__
+0:     return launch_agent(self._config, self._entrypoint, list(args))
+0:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 288, in launch_agent
+0:     raise ChildFailedError(
+0: torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+0: ============================================================
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py FAILED
+0: ------------------------------------------------------------
+0: Failures:
+0:   <NO_OTHER_FAILURES>
+0: ------------------------------------------------------------
+0: Root Cause (first observed failure):
+0: [0]:
+0:   time      : 2026-04-14_23:34:50
+0:   host      : nid006309
+0:   rank      : 0 (local_rank: 0)
+0:   exitcode  : 1 (pid: 44743)
+0:   error_file: <N/A>
+0:   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+0: ============================================================
+8: [default3]:Stack (most recent call first):
+8: [default3]:  <no Python frame>
+1: E0414 23:34:51.273000 147037 torch/distributed/elastic/multiprocessing/api.py:880] failed (exitcode: 1) local_rank: 0 (pid: 147478) of binary: /opt/venv/bin/python
+2: E0414 23:34:51.275000 238501 torch/distributed/elastic/multiprocessing/api.py:880] failed (exitcode: 1) local_rank: 2 (pid: 238943) of binary: /opt/venv/bin/python
+2: [W414 23:34:51.422697354 TCPStore.cpp:115] [c10d] recvVector failed on SocketImpl(fd=28, addr=[nid006647-hsn2]:48456, remote=[nid006309]:21984): Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+2: Exception raised from recvBytes at /opt/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:682 (most recent call first):
+2: frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0xbc (0x400353042a9c in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+2: frame #1: <unknown function> + 0x5bd3ac0 (0x4003323f3ac0 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+2: frame #2: <unknown function> + 0x5bd5714 (0x4003323f5714 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+2: frame #3: <unknown function> + 0x5bd5f18 (0x4003323f5f18 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+2: frame #4: <unknown function> + 0x5bd7744 (0x4003323f7744 
+2: in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+2: frame #5: c10d::TCPStore::compareSet(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::vector<unsigned char, std::allocator<unsigned char> > const&, std::vector<unsigned char, std::allocator<unsigned char> > const&) + 0x1bc (0x4003323f984c in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+2: frame #6: <unknown function> + 0xfdb6a0 (0x40032c69b6a0 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_python.so)
+2: frame #7: <unknown function> + 0x59e870 (0x40032bc5e870 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_python.so)
+2: frame #8: python() [0x503454]
+2: <omitting python frames>
+2: frame #10: python() [0x4c6fbc]
+2: frame #13: python() [0x528970]
+2: frame #17: python() [0x59ac14]
+2: frame #18: python() [0x67f274]
+2: frame #23: <unknown function> + 0x284c4 (0x40032a8184c4 in /usr/lib/aarch64-linux-gnu/libc.so.6)
+2: frame #24: __libc_start_main + 0x98 (0x40032a818598 in /usr/lib/aar
+2: ch64-linux-gnu/libc.so.6)
+2: 
+2: W0414 23:34:51.309000 238501 torch/distributed/elastic/rendezvous/dynamic_rendezvous.py:1292] The node 'nid006647_238501_0' has failed to shutdown the rendezvous 'none' due to an error of type RendezvousConnectionError.
+2: Traceback (most recent call last):
+2:   File "/usr/local/bin/torchrun", line 7, in <module>
+2:     sys.exit(main())
+2:              ^^^^^^
+2:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 357, in wrapper
+2:     return f(*args, **kwargs)
+2:            ^^^^^^^^^^^^^^^^^^
+2:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 936, in main
+2:     run(args)
+2:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 927, in run
+2:     elastic_launch(
+2:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 151, in __call__
+2:     return launch_agent(self._config, self._entrypoint, list(args))
+2:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 288, in launch_agent
+2:     raise ChildFailedError(
+2: torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+2: ============================================================
+2: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py FAILED
+2: ------------------------------------------------------------
+2: Failures:
+2:   <NO_OTHER_FAILURES>
+2: ------------------------------------------------------------
+2: Root Cause (first observed failure):
+2: [0]:
+2:   time      : 2026-04-14_23:34:50
+2:   host      : nid006647
+2:   rank      : 10 (local_rank: 2)
+2:   exitcode  : 1 (pid: 238943)
+2:   error_file: <N/A>
+2:   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+2: ============================================================
+2: 
+1: [W414 23:34:51.191021176 TCPStore.cpp:115] [c10d] recvVector failed on SocketImpl(fd=28, addr=[nid006636]:51930, remote=[nid006309]:21984): Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+1: Exception raised from recvBytes at /opt/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:682 (most recent call first):
+1: frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0xbc (0x40038a682a9c in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+1: frame #1: <unknown function> + 0x5bd3ac0 (0x400369a33ac0 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+1: frame #2: <unknown function> + 0x5bd5714 (0x400369a35714 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+1: frame #3: <unknown function> + 0x5bd5f18 (0x400369a35f18 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+1: frame #4: <unknown function> + 0x5bd7744 (0x400369a37744 in /u
+1: sr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+1: frame #5: c10d::TCPStore::compareSet(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::vector<unsigned char, std::allocator<unsigned char> > const&, std::vector<unsigned char, std::allocator<unsigned char> > const&) + 0x1bc (0x400369a3984c in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+1: frame #6: <unknown function> + 0xfdb6a0 (0x400363cdb6a0 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_python.so)
+1: frame #7: <unknown function> + 0x59e870 (0x40036329e870 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_python.so)
+1: frame #8: python() [0x503454]
+1: <omitting python frames>
+1: frame #10: python() [0x4c6fbc]
+1: frame #13: python() [0x528970]
+1: frame #17: python() [0x59ac14]
+1: frame #18: python() [0x67f274]
+1: frame #23: <unknown function> + 0x284c4 (0x400361e584c4 in /usr/lib/aarch64-linux-gnu/libc.so.6)
+1: frame #24: __libc_start_main + 0x98 (0x400361e58598 in /usr/lib/aarch64-
+1: linux-gnu/libc.so.6)
+1: 
+9: W0414 23:34:51.312000 123013 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 123435 closing signal SIGTERM
+1: W0414 23:34:51.313000 147037 torch/distributed/elastic/rendezvous/dynamic_rendezvous.py:1292] The node 'nid006636_147037_0' has failed to shutdown the rendezvous 'none' due to an error of type RendezvousConnectionError.
+1: Traceback (most recent call last):
+1:   File "/usr/local/bin/torchrun", line 7, in <module>
+9: W0414 23:34:51.313000 123013 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 123437 closing signal SIGTERM
+1:     sys.exit(main())
+1:              ^^^^^^
+1:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 357, in wrapper
+1:     return f(*args, **kwargs)
+1:            ^^^^^^^^^^^^^^^^^^
+1:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 936, in main
+1:     run(args)
+1:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 927, in run
+9: W0414 23:34:51.314000 123013 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 123438 closing signal SIGTERM
+1:     elastic_launch(
+1:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 151, in __call__
+1:     return launch_agent(self._config, self._entrypoint, list(args))
+1:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 288, in launch_agent
+1:     raise ChildFailedError(
+1: torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+1: ============================================================
+1: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py FAILED
+1: ------------------------------------------------------------
+1: Failures:
+1: [1]:
+1:   time      : 2026-04-14_23:34:51
+1:   host      : nid006636
+1:   rank      : 7 (local_rank: 3)
+1:   exitcode  : 1 (pid: 147481)
+1:   error_file: <N/A>
+1:   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+1: ------------------------------------------------------------
+1: Root Cause (first observed failure):
+1: [0]:
+1:   time      : 2026-04-14_23:34:51
+1:   host      : nid006636
+1:   rank      : 4 (local_rank: 0)
+1:   exitcode  : 1 (pid: 147478)
+1:   error_file: <N/A>
+1:   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+1: ============================================================
+9: [default3]:Stack (most recent call first):
+9: [default3]:  File "/usr/lib/python3.12/subprocess.py", line 2011 in _try_wait
+9: [default3]:  File "/usr/lib/python3.12/subprocess.py", line 2053 in _wait
+9: [default3]:  File "/usr/lib/python3.12/subprocess.py", line 1264 in wait
+9: [default3]:  File "/opt/venv/lib/python3.12/site-packages/wandb/sdk/lib/service/service_process.py", line 57 in join
+9: [default3]:  File "/opt/venv/lib/python3.12/site-packages/wandb/sdk/lib/service/service_connection.py", line 301 in teardown
+9: [default3]:  File "/opt/venv/lib/python3.12/site-packages/wandb/sdk/lib/service/service_connection.py", line 65 in teardown_atexit
+4: W0414 23:34:51.402000 13923 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 14344 closing signal SIGTERM
+4: W0414 23:34:51.404000 13923 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 14346 closing signal SIGTERM
+4: W0414 23:34:51.405000 13923 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 14347 closing signal SIGTERM
+7: W0414 23:34:51.496000 154954 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 155377 closing signal SIGTERM
+7: W0414 23:34:51.497000 154954 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 155378 closing signal SIGTERM
+8: E0414 23:34:51.563000 154728 torch/distributed/elastic/multiprocessing/api.py:880] failed (exitcode: 1) local_rank: 2 (pid: 155185) of binary: /opt/venv/bin/python
+8: [W414 23:34:51.302565028 TCPStore.cpp:138] [c10d] recvValueWithTimeout failed on SocketImpl(fd=28, addr=[nid007358-hsn3]:54004, remote=[nid006309]:21984): Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+8: Exception raised from recvBytes at /opt/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:682 (most recent call first):
+8: frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0xbc (0x40039df72a9c in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+8: frame #1: <unknown function> + 0x5bd3ac0 (0x40037d323ac0 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+8: frame #2: <unknown function> + 0x5bd6bf4 (0x40037d326bf4 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+8: frame #3: <unknown function> + 0x5bd79f0 (0x40037d3279f0 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+8: frame #4: c10d::TCPStore::doWait(c10::ArrayRef<
+8: std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::chrono::duration<long, std::ratio<1l, 1000l> >) + 0x168 (0x40037d32a348 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+8: frame #5: c10d::TCPStore::doGet(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) + 0x2c (0x40037d32a89c in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+8: frame #6: c10d::TCPStore::get(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) + 0x9c (0x40037d32bf1c in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+8: frame #7: <unknown function> + 0xfdb284 (0x4003775cb284 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_python.so)
+8: frame #8: <unknown function> + 0x59e870 (0x400376b8e870 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_python.so)
+8: frame #9: python() [0x503454]
+8: <omitting python frames>
+8: frame #11: python() [0x4c6fbc]
+8: frame #14: python() [0x528
+8: 970]
+8: frame #18: python() [0x59ac14]
+8: frame #19: python() [0x67f274]
+8: frame #24: <unknown function> + 0x284c4 (0x4003757484c4 in /usr/lib/aarch64-linux-gnu/libc.so.6)
+8: frame #25: __libc_start_main + 0x98 (0x400375748598 in /usr/lib/aarch64-linux-gnu/libc.so.6)
+8: 
+8: W0414 23:34:51.599000 154728 torch/distributed/elastic/rendezvous/dynamic_rendezvous.py:1292] The node 'nid007358_154728_0' has failed to shutdown the rendezvous 'none' due to an error of type RendezvousConnectionError.
+8: Traceback (most recent call last):
+8:   File "/usr/local/bin/torchrun", line 7, in <module>
+8:     sys.exit(main())
+8:              ^^^^^^
+8:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 357, in wrapper
+8:     return f(*args, **kwargs)
+8:            ^^^^^^^^^^^^^^^^^^
+8:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 936, in main
+8:     run(args)
+8:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 927, in run
+8:     elastic_launch(
+8:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 151, in __call__
+8:     return launch_agent(self._config, self._entrypoint, list(args))
+8:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+8:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 288, in launch_agent
+8:     raise ChildFailedError(
+8: torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+8: ============================================================
+8: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py FAILED
+8: ------------------------------------------------------------
+8: Failures:
+8:   <NO_OTHER_FAILURES>
+8: ------------------------------------------------------------
+8: Root Cause (first observed failure):
+8: [0]:
+8:   time      : 2026-04-14_23:34:51
+8:   host      : nid007358
+8:   rank      : 34 (local_rank: 2)
+8:   exitcode  : 1 (pid: 155185)
+8:   error_file: <N/A>
+8:   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+8: ============================================================
+8: 
+7: E0414 23:34:51.664000 154954 torch/distributed/elastic/multiprocessing/api.py:880] failed (exitcode: 1) local_rank: 2 (pid: 155379) of binary: /opt/venv/bin/python
+4: E0414 23:34:51.667000 13923 torch/distributed/elastic/multiprocessing/api.py:880] failed (exitcode: 1) local_rank: 1 (pid: 14345) of binary: /opt/venv/bin/python
+4: [W414 23:34:51.605964962 TCPStore.cpp:138] [c10d] recvValueWithTimeout failed on SocketImpl(fd=28, addr=[nid006657-hsn2]:51078, remote=[nid006309]:21984): Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+4: Exception raised from recvBytes at /opt/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:682 (most recent call first):
+4: frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0xbc (0x400255c62a9c in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+4: frame #1: <unknown function> + 0x5bd3ac0 (0x400235013ac0 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+4: frame #2: <unknown function> + 0x5bd6bf4 (0x400235016bf4 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+4: frame #3: <unknown function> + 0x5bd79f0 (0x4002350179f0 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+4: frame #4: c10d::TCPStore::doWait(c10::ArrayRef<
+4: std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::chrono::duration<long, std::ratio<1l, 1000l> >) + 0x168 (0x40023501a348 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+4: frame #5: c10d::TCPStore::doGet(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) + 0x2c (0x40023501a89c in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+4: frame #6: c10d::TCPStore::get(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) + 0x9c (0x40023501bf1c in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+4: frame #7: <unknown function> + 0xfdb284 (0x40022f2bb284 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_python.so)
+4: frame #8: <unknown function> + 0x59e870 (0x40022e87e870 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_python.so)
+4: frame #9: python() [0x503454]
+4: <omitting python frames>
+4: frame #11: python() [0x4c6fbc]
+4: frame #14: python() [0x528
+4: 970]
+4: frame #18: python() [0x59ac14]
+4: frame #19: python() [0x67f274]
+4: frame #24: <unknown function> + 0x284c4 (0x40022d4384c4 in /usr/lib/aarch64-linux-gnu/libc.so.6)
+4: frame #25: __libc_start_main + 0x98 (0x40022d438598 in /usr/lib/aarch64-linux-gnu/libc.so.6)
+4: 
+4: W0414 23:34:51.704000 13923 torch/distributed/elastic/rendezvous/dynamic_rendezvous.py:1292] The node 'nid006657_13923_0' has failed to shutdown the rendezvous 'none' due to an error of type RendezvousConnectionError.
+4: Traceback (most recent call last):
+4:   File "/usr/local/bin/torchrun", line 7, in <module>
+4:     sys.exit(main())
+4:              ^^^^^^
+4:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 357, in wrapper
+4:     return f(*args, **kwargs)
+4:            ^^^^^^^^^^^^^^^^^^
+4:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 936, in main
+4:     run(args)
+4:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 927, in run
+4:     elastic_launch(
+4:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 151, in __call__
+4:     return launch_agent(self._config, self._entrypoint, list(args))
+4:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+4:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 288, in launch_agent
+4:     raise ChildFailedError(
+4: torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+4: ============================================================
+4: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py FAILED
+4: ------------------------------------------------------------
+4: Failures:
+4:   <NO_OTHER_FAILURES>
+4: ------------------------------------------------------------
+4: Root Cause (first observed failure):
+4: [0]:
+4:   time      : 2026-04-14_23:34:51
+4:   host      : nid006657
+4:   rank      : 17 (local_rank: 1)
+4:   exitcode  : 1 (pid: 14345)
+4:   error_file: <N/A>
+4:   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+4: ============================================================
+4: 
+7: [W414 23:34:51.898752597 TCPStore.cpp:138] [c10d] recvValueWithTimeout failed on SocketImpl(fd=28, addr=[nid007132-hsn1]:44476, remote=[nid006309]:21984): Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+7: Exception raised from recvBytes at /opt/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:682 (most recent call first):
+7: frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0xbc (0x4002da412a9c in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+7: frame #1: <unknown function> + 0x5bd3ac0 (0x4002b97c3ac0 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+7: frame #2: <unknown function> + 0x5bd6bf4 (0x4002b97c6bf4 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+7: frame #3: <unknown function> + 0x5bd79f0 (0x4002b97c79f0 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+7: frame #4: c10d::TCPStore::doWait(c10::ArrayRef<
+7: std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::chrono::duration<long, std::ratio<1l, 1000l> >) + 0x168 (0x4002b97ca348 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+7: frame #5: c10d::TCPStore::doGet(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) + 0x2c (0x4002b97ca89c in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+7: frame #6: c10d::TCPStore::get(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) + 0x9c (0x4002b97cbf1c in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+7: frame #7: <unknown function> + 0xfdb284 (0x4002b3a6b284 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_python.so)
+7: frame #8: <unknown function> + 0x59e870 (0x4002b302e870 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_python.so)
+7: frame #9: python() [0x503454]
+7: <omitting python frames>
+7: frame #11: python() [0x4c6fbc]
+7: frame #14: python() [0x528
+7: 970]
+7: frame #18: python() [0x59ac14]
+7: frame #19: python() [0x67f274]
+7: frame #24: <unknown function> + 0x284c4 (0x4002b1be84c4 in /usr/lib/aarch64-linux-gnu/libc.so.6)
+7: frame #25: __libc_start_main + 0x98 (0x4002b1be8598 in /usr/lib/aarch64-linux-gnu/libc.so.6)
+7: 
+7: W0414 23:34:51.707000 154954 torch/distributed/elastic/rendezvous/dynamic_rendezvous.py:1292] The node 'nid007132_154954_0' has failed to shutdown the rendezvous 'none' due to an error of type RendezvousConnectionError.
+7: Traceback (most recent call last):
+7:   File "/usr/local/bin/torchrun", line 7, in <module>
+7:     sys.exit(main())
+7:              ^^^^^^
+7:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 357, in wrapper
+7:     return f(*args, **kwargs)
+7:            ^^^^^^^^^^^^^^^^^^
+7:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 936, in main
+7:     run(args)
+7:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 927, in run
+7:     elastic_launch(
+7:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 151, in __call__
+7:     return launch_agent(self._config, self._entrypoint, list(args))
+7:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+7:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 288, in launch_agent
+7:     raise ChildFailedError(
+7: torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+7: ============================================================
+7: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py FAILED
+7: ------------------------------------------------------------
+7: Failures:
+7: [1]:
+7:   time      : 2026-04-14_23:34:51
+7:   host      : nid007132
+7:   rank      : 31 (local_rank: 3)
+7:   exitcode  : 1 (pid: 155380)
+7:   error_file: <N/A>
+7:   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+7: ------------------------------------------------------------
+7: Root Cause (first observed failure):
+7: [0]:
+7:   time      : 2026-04-14_23:34:51
+7:   host      : nid007132
+7:   rank      : 30 (local_rank: 2)
+7:   exitcode  : 1 (pid: 155379)
+7:   error_file: <N/A>
+7:   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+7: ============================================================
+7: 
+9: E0414 23:34:51.759000 123013 torch/distributed/elastic/multiprocessing/api.py:880] failed (exitcode: 1) local_rank: 1 (pid: 123436) of binary: /opt/venv/bin/python
+9: [W414 23:34:51.423626630 TCPStore.cpp:138] [c10d] recvValueWithTimeout failed on SocketImpl(fd=28, addr=[nid007418-hsn2]:38012, remote=[nid006309]:21984): Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+9: Exception raised from recvBytes at /opt/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:682 (most recent call first):
+9: frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0xbc (0x40036f562a9c in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+9: frame #1: <unknown function> + 0x5bd3ac0 (0x40034e913ac0 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+9: frame #2: <unknown function> + 0x5bd6bf4 (0x40034e916bf4 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+9: frame #3: <unknown function> + 0x5bd79f0 (0x40034e9179f0 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+9: frame #4: c10d::TCPStore::doWait(c10::ArrayRef<
+9: std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::chrono::duration<long, std::ratio<1l, 1000l> >) + 0x168 (0x40034e91a348 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+9: frame #5: c10d::TCPStore::doGet(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) + 0x2c (0x40034e91a89c in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+9: frame #6: c10d::TCPStore::get(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) + 0x9c (0x40034e91bf1c in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+9: frame #7: <unknown function> + 0xfdb284 (0x400348bbb284 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_python.so)
+9: frame #8: <unknown function> + 0x59e870 (0x40034817e870 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_python.so)
+9: frame #9: python() [0x503454]
+9: <omitting python frames>
+9: frame #11: python() [0x4c6fbc]
+9: frame #14: python() [0x528
+9: 970]
+9: frame #18: python() [0x59ac14]
+9: frame #19: python() [0x67f274]
+9: frame #24: <unknown function> + 0x284c4 (0x400346d384c4 in /usr/lib/aarch64-linux-gnu/libc.so.6)
+9: frame #25: __libc_start_main + 0x98 (0x400346d38598 in /usr/lib/aarch64-linux-gnu/libc.so.6)
+9: 
+9: W0414 23:34:51.793000 123013 torch/distributed/elastic/rendezvous/dynamic_rendezvous.py:1292] The node 'nid007418_123013_0' has failed to shutdown the rendezvous 'none' due to an error of type RendezvousConnectionError.
+9: Traceback (most recent call last):
+9:   File "/usr/local/bin/torchrun", line 7, in <module>
+9:     sys.exit(main())
+9:              ^^^^^^
+9:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 357, in wrapper
+9:     return f(*args, **kwargs)
+9:            ^^^^^^^^^^^^^^^^^^
+9:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 936, in main
+9:     run(args)
+9:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 927, in run
+9:     elastic_launch(
+9:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 151, in __call__
+9:     return launch_agent(self._config, self._entrypoint, list(args))
+9:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+9:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 288, in launch_agent
+9:     raise ChildFailedError(
+9: torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+9: ============================================================
+9: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py FAILED
+9: ------------------------------------------------------------
+9: Failures:
+9:   <NO_OTHER_FAILURES>
+9: ------------------------------------------------------------
+9: Root Cause (first observed failure):
+9: [0]:
+9:   time      : 2026-04-14_23:34:51
+9:   host      : nid007418
+9:   rank      : 37 (local_rank: 1)
+9:   exitcode  : 1 (pid: 123436)
+9:   error_file: <N/A>
+9:   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+9: ============================================================
+srun: error: nid006657: task 4: Exited with exit code 1
+srun: Terminating StepId=1857626.1
+srun: error: nid007418: task 9: Exited with exit code 1
+srun: error: nid006659: task 5: Exited with exit code 1
+srun: error: nid006309: task 0: Exited with exit code 1
+srun: error: nid006636: task 1: Exited with exit code 1
+srun: error: nid006649: task 3: Exited with exit code 1
+srun: error: nid006669: task 6: Exited with exit code 1
+srun: error: nid006647: task 2: Exited with exit code 1
+srun: error: nid007358: task 8: Exited with exit code 1
+srun: error: nid007132: task 7: Exited with exit code 1

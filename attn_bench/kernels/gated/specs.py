@@ -7,8 +7,10 @@ X = RMSNorm(residual_stream)
 
 from __future__ import annotations
 
+import functools
 from typing import Optional
 
+from megatron.core.extensions.transformer_engine import TEDotProductAttention
 from megatron.core.models.backends import BackendSpecProvider
 from megatron.core.process_groups_config import ProcessGroupCollection
 from megatron.core.transformer.attention import CoreAttentionBuilder, SelfAttention, SelfAttentionSubmodules
@@ -66,7 +68,12 @@ class GatedSelfAttention(SelfAttention):
 class GatedSpecProvider:
     # TODO: create a Base spec? to not duplicate
     def __init__(self, kernel_cls: type, base: BackendSpecProvider, **kernel_kwargs):
-        self._kernel_wrapper_cls = make_megatron_wrapper(kernel_cls, **kernel_kwargs)
+        # TEDotProductAttention subclasses already implement Megatron's CoreAttention interface
+        # and must not be wrapped by make_megatron_wrapper.
+        if issubclass(kernel_cls, TEDotProductAttention):
+            self._kernel_wrapper_cls = functools.partial(kernel_cls, **kernel_kwargs) if kernel_kwargs else kernel_cls
+        else:
+            self._kernel_wrapper_cls = make_megatron_wrapper(kernel_cls, **kernel_kwargs)
         self._base = base
 
     def core_attention(self) -> CoreAttentionBuilder:

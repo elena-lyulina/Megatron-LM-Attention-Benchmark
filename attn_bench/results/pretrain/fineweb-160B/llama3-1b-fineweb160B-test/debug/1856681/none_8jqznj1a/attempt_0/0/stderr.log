@@ -1,0 +1,21 @@
+Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+[W414 20:16:12.994919211 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+[rank16]: Traceback (most recent call last):
+[rank16]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+[rank16]:     pretrain(
+[rank16]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+[rank16]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+[rank16]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank16]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+[rank16]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+[rank16]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank16]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+[rank16]:     opt_param_scheduler = OptimizerParamScheduler(
+[rank16]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+[rank16]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+[rank16]:     assert self.lr_warmup_steps < self.lr_decay_steps
+[rank16]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank16]: AssertionError
+[rank16]:[W414 20:16:35.144682782 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+Stack (most recent call first):
+  <no Python frame>

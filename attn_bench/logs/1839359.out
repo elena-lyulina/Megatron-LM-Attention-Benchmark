@@ -1,0 +1,26 @@
+START TIME: Sun Apr 12 20:48:35 CEST 2026
+2026-04-12 20:49:00,345 [main] Fetching parquet file list from HuggingFace ...
+2026-04-12 20:49:00,649 [main] Found 234 parquet files for fineweb-edu-dedup
+2026-04-12 20:49:00,649 [main] Splitting across 4 workers | Budget: 0.1B tokens
+2026-04-12 20:49:00,669 [main] Starting — 58 parquet files assigned
+2026-04-12 20:49:00,669 [main] Starting — 59 parquet files assigned
+2026-04-12 20:49:00,669 [main] Starting — 59 parquet files assigned
+2026-04-12 20:49:00,669 [main] Starting — 58 parquet files assigned
+2026-04-12 20:49:00,915 [main] Processing train-00003-of-00234.parquet
+2026-04-12 20:49:00,916 [main] Processing train-00002-of-00234.parquet
+2026-04-12 20:49:00,916 [main] Processing train-00000-of-00234.parquet
+2026-04-12 20:49:00,916 [main] Processing train-00001-of-00234.parquet
+2026-04-12 20:49:44,855 [main] Global token budget reached. Stopping.
+2026-04-12 20:49:44,858 [main] Finished train-00000-of-00234.parquet | Docs: 26,000 | Tokens: 26,130,868 (26.1M) | Speed: 0.6M tok/s
+2026-04-12 20:49:44,872 [main] Done. Docs: 26,000 | Tokens: 26,130,868 (26.1M) | Speed: 0.6M tok/s
+2026-04-12 20:49:45,303 [main] Global token budget reached. Stopping.
+2026-04-12 20:49:45,307 [main] Finished train-00002-of-00234.parquet | Docs: 24,000 | Tokens: 24,784,751 (24.8M) | Speed: 0.6M tok/s
+2026-04-12 20:49:45,319 [main] Done. Docs: 24,000 | Tokens: 24,784,751 (24.8M) | Speed: 0.6M tok/s
+2026-04-12 20:49:45,988 [main] Global token budget reached. Stopping.
+2026-04-12 20:49:45,990 [main] Finished train-00003-of-00234.parquet | Docs: 27,000 | Tokens: 26,202,051 (26.2M) | Speed: 0.6M tok/s
+2026-04-12 20:49:46,003 [main] Done. Docs: 27,000 | Tokens: 26,202,051 (26.2M) | Speed: 0.6M tok/s
+2026-04-12 20:49:46,218 [main] Global token budget reached. Stopping.
+2026-04-12 20:49:46,221 [main] Finished train-00001-of-00234.parquet | Docs: 28,000 | Tokens: 26,705,435 (26.7M) | Speed: 0.6M tok/s
+2026-04-12 20:49:46,234 [main] Done. Docs: 28,000 | Tokens: 26,705,435 (26.7M) | Speed: 0.6M tok/s
+2026-04-12 20:49:46,278 [main] All workers done. Total tokens: 103,823,105 (0.10B) | Total docs: 105,000 | Time: 0.01h | Combined speed: 2.3M tok/s
+END TIME: Sun Apr 12 20:49:47 CEST 2026

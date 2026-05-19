@@ -1,0 +1,74 @@
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+pyloudnorm 0.1.1 requires future>=0.16.0, which is not installed.
+tensorrt-llm 1.1.0 requires patchelf==0.18.0, which is not installed.
+tritonclient 2.51.0 requires numpy<2,>=1.19.1, but you have numpy 2.4.4 which is incompatible.
+nemo-toolkit 2.6.0rc0 requires fsspec==2024.12.0, but you have fsspec 2024.9.0 which is incompatible.
+nemo-toolkit 2.6.0rc0 requires protobuf~=5.29.5, but you have protobuf 4.25.8 which is incompatible.
+numba 0.61.2 requires numpy<2.3,>=1.24, but you have numpy 2.4.4 which is incompatible.
+nvidia-pytriton 0.7.0 requires numpy<2.0.0,>=1.21, but you have numpy 2.4.4 which is incompatible.
+megatron-core 0.16.0rc0 requires numpy<2.0.0, but you have numpy 2.4.4 which is incompatible.
+megatron-bridge 0.2.0 requires megatron-core[dev,mlm]<0.16.0,>=0.15.0a0, but you have megatron-core 0.16.0rc0 which is incompatible.
+megatron-bridge 0.2.0 requires transformers==4.57.1, but you have transformers 4.57.3 which is incompatible.
+vllm 0.10.1.1+381074ae.nv25.9.cu130 requires transformers==4.55.2, but you have transformers 4.57.3 which is incompatible.
+vllm 0.10.1.1+381074ae.nv25.9.cu130 requires xgrammar==0.1.22; platform_machine == "x86_64" or platform_machine == "aarch64" or platform_machine == "arm64", but you have xgrammar 0.1.25 which is incompatible.
+tensorrt-llm 1.1.0 requires fastapi<=0.117.1,>=0.115.4, but you have fastapi 0.124.2 which is incompatible.
+tensorrt-llm 1.1.0 requires h5py==3.12.1, but you have h5py 3.15.1 which is incompatible.
+tensorrt-llm 1.1.0 requires numpy<2, but you have numpy 2.4.4 which is incompatible.
+tensorrt-llm 1.1.0 requires nvidia-cutlass-dsl==4.2.1; python_version >= "3.10", but you have nvidia-cutlass-dsl 4.3.3 which is incompatible.
+tensorrt-llm 1.1.0 requires transformers==4.56.0, but you have transformers 4.57.3 which is incompatible.
+2026-04-24 00:34:11.479 | INFO     | datatrove.utils.logging:add_task_logger:76 - Launching pipeline for rank=1
+2026-04-24 00:34:11.479 | INFO     | datatrove.utils.logging:log_pipeline:108 - 
+--- 🛠️ PIPELINE 🛠
+📖 - READER: 📒 Parquet
+🔢 - TOKENIZER: ✍️ Writer
+2026-04-24 00:34:11.479 | INFO     | attn_bench.data_processing.tokenization.megatron_tokenizer_budgeted:run:313 - Tokenizing in "00001_tokens"...
+2026-04-24 00:34:32.028 | INFO     | datatrove.pipeline.readers.base:read_files_shard:206 - Reading input file train-00226-of-00234.parquet, 1/6
+2026-04-24 00:51:05.269 | INFO     | datatrove.pipeline.readers.base:read_files_shard:206 - Reading input file train-00194-of-00234.parquet, 2/6
+2026-04-24 01:08:41.459 | INFO     | datatrove.pipeline.readers.base:read_files_shard:206 - Reading input file train-00167-of-00234.parquet, 3/6
+2026-04-24 01:26:40.483 | INFO     | datatrove.pipeline.readers.base:read_files_shard:206 - Reading input file train-00144-of-00234.parquet, 4/6
+2026-04-24 01:43:17.132 | INFO     | datatrove.pipeline.readers.base:read_files_shard:206 - Reading input file train-00051-of-00234.parquet, 5/6
+2026-04-24 01:57:43.730 | INFO     | datatrove.executor.local:_launch_run_for_rank:81 - 1/20 tasks completed.
+2026-04-24 01:58:33.806 | INFO     | datatrove.executor.local:_launch_run_for_rank:81 - 2/20 tasks completed.
+2026-04-24 01:58:56.027 | INFO     | datatrove.executor.local:_launch_run_for_rank:81 - 3/20 tasks completed.
+2026-04-24 01:59:14.014 | INFO     | datatrove.executor.local:_launch_run_for_rank:81 - 4/20 tasks completed.
+2026-04-24 01:59:15.358 | INFO     | datatrove.executor.local:_launch_run_for_rank:81 - 5/20 tasks completed.
+2026-04-24 01:59:22.785 | SUCCESS  | datatrove.executor.base:_run_for_rank:140 - Processing done for rank=1
+2026-04-24 01:59:22.805 | INFO     | datatrove.executor.base:_run_for_rank:147 - 
+
+📉📉📉 Stats: Task 1 📉📉📉
+
+Total Runtime: 1 hour, 17 minutes and 44.31 seconds
+
+📖 - READER: 📒 Parquet
+    Runtime: (10.97%) 8 minutes and 31.87 seconds [127.90 milliseconds±276.39 milliseconds/batch]
+    Stats: {input_files: 5, doc_len: 19024787846 [min=159, max=674092, 4756.20±8796/doc], doc_len_tokens: 4120999944 [min=37, max=226779, 1030.25±1956/doc], documents: 3250734 [min=812683, max=812684, 812683.50±1/input_file]}
+🔢 - TOKENIZER: ✍️ Writer
+    Runtime: (89.03%) 1 hour, 9 minutes and 12.44 seconds [10 seconds and 381.10 milliseconds±2 seconds and 976.66 milliseconds/batch]
+    Stats: {tokens: 4005698699 [min=38, max=171512, 1001.42±1912/doc]}
+2026-04-24 01:59:22.821 | INFO     | datatrove.executor.local:_launch_run_for_rank:81 - 6/20 tasks completed.
+2026-04-24 01:59:43.107 | INFO     | datatrove.executor.local:_launch_run_for_rank:81 - 7/20 tasks completed.
+2026-04-24 01:59:53.579 | INFO     | datatrove.executor.local:_launch_run_for_rank:81 - 8/20 tasks completed.
+2026-04-24 02:00:01.656 | INFO     | datatrove.executor.local:_launch_run_for_rank:81 - 9/20 tasks completed.
+2026-04-24 02:00:04.732 | INFO     | datatrove.executor.local:_launch_run_for_rank:81 - 10/20 tasks completed.
+2026-04-24 02:00:50.759 | INFO     | datatrove.executor.local:_launch_run_for_rank:81 - 11/20 tasks completed.
+2026-04-24 02:00:51.866 | INFO     | datatrove.executor.local:_launch_run_for_rank:81 - 12/20 tasks completed.
+2026-04-24 02:01:09.939 | INFO     | datatrove.executor.local:_launch_run_for_rank:81 - 13/20 tasks completed.
+2026-04-24 02:01:17.014 | INFO     | datatrove.executor.local:_launch_run_for_rank:81 - 14/20 tasks completed.
+2026-04-24 02:01:27.051 | INFO     | datatrove.executor.local:_launch_run_for_rank:81 - 15/20 tasks completed.
+2026-04-24 02:01:28.446 | INFO     | datatrove.executor.local:_launch_run_for_rank:81 - 16/20 tasks completed.
+2026-04-24 02:01:35.880 | INFO     | datatrove.executor.local:_launch_run_for_rank:81 - 17/20 tasks completed.
+2026-04-24 02:01:44.450 | INFO     | datatrove.executor.local:_launch_run_for_rank:81 - 18/20 tasks completed.
+2026-04-24 02:02:09.803 | INFO     | datatrove.executor.local:_launch_run_for_rank:81 - 19/20 tasks completed.
+2026-04-24 02:02:58.139 | INFO     | datatrove.executor.local:_launch_run_for_rank:81 - 20/20 tasks completed.
+2026-04-24 02:02:58.512 | SUCCESS  | datatrove.executor.local:run:151 - 
+
+📉📉📉 Stats: All 20 tasks 📉📉📉
+
+Total Runtime: 1 hour, 18 minutes and 24.83 seconds ± 1 minute and 7.30 seconds/task
+
+📖 - READER: 📒 Parquet
+    Runtime: (10.72%) 8 minutes and 24.30 seconds±18.22 seconds/task, min=7 minutes and 45.23 seconds, max=9 minutes and 0.99 seconds [124.99 milliseconds±260.75 milliseconds/batch]
+    Stats: {input_files: 100, doc_len: 380100701402 [min=133, max=679608, 4712.57±8588/doc], doc_len_tokens: 82363460432 [min=31, max=377874, 1021.16±1917/doc], documents: 66640061 [min=812683, max=812684, 812683.67±0/input_file]}
+🔢 - TOKENIZER: ✍️ Writer
+    Runtime: (89.28%) 1 hour, 10 minutes and 0.53 seconds±1 minute and 4.79 seconds/task, min=1 hour, 8 minutes and 19.71 seconds, max=1 hour, 12 minutes and 0.32 seconds [10 seconds and 414.10 milliseconds±3 seconds and 103.75 milliseconds/batch]
+    Stats: {tokens: 80080097628 [min=29, max=216067, 992.85±1875/doc]}

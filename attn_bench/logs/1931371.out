@@ -1,0 +1,44 @@
+START TIME: Fri Apr 24 00:34:03 CEST 2026 | Preprocessing /iopsstor/scratch/cscs/elyulina/datasets/preprocessing/fineweb-edu-dedup/dumps/paths_file_1.txt with 20 tasks per node with the meta-llama/Llama-3.2-1B tokenizer. Node budget: 80000000000 tokens. Storing tokenized dataset in /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_1
+FINISH TIME: Fri Apr 24 02:04:14 CEST 2026 | Preprocessed /iopsstor/scratch/cscs/elyulina/datasets/preprocessing/fineweb-edu-dedup/dumps/paths_file_1.txt ! Stored in /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_1
+1931371,nid007127,Fri Apr 24 00:34:03 CEST 2026,Fri Apr 24 02:04:14 CEST 2026,/iopsstor/scratch/cscs/elyulina/datasets/preprocessing/fineweb-edu-dedup/dumps/paths_file_1.txt,/iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_1,275033984122,321933654316,20,10000,80000000000,5411,50828679.37941231,80079846274,14799454.125669932
+total 314388568
+-rw-r-----+ 1 elyulina infra01 16035668612 Apr 24 02:02 00007_tokens.bin
+-rw-r-----+ 1 elyulina infra01 16032788724 Apr 24 02:00 00002_tokens.bin
+-rw-r-----+ 1 elyulina infra01 16030372116 Apr 24 02:01 00015_tokens.bin
+-rw-r-----+ 1 elyulina infra01 16028471048 Apr 24 01:59 00013_tokens.bin
+-rw-r-----+ 1 elyulina infra01 16025233048 Apr 24 02:00 00008_tokens.bin
+-rw-r-----+ 1 elyulina infra01 16025168040 Apr 24 02:00 00018_tokens.bin
+-rw-r-----+ 1 elyulina infra01 16024939436 Apr 24 02:01 00004_tokens.bin
+-rw-r-----+ 1 elyulina infra01 16020610144 Apr 24 02:02 00006_tokens.bin
+-rw-r-----+ 1 elyulina infra01 16016539204 Apr 24 01:59 00014_tokens.bin
+-rw-r-----+ 1 elyulina infra01 16014017020 Apr 24 01:57 00012_tokens.bin
+-rw-r-----+ 1 elyulina infra01 16012789812 Apr 24 02:02 00016_tokens.bin
+-rw-r-----+ 1 elyulina infra01 16012675888 Apr 24 02:02 00000_tokens.bin
+-rw-r-----+ 1 elyulina infra01 16012093688 Apr 24 01:58 00017_tokens.bin
+-rw-r-----+ 1 elyulina infra01 16011902460 Apr 24 02:04 00011_tokens.bin
+-rw-r-----+ 1 elyulina infra01 16009469044 Apr 24 02:02 00003_tokens.bin
+-rw-r-----+ 1 elyulina infra01 16005686532 Apr 24 01:53 00001_tokens.bin
+-rw-r-----+ 1 elyulina infra01 16002235240 Apr 24 02:02 00005_tokens.bin
+-rw-r-----+ 1 elyulina infra01 16001579704 Apr 24 02:01 00010_tokens.bin
+-rw-r-----+ 1 elyulina infra01 16000359868 Apr 24 02:00 00009_tokens.bin
+-rw-r-----+ 1 elyulina infra01 15996785468 Apr 24 02:02 00019_tokens.bin
+-rw-r-----+ 1 elyulina infra01    81268422 Apr 24 02:02 00019_tokens.idx
+-rw-r-----+ 1 elyulina infra01    81200042 Apr 24 02:01 00015_tokens.idx
+-rw-r-----+ 1 elyulina infra01    81200042 Apr 24 02:02 00016_tokens.idx
+-rw-r-----+ 1 elyulina infra01    81200042 Apr 24 01:58 00017_tokens.idx
+-rw-r-----+ 1 elyulina infra01    81200042 Apr 24 02:00 00018_tokens.idx
+-rw-r-----+ 1 elyulina infra01    81000042 Apr 24 01:57 00012_tokens.idx
+-rw-r-----+ 1 elyulina infra01    81000042 Apr 24 01:59 00013_tokens.idx
+-rw-r-----+ 1 elyulina infra01    81000042 Apr 24 01:59 00014_tokens.idx
+-rw-r-----+ 1 elyulina infra01    80800042 Apr 24 02:00 00009_tokens.idx
+-rw-r-----+ 1 elyulina infra01    80800042 Apr 24 02:01 00010_tokens.idx
+-rw-r-----+ 1 elyulina infra01    80800042 Apr 24 02:04 00011_tokens.idx
+-rw-r-----+ 1 elyulina infra01    80600042 Apr 24 02:02 00007_tokens.idx
+-rw-r-----+ 1 elyulina infra01    80600042 Apr 24 02:00 00008_tokens.idx
+-rw-r-----+ 1 elyulina infra01    80400042 Apr 24 02:00 00002_tokens.idx
+-rw-r-----+ 1 elyulina infra01    80400042 Apr 24 02:01 00004_tokens.idx
+-rw-r-----+ 1 elyulina infra01    80400042 Apr 24 02:02 00005_tokens.idx
+-rw-r-----+ 1 elyulina infra01    80400042 Apr 24 02:02 00006_tokens.idx
+-rw-r-----+ 1 elyulina infra01    80200042 Apr 24 02:02 00003_tokens.idx
+-rw-r-----+ 1 elyulina infra01    80000042 Apr 24 01:53 00001_tokens.idx
+-rw-r-----+ 1 elyulina infra01    79800042 Apr 24 02:02 00000_tokens.idx

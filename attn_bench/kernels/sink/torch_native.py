@@ -58,10 +58,6 @@ class SinkTorchAttention(nn.Module):
         assert packed_seq_params is None, (
             "SinkTorchAttention does not support packed sequences."
         )
-        assert attn_mask_type.name == "causal", (
-            f"SinkTorchAttention only supports causal masking, got {attn_mask_type.name!r}."
-        )
-
         sq, b, np, hn = query.shape
 
         # GQA: repeat KV heads to match query heads
@@ -77,10 +73,14 @@ class SinkTorchAttention(nn.Module):
 
         scores = torch.matmul(q, k.transpose(-2, -1)) * self.softmax_scale  # [b, h, sq, sk]
 
-        # Causal mask
-        sk = k.size(2)
-        causal_mask = torch.ones(sq, sk, dtype=torch.bool, device=scores.device).tril()
-        scores = scores.masked_fill(~causal_mask, float('-inf'))
+        # Masking: use explicit block-diagonal mask if provided, else fall back to causal tril
+        # Megatron mask: True=blocked
+        if attention_mask is not None:
+            scores = scores.masked_fill(attention_mask, float('-inf'))
+        else:
+            sk = k.size(2)
+            causal_mask = torch.ones(sq, sk, dtype=torch.bool, device=scores.device).triu(diagonal=1)
+            scores = scores.masked_fill(causal_mask, float('-inf'))
 
         # Append sink logit as an extra column, softmax over it, then drop it
         # equivalent to the paper's formula but avoids any kernel modification.

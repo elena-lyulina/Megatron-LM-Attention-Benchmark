@@ -1,0 +1,326 @@
+START TIME: Sun Apr 12 21:13:38 CEST 2026
+2026-04-12 21:14:04,077 [main] Fetching parquet file list from HuggingFace ...
+2026-04-12 21:14:04,302 [main] Found 234 parquet files for fineweb-edu-dedup
+2026-04-12 21:14:04,302 [main] Splitting across 64 workers | Budget: 1.0B tokens
+2026-04-12 21:14:04,566 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,566 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,566 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,566 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,566 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,566 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,567 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,567 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,567 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,567 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,567 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,567 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,567 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,567 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,567 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,567 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,568 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,568 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,568 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,568 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,568 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,568 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,568 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,568 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,568 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,568 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,569 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,569 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,569 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,569 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,569 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,570 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,569 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,570 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,569 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,570 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,570 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,570 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,570 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,570 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,570 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,570 [main] Starting — 4 parquet files assigned
+2026-04-12 21:14:04,570 [main] Starting — 3 parquet files assigned
+2026-04-12 21:14:04,571 [main] Starting — 3 parquet files assigned
+2026-04-12 21:14:04,571 [main] Starting — 3 parquet files assigned
+2026-04-12 21:14:04,571 [main] Starting — 3 parquet files assigned
+2026-04-12 21:14:04,571 [main] Starting — 3 parquet files assigned
+2026-04-12 21:14:04,572 [main] Starting — 3 parquet files assigned
+2026-04-12 21:14:04,572 [main] Starting — 3 parquet files assigned
+2026-04-12 21:14:04,572 [main] Starting — 3 parquet files assigned
+2026-04-12 21:14:04,572 [main] Starting — 3 parquet files assigned
+2026-04-12 21:14:04,572 [main] Starting — 3 parquet files assigned
+2026-04-12 21:14:04,572 [main] Starting — 3 parquet files assigned
+2026-04-12 21:14:04,572 [main] Starting — 3 parquet files assigned
+2026-04-12 21:14:04,572 [main] Starting — 3 parquet files assigned
+2026-04-12 21:14:04,572 [main] Starting — 3 parquet files assigned
+2026-04-12 21:14:04,572 [main] Starting — 3 parquet files assigned
+2026-04-12 21:14:04,573 [main] Starting — 3 parquet files assigned
+2026-04-12 21:14:04,573 [main] Starting — 3 parquet files assigned
+2026-04-12 21:14:04,573 [main] Starting — 3 parquet files assigned
+2026-04-12 21:14:04,573 [main] Starting — 3 parquet files assigned
+2026-04-12 21:14:04,573 [main] Starting — 3 parquet files assigned
+2026-04-12 21:14:04,573 [main] Starting — 3 parquet files assigned
+2026-04-12 21:14:04,573 [main] Starting — 3 parquet files assigned
+2026-04-12 21:14:04,943 [main] Processing train-00038-of-00234.parquet
+2026-04-12 21:14:04,944 [main] Processing train-00047-of-00234.parquet
+2026-04-12 21:14:04,944 [main] Processing train-00002-of-00234.parquet
+2026-04-12 21:14:04,945 [main] Processing train-00011-of-00234.parquet
+2026-04-12 21:14:04,945 [main] Processing train-00037-of-00234.parquet
+2026-04-12 21:14:04,945 [main] Processing train-00042-of-00234.parquet
+2026-04-12 21:14:05,058 [main] Processing train-00000-of-00234.parquet
+2026-04-12 21:14:05,059 [main] Processing train-00036-of-00234.parquet
+2026-04-12 21:14:05,059 [main] Processing train-00023-of-00234.parquet
+2026-04-12 21:14:05,060 [main] Processing train-00017-of-00234.parquet
+2026-04-12 21:14:05,060 [main] Processing train-00005-of-00234.parquet
+2026-04-12 21:14:05,061 [main] Processing train-00013-of-00234.parquet
+2026-04-12 21:14:05,061 [main] Processing train-00010-of-00234.parquet
+2026-04-12 21:14:05,062 [main] Processing train-00003-of-00234.parquet
+2026-04-12 21:14:05,062 [main] Processing train-00016-of-00234.parquet
+2026-04-12 21:14:05,063 [main] Processing train-00030-of-00234.parquet
+2026-04-12 21:14:05,063 [main] Processing train-00018-of-00234.parquet
+2026-04-12 21:14:05,063 [main] Processing train-00025-of-00234.parquet
+2026-04-12 21:14:05,064 [main] Processing train-00004-of-00234.parquet
+2026-04-12 21:14:05,064 [main] Processing train-00045-of-00234.parquet
+2026-04-12 21:14:05,065 [main] Processing train-00063-of-00234.parquet
+2026-04-12 21:14:05,065 [main] Processing train-00001-of-00234.parquet
+2026-04-12 21:14:05,066 [main] Processing train-00029-of-00234.parquet
+2026-04-12 21:14:05,066 [main] Processing train-00046-of-00234.parquet
+2026-04-12 21:14:05,067 [main] Processing train-00026-of-00234.parquet
+2026-04-12 21:14:05,067 [main] Processing train-00034-of-00234.parquet
+2026-04-12 21:14:05,067 [main] Processing train-00060-of-00234.parquet
+2026-04-12 21:14:05,068 [main] Processing train-00062-of-00234.parquet
+2026-04-12 21:14:05,068 [main] Processing train-00027-of-00234.parquet
+2026-04-12 21:14:05,068 [main] Processing train-00015-of-00234.parquet
+2026-04-12 21:14:05,069 [main] Processing train-00055-of-00234.parquet
+2026-04-12 21:14:05,069 [main] Processing train-00024-of-00234.parquet
+2026-04-12 21:14:05,069 [main] Processing train-00014-of-00234.parquet
+2026-04-12 21:14:05,070 [main] Processing train-00006-of-00234.parquet
+2026-04-12 21:14:05,070 [main] Processing train-00061-of-00234.parquet
+2026-04-12 21:14:05,070 [main] Processing train-00021-of-00234.parquet
+2026-04-12 21:14:05,070 [main] Processing train-00028-of-00234.parquet
+2026-04-12 21:14:05,071 [main] Processing train-00031-of-00234.parquet
+2026-04-12 21:14:05,071 [main] Processing train-00008-of-00234.parquet
+2026-04-12 21:14:05,071 [main] Processing train-00059-of-00234.parquet
+2026-04-12 21:14:05,072 [main] Processing train-00022-of-00234.parquet
+2026-04-12 21:14:05,072 [main] Processing train-00050-of-00234.parquet
+2026-04-12 21:14:05,072 [main] Processing train-00043-of-00234.parquet
+2026-04-12 21:14:05,072 [main] Processing train-00053-of-00234.parquet
+2026-04-12 21:14:05,073 [main] Processing train-00044-of-00234.parquet
+2026-04-12 21:14:05,073 [main] Processing train-00051-of-00234.parquet
+2026-04-12 21:14:05,073 [main] Processing train-00052-of-00234.parquet
+2026-04-12 21:14:05,074 [main] Processing train-00020-of-00234.parquet
+2026-04-12 21:14:05,074 [main] Processing train-00032-of-00234.parquet
+2026-04-12 21:14:05,074 [main] Processing train-00007-of-00234.parquet
+2026-04-12 21:14:05,074 [main] Processing train-00019-of-00234.parquet
+2026-04-12 21:14:05,075 [main] Processing train-00054-of-00234.parquet
+2026-04-12 21:14:05,075 [main] Processing train-00041-of-00234.parquet
+2026-04-12 21:14:05,075 [main] Processing train-00012-of-00234.parquet
+2026-04-12 21:14:05,076 [main] Processing train-00035-of-00234.parquet
+2026-04-12 21:14:05,076 [main] Processing train-00039-of-00234.parquet
+2026-04-12 21:14:05,076 [main] Processing train-00049-of-00234.parquet
+2026-04-12 21:14:05,077 [main] Processing train-00058-of-00234.parquet
+2026-04-12 21:14:05,077 [main] Processing train-00040-of-00234.parquet
+2026-04-12 21:14:05,077 [main] Processing train-00033-of-00234.parquet
+2026-04-12 21:14:05,077 [main] Processing train-00057-of-00234.parquet
+2026-04-12 21:14:05,078 [main] Processing train-00056-of-00234.parquet
+2026-04-12 21:14:05,078 [main] Processing train-00009-of-00234.parquet
+2026-04-12 21:14:05,120 [main] Processing train-00048-of-00234.parquet
+2026-04-12 21:14:42,165 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:42,169 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:42,169 [main] Finished train-00032-of-00234.parquet | Docs: 20,000 | Tokens: 17,642,764 (17.6M) | Speed: 0.5M tok/s
+2026-04-12 21:14:42,171 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:42,173 [main] Finished train-00043-of-00234.parquet | Docs: 17,000 | Tokens: 17,124,816 (17.1M) | Speed: 0.5M tok/s
+2026-04-12 21:14:42,174 [main] Finished train-00052-of-00234.parquet | Docs: 16,000 | Tokens: 17,544,310 (17.5M) | Speed: 0.5M tok/s
+2026-04-12 21:14:42,182 [main] Done. Docs: 20,000 | Tokens: 17,642,764 (17.6M) | Speed: 0.5M tok/s
+2026-04-12 21:14:42,183 [main] Done. Docs: 17,000 | Tokens: 17,124,816 (17.1M) | Speed: 0.5M tok/s
+2026-04-12 21:14:42,183 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:42,184 [main] Done. Docs: 16,000 | Tokens: 17,544,310 (17.5M) | Speed: 0.5M tok/s
+2026-04-12 21:14:42,187 [main] Finished train-00062-of-00234.parquet | Docs: 19,000 | Tokens: 17,557,728 (17.6M) | Speed: 0.5M tok/s
+2026-04-12 21:14:42,200 [main] Done. Docs: 19,000 | Tokens: 17,557,728 (17.6M) | Speed: 0.5M tok/s
+2026-04-12 21:14:42,237 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:42,241 [main] Finished train-00029-of-00234.parquet | Docs: 19,000 | Tokens: 17,566,038 (17.6M) | Speed: 0.5M tok/s
+2026-04-12 21:14:42,252 [main] Done. Docs: 19,000 | Tokens: 17,566,038 (17.6M) | Speed: 0.5M tok/s
+2026-04-12 21:14:42,256 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:42,259 [main] Finished train-00026-of-00234.parquet | Docs: 17,000 | Tokens: 17,381,128 (17.4M) | Speed: 0.5M tok/s
+2026-04-12 21:14:42,266 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:42,270 [main] Finished train-00004-of-00234.parquet | Docs: 18,000 | Tokens: 17,636,245 (17.6M) | Speed: 0.5M tok/s
+2026-04-12 21:14:42,269 [main] Done. Docs: 17,000 | Tokens: 17,381,128 (17.4M) | Speed: 0.5M tok/s
+2026-04-12 21:14:42,281 [main] Done. Docs: 18,000 | Tokens: 17,636,245 (17.6M) | Speed: 0.5M tok/s
+2026-04-12 21:14:42,303 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:42,306 [main] Finished train-00060-of-00234.parquet | Docs: 18,000 | Tokens: 17,053,423 (17.1M) | Speed: 0.5M tok/s
+2026-04-12 21:14:42,317 [main] Done. Docs: 18,000 | Tokens: 17,053,423 (17.1M) | Speed: 0.5M tok/s
+2026-04-12 21:14:42,320 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:42,323 [main] Finished train-00020-of-00234.parquet | Docs: 18,000 | Tokens: 17,400,505 (17.4M) | Speed: 0.5M tok/s
+2026-04-12 21:14:42,335 [main] Done. Docs: 18,000 | Tokens: 17,400,505 (17.4M) | Speed: 0.5M tok/s
+2026-04-12 21:14:42,417 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:42,420 [main] Finished train-00023-of-00234.parquet | Docs: 18,000 | Tokens: 17,626,807 (17.6M) | Speed: 0.5M tok/s
+2026-04-12 21:14:42,432 [main] Done. Docs: 18,000 | Tokens: 17,626,807 (17.6M) | Speed: 0.5M tok/s
+2026-04-12 21:14:42,494 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:42,497 [main] Finished train-00036-of-00234.parquet | Docs: 17,000 | Tokens: 17,750,104 (17.8M) | Speed: 0.5M tok/s
+2026-04-12 21:14:42,508 [main] Done. Docs: 17,000 | Tokens: 17,750,104 (17.8M) | Speed: 0.5M tok/s
+2026-04-12 21:14:42,588 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:42,592 [main] Finished train-00021-of-00234.parquet | Docs: 14,000 | Tokens: 14,471,751 (14.5M) | Speed: 0.4M tok/s
+2026-04-12 21:14:42,602 [main] Done. Docs: 14,000 | Tokens: 14,471,751 (14.5M) | Speed: 0.4M tok/s
+2026-04-12 21:14:42,622 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:42,626 [main] Finished train-00034-of-00234.parquet | Docs: 17,000 | Tokens: 17,056,730 (17.1M) | Speed: 0.5M tok/s
+2026-04-12 21:14:42,636 [main] Done. Docs: 17,000 | Tokens: 17,056,730 (17.1M) | Speed: 0.5M tok/s
+2026-04-12 21:14:42,717 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:42,720 [main] Finished train-00024-of-00234.parquet | Docs: 20,000 | Tokens: 17,913,019 (17.9M) | Speed: 0.5M tok/s
+2026-04-12 21:14:42,731 [main] Done. Docs: 20,000 | Tokens: 17,913,019 (17.9M) | Speed: 0.5M tok/s
+2026-04-12 21:14:42,753 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:42,759 [main] Finished train-00039-of-00234.parquet | Docs: 17,000 | Tokens: 17,235,025 (17.2M) | Speed: 0.5M tok/s
+2026-04-12 21:14:42,771 [main] Done. Docs: 17,000 | Tokens: 17,235,025 (17.2M) | Speed: 0.5M tok/s
+2026-04-12 21:14:42,785 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:42,789 [main] Finished train-00027-of-00234.parquet | Docs: 14,000 | Tokens: 15,112,410 (15.1M) | Speed: 0.4M tok/s
+2026-04-12 21:14:42,799 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:42,799 [main] Done. Docs: 14,000 | Tokens: 15,112,410 (15.1M) | Speed: 0.4M tok/s
+2026-04-12 21:14:42,802 [main] Finished train-00000-of-00234.parquet | Docs: 18,000 | Tokens: 18,007,523 (18.0M) | Speed: 0.5M tok/s
+2026-04-12 21:14:42,812 [main] Done. Docs: 18,000 | Tokens: 18,007,523 (18.0M) | Speed: 0.5M tok/s
+2026-04-12 21:14:42,823 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:42,827 [main] Finished train-00050-of-00234.parquet | Docs: 17,000 | Tokens: 14,970,573 (15.0M) | Speed: 0.4M tok/s
+2026-04-12 21:14:42,837 [main] Done. Docs: 17,000 | Tokens: 14,970,573 (15.0M) | Speed: 0.4M tok/s
+2026-04-12 21:14:42,882 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:42,885 [main] Finished train-00007-of-00234.parquet | Docs: 17,000 | Tokens: 17,459,208 (17.5M) | Speed: 0.5M tok/s
+2026-04-12 21:14:42,895 [main] Done. Docs: 17,000 | Tokens: 17,459,208 (17.5M) | Speed: 0.5M tok/s
+2026-04-12 21:14:42,917 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:42,920 [main] Finished train-00058-of-00234.parquet | Docs: 17,000 | Tokens: 17,496,703 (17.5M) | Speed: 0.5M tok/s
+2026-04-12 21:14:42,930 [main] Done. Docs: 17,000 | Tokens: 17,496,703 (17.5M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,017 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,020 [main] Finished train-00035-of-00234.parquet | Docs: 18,000 | Tokens: 17,485,630 (17.5M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,030 [main] Done. Docs: 18,000 | Tokens: 17,485,630 (17.5M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,074 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,077 [main] Finished train-00061-of-00234.parquet | Docs: 17,000 | Tokens: 18,094,108 (18.1M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,086 [main] Done. Docs: 17,000 | Tokens: 18,094,108 (18.1M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,103 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,106 [main] Finished train-00006-of-00234.parquet | Docs: 18,000 | Tokens: 17,891,002 (17.9M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,115 [main] Done. Docs: 18,000 | Tokens: 17,891,002 (17.9M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,132 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,135 [main] Finished train-00025-of-00234.parquet | Docs: 19,000 | Tokens: 18,230,403 (18.2M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,135 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,138 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,138 [main] Finished train-00014-of-00234.parquet | Docs: 18,000 | Tokens: 18,280,650 (18.3M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,141 [main] Finished train-00013-of-00234.parquet | Docs: 17,000 | Tokens: 17,688,668 (17.7M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,145 [main] Done. Docs: 19,000 | Tokens: 18,230,403 (18.2M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,148 [main] Done. Docs: 18,000 | Tokens: 18,280,650 (18.3M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,150 [main] Done. Docs: 17,000 | Tokens: 17,688,668 (17.7M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,158 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,158 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,161 [main] Finished train-00041-of-00234.parquet | Docs: 18,000 | Tokens: 18,075,048 (18.1M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,163 [main] Finished train-00037-of-00234.parquet | Docs: 14,000 | Tokens: 14,597,553 (14.6M) | Speed: 0.4M tok/s
+2026-04-12 21:14:43,172 [main] Done. Docs: 18,000 | Tokens: 18,075,048 (18.1M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,173 [main] Done. Docs: 14,000 | Tokens: 14,597,553 (14.6M) | Speed: 0.4M tok/s
+2026-04-12 21:14:43,180 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,184 [main] Finished train-00063-of-00234.parquet | Docs: 18,000 | Tokens: 18,019,121 (18.0M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,195 [main] Done. Docs: 18,000 | Tokens: 18,019,121 (18.0M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,213 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,216 [main] Finished train-00019-of-00234.parquet | Docs: 19,000 | Tokens: 17,909,130 (17.9M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,227 [main] Done. Docs: 19,000 | Tokens: 17,909,130 (17.9M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,292 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,295 [main] Finished train-00022-of-00234.parquet | Docs: 18,000 | Tokens: 18,229,777 (18.2M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,306 [main] Done. Docs: 18,000 | Tokens: 18,229,777 (18.2M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,308 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,311 [main] Finished train-00010-of-00234.parquet | Docs: 18,000 | Tokens: 18,478,444 (18.5M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,322 [main] Done. Docs: 18,000 | Tokens: 18,478,444 (18.5M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,325 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,328 [main] Finished train-00056-of-00234.parquet | Docs: 19,000 | Tokens: 17,344,680 (17.3M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,338 [main] Done. Docs: 19,000 | Tokens: 17,344,680 (17.3M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,400 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,402 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,402 [main] Finished train-00059-of-00234.parquet | Docs: 21,000 | Tokens: 18,292,096 (18.3M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,405 [main] Finished train-00003-of-00234.parquet | Docs: 19,000 | Tokens: 18,402,361 (18.4M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,414 [main] Done. Docs: 21,000 | Tokens: 18,292,096 (18.3M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,415 [main] Done. Docs: 19,000 | Tokens: 18,402,361 (18.4M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,441 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,444 [main] Finished train-00005-of-00234.parquet | Docs: 18,000 | Tokens: 18,483,193 (18.5M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,454 [main] Done. Docs: 18,000 | Tokens: 18,483,193 (18.5M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,475 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,478 [main] Finished train-00057-of-00234.parquet | Docs: 19,000 | Tokens: 17,639,944 (17.6M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,484 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,487 [main] Finished train-00049-of-00234.parquet | Docs: 7,000 | Tokens: 6,991,516 (7.0M) | Speed: 0.2M tok/s
+2026-04-12 21:14:43,489 [main] Done. Docs: 19,000 | Tokens: 17,639,944 (17.6M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,493 [main] Done. Docs: 7,000 | Tokens: 6,991,516 (7.0M) | Speed: 0.2M tok/s
+2026-04-12 21:14:43,519 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,523 [main] Finished train-00002-of-00234.parquet | Docs: 9,000 | Tokens: 9,361,173 (9.4M) | Speed: 0.2M tok/s
+2026-04-12 21:14:43,532 [main] Done. Docs: 9,000 | Tokens: 9,361,173 (9.4M) | Speed: 0.2M tok/s
+2026-04-12 21:14:43,580 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,583 [main] Finished train-00015-of-00234.parquet | Docs: 19,000 | Tokens: 18,090,549 (18.1M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,587 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,590 [main] Finished train-00028-of-00234.parquet | Docs: 7,000 | Tokens: 6,859,233 (6.9M) | Speed: 0.2M tok/s
+2026-04-12 21:14:43,593 [main] Done. Docs: 19,000 | Tokens: 18,090,549 (18.1M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,596 [main] Done. Docs: 7,000 | Tokens: 6,859,233 (6.9M) | Speed: 0.2M tok/s
+2026-04-12 21:14:43,611 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,612 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,614 [main] Finished train-00018-of-00234.parquet | Docs: 7,000 | Tokens: 6,888,060 (6.9M) | Speed: 0.2M tok/s
+2026-04-12 21:14:43,615 [main] Finished train-00012-of-00234.parquet | Docs: 20,000 | Tokens: 18,606,960 (18.6M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,620 [main] Done. Docs: 7,000 | Tokens: 6,888,060 (6.9M) | Speed: 0.2M tok/s
+2026-04-12 21:14:43,622 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,626 [main] Finished train-00001-of-00234.parquet | Docs: 16,000 | Tokens: 15,457,132 (15.5M) | Speed: 0.4M tok/s
+2026-04-12 21:14:43,626 [main] Done. Docs: 20,000 | Tokens: 18,606,960 (18.6M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,636 [main] Done. Docs: 16,000 | Tokens: 15,457,132 (15.5M) | Speed: 0.4M tok/s
+2026-04-12 21:14:43,653 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,656 [main] Finished train-00045-of-00234.parquet | Docs: 18,000 | Tokens: 18,388,202 (18.4M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,662 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,665 [main] Finished train-00053-of-00234.parquet | Docs: 19,000 | Tokens: 17,775,331 (17.8M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,666 [main] Done. Docs: 18,000 | Tokens: 18,388,202 (18.4M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,675 [main] Done. Docs: 19,000 | Tokens: 17,775,331 (17.8M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,750 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,754 [main] Finished train-00048-of-00234.parquet | Docs: 15,000 | Tokens: 14,059,844 (14.1M) | Speed: 0.4M tok/s
+2026-04-12 21:14:43,758 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,762 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,762 [main] Finished train-00009-of-00234.parquet | Docs: 17,000 | Tokens: 15,345,487 (15.3M) | Speed: 0.4M tok/s
+2026-04-12 21:14:43,764 [main] Done. Docs: 15,000 | Tokens: 14,059,844 (14.1M) | Speed: 0.4M tok/s
+2026-04-12 21:14:43,765 [main] Finished train-00055-of-00234.parquet | Docs: 15,000 | Tokens: 15,097,845 (15.1M) | Speed: 0.4M tok/s
+2026-04-12 21:14:43,774 [main] Done. Docs: 17,000 | Tokens: 15,345,487 (15.3M) | Speed: 0.4M tok/s
+2026-04-12 21:14:43,775 [main] Done. Docs: 15,000 | Tokens: 15,097,845 (15.1M) | Speed: 0.4M tok/s
+2026-04-12 21:14:43,798 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,801 [main] Finished train-00008-of-00234.parquet | Docs: 19,000 | Tokens: 18,668,081 (18.7M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,812 [main] Done. Docs: 19,000 | Tokens: 18,668,081 (18.7M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,843 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,846 [main] Finished train-00046-of-00234.parquet | Docs: 17,000 | Tokens: 18,207,278 (18.2M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,855 [main] Done. Docs: 17,000 | Tokens: 18,207,278 (18.2M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,866 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,869 [main] Finished train-00030-of-00234.parquet | Docs: 19,000 | Tokens: 17,972,521 (18.0M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,879 [main] Done. Docs: 19,000 | Tokens: 17,972,521 (18.0M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,886 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,889 [main] Finished train-00040-of-00234.parquet | Docs: 18,000 | Tokens: 18,485,800 (18.5M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,899 [main] Done. Docs: 18,000 | Tokens: 18,485,800 (18.5M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,911 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,914 [main] Finished train-00016-of-00234.parquet | Docs: 20,000 | Tokens: 18,513,031 (18.5M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,924 [main] Done. Docs: 20,000 | Tokens: 18,513,031 (18.5M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,943 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,946 [main] Finished train-00017-of-00234.parquet | Docs: 19,000 | Tokens: 18,614,621 (18.6M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,948 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,951 [main] Finished train-00044-of-00234.parquet | Docs: 18,000 | Tokens: 18,576,196 (18.6M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,951 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,954 [main] Finished train-00033-of-00234.parquet | Docs: 20,000 | Tokens: 18,096,871 (18.1M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,955 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:43,957 [main] Done. Docs: 19,000 | Tokens: 18,614,621 (18.6M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,958 [main] Finished train-00031-of-00234.parquet | Docs: 20,000 | Tokens: 18,148,862 (18.1M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,960 [main] Done. Docs: 18,000 | Tokens: 18,576,196 (18.6M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,965 [main] Done. Docs: 20,000 | Tokens: 18,096,871 (18.1M) | Speed: 0.5M tok/s
+2026-04-12 21:14:43,969 [main] Done. Docs: 20,000 | Tokens: 18,148,862 (18.1M) | Speed: 0.5M tok/s
+2026-04-12 21:14:44,101 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:44,106 [main] Finished train-00038-of-00234.parquet | Docs: 12,000 | Tokens: 12,382,037 (12.4M) | Speed: 0.3M tok/s
+2026-04-12 21:14:44,115 [main] Done. Docs: 12,000 | Tokens: 12,382,037 (12.4M) | Speed: 0.3M tok/s
+2026-04-12 21:14:44,120 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:44,125 [main] Finished train-00047-of-00234.parquet | Docs: 14,000 | Tokens: 14,558,492 (14.6M) | Speed: 0.4M tok/s
+2026-04-12 21:14:44,133 [main] Done. Docs: 14,000 | Tokens: 14,558,492 (14.6M) | Speed: 0.4M tok/s
+2026-04-12 21:14:44,161 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:44,164 [main] Finished train-00051-of-00234.parquet | Docs: 16,000 | Tokens: 15,031,289 (15.0M) | Speed: 0.4M tok/s
+2026-04-12 21:14:44,168 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:44,171 [main] Finished train-00054-of-00234.parquet | Docs: 20,000 | Tokens: 18,783,943 (18.8M) | Speed: 0.5M tok/s
+2026-04-12 21:14:44,174 [main] Done. Docs: 16,000 | Tokens: 15,031,289 (15.0M) | Speed: 0.4M tok/s
+2026-04-12 21:14:44,181 [main] Done. Docs: 20,000 | Tokens: 18,783,943 (18.8M) | Speed: 0.5M tok/s
+2026-04-12 21:14:44,339 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:44,344 [main] Finished train-00011-of-00234.parquet | Docs: 15,000 | Tokens: 14,931,995 (14.9M) | Speed: 0.4M tok/s
+2026-04-12 21:14:44,352 [main] Done. Docs: 15,000 | Tokens: 14,931,995 (14.9M) | Speed: 0.4M tok/s
+2026-04-12 21:14:44,520 [main] Global token budget reached. Stopping.
+2026-04-12 21:14:44,525 [main] Finished train-00042-of-00234.parquet | Docs: 13,000 | Tokens: 13,578,607 (13.6M) | Speed: 0.3M tok/s
+2026-04-12 21:14:44,533 [main] Done. Docs: 13,000 | Tokens: 13,578,607 (13.6M) | Speed: 0.3M tok/s
+2026-04-12 21:14:44,738 [main] All workers done. Total tokens: 1,062,619,574 (1.06B) | Total docs: 1,085,000 | Time: 0.01h | Combined speed: 26.3M tok/s
+END TIME: Sun Apr 12 21:14:46 CEST 2026

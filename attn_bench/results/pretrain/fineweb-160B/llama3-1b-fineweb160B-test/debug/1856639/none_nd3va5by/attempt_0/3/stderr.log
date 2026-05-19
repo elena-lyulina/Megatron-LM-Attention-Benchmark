@@ -1,0 +1,29 @@
+Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+wandb: Currently logged in as: elyulina (elyulina-thesis) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: setting up run eqqc4xnh
+wandb: Tracking run with wandb version 0.23.1
+wandb: Run data is saved locally in /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/results/pretrain/fineweb-160B/llama3-1b-fineweb160B-test/logging/wandb/run-20260414_201250-eqqc4xnh
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run llama3-1b-fineweb160B-test-1856639
+wandb: ⭐️ View project at https://wandb.ai/elyulina-thesis/fineweb-160B
+wandb: 🚀 View run at https://wandb.ai/elyulina-thesis/fineweb-160B/runs/eqqc4xnh
+wandb: Detected [openai] in use.
+wandb: Use W&B Weave for improved LLM call tracing. Install Weave with `pip install weave` then add `import weave` to the top of your script.
+wandb: For more information, check out the docs at: https://weave-docs.wandb.ai/
+[W414 20:12:53.066189523 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+[rank39]: Traceback (most recent call last):
+[rank39]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+[rank39]:     pretrain(
+[rank39]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+[rank39]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+[rank39]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank39]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+[rank39]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+[rank39]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank39]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+[rank39]:     opt_param_scheduler = OptimizerParamScheduler(
+[rank39]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+[rank39]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+[rank39]:     assert self.lr_warmup_steps < self.lr_decay_steps
+[rank39]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank39]: AssertionError

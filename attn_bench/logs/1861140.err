@@ -1,0 +1,606 @@
+cat: nemo: No such file or directory
+8: [default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+8: [default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+8: [default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+8: [default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+1: [default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+1: [default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+1: [default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+1: [default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+5: [default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+5: [default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+5: [default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+5: [default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+4: [default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+4: [default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+4: [default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+4: [default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+6: [default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+6: [default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+6: [default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+6: [default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: [default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: [default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: [default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: [default0]:/opt/TensorRT-Model-Optimizer/modelopt/torch/utils/import_utils.py:32: UserWarning: Failed to import diffusers plugin due to: ImportError('peft>=0.17.0 is required for a normal functioning of this module, but found peft==0.13.2.'). You may ignore this warning if you do not need this plugin.
+0: [default0]:  warnings.warn(
+0: [default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: [default0]:/opt/TensorRT-Model-Optimizer/modelopt/torch/utils/import_utils.py:32: UserWarning: Failed to import peft plugin due to: ImportError("cannot import name 'ParamWrapper' from 'peft.tuners.lora.layer' (/opt/venv/lib/python3.12/site-packages/peft/tuners/lora/layer.py)"). You may ignore this warning if you do not need this plugin.
+0: [default0]:  warnings.warn(
+2: [default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+2: [default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+2: [default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+2: [default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+7: [default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+7: [default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+7: [default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+7: [default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: [default0]:/opt/TensorRT-Model-Optimizer/modelopt/torch/__init__.py:36: UserWarning: transformers version 4.57.3 is incompatible with nvidia-modelopt and may cause issues. Please install recommended version with `pip install nvidia-modelopt[hf]` if working with HF models.
+0: [default0]:  _warnings.warn(
+3: [default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+3: [default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+3: [default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+3: [default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+9: [default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+9: [default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+9: [default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+9: [default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+4: [default2]:[W415 11:18:13.969251424 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+4: [default1]:[W415 11:18:13.071564186 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+4: [default3]:[W415 11:18:13.071565626 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+0: [default0]:/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: Overriding default arguments for tokenizer_type:GPT2BPETokenizer with tokenizer_type:HuggingFaceTokenizer
+0: [default0]:  warnings.warn(message)
+0: [default0]:/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --async-save is not supported without --use-persistent-ckpt-worker. Disabling --async-save.
+0: [default0]:  warnings.warn(message)
+0: [default0]:/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-use-fast argument is deprecated and will be removed soon. `use_fast` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-use-fast if you want to disable `use_fast`.
+0: [default0]:  warnings.warn(message)
+0: [default0]:/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-include-special-tokens argument is deprecated and will be removed soon. `include_special_tokens` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-include-special-tokens if you want to disable `include_special_tokens`.
+0: [default0]:  warning
+0: s.warn(message)
+4: [default0]:[W415 11:18:13.219366681 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+1: [default2]:[W415 11:18:14.133666455 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+1: [default1]:[W415 11:18:14.131154340 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+5: [default2]:[W415 11:18:14.463291413 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+5: [default0]:[W415 11:18:14.463291157 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+5: [default3]:[W415 11:18:14.463292149 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+5: [default1]:[W415 11:18:14.463291093 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+1: [default3]:[W415 11:18:14.138231563 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+1: [default0]:[W415 11:18:14.145808418 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+8: [default0]:[W415 11:18:14.422525939 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+6: [default1]:[W415 11:18:14.304615534 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+6: [default2]:[W415 11:18:14.304617038 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+6: [default0]:[W415 11:18:14.304614894 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+6: [default3]:[W415 11:18:14.304614958 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+0: [default1]:[W415 11:18:14.881298212 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+0: [default3]:[W415 11:18:14.840816434 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+8: [default1]:[W415 11:18:14.601788743 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+8: [default2]:[W415 11:18:14.586344848 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+0: [default0]:[W415 11:18:14.888857819 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+8: [default3]:[W415 11:18:14.819668690 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+0: [default2]:[W415 11:18:14.082842972 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+7: [default1]:[W415 11:18:14.074944236 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+7: [default3]:[W415 11:18:14.086392301 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+7: [default0]:[W415 11:18:14.086372398 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+7: [default2]:[W415 11:18:14.086366318 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+2: [default3]:[W415 11:18:15.671542364 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+2: [default2]:[W415 11:18:15.671497246 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+2: [default0]:[W415 11:18:15.671497310 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+2: [default1]:[W415 11:18:15.705196190 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+9: [default1]:[W415 11:18:16.158181955 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+9: [default0]:[W415 11:18:16.189015514 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+9: [default2]:[W415 11:18:16.185027059 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+3: [default3]:[W415 11:18:16.668935382 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+3: [default1]:[W415 11:18:16.629758895 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+3: [default0]:[W415 11:18:16.661948808 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+3: [default2]:[W415 11:18:16.754543403 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+9: [default3]:wandb: Currently logged in as: elyulina (elyulina-thesis) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+9: [default3]:wandb: setting up run jwn9nful
+9: [default3]:wandb: Tracking run with wandb version 0.23.1
+9: [default3]:wandb: Run data is saved locally in /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/results/pretrain/fineweb-160B/llama3-1b-fineweb160B-test/logging/wandb/run-20260415_111816-jwn9nful
+9: [default3]:wandb: Run `wandb offline` to turn off syncing.
+9: [default3]:wandb: Syncing run llama3-1b-fineweb160B-test-1861140
+9: [default3]:wandb: ⭐️ View project at https://wandb.ai/elyulina-thesis/fineweb-160B
+9: [default3]:wandb: 🚀 View run at https://wandb.ai/elyulina-thesis/fineweb-160B/runs/jwn9nful
+9: [default3]:wandb: Detected [openai] in use.
+9: [default3]:wandb: Use W&B Weave for improved LLM call tracing. Install Weave with `pip install weave` then add `import weave` to the top of your script.
+9: [default3]:wandb: For more information, check out the docs at: https://weave-docs.wandb.ai/
+9: [default3]:[W415 11:18:19.267263638 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+4: [default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+4: [default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+4: [default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+4: [default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: [default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: [default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: [default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: [default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: [default0]:/opt/TensorRT-Model-Optimizer/modelopt/torch/utils/import_utils.py:32: UserWarning: Failed to import diffusers plugin due to: ImportError('peft>=0.17.0 is required for a normal functioning of this module, but found peft==0.13.2.'). You may ignore this warning if you do not need this plugin.
+0: [default0]:  warnings.warn(
+3: [default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+2: [default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+2: [default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+2: [default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+2: [default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+6: [default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+6: [default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+6: [default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+6: [default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: [default0]:/opt/TensorRT-Model-Optimizer/modelopt/torch/utils/import_utils.py:32: UserWarning: Failed to import peft plugin due to: ImportError("cannot import name 'ParamWrapper' from 'peft.tuners.lora.layer' (/opt/venv/lib/python3.12/site-packages/peft/tuners/lora/layer.py)"). You may ignore this warning if you do not need this plugin.
+0: [default0]:  warnings.warn(
+8: [default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+1: [default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+1: [default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+1: [default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+1: [default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+5: [default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+5: [default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+5: [default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+5: [default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+3: [default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+3: [default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+3: [default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: [default0]:/opt/TensorRT-Model-Optimizer/modelopt/torch/__init__.py:36: UserWarning: transformers version 4.57.3 is incompatible with nvidia-modelopt and may cause issues. Please install recommended version with `pip install nvidia-modelopt[hf]` if working with HF models.
+0: [default0]:  _warnings.warn(
+7: [default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+7: [default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+7: [default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+7: [default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+9: [default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+8: [default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+9: [default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+9: [default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+9: [default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+8: [default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+8: [default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+0: slurmstepd: error: *** STEP 1861140.1 ON nid007420 CANCELLED AT 2026-04-15T11:31:51 DUE TO TIME LIMIT ***
+slurmstepd: error: *** JOB 1861140 ON nid007420 CANCELLED AT 2026-04-15T11:31:51 DUE TO TIME LIMIT ***
+1: W0415 11:31:51.007000 14574 torch/distributed/elastic/agent/server/api.py:732] Received 15 death signal, shutting down workers
+9: W0415 11:31:51.007000 275500 torch/distributed/elastic/agent/server/api.py:732] Received 15 death signal, shutting down workers
+2: W0415 11:31:51.007000 130128 torch/distributed/elastic/agent/server/api.py:732] Received 15 death signal, shutting down workers
+7: W0415 11:31:51.007000 194669 torch/distributed/elastic/agent/server/api.py:732] Received 15 death signal, shutting down workers
+6: W0415 11:31:51.007000 25501 torch/distributed/elastic/agent/server/api.py:732] Received 15 death signal, shutting down workers
+8: W0415 11:31:51.007000 191220 torch/distributed/elastic/agent/server/api.py:732] Received 15 death signal, shutting down workers
+1: W0415 11:31:51.008000 14574 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 15020 closing signal SIGTERM
+9: W0415 11:31:51.008000 275500 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 275935 closing signal SIGTERM
+0: W0415 11:31:51.007000 244947 torch/distributed/elastic/agent/server/api.py:732] Received 15 death signal, shutting down workers
+3: W0415 11:31:51.007000 286065 torch/distributed/elastic/agent/server/api.py:732] Received 15 death signal, shutting down workers
+4: W0415 11:31:51.007000 176679 torch/distributed/elastic/agent/server/api.py:732] Received 15 death signal, shutting down workers
+5: W0415 11:31:51.007000 126965 torch/distributed/elastic/agent/server/api.py:732] Received 15 death signal, shutting down workers
+2: W0415 11:31:51.008000 130128 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 130564 closing signal SIGTERM
+6: W0415 11:31:51.008000 25501 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 25960 closing signal SIGTERM
+7: W0415 11:31:51.008000 194669 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 195104 closing signal SIGTERM
+8: W0415 11:31:51.008000 191220 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 191639 closing signal SIGTERM
+0: W0415 11:31:51.009000 244947 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 245401 closing signal SIGTERM
+4: W0415 11:31:51.009000 176679 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 177135 closing signal SIGTERM
+5: W0415 11:31:51.009000 126965 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 127404 closing signal SIGTERM
+3: W0415 11:31:51.009000 286065 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 286501 closing signal SIGTERM
+2: W0415 11:31:51.009000 130128 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 130564 closing signal SIGTERM
+0: --- Logging error ---
+8: W0415 11:31:51.010000 191220 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 191639 closing signal SIGTERM
+9: W0415 11:31:51.009000 275500 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 275936 closing signal SIGTERM
+0: Traceback (most recent call last):
+6: W0415 11:31:51.010000 25501 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 25961 closing signal SIGTERM
+1: W0415 11:31:51.010000 14574 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 15021 closing signal SIGTERM
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/agent/server/api.py", line 724, in run
+0:     result = self._invoke_run(role)
+0:              ^^^^^^^^^^^^^^^^^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/agent/server/api.py", line 888, in _invoke_run
+0:     time.sleep(monitor_interval)
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/api.py", line 85, in _terminate_process_handler
+0:     raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+0: torch.distributed.elastic.multiprocessing.api.SignalException: Process 244947 got signal: 15
+0: 
+0: During handling of the above exception, another exception occurred:
+0: 
+0: Traceback (most recent call last):
+0:   File "/usr/lib/python3.12/logging/__init__.py", line 1160, in emit
+0:     msg = self.format(record)
+0:           ^^^^^^^^^^^^^^^^^^^
+0:   File "/usr/lib/python3.12/logging/__init__.py", line 999, in format
+0:     return fmt.format(record)
+0:            ^^^^^^^^^^^^^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/_logging/_internal.py", line 891, in format
+0:     filepath = make_module_path_relative(record.pathname)
+0:                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/_logging/_internal.py", line 819, in make_module_path_relative
+0:     rel_path = abs_path.relative_to(path)
+0:                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+0:   File "/usr/lib/python3.12/pathlib.py", line 679, in relative_to
+0:     if self.is_relative_to(path):
+0:        ^^^^^^^^^^^^^^^^^^^^^^^^^
+5: W0415 11:31:51.010000 126965 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 127404 closing signal SIGTERM
+5: W0415 11:31:51.012000 126965 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 127405 closing signal SIGTERM
+5: W0415 11:31:51.014000 126965 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 127406 closing signal SIGTERM
+7: W0415 11:31:51.010000 194669 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 195105 closing signal SIGTERM
+7: W0415 11:31:51.011000 194669 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 195106 closing signal SIGTERM
+7: W0415 11:31:51.014000 194669 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 195107 closing signal SIGTERM
+0:   File "/usr/lib/python3.12/pathlib.py", line 700, in is_relative_to
+0:     return other == self or other in self.parents
+0:                             ^^^^^^^^^^^^^^^^^^^^^
+0:   File "<frozen _collections_abc>", line 1034, in __contains__
+0:   File "/usr/lib/python3.12/pathlib.py", line 522, in __eq__
+0:     return self._str_normcase == other._str_normcase and self._flavour is other._flavour
+0:            ^^^^^^^^^^^^^^^^^^
+4: W0415 11:31:51.010000 176679 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 177135 closing signal SIGTERM
+4: W0415 11:31:51.013000 176679 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 177136 closing signal SIGTERM
+6: W0415 11:31:51.011000 25501 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 25962 closing signal SIGTERM
+2: W0415 11:31:51.012000 130128 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 130565 closing signal SIGTERM
+8: W0415 11:31:51.013000 191220 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 191640 closing signal SIGTERM
+0:   File "/usr/lib/python3.12/pathlib.py", line 484, in _str_normcase
+0:     @property
+0:     
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/api.py", line 85, in _terminate_process_handler
+0:     raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+0: torch.distributed.elastic.multiprocessing.api.SignalException: Process 244947 got signal: 15
+0: Call stack:
+0:   File "/usr/local/bin/torchrun", line 7, in <module>
+0:     sys.exit(main())
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 357, in wrapper
+0:     return f(*args, **kwargs)
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 936, in main
+0:     run(args)
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 927, in run
+0:     elastic_launch(
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 151, in __call__
+0:     return launch_agent(self._config, self._entrypoint, list(args))
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 279, in launch_agent
+0:     result = agent.run()
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/metrics/api.py", line 138, in wrapper
+0:     result = f(*args, **kwargs)
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/agent/server/api.py", line 733, in run
+0:     self._shutdown(e.sigval)
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/agent/server/local_elastic_agent.py", line 369, in _shutdown
+0:     self._pcontext.close(death_sig)
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/api.py", line 578, in close
+0:     self._close(death_sig=death_sig, timeout=timeout)
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/api.py", line 906, in _close
+0:     logger.warning(
+0: Message: 'Sending process %s closing signal %s'
+0: Arguments: (245402, 'SIGTERM')
+3: W0415 11:31:51.010000 286065 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 286501 closing signal SIGTERM
+3: W0415 11:31:51.013000 286065 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 286502 closing signal SIGTERM
+1: W0415 11:31:51.016000 14574 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 15020 closing signal SIGTERM
+4: W0415 11:31:51.016000 176679 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 177137 closing signal SIGTERM
+srun: forcing job termination
+srun: got SIGCONT
+3: W0415 11:31:51.017000 286065 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 286503 closing signal SIGTERM
+8: W0415 11:31:51.017000 191220 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 191641 closing signal SIGTERM
+9: W0415 11:31:51.016000 275500 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 275937 closing signal SIGTERM
+0: W0415 11:31:51.018000 244947 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 245403 closing signal SIGTERM
+2: W0415 11:31:51.016000 130128 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 130566 closing signal SIGTERM
+2: [default0]:Stack (most recent call first):
+2: [default0]:Stack (most recent call first):
+2: [default0]:  File   File ""/usr/lib/python3.12/threading.py/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py"", line , line 359266 in  in wait_reduce_any
+2: [default0]:
+2: [default0]:  File   File ""/usr/lib/python3.12/threading.py/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py"", line 655 in , line wait327
+2: [default0]: in   File should_run_forward_backward"
+2: [default0]:/usr/lib/python3.12/multiprocessing/managers.py  File "", line /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py176" in , line serve_forever1691
+2: [default0]: in   File train_step"
+2: [default0]:/usr/lib/python3.12/multiprocessing/managers.py  File "", line /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py599" in _run_server
+2: [default0]:  File "/usr/lib/python3.12/multiprocessing/process.py", line 108, line  in 2926run in 
+2: [default0]:train  File 
+2: [default0]:"  File /usr/lib/python3.12/multiprocessing/process.py""/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py, line "314 in _bootstrap
+2: [default0]:  File ", line /usr/lib/python3.12/multiprocessing/spawn.py1077" in , line pretrain135
+2: [default0]: in   File _main"
+2: [default0]:/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py  File "", line /usr/lib/python3.12/multiprocessing/spawn.py338" in , line <module>122
+2: [default0]: in spawn_main
+2: [default0]:  File "<string>", line 1 in Stack (most recent call first):
+2: [default0]:<module>  File 
+0: W0415 11:31:51.020000 244947 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 245404 closing signal SIGTERM
+5: W0415 11:31:51.020000 126965 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 127407 closing signal SIGTERM
+6: W0415 11:31:51.020000 25501 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 25960 closing signal SIGTERM
+2: [default0]:"/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 266 in _reduce_any
+2: [default0]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 327 in should_run_forward_backward
+2: [default0]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1691 in train_step
+2: [default0]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 2926 in train
+2: [default0]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1077 in pretrain
+2: [default0]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338 in <module>
+6: W0415 11:31:51.021000 25501 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 25961 closing signal SIGTERM
+4: W0415 11:31:51.017000 176679 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 177138 closing signal SIGTERM
+7: W0415 11:31:51.021000 194669 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 195104 closing signal SIGTERM
+2: W0415 11:31:51.021000 130128 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 130567 closing signal SIGTERM
+1: W0415 11:31:51.017000 14574 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 15021 closing signal SIGTERM
+1: W0415 11:31:51.022000 14574 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 15022 closing signal SIGTERM
+3: W0415 11:31:51.022000 286065 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 286504 closing signal SIGTERM
+8: W0415 11:31:51.018000 191220 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 191642 closing signal SIGTERM
+9: [default1]:Stack (most recent call first):
+6: W0415 11:31:51.023000 25501 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 25962 closing signal SIGTERM
+3: [default1]:Stack (most recent call first):
+3: [default1]:Stack (most recent call first):
+3: [default1]:  File   File ""/usr/lib/python3.12/threading.py/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py"", line , line 359266 in  in wait_reduce_any
+3: [default1]:
+3: [default1]:  File   File ""/usr/lib/python3.12/threading.py/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py"", line , line 655327 in  in waitshould_run_forward_backward
+3: [default1]:
+3: [default1]:  File   File ""/usr/lib/python3.12/multiprocessing/managers.py/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py"", line , line 1761691 in  in serve_forevertrain_step
+3: [default1]:
+3: [default1]:  File   File ""/usr/lib/python3.12/multiprocessing/managers.py/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py"", line 599 in _run_server, line 
+3: [default1]:2926  File  in "train/usr/lib/python3.12/
+9: [default1]:Stack (most recent call first):
+9: [default1]:  File   File ""/usr/lib/python3.12/threading.py/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py"", line , line 359266 in  in wait_reduce_any
+3: multiprocessing/process.py
+9: [default1]:
+9: [default1]:  File   File ""/usr/lib/python3.12/threading.py/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py"", line , line 655327 in  in waitshould_run_forward_backward
+9: [default1]:
+9: [default1]:  File   File ""/usr/lib/python3.12/multiprocessing/managers.py/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py"", line , line 1761691 in  in serve_forevertrain_step
+9: [default1]:
+9: [default1]:  File   File ""/usr/lib/python3.12/multiprocessing/managers.py/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py"", line 599 in _run_server
+9: [default1]:  File ", line /usr/lib/python3.12/multiprocessing/process.py2926" in , line train108
+9: [default1]: in   File run"
+9: [default1]:/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py  File ""/usr/lib/python3.12/multiprocessing/process.py", line 314 in , line _bootstrap1077
+3: [default1]:"  File , line "108/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py in "run, line 
+3: [default1]:1077  File  in "pretrain/usr/lib/python3.12/multiprocessing/process.py
+3: [default1]:"  File , line "314/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py in "_bootstrap, line 
+3: [default1]:338  File  in "<module>/usr/lib/python3.12/multiprocessing/spawn.py
+3: [default1]:", line 135 in Stack (most recent call first):
+3: [default1]:_main  File 
+9: [default1]: in   File pretrain"
+9: [default1]:/usr/lib/python3.12/multiprocessing/spawn.py  File "", line /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py135" in , line _main338
+9: [default1]: in   File <module>"
+9: [default1]:/usr/lib/python3.12/multiprocessing/spawn.py", line 122 in Stack (most recent call first):
+9: [default1]:spawn_main  File 
+9: [default1]:"  File /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py""<string>, line "266, line  in 1_reduce_any in 
+3: [default1]:"  File /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py""/usr/lib/python3.12/multiprocessing/spawn.py, line "266, line  in 122_reduce_any in 
+3: [default1]:spawn_main  File 
+3: [default1]:"  File /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py""<string>, line "327, line  in 1should_run_forward_backward in 
+3: [default1]:<module>  File 
+3: [default1]:"/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1691 in train_step
+3: [default1]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 2926 in train
+3: [default1]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1077 in pretrain
+3: [default1]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338 in <module>
+9: [default1]:<module>  File 
+9: [default1]:"/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 327 in should_run_forward_backward
+9: [default1]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1691 in train_step
+9: [default1]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 2926 in train
+9: [default1]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1077 in pretrain
+9: [default1]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338 in <module>
+8: [default2]:Stack (most recent call first):
+8: [default2]:  File "/usr/lib/python3.12/threading.py", line 359 in wait
+8: [default2]:  File "/usr/lib/python3.12/threading.py", line 655 in wait
+8: [default2]:  File "/usr/lib/python3.12/multiprocessing/managers.py", line 176 in serve_forever
+8: [default2]:  File "/usr/lib/python3.12/multiprocessing/managers.py", line 599 in _run_server
+8: [default2]:  File "/usr/lib/python3.12/multiprocessing/process.py", line 108 in run
+8: [default2]:  File "/usr/lib/python3.12/multiprocessing/process.py", line 314 in _bootstrap
+8: [default2]:  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 135 in _main
+8: [default2]:  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 122 in spawn_main
+1: W0415 11:31:51.023000 14574 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 15023 closing signal SIGTERM
+8: [default2]:  File "<string>", line 1 in <module>
+8: [default2]:Stack (most recent call first):
+8: [default2]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 266 in _reduce_any
+8: [default2]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 327 in should_run_forward_backward
+8: [default2]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1691 in train_step
+8: [default2]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 2926 in train
+8: [default2]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1077 in pretrain
+8: [default2]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338 in <module>
+8: [default2]:Stack (most recent call first):
+8: [default2]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 266 in _reduce_any
+8: [default2]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 327 in should_
+7: W0415 11:31:51.025000 194669 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 195105 closing signal SIGTERM
+8: run_forward_backward
+8: [default2]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1691 in train_step
+8: [default2]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 2926 in train
+8: [default2]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1077 in pretrain
+8: [default2]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338 in <module>
+9: W0415 11:31:51.024000 275500 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 275935 closing signal SIGTERM
+6: W0415 11:31:51.024000 25501 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 25963 closing signal SIGTERM
+9: W0415 11:31:51.025000 275500 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 275936 closing signal SIGTERM
+9: W0415 11:31:51.026000 275500 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 275937 closing signal SIGTERM
+8: [default1]:Stack (most recent call first):
+8: [default1]:  File "/usr/lib/python3.12/threading.py"Stack (most recent call first):
+8: [default1]:, line   File 359" in /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.pywait"
+8: [default1]:  File , line "266/usr/lib/python3.12/threading.py in "_reduce_any, line 
+8: [default1]:655  File  in "wait/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py
+9: W0415 11:31:51.027000 275500 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 275938 closing signal SIGTERM
+8: [default1]:"  File ", line /usr/lib/python3.12/multiprocessing/managers.py327" in , line should_run_forward_backward176
+8: [default1]: in   File serve_forever"
+8: [default1]:/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py  File ""/usr/lib/python3.12/multiprocessing/managers.py", line , line 1691599 in  in train_step_run_server
+8: [default1]:
+8: [default1]:  File   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py""/usr/lib/python3.12/multiprocessing/process.py", line 108 in run
+8: [default1]:  File "/usr/lib/python3.12/multiprocessing/process.py", line , line 2926314 in  in train_bootstrap
+8: [default1]:
+8: [default1]:  File   File ""/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py/usr/lib/python3.12/multiprocessing/spawn.py"", line 135 in , line _main1077
+8: [default1]: in   File pretrain"
+8: [default1]:/usr/lib/python3.12/multiprocessing/spawn.py  File "", line /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py122" in , line spawn_main338
+8: [default1]: in   File <module>"
+8: [default1]:<string>", line 1 in <module>
+8: [default1]:Stack (most recent call first):
+8: [default1]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 266 in _reduce_any
+8: [default1]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 327 in should_run_forward_backward
+8: [default1]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1691 in train_step
+8: [default1]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 2926 in train
+8: [default1]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1077 in pretrain
+8: [default1]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338 in <module>
+7: W0415 11:31:51.027000 194669 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 195106 closing signal SIGTERM
+7: W0415 11:31:51.030000 194669 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 195107 closing signal SIGTERM
+1: [default1]:Stack (most recent call first):
+1: [default1]:  File "/usr/lib/python3.12/threading.py", line 359 in wait
+1: [default1]:  File "/usr/lib/python3.12/threading.py", line 655 in wait
+1: [default1]:  File "/usr/lib/python3.12/multiprocessing/managers.py", line 176 in serve_forever
+1: [default1]:  File "/usr/lib/python3.12/multiprocessing/managers.py", line 599 in _run_server
+1: [default1]:  File "/usr/lib/python3.12/multiprocessing/process.py", line 108 in run
+1: [default1]:  File "/usr/lib/python3.12/multiprocessing/process.py", line 314 in _bootstrap
+1: [default1]:  File "Stack (most recent call first):
+1: [default1]:/usr/lib/python3.12/multiprocessing/spawn.py  File "", line /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py135" in , line _main266
+1: [default1]: in   File _reduce_any"
+1: [default1]:/usr/lib/python3.12/multiprocessing/spawn.py  File "", line /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py122" in , line spawn_main327 in should_run_forward_backward
+1: [default1]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1691 in 
+1: [default1]:train_step  File 
+1: [default1]:"  File <string>""/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py, line "1 in <module>
+1: [default1]:, line 2926 in train
+1: [default1]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1077 in pretrain
+1: [default1]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338 in <module>
+1: [default1]:Stack (most recent call first):
+1: [default1]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 266 in _reduce_any
+1: [default1]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 327 in should_run_forward_backward
+1: [default1]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1691 in train_step
+1: [default1]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 2926 in train
+1: [default1]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1077 in pretrain
+1: [default1]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338 in <module>
+7: [default0]:Stack (most recent call first):
+7: [default0]:Stack (most recent call first):
+7: [default0]:  File   File ""/usr/lib/python3.12/threading.py/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py"", line , line 359266 in  in wait_reduce_any
+7: [default2]:Stack (most recent call first):
+7: [default2]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 266 in _reduce_any
+7: [default2]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 327 in should_run_forward_backward
+7: [default2]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1691 in train_step
+7: [default2]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 2926 in train
+7: [default0]:
+7: [default0]:  File   File ""/usr/lib/python3.12/threading.py/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py"", line 655 in wait
+7: [default2]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1077 in pretrain
+7: [default0]:  File , line "327/usr/lib/python3.12/multiprocessing/managers.py in "should_run_forward_backward, line 
+7: [default0]:176  File  in "serve_forever/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py
+7: [default0]:"  File "/usr/lib/python3.12/multiprocessing/managers.py, line "1691, line  in 599train_step in 
+7: [default0]:_run_server  File 
+7: [default2]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338 in <module>
+7: [default2]:Stack (most recent call first):
+7: [default0]:"  File /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py""/usr/lib/python3.12/multiprocessing/process.py", line 108 in run
+7: [default0]:  File "/usr/lib/python3.12/multiprocessing/process.py", line 314 in , line _bootstrap2926
+7: [default0]: in   File train"
+7: [default0]:/usr/lib/python3.12/multiprocessing/spawn.py  File "", line /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py135" in _main
+7: [default0]:  File "/usr/lib/python3.12/multiprocessing/spawn.py", line , line 1077122 in  in pretrainspawn_main
+7: [default0]:
+7: [default0]:  File   File ""/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py<string>"", line , line 3381 in  in <module><module>
+7: [default0]:
+7: [default0]:Stack (most recent call first):
+7: [default2]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 266 in _reduce_any
+7: [default2]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 327 in should_run_forward_backward
+7: [default2]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1691 in train_step
+7: [default2]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 2926 in train
+7: [default2]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1077 in pretrain
+7: [default2]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338 in <module>
+7: [default2]:Stack (most recent call first):
+7: [default0]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 266 in _reduce_any
+7: [default0]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 327 in should_run_forward_backward
+7: [default0]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1691 in train_step
+7: [default2]:  File "/usr/lib/python3.12/threading.py", line 359 in wait
+7: [default2]:  File "/usr/lib/python3.12/threading.py", line 655 in wait
+7: [default2]:  File "/usr/lib/python3.12/multiprocessing/managers.py", line 176 in serve_forever
+7: [default2]:  File "/usr/lib/python3.12/multiprocessing/managers.py", line 599 in _run_server
+7: [default2]:  File "/usr/lib/python3.12/multiprocessing/process.py", line 108 in run
+7: [default2]:  File "/usr/lib/python3.12/multiprocessing/process.py", line 314 in _bootstrap
+7: [default2]:  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 135 in _main
+7: [default2]:  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 122 in spawn_main
+7: [default2]:  File "<string>", line 1 in <module>
+7: [default0]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 2926 in train
+7: [default0]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1077 in pretrain
+7: [default0]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338 in <module>
+5: [default2]:Stack (most recent call first):
+5: [default2]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 266 in _reduce_any
+5: [default2]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 327 in should_run_forward_backward
+5: [default2]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1691 in train_step
+5: [default2]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 2926 in train
+5: [default2]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1077 in pretrain
+5: [default2]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338 in <module>
+5: [default2]:Stack (most recent call first):
+5: [default2]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 266 in _reduce_any
+5: [default2]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 327 in should_run_forward_backward
+5: [default2]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1691 in train_step
+5: [default2]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 2926 in train
+5: [default2]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1077 in pretrain
+5: [default2]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338 in <module>
+5: [default2]:Stack (most recent call first):
+5: [default2]:  File "/usr/lib/python3.12/threading.py", line 359 in wait
+5: [default2]:  File "/usr/lib/python3.12/threading.py", line 655 in wait
+5: [default2]:  File "/usr/lib/python3.12/multiprocessing/managers.py", line 176 in serve_forever
+5: [default2]:  File "/usr/lib/python3.12/multiprocessing/managers.py", line 599 in _run_server
+5: [default2]:  File "/usr/lib/python3.12/multiprocessing/process.py", line 108 in run
+5: [default2]:  File "/usr/lib/python3.12/multiprocessing/process.py", line 314 in _bootstrap
+5: [default2]:  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 135 in _main
+5: [default2]:  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 122 in spawn_main
+5: [default2]:  File "<string>", line 1 in <module>
+3: [default0]:Stack (most recent call first):
+3: [default0]:Stack (most recent call first):
+3: [default0]:  File   File ""/usr/lib/python3.12/threading.py/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py"", line , line 359266 in  in wait_reduce_any
+3: [default0]:
+3: [default0]:  File   File ""/usr/lib/python3.12/threading.py/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py"", line 655 in wait
+3: [default0]:, line   File 327" in /usr/lib/python3.12/multiprocessing/managers.pyshould_run_forward_backward"
+3: [default0]:, line   File 176" in /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.pyserve_forever"
+3: [default0]:  File "/usr/lib/python3.12/multiprocessing/managers.py, line "1691, line  in 599train_step in 
+3: [default0]:_run_server  File 
+3: [default0]:"  File /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py""/usr/lib/python3.12/multiprocessing/process.py", line 108 in run
+3: [default0]:  File "/usr/lib/python3.12/multiprocessing/process.py", line 314, line  in 2926_bootstrap in 
+3: [default0]:train  File 
+3: [default0]:"  File /usr/lib/python3.12/multiprocessing/spawn.py""/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py, line "135 in _main
+3: [default0]:  File , line "1077/usr/lib/python3.12/multiprocessing/spawn.py in "pretrain, line 
+3: [default0]:122  File  in "spawn_main/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py
+3: [default0]:"  File , line "338<string> in "<module>, line 
+3: [default0]:1 in <module>
+3: [default0]:Stack (most recent call first):
+3: [default0]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 266 in _reduce_any
+3: [default0]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 327 in should_run_forward_backward
+3: [default0]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1691 in train_step
+3: [default0]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 2926 in train
+3: [default0]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1077 in pretrain
+3: [default0]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338 in <module>
+3: [default3]:Stack (most recent call first):
+3: [default3]:  File "/usr/lib/python3.12/threading.py", line 359 in wait
+3: [default3]:  File "/usr/lib/python3.12/threading.py", line 655 in wait
+3: [default3]:  File "/usr/lib/python3.12/multiprocessing/managers.py", line 176 in serve_forever
+3: [default3]:  File "/usr/lib/python3.12/multiprocessing/managers.py", line 599 in _run_server
+3: [default3]:  File "/usr/lib/python3.12/multiprocessing/process.py", line 108 in run
+3: [default3]:  File "/usr/lib/python3.12/multiprocessing/process.py", line 314 in _bootstrap
+3: [default3]:  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 135 in _main
+3: [default3]:  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 122 in spawn_main
+3: [default3]:  File "<string>", line 1 in <module>
+3: [default3]:Stack (most recent call first):
+3: [default3]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 266 in _reduce_any
+3: [default3]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 327 in should_run_forward_backward
+3: [default3]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1691 in train_step
+3: [default3]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 2926 in train
+3: [default3]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1077 in pretrain
+3: [default3]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338 in <module>
+3: [default3]:Stack (most recent call first):
+3: [default3]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 266 in _reduce_any
+3: [default3]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 327 in should_run_forward_backward
+3: [default3]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1691 in train_step
+3: [default3]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 2926 in train
+3: [default3]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1077 in pretrain
+3: [default3]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338 in <module>
+4: [default0]:Stack (most recent call first):
+4: [default0]:  File "/usr/lib/python3.12/threading.py", line 359 in wait
+4: [default0]:  File "/usr/lib/python3.12/threading.py", line 655 in wait
+4: [default0]:  File "/usr/lib/python3.12/multiprocessing/managers.py", line 176 in serve_forever
+4: [default0]:  File "/usr/lib/python3.12/multiprocessing/managers.py", line 599 in _run_server
+4: [default0]:  File "/usr/lib/python3.12/multiprocessing/process.py", line 108 in run
+4: [default0]:  File "/usr/lib/python3.12/multiprocessing/process.py", line 314 in _bootstrap
+4: [default0]:  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 135 in _main
+4: [default0]:  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 122 in spawn_main
+4: [default0]:  File "<string>", line 1 in <module>
+4: [default0]:Stack (most recent call first):
+4: [default0]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 266 in _reduce_any
+4: [default0]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 327 in should_run_forward_backward
+4: [default0]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1691 in train_step
+4: [default0]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 2926 in train
+4: [default0]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1077 in pretrain
+4: [default0]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338 in <module>
+4: [default0]:Stack (most recent call first):
+4: [default0]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 266 in _reduce_any
+4: [default0]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 327 in should_run_forward_backward
+4: [default0]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1691 in train_step
+4: [d
+4: efault0]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 2926 in train
+4: [default0]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1077 in pretrain
+4: [default0]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338 in <module>
+7: [default1]:Stack (most recent call first):
+7: [default1]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 266 in _reduce_any
+7: [default1]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 327 in should_run_forward_backward
+7: [default1]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1691 in train_step
+7: [default1]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 2926 in train
+7: [default1]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1077 in pretrain
+7: [default1]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338 in <module>
+7: [default1]:Stack (most recent call first):
+7: [default1]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 266 in _reduce_any
+7: [default1]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/rerun_state_machine.py", line 327 in should_run_forward_backward
+7: [default1]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1691 in train_step
+7: [default1]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 2926 in train
+7: [default1]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1077 in pretrain
+7: [default1]:  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338 in <module>
+7: [default1]:Stack (most recent call first):
+7: [default1]:  File "/usr/lib/python3.12/threading.py", line 359 in wait
+7: [default1]:  File "/usr/lib/python3.12/threading.py", line 655 in wait
+7: [default1]:  File "/usr/lib/python3.12/multiprocessing/managers.py", line 176 in serve_forever
+7: [default1]:  File "/usr/lib/python3.12/multiprocessing/managers.py", line 599 in _run_server
+7: [default1]:  File "/usr/lib/python3.12/multiprocessing/process.py", line 108 in run
+7: [default1]:  File "/usr/lib/python3.12/multiprocessing/process.py", line 314 in _bootstrap
+7: [default1]:  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 135 in _main
+7: [default1]:  File "/usr/lib/python3.12/multiprocessing/spawn.py", line 122 in spawn_main
+7: [default1]:  File "<string>", line 1 in <module>

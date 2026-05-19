@@ -1,0 +1,138 @@
+cat: nemo: No such file or directory
+0: [default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: [default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: [default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: [default0]:/opt/TensorRT-Model-Optimizer/modelopt/torch/utils/import_utils.py:32: UserWarning: Failed to import diffusers plugin due to: ImportError('peft>=0.17.0 is required for a normal functioning of this module, but found peft==0.13.2.'). You may ignore this warning if you do not need this plugin.
+0: [default0]:  warnings.warn(
+0: [default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: [default0]:/opt/TensorRT-Model-Optimizer/modelopt/torch/utils/import_utils.py:32: UserWarning: Failed to import peft plugin due to: ImportError("cannot import name 'ParamWrapper' from 'peft.tuners.lora.layer' (/opt/venv/lib/python3.12/site-packages/peft/tuners/lora/layer.py)"). You may ignore this warning if you do not need this plugin.
+0: [default0]:  warnings.warn(
+0: [default0]:/opt/TensorRT-Model-Optimizer/modelopt/torch/__init__.py:36: UserWarning: transformers version 4.57.3 is incompatible with nvidia-modelopt and may cause issues. Please install recommended version with `pip install nvidia-modelopt[hf]` if working with HF models.
+0: [default0]:  _warnings.warn(
+0: [default0]:/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: Overriding default arguments for tokenizer_type:GPT2BPETokenizer with tokenizer_type:HuggingFaceTokenizer
+0: [default0]:  warnings.warn(message)
+0: [default0]:/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --async-save is not supported without --use-persistent-ckpt-worker. Disabling --async-save.
+0: [default0]:  warnings.warn(message)
+0: [default0]:/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-use-fast argument is deprecated and will be removed soon. `use_fast` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-use-fast if you want to disable `use_fast`.
+0: [default0]:  warnings.warn(message)
+0: [default0]:/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-include-special-tokens argument is deprecated and will be removed soon. `include_special_tokens` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-include-special-tokens if you want to disable `include_special_tokens`.
+0: [default0]:  warnings.warn(message)
+0: [default1]:[W414 18:53:34.689662634 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+0: [default2]:[W414 18:53:34.651494569 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+0: [default0]:[W414 18:53:34.689663754 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+0: [default3]:[W414 18:53:34.689654858 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+0: [default2]:[rank2]: Traceback (most recent call last):
+0: [default2]:[rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+0: [default2]:[rank2]:     pretrain(
+0: [default2]:[rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+0: [default2]:[rank2]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+0: [default2]:[rank2]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default2]:[rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+0: [default2]:[rank2]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+0: [default2]:[rank2]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default2]:[rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+0: [default2]:[rank2]:     opt_param_scheduler = OptimizerParamScheduler(
+0: [default2]:[rank2]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default2]:[rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+0: [default2]:[rank2]:     assert self.lr_warmup_steps < self.lr_decay_steps
+0: [default2]:[rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default2]:[rank2]: AssertionError
+0: [default0]:[rank0]: Traceback (most recent call last):
+0: [default0]:[rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+0: [default0]:[rank0]:     pretrain(
+0: [default0]:[rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+0: [default0]:[rank0]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+0: [default0]:[rank0]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default0]:[rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+0: [default0]:[rank0]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+0: [default0]:[rank0]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default0]:[rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+0: [default0]:[rank0]:     opt_param_scheduler = OptimizerParamScheduler(
+0: [default0]:[rank0]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default0]:[rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+0: [default0]:[rank0]:     assert self.lr_warmup_steps < self.lr_decay_steps
+0: [default0]:[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default0]:[rank0]: AssertionError
+0: [default1]:[rank1]: Traceback (most recent call last):
+0: [default1]:[rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+0: [default1]:[rank1]:     pretrain(
+0: [default1]:[rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+0: [default1]:[rank1]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+0: [default1]:[rank1]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default1]:[rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+0: [default1]:[rank1]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+0: [default1]:[rank1]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default1]:[rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+0: [default1]:[rank1]:     opt_param_scheduler = OptimizerParamScheduler(
+0: [default1]:[rank1]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default1]:[rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+0: [default1]:[rank1]:     assert self.lr_warmup_steps < self.lr_decay_steps
+0: [default1]:[rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default1]:[rank1]: AssertionError
+0: [default3]:[rank3]: Traceback (most recent call last):
+0: [default3]:[rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+0: [default3]:[rank3]:     pretrain(
+0: [default3]:[rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+0: [default3]:[rank3]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+0: [default3]:[rank3]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default3]:[rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+0: [default3]:[rank3]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+0: [default3]:[rank3]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default3]:[rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+0: [default3]:[rank3]:     opt_param_scheduler = OptimizerParamScheduler(
+0: [default3]:[rank3]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default3]:[rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+0: [default3]:[rank3]:     assert self.lr_warmup_steps < self.lr_decay_steps
+0: [default3]:[rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default3]:[rank3]: AssertionError
+0: [default0]:[rank0]:[W414 18:53:43.436744526 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [default2]:[rank2]:[W414 18:53:45.625727979 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [default1]:[rank1]:[W414 18:53:45.615740497 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [default3]:[rank3]:[W414 18:53:45.625709196 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: W0414 18:53:54.911000 215606 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 216178 closing signal SIGTERM
+0: W0414 18:53:54.913000 215606 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 216180 closing signal SIGTERM
+0: [default1]:Stack (most recent call first):
+0: [default1]:  <no Python frame>
+0: [default3]:Stack (most recent call first):
+0: [default3]:  <no Python frame>
+0: E0414 18:53:55.187000 215606 torch/distributed/elastic/multiprocessing/api.py:880] failed (exitcode: 1) local_rank: 0 (pid: 216177) of binary: /opt/venv/bin/python
+0: Traceback (most recent call last):
+0:   File "/usr/local/bin/torchrun", line 7, in <module>
+0:     sys.exit(main())
+0:              ^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 357, in wrapper
+0:     return f(*args, **kwargs)
+0:            ^^^^^^^^^^^^^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 936, in main
+0:     run(args)
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 927, in run
+0:     elastic_launch(
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 151, in __call__
+0:     return launch_agent(self._config, self._entrypoint, list(args))
+0:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 288, in launch_agent
+0:     raise ChildFailedError(
+0: torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+0: ============================================================
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py FAILED
+0: ------------------------------------------------------------
+0: Failures:
+0: [1]:
+0:   time      : 2026-04-14_18:53:54
+0:   host      : nid006857
+0:   rank      : 2 (local_rank: 2)
+0:   exitcode  : 1 (pid: 216179)
+0:   error_file: <N/A>
+0:   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+0: ------------------------------------------------------------
+0: Root Cause (first observed failure):
+0: [0]:
+0:   time      : 2026-04-14_18:53:54
+0:   host      : nid006857
+0:   rank      : 0 (local_rank: 0)
+0:   exitcode  : 1 (pid: 216177)
+0:   error_file: <N/A>
+0:   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+0: ============================================================
+srun: error: nid006857: task 0: Exited with exit code 1
+srun: Terminating StepId=1856501.1

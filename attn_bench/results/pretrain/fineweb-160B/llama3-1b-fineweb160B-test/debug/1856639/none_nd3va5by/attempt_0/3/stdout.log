@@ -1,0 +1,21 @@
+INFO 04-14 20:12:46 [__init__.py:241] Automatically detected platform cuda.
+LANG_RL Log directory: None
+> setting tensorboard ...
+WARNING: one_logger package is required to enable e2e metrics tracking. please go to https://confluence.nvidia.com/display/MLWFO/Package+Repositories for details to install it
+[Gloo] Rank 39 is connected to 39 peer ranks. Expected number of connected peer ranks is : 39
+[Gloo] Rank 39 is connected to 39 peer ranks. Expected number of connected peer ranks is : 39
+[Gloo] Rank 39 is connected to 39 peer ranks. Expected number of connected peer ranks is : 39
+INFO:megatron.core.timers:(min, max) time across ranks (ms):
+    startup-program-entry-spread ...................: (0.25, 80.22)
+    startup-library-setup ..........................: (33693.86, 35794.61)
+    startup-program-setup ..........................: (54.74, 647.95)
+    startup-in-process-setup .......................: (0.00, 0.00)
+    startup-in-job-setup ...........................: (36.06, 45.35)
+    startup-initialize-megatron ....................: (18774.87, 21249.35)
+    startup-set-jit-fusion-options .................: (1924.50, 2462.96)
+    all-reduce-start-timestamps-tensor .............: (1.25, 539.67)
+    startup-megatron-init-local ....................: (21280.29, 23750.14)
+    startup-megatron-init-global ...................: (57537.67, 57537.97)
+[1;34mwandb[0m: 
+[1;34mwandb[0m: 🚀 View run [33mllama3-1b-fineweb160B-test-1856639[0m at: [34m[0m
+[1;34mwandb[0m: Find logs at: [1;35m../iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/results/pretrain/fineweb-160B/llama3-1b-fineweb160B-test/logging/wandb/run-20260414_201250-eqqc4xnh/logs[0m

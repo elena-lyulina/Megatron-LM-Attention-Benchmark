@@ -1,0 +1,165 @@
+START TIME: Tue May 19 09:59:21 CEST 2026
+Loaded 6,597 records
+
+Writing 9 repetition buckets to /iopsstor/scratch/cscs/elyulina/datasets/tokenized/gutenberg_rep_1_256
+   rep   books  sequences        tokens
+  rep=   1  books=   733  sequences=     733  tokens=   6,004,736  ->  rep_1_tokens.bin/.idx
+  rep=   2  books=   733  sequences=   1,466  tokens=  12,009,472  ->  rep_2_tokens.bin/.idx
+  rep=   4  books=   733  sequences=   2,932  tokens=  24,018,944  ->  rep_4_tokens.bin/.idx
+  rep=   8  books=   733  sequences=   5,864  tokens=  48,037,888  ->  rep_8_tokens.bin/.idx
+  rep=  16  books=   733  sequences=  11,728  tokens=  96,075,776  ->  rep_16_tokens.bin/.idx
+  rep=  32  books=   733  sequences=  23,456  tokens= 192,151,552  ->  rep_32_tokens.bin/.idx
+  rep=  64  books=   733  sequences=  46,912  tokens= 384,303,104  ->  rep_64_tokens.bin/.idx
+  rep= 128  books=   733  sequences=  93,824  tokens= 768,606,208  ->  rep_128_tokens.bin/.idx
+  rep= 256  books=   733  sequences= 187,648  tokens=1,537,212,416  ->  rep_256_tokens.bin/.idx
+
+Total tokens written: 3,068,420,096  (3.07B)
+BOS id: 128000  |  EOS id: 128001
+
+Found 9 bucket(s) in /iopsstor/scratch/cscs/elyulina/datasets/tokenized/gutenberg_rep_1_256
+
+### rep_128_tokens ###
+  sequences    : 93,824
+  unique books : 733
+  seq length   : 8192  (expected 8192)  OK
+  BOS at start : 93,824/93,824  OK
+  EOS at end   : 93,824/93,824  OK
+  BOS exactly 1: 93,824/93,824  OK
+  EOS exactly 1: 93,824/93,824  OK
+  rep dist     : {128: 733}  all repeat exactly 128x  OK
+
+  Examples (first 3 sequences):
+    seq 0 : first 6: [128000, 791, 8334, 596, 66939, 6197]   last 6: [1202, 2132, 5178, 264, 2478, 128001]
+    seq 1 : first 6: [128000, 4897, 279, 507, 764, 404]   last 6: [3463, 499, 4265, 2751, 927, 128001]
+    seq 2 : first 6: [128000, 36412, 18276, 466, 2288, 574]   last 6: [304, 64935, 704, 315, 1405, 128001]
+
+### rep_16_tokens ###
+  sequences    : 11,728
+  unique books : 733
+  seq length   : 8192  (expected 8192)  OK
+  BOS at start : 11,728/11,728  OK
+  EOS at end   : 11,728/11,728  OK
+  BOS exactly 1: 11,728/11,728  OK
+  EOS exactly 1: 11,728/11,728  OK
+  rep dist     : {16: 733}  all repeat exactly 16x  OK
+
+  Examples (first 3 sequences):
+    seq 0 : first 6: [128000, 79762, 9004, 574, 5403, 520]   last 6: [382, 55005, 0, 15936, 304, 128001]
+    seq 1 : first 6: [128000, 8100, 690, 387, 264, 16879]   last 6: [779, 25406, 304, 11937, 11, 128001]
+    seq 2 : first 6: [128000, 1687, 2643, 11, 422, 584]   last 6: [11422, 382, 1, 1383, 622, 128001]
+
+### rep_1_tokens ###
+  sequences    : 733
+  unique books : 733
+  seq length   : 8192  (expected 8192)  OK
+  BOS at start : 733/733  OK
+  EOS at end   : 733/733  OK
+  BOS exactly 1: 733/733  OK
+  EOS exactly 1: 733/733  OK
+  rep dist     : {1: 733}  all repeat exactly 1x  OK
+
+  Examples (first 3 sequences):
+    seq 0 : first 6: [128000, 5176, 329, 304, 1077, 46471]   last 6: [5507, 315, 264, 1938, 11, 128001]
+    seq 1 : first 6: [128000, 791, 14299, 61570, 1047, 279]   last 6: [315, 701, 36778, 369, 499, 128001]
+    seq 2 : first 6: [128000, 25310, 398, 11, 1457, 1359]   last 6: [539, 2019, 1790, 11, 719, 128001]
+
+### rep_256_tokens ###
+  sequences    : 187,648
+  unique books : 733
+  seq length   : 8192  (expected 8192)  OK
+  BOS at start : 187,648/187,648  OK
+  EOS at end   : 187,648/187,648  OK
+  BOS exactly 1: 187,648/187,648  OK
+  EOS exactly 1: 187,648/187,648  OK
+  rep dist     : {256: 733}  all repeat exactly 256x  OK
+
+  Examples (first 3 sequences):
+    seq 0 : first 6: [128000, 3112, 1618, 358, 12876, 35426]   last 6: [26, 1243, 279, 220, 18, 128001]
+    seq 1 : first 6: [128000, 4071, 520, 11220, 8050, 596]   last 6: [364, 359, 11, 323, 1375, 128001]
+    seq 2 : first 6: [128000, 791, 61080, 315, 279, 1652]   last 6: [1667, 430, 8272, 1070, 1047, 128001]
+
+### rep_2_tokens ###
+  sequences    : 1,466
+  unique books : 733
+  seq length   : 8192  (expected 8192)  OK
+  BOS at start : 1,466/1,466  OK
+  EOS at end   : 1,466/1,466  OK
+  BOS exactly 1: 1,466/1,466  OK
+  EOS exactly 1: 1,466/1,466  OK
+  rep dist     : {2: 733}  all repeat exactly 2x  OK
+
+  Examples (first 3 sequences):
+    seq 0 : first 6: [128000, 36412, 469, 13, 9508, 311]   last 6: [2266, 47416, 7770, 398, 11, 128001]
+    seq 1 : first 6: [128000, 1, 25797, 0, 323, 1148]   last 6: [814, 3085, 369, 701, 4363, 128001]
+    seq 2 : first 6: [128000, 4516, 279, 20820, 12570, 11]   last 6: [1022, 813, 2010, 382, 2520, 128001]
+
+### rep_32_tokens ###
+  sequences    : 23,456
+  unique books : 733
+  seq length   : 8192  (expected 8192)  OK
+  BOS at start : 23,456/23,456  OK
+  EOS at end   : 23,456/23,456  OK
+  BOS exactly 1: 23,456/23,456  OK
+  EOS exactly 1: 23,456/23,456  OK
+  rep dist     : {32: 733}  all repeat exactly 32x  OK
+
+  Examples (first 3 sequences):
+    seq 0 : first 6: [128000, 4071, 315, 3388, 358, 1436]   last 6: [617, 3463, 813, 14162, 85627, 128001]
+    seq 1 : first 6: [128000, 4599, 279, 1314, 1450, 374]   last 6: [6367, 43821, 15105, 13, 9176, 128001]
+    seq 2 : first 6: [128000, 791, 86529, 389, 279, 45747]   last 6: [6691, 2268, 2520, 264, 2697, 128001]
+
+### rep_4_tokens ###
+  sequences    : 2,932
+  unique books : 733
+  seq length   : 8192  (expected 8192)  OK
+  BOS at start : 2,932/2,932  OK
+  EOS at end   : 2,932/2,932  OK
+  BOS exactly 1: 2,932/2,932  OK
+  EOS exactly 1: 2,932/2,932  OK
+  rep dist     : {4: 733}  all repeat exactly 4x  OK
+
+  Examples (first 3 sequences):
+    seq 0 : first 6: [128000, 791, 81441, 4131, 505, 96058]   last 6: [656, 539, 1367, 801, 701, 128001]
+    seq 1 : first 6: [128000, 1542, 424, 750, 389, 2380]   last 6: [304, 34781, 315, 813, 6940, 128001]
+    seq 2 : first 6: [128000, 1688, 5899, 4520, 3347, 45314]   last 6: [1578, 311, 1474, 7924, 13, 128001]
+
+### rep_64_tokens ###
+  sequences    : 46,912
+  unique books : 733
+  seq length   : 8192  (expected 8192)  OK
+  BOS at start : 46,912/46,912  OK
+  EOS at end   : 46,912/46,912  OK
+  BOS exactly 1: 46,912/46,912  OK
+  EOS exactly 1: 46,912/46,912  OK
+  rep dist     : {64: 733}  all repeat exactly 64x  OK
+
+  Examples (first 3 sequences):
+    seq 0 : first 6: [128000, 1, 9241, 1521, 3666, 365]   last 6: [369, 279, 5696, 315, 279, 128001]
+    seq 1 : first 6: [128000, 28597, 1077, 13272, 1364, 1051]   last 6: [387, 1633, 16089, 311, 617, 128001]
+    seq 2 : first 6: [128000, 1, 11800, 11, 36346, 7673]   last 6: [4205, 1359, 4024, 389, 279, 128001]
+
+### rep_8_tokens ###
+  sequences    : 5,864
+  unique books : 733
+  seq length   : 8192  (expected 8192)  OK
+  BOS at start : 5,864/5,864  OK
+  EOS at end   : 5,864/5,864  OK
+  BOS exactly 1: 5,864/5,864  OK
+  EOS exactly 1: 5,864/5,864  OK
+  rep dist     : {8: 733}  all repeat exactly 8x  OK
+
+  Examples (first 3 sequences):
+    seq 0 : first 6: [128000, 6, 3112, 1148, 617, 499]   last 6: [3249, 1205, 358, 617, 19089, 128001]
+    seq 1 : first 6: [128000, 2181, 2011, 387, 1120, 18406]   last 6: [323, 813, 10868, 1047, 64263, 128001]
+    seq 2 : first 6: [128000, 1, 28671, 768, 11, 1716]   last 6: [279, 8870, 18266, 4131, 311, 128001]
+
+============================================================
+SUMMARY
+  total sequences  : 374,563
+  total unique books (across all buckets): 6,597
+  total tokens     : 3,068,420,096  (3.07B)
+  ALL CHECKS PASSED
+
+Summary written to /iopsstor/scratch/cscs/elyulina/datasets/preprocessing/gutenberg-laion/hf-full-output/stats/megatron-tokenization/summary.txt
+END TIME: Tue May 19 10:02:20 CEST 2026
+Done. Files in /iopsstor/scratch/cscs/elyulina/datasets/tokenized/gutenberg_rep_1_256

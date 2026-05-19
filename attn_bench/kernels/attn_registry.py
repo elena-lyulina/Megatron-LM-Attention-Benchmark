@@ -19,6 +19,7 @@ from attn_bench.kernels.full.specs import FullSpecProvider
 from attn_bench.kernels.full.torch_native import TorchFullAttention
 from attn_bench.kernels.gated.flash import GatedFlashAttention
 from attn_bench.kernels.gated.specs import GatedSpecProvider
+from attn_bench.kernels.gated.te import GatedTEAttention
 from attn_bench.kernels.gated.torch_native import GatedTorchAttention
 from attn_bench.kernels.sink.specs import SinkSpecProvider
 from attn_bench.kernels.sink.te import SinkTEAttention
@@ -38,11 +39,12 @@ class AttnKwargSchema:
 # TODO: if too much duplicate code due to repeating params across the same mechanism, move to SpecProvider?
 ATTN_REGISTRY: dict[tuple[str, str], tuple[type, type, dict[str, AttnKwargSchema]]] = {
     ### FULL ATTENTION  ###
-    ("full",  "flash"): (FullSpecProvider,  FlashFullAttention,  {}),
-    ("full",  "torch"): (FullSpecProvider,  TorchFullAttention,  {}),
+    ("full",  "flash"): (FullSpecProvider,  FlashFullAttention, {}),
+    ("full",  "torch"): (FullSpecProvider,  TorchFullAttention, {}),
     ### GATED ATTENTION ###
     ("gated", "flash"): (GatedSpecProvider, GatedFlashAttention, {}),
     ("gated", "torch"): (GatedSpecProvider, GatedTorchAttention, {}),
+    ("gated", "te"):    (GatedSpecProvider, GatedTEAttention, {}),
     ### SINK ATTENTION ###
     # init_sink_zero=True: inits sinks with zeros (for reproducible comparison with sink/te).
     # init_sink_zero=False: inits sinks from N(0, 0.023), matching TE's get_default_init_method().

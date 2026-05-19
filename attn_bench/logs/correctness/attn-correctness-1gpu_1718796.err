@@ -1,0 +1,42 @@
+slurmstepd: error: couldn't chdir to `/workspace': No such file or directory: going to /tmp instead
+slurmstepd: error: couldn't chdir to `/workspace': No such file or directory: going to /tmp instead
+++ date
++ echo 'START TIME: Tue Mar 24 16:58:36 CET 2026'
++ ATTN=full
++ IMPL=flash
++++ dirname /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/scripts/run_correctness.sh
+++ cd /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/scripts/../..
+++ pwd
++ REPO_ROOT=/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark
++ RESULTS_DIR=/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/results/correctness
++ EXP_NAME=correctness_full_flash_1node_1gpu_tp1_pp1_1718796
++ EXP_DIR=/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/results/correctness/correctness_full_flash_1node_1gpu_tp1_pp1_1718796
++ TRIGGER_DIR=/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/results/correctness/correctness_full_flash_1node_1gpu_tp1_pp1_1718796/triggers
++ DEBUG_DIR=/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/results/correctness/correctness_full_flash_1node_1gpu_tp1_pp1_1718796/debug/1718796
++ COMPUTE_ENVIRONMENT_DIR=/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/results/correctness/correctness_full_flash_1node_1gpu_tp1_pp1_1718796/debug/1718796/compute_environment.txt
++ GPU_MEM_LOGGING=/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/results/correctness/correctness_full_flash_1node_1gpu_tp1_pp1_1718796/debug/1718796/memory_logging.txt
++ TENSORBOARD_DIR=/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/results/correctness/correctness_full_flash_1node_1gpu_tp1_pp1_1718796/tensorboard
++ mkdir -p /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/results/correctness/correctness_full_flash_1node_1gpu_tp1_pp1_1718796
++ mkdir -p /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/results/correctness/correctness_full_flash_1node_1gpu_tp1_pp1_1718796/triggers
++ mkdir -p /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/results/correctness/correctness_full_flash_1node_1gpu_tp1_pp1_1718796/debug/1718796
++ mkdir -p /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/results/correctness/correctness_full_flash_1node_1gpu_tp1_pp1_1718796/tensorboard
++ rm -f /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/results/correctness/correctness_full_flash_1node_1gpu_tp1_pp1_1718796/triggers/save
++ rm -f /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/results/correctness/correctness_full_flash_1node_1gpu_tp1_pp1_1718796/triggers/exit
++ WANDB_PROJECT=Megatron-LM-Attention-Benchmark
++ LOG_NCCL=false
++ '[' false = true ']'
++ cd /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark
++ export PYTHONPATH=/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark:/opt/Export-Deploy:/opt/venv/lib/python3.12/site-packages/:
++ PYTHONPATH=/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark:/opt/Export-Deploy:/opt/venv/lib/python3.12/site-packages/:
++ ulimit -c 0
++ srun -l bash -c 'echo $(hostname) $(nvidia-smi | grep -o "|\s*[0-9]*MiB")'
+srun: Job 1718796 step creation temporarily disabled, retrying (Requested nodes are busy)
+srun: Job 1718796 step creation still disabled, retrying (Requested nodes are busy)
+srun: Job 1718796 step creation still disabled, retrying (Requested nodes are busy)
+srun: Job 1718796 step creation still disabled, retrying (Requested nodes are busy)
+srun: Job 1718796 step creation still disabled, retrying (Requested nodes are busy)
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+slurmstepd: error: *** STEP 1718796.0 ON nid007643 CANCELLED AT 2026-03-24T17:04:13 ***
+slurmstepd: error: *** JOB 1718796 ON nid007643 CANCELLED AT 2026-03-24T17:04:13 ***
+srun: forcing job termination
+srun: got SIGCONT

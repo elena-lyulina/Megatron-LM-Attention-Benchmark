@@ -1,0 +1,1211 @@
+cat: nemo: No such file or directory
+3: [default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+3: [default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+3: [default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+3: [default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+6: [default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+6: [default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+6: [default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+6: [default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+9: [default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+9: [default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+9: [default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+9: [default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+4: [default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+4: [default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+4: [default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+4: [default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+5: [default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+5: [default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+5: [default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+5: [default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+8: [default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+8: [default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+8: [default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+7: [default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+7: [default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+7: [default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+7: [default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+8: [default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: [default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: [default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: [default0]:/opt/TensorRT-Model-Optimizer/modelopt/torch/utils/import_utils.py:32: UserWarning: Failed to import diffusers plugin due to: ImportError('peft>=0.17.0 is required for a normal functioning of this module, but found peft==0.13.2.'). You may ignore this warning if you do not need this plugin.
+0: [default0]:  warnings.warn(
+0: [default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: [default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: [default0]:/opt/TensorRT-Model-Optimizer/modelopt/torch/utils/import_utils.py:32: UserWarning: Failed to import peft plugin due to: ImportError("cannot import name 'ParamWrapper' from 'peft.tuners.lora.layer' (/opt/venv/lib/python3.12/site-packages/peft/tuners/lora/layer.py)"). You may ignore this warning if you do not need this plugin.
+0: [default0]:  warnings.warn(
+0: [default0]:/opt/TensorRT-Model-Optimizer/modelopt/torch/__init__.py:36: UserWarning: transformers version 4.57.3 is incompatible with nvidia-modelopt and may cause issues. Please install recommended version with `pip install nvidia-modelopt[hf]` if working with HF models.
+0: [default0]:  _warnings.warn(
+2: [default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+2: [default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+2: [default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+2: [default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+1: [default0]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default2]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default1]:Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)[default3]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+1: [default2]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+1: [default1]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+1: [default0]:Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: [default0]:/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: Overriding default arguments for tokenizer_type:GPT2BPETokenizer with tokenizer_type:HuggingFaceTokenizer
+0: [default0]:  warnings.warn(message)
+0: [default0]:/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --async-save is not supported without --use-persistent-ckpt-worker. Disabling --async-save.
+0: [default0]:  warnings.warn(message)
+0: [default0]:/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-use-fast argument is deprecated and will be removed soon. `use_fast` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-use-fast if you want to disable `use_fast`.
+0: [default0]:  warnings.warn(message)
+0: [default0]:/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-include-special-tokens argument is deprecated and will be removed soon. `include_special_tokens` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-include-special-tokens if you want to disable `include_special_tokens`.
+0: [default0]:  warnings.warn(message)
+4: [default1]:[W414 20:12:49.377300683 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+5: [default2]:[W414 20:12:50.881573302 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+5: [default0]:[W414 20:12:50.883424732 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+5: [default1]:[W414 20:12:50.862055871 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+5: [default3]:[W414 20:12:50.878189026 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+0: [default0]:[W414 20:12:50.407790212 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+0: [default1]:[W414 20:12:50.401180019 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+0: [default2]:[W414 20:12:50.409264470 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+0: [default3]:[W414 20:12:50.337904235 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+9: [default1]:[W414 20:12:50.709500888 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+9: [default2]:[W414 20:12:50.712801186 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+7: [default0]:[W414 20:12:50.690873711 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+7: [default3]:[W414 20:12:50.690876111 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+7: [default1]:[W414 20:12:50.690873583 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+7: [default2]:[W414 20:12:50.690873647 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+9: [default0]:[W414 20:12:50.713317744 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+3: [default1]:[W414 20:12:50.114240847 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+8: [default2]:[W414 20:12:50.480955578 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+8: [default1]:[W414 20:12:50.477307454 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+6: [default0]:[W414 20:12:50.930302288 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+6: [default1]:[W414 20:12:50.941965624 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+6: [default2]:[W414 20:12:50.944844307 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+6: [default3]:[W414 20:12:50.941997974 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+3: [default3]:[W414 20:12:50.271068508 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+4: [default2]:[W414 20:12:50.632157825 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+4: [default0]:[W414 20:12:50.635169615 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+4: [default3]:[W414 20:12:50.636177587 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+3: [default2]:[W414 20:12:50.268262344 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+3: [default0]:[W414 20:12:50.271067836 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+8: [default0]:[W414 20:12:50.610466351 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+8: [default3]:[W414 20:12:50.607078348 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+9: [default3]:wandb: Currently logged in as: elyulina (elyulina-thesis) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+2: [default2]:[W414 20:12:52.619968094 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+2: [default3]:[W414 20:12:52.619994749 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+2: [default1]:[W414 20:12:52.619968798 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+1: [default1]:[W414 20:12:52.731264658 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+1: [default3]:[W414 20:12:52.731264466 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+1: [default2]:[W414 20:12:52.731264466 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+1: [default0]:[W414 20:12:52.731264722 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+2: [default0]:[W414 20:12:52.706602913 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+9: [default3]:wandb: setting up run eqqc4xnh
+9: [default3]:wandb: Tracking run with wandb version 0.23.1
+9: [default3]:wandb: Run data is saved locally in /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/results/pretrain/fineweb-160B/llama3-1b-fineweb160B-test/logging/wandb/run-20260414_201250-eqqc4xnh
+9: [default3]:wandb: Run `wandb offline` to turn off syncing.
+9: [default3]:wandb: Syncing run llama3-1b-fineweb160B-test-1856639
+9: [default3]:wandb: ⭐️ View project at https://wandb.ai/elyulina-thesis/fineweb-160B
+9: [default3]:wandb: 🚀 View run at https://wandb.ai/elyulina-thesis/fineweb-160B/runs/eqqc4xnh
+9: [default3]:wandb: Detected [openai] in use.
+9: [default3]:wandb: Use W&B Weave for improved LLM call tracing. Install Weave with `pip install weave` then add `import weave` to the top of your script.
+9: [default3]:wandb: For more information, check out the docs at: https://weave-docs.wandb.ai/
+9: [default3]:[W414 20:12:53.066189523 ProcessGroupNCCL.cpp:927] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+0: [default0]:[rank0]: Traceback (most recent call last):
+0: [default0]:[rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+0: [default0]:[rank0]:     pretrain(
+0: [default0]:[rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+0: [default0]:[rank0]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+0: [default0]:[rank0]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default1]:[rank1]: Traceback (most recent call last):
+0: [default1]:[rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+0: [default1]:[rank1]:     pretrain(
+0: [default1]:[rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+0: [default1]:[rank1]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+0: [default1]:[rank1]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default0]:[rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+0: [default0]:[rank0]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+0: [default0]:[rank0]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default0]:[rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+0: [default1]:[rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+0: [default1]:[rank1]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+0: [default1]:[rank1]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default0]:[rank0]:     opt_param_scheduler = OptimizerParamScheduler(
+0: [default0]:[rank0]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default0]:[rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+0: [default0]:[rank0]:     assert self.lr_warmup_steps < self.lr_decay_steps
+0: [default0]:[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default0]:[rank0]: AssertionError
+0: [default1]:[rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+0: [default1]:[rank1]:     opt_param_scheduler = OptimizerParamScheduler(
+0: [default1]:[rank1]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default1]:[rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+0: [default1]:[rank1]:     assert self.lr_warmup_steps < self.lr_decay_steps
+0: [default1]:[rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default1]:[rank1]: AssertionError
+0: [default2]:[rank2]: Traceback (most recent call last):
+0: [default2]:[rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+0: [default3]:[rank3]: Traceback (most recent call last):
+0: [default3]:[rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+0: [default2]:[rank2]:     pretrain(
+0: [default2]:[rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+0: [default2]:[rank2]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+0: [default3]:[rank3]:     pretrain(
+0: [default3]:[rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+0: [default3]:[rank3]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+0: [default2]:[rank2]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default3]:[rank3]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default3]:[rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+0: [default3]:[rank3]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+0: [default3]:[rank3]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default2]:[rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+0: [default2]:[rank2]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+0: [default2]:[rank2]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default3]:[rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+0: [default2]:[rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+0: [default2]:[rank2]:     opt_param_scheduler = OptimizerParamScheduler(
+0: [default3]:[rank3]:     opt_param_scheduler = OptimizerParamScheduler(
+0: [default3]:[rank3]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default3]:[rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+0: [default3]:[rank3]:     assert self.lr_warmup_steps < self.lr_decay_steps
+0: [default3]:[rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default3]:[rank3]: AssertionError
+0: [default2]:[rank2]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default2]:[rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+0: [default2]:[rank2]:     assert self.lr_warmup_steps < self.lr_decay_steps
+0: [default2]:[rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [default2]:[rank2]: AssertionError
+2: [default0]:[rank8]: Traceback (most recent call last):
+2: [default0]:[rank8]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+2: [default0]:[rank8]:     pretrain(
+2: [default0]:[rank8]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+2: [default0]:[rank8]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+2: [default0]:[rank8]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2: [default0]:[rank8]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+2: [default0]:[rank8]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+2: [default0]:[rank8]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2: [default0]:[rank8]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in
+2:  get_optimizer_param_scheduler
+2: [default0]:[rank8]:     opt_param_scheduler = OptimizerParamScheduler(
+2: [default0]:[rank8]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+2: [default0]:[rank8]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+2: [default0]:[rank8]:     assert self.lr_warmup_steps < self.lr_decay_steps
+2: [default0]:[rank8]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2: [default0]:[rank8]: AssertionError
+2: [default1]:[rank9]: Traceback (most recent call last):
+2: [default1]:[rank9]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+2: [default1]:[rank9]:     pretrain(
+2: [default1]:[rank9]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+2: [default1]:[rank9]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+2: [default1]:[rank9]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2: [default1]:[rank9]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+2: [default1]:[rank9]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+2: [default1]:[rank9]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2: [default1]:[rank9]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+2: [default1]:[rank9]:     opt_param_scheduler = OptimizerParamScheduler(
+2: [default1]:[rank9]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+2: [default1]:[rank9]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+2: [default1]:[rank9]:     assert self.lr_warmup_steps < self.lr_decay_steps
+2: [default1]:[rank9]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2: [default1]:[rank9]: AssertionError
+2: [default2]:[rank10]: Traceback (most recent call last):
+2: [default2]:[rank10]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+2: [default2]:[rank10]:     pretrain(
+2: [default2]:[rank10]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+2: [default2]:[rank10]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+2: [default2]:[rank10]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2: [default2]:[rank10]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+2: [default2]:[rank10]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+2: [default2]:[rank10]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2: [default2]:[rank10]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+2: [default2]:[rank10]:     opt_param_scheduler = OptimizerParamScheduler(
+2: [default2]:[rank10]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+2: [default2]:[rank10]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+2: [default2]:[rank10]:     assert self.lr_warmup_steps < self.lr_decay_steps
+2: [default2]:[rank10]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2: [default2]:[rank10]: AssertionError
+2: [default3]:[rank11]: Traceback (most recent call last):
+2: [default3]:[rank11]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+2: [default3]:[rank11]:     pretrain(
+2: [default3]:[rank11]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+2: [default3]:[rank11]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+2: [default3]:[rank11]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2: [default3]:[rank11]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+2: [default3]:[rank11]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+2: [default3]:[rank11]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2: [default3]:[rank11]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+2: [default3]:[rank11]:     opt_param_scheduler = OptimizerParamScheduler(
+2: [default3]:[rank11]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+2: [default3]:[rank11]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+2: [default3]:[rank11]:     assert self.lr_warmup_steps < self.lr_decay_steps
+2: [default3]:[rank11]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2: [default3]:[rank11]: AssertionError
+7: [default3]:[rank31]: Traceback (most recent call last):
+7: [default3]:[rank31]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+7: [default0]:[rank28]: Traceback (most recent call last):
+7: [default0]:[rank28]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+7: [default3]:[rank31]:     pretrain(
+7: [default1]:[rank29]: Traceback (most recent call last):
+7: [default1]:[rank29]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+7: [default2]:[rank30]: Traceback (most recent call last):
+7: [default2]:[rank30]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+7: [default1]:[rank29]:     pretrain(
+7: [default0]:[rank28]:     pretrain(
+7: [default3]:[rank31]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+7: [default3]:[rank31]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+7: [default0]:[rank28]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+7: [default2]:[rank30]:     pretrain(
+7: [default1]:[rank29]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+7: [default0]:[rank28]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+7: [default2]:[rank30]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+7: [default3]:[rank31]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+7: [default3]:[rank31]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+7: [default0]:[rank28]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+7: [default1]:[rank29]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+7: [default2]:[rank30]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+7: [default2]:[rank30]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+7: [default2]:[rank30]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+7: [default1]:[rank29]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+7: [default0]:[rank28]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+7: [default0]:[rank28]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+7: [default2]:[rank30]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+7: [default2]:[rank30]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+7: [default2]:[rank30]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+7: [default3]:[rank31]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+7: [default0]:[rank28]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+7: [default1]:[rank29]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+7: [default2]:[rank30]:     opt_param_scheduler = OptimizerParamScheduler(
+7: [default0]:[rank28]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+7: [default3]:[rank31]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+7: [default3]:[rank31]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+7: [default0]:[rank28]:     opt_param_scheduler = OptimizerParamScheduler(
+7: [default2]:[rank30]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+7: [default1]:[rank29]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+7: [default3]:[rank31]:     opt_param_scheduler = OptimizerParamScheduler(
+7: [default0]:[rank28]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+7: [default2]:[rank30]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+7: [default1]:[rank29]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+7: [default1]:[rank29]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+7: [default3]:[rank31]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+7: [default0]:[rank28]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+7: [default1]:[rank29]:     opt_param_scheduler = OptimizerParamScheduler(
+7: [default1]:[rank29]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+7: [default1]:[rank29]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+7: [default2]:[rank30]:     assert self.lr_warmup_steps < self.lr_decay_steps
+7: [default0]:[rank28]:     assert self.lr_warmup_steps < self.lr_decay_steps
+7: [default1]:[rank29]:     assert self.lr_warmup_steps < self.lr_decay_steps
+7: [default1]:[rank29]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+7: [default1]:[rank29]: AssertionError
+7: [default3]:[rank31]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+7: [default2]:[rank30]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+7: [default0]:[rank28]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+7: [default3]:[rank31]:     assert self.lr_warmup_steps < self.lr_decay_steps
+7: [default3]:[rank31]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+7: [default0]:[rank28]: AssertionError
+7: [default2]:[rank30]: AssertionError
+7: [default3]:[rank31]: AssertionError
+9: [default3]:[rank39]: Traceback (most recent call last):
+9: [default3]:[rank39]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+9: [default3]:[rank39]:     pretrain(
+9: [default3]:[rank39]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+9: [default3]:[rank39]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+9: [default3]:[rank39]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+9: [default3]:[rank39]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+9: [default3]:[rank39]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+9: [default3]:[rank39]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+9: [default3]:[rank39]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+9: [default3]:[rank39]:     opt_param_scheduler = OptimizerParamScheduler(
+9: [default3]:[rank39]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+9: [default1]:[rank37]: Traceback (most recent call last):
+9: [default1]:[rank37]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+9: [default0]:[rank36]: Traceback (most recent call last):
+9: [default0]:[rank36]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+9: [default1]:[rank37]:     pretrain(
+9: [default3]:[rank39]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+9: [default3]:[rank39]:     assert self.lr_warmup_steps < self.lr_decay_steps
+9: [default3]:[rank39]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+9: [default0]:[rank36]:     pretrain(
+9: [default1]:[rank37]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+9: [default1]:[rank37]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+9: [default1]:[rank37]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+9: [default3]:[rank39]: AssertionError
+9: [default0]:[rank36]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+9: [default0]:[rank36]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+9: [default0]:[rank36]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+9: [default0]:[rank36]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+9: [default1]:[rank37]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+9: [default1]:[rank37]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+9: [default1]:[rank37]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+9: [default1]:[rank37]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+9: [default1]:[rank37]:     opt_param_scheduler = OptimizerParamScheduler(
+9: [default1]:[rank37]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+9: [default0]:[rank36]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+9: [default0]:[rank36]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+9: [default0]:[rank36]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+9: [default0]:[rank36]:     opt_param_scheduler = OptimizerParamScheduler(
+9: [default0]:[rank36]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+9: [default1]:[rank37]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+9: [default1]:[rank37]:     assert self.lr_warmup_steps < self.lr_decay_steps
+9: [default1]:[rank37]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+9: [default0]:[rank36]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+9: [default0]:[rank36]:     assert self.lr_warmup_steps < self.lr_decay_steps
+9: [default0]:[rank36]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+9: [default1]:[rank37]: AssertionError
+9: [default0]:[rank36]: AssertionError
+9: [default2]:[rank38]: Traceback (most recent call last):
+9: [default2]:[rank38]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+9: [default2]:[rank38]:     pretrain(
+9: [default2]:[rank38]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+9: [default2]:[rank38]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+9: [default2]:[rank38]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+9: [default2]:[rank38]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+9: [default2]:[rank38]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+9: [default2]:[rank38]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+9: [default2]:[rank38]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+9: [default2]:[rank38]:     opt_param_scheduler = OptimizerParamScheduler(
+9: [default2]:[rank38]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+9: [default2]:[rank38]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+9: [default2]:[rank38]:     assert self.lr_warmup_steps < self.lr_decay_steps
+9: [default2]:[rank38]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+9: [default2]:[rank38]: AssertionError
+3: [default3]:[rank15]: Traceback (most recent call last):
+3: [default3]:[rank15]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+3: [default3]:[rank15]:     pretrain(
+3: [default3]:[rank15]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+3: [default3]:[rank15]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+3: [default3]:[rank15]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+3: [default3]:[rank15]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+3: [default3]:[rank15]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+3: [default3]:[rank15]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+3: [default3]:[rank15]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", lin
+3: e 1448, in get_optimizer_param_scheduler
+3: [default3]:[rank15]:     opt_param_scheduler = OptimizerParamScheduler(
+3: [default3]:[rank15]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+3: [default3]:[rank15]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+3: [default3]:[rank15]:     assert self.lr_warmup_steps < self.lr_decay_steps
+3: [default3]:[rank15]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+3: [default3]:[rank15]: AssertionError
+3: [default1]:[rank13]: Traceback (most recent call last):
+3: [default1]:[rank13]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+3: [default1]:[rank13]:     pretrain(
+3: [default1]:[rank13]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+3: [default1]:[rank13]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+3: [default1]:[rank13]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+3: [default1]:[rank13]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+3: [default1]:[rank13]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+3: [default1]:[rank13]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+3: [default1]:[rank13]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+3: [default1]:[rank13]:     opt_param_scheduler = OptimizerParamScheduler(
+3: [default1]:[rank13]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+3: [default1]:[rank13]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+3: [default1]:[rank13]:     assert self.lr_warmup_steps < self.lr_decay_steps
+3: [default1]:[rank13]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+3: [default1]:[rank13]: AssertionError
+1: [default3]:[rank7]: Traceback (most recent call last):
+1: [default3]:[rank7]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+1: [default2]:[rank6]: Traceback (most recent call last):
+1: [default3]:[rank7]:     pretrain(
+1: [default3]:[rank7]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+1: [default3]:[rank7]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+1: [default3]:[rank7]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+1: [default3]:[rank7]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+1: [default3]:[rank7]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+1: [default3]:[rank7]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1: [default3]:[rank7]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+1: [default3]:[rank7]:     opt_param_scheduler = OptimizerParamScheduler(
+1: [default2]:[rank6]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+1: [default3]:[rank7]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+1: [default2]:[rank6]:     pretrain(
+1: [default1]:[rank5]: Traceback (most recent call last):
+1: [default1]:[rank5]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+1: [default3]:[rank7]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+1: [default3]:[rank7]:     assert self.lr_warmup_steps < self.lr_decay_steps
+1: [default2]:[rank6]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+1: [default1]:[rank5]:     pretrain(
+1: [default0]:[rank4]: Traceback (most recent call last):
+1: [default0]:[rank4]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+1: [default3]:[rank7]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1: [default3]:[rank7]: AssertionError
+1: [default1]:[rank5]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+1: [default1]:[rank5]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+1: [default2]:[rank6]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+1: [default0]:[rank4]:     pretrain(
+1: [default1]:[rank5]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+1: [default1]:[rank5]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+1: [default2]:[rank6]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+1: [default0]:[rank4]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+1: [default0]:[rank4]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+1: [default0]:[rank4]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+1: [default1]:[rank5]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+1: [default1]:[rank5]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1: [default2]:[rank6]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+1: [default0]:[rank4]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+1: [default0]:[rank4]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+1: [default0]:[rank4]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1: [default0]:[rank4]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+1: [default0]:[rank4]:     opt_param_scheduler = OptimizerParamScheduler(
+1: [default0]:[rank4]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+1: [default2]:[rank6]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+1: [default0]:[rank4]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+1: [default1]:[rank5]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+1: [default2]:[rank6]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1: [default0]:[rank4]:     assert self.lr_warmup_steps < self.lr_decay_steps
+1: [default2]:[rank6]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+1: [default0]:[rank4]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1: [default0]:[rank4]: AssertionError
+1: [default2]:[rank6]:     opt_param_scheduler = OptimizerParamScheduler(
+1: [default2]:[rank6]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+1: [default1]:[rank5]:     opt_param_scheduler = OptimizerParamScheduler(
+1: [default1]:[rank5]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+1: [default1]:[rank5]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+1: [default1]:[rank5]:     assert self.lr_warmup_steps < self.lr_decay_steps
+1: [default1]:[rank5]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1: [default2]:[rank6]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+1: [default2]:[rank6]:     assert self.lr_warmup_steps < self.lr_decay_steps
+1: [default2]:[rank6]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1: [default2]:[rank6]: AssertionError
+1: [default1]:[rank5]: AssertionError
+4: [default2]:[rank18]: Traceback (most recent call last):
+4: [default2]:[rank18]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+4: [default2]:[rank18]:     pretrain(
+4: [default2]:[rank18]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+4: [default2]:[rank18]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+4: [default2]:[rank18]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+4: [default2]:[rank18]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+4: [default2]:[rank18]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+4: [default2]:[rank18]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+4: [default2]:[rank18]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+4: [default2]:[rank18]:     opt_param_scheduler = OptimizerParamScheduler(
+4: [default2]:[rank18]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+4: [default2]:[rank18]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+4: [default2]:[rank18]:     assert self.lr_warmup_steps < self.lr_decay_steps
+4: [default2]:[rank18]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+4: [default2]:[rank18]: AssertionError
+4: [default1]:[rank17]: Traceback (most recent call last):
+4: [default1]:[rank17]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+4: [default0]:[rank16]: Traceback (most recent call last):
+4: [default0]:[rank16]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+4: [default1]:[rank17]:     pretrain(
+4: [default1]:[rank17]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+4: [default1]:[rank17]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+4: [default1]:[rank17]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+4: [default0]:[rank16]:     pretrain(
+4: [default3]:[rank19]: Traceback (most recent call last):
+4: [default3]:[rank19]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+4: [default3]:[rank19]:     pretrain(
+4: [default3]:[rank19]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+4: [default0]:[rank16]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+4: [default1]:[rank17]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+4: [default1]:[rank17]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+4: [default1]:[rank17]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+4: [default3]:[rank19]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+4: [default3]:[rank19]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+4: [default1]:[rank17]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+4: [default1]:[rank17]:     opt_param_scheduler = OptimizerParamScheduler(
+4: [default1]:[rank17]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+4: [default0]:[rank16]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+4: [default3]:[rank19]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+4: [default3]:[rank19]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+4: [default1]:[rank17]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+4: [default1]:[rank17]:     assert self.lr_warmup_steps < self.lr_decay_steps
+4: [default3]:[rank19]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+4: [default3]:[rank19]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+4: [default0]:[rank16]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+4: [default1]:[rank17]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+4: [default1]:[rank17]: AssertionError
+4: [default0]:[rank16]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+4: [default3]:[rank19]:     opt_param_scheduler = OptimizerParamScheduler(
+4: [default3]:[rank19]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+4: [default0]:[rank16]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+4: [default0]:[rank16]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+4: [default0]:[rank16]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+4: [default0]:[rank16]:     opt_param_scheduler = OptimizerParamScheduler(
+4: [default0]:[rank16]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+4: [default3]:[rank19]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+4: [default3]:[rank19]:     assert self.lr_warmup_steps < self.lr_decay_steps
+4: [default3]:[rank19]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+4: [default3]:[rank19]: AssertionError
+4: [default0]:[rank16]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+4: [default0]:[rank16]:     assert self.lr_warmup_steps < self.lr_decay_steps
+4: [default0]:[rank16]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+4: [default0]:[rank16]: AssertionError
+8: [default0]:[rank32]: Traceback (most recent call last):
+8: [default0]:[rank32]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+8: [default0]:[rank32]:     pretrain(
+8: [default0]:[rank32]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+8: [default0]:[rank32]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+8: [default0]:[rank32]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+8: [default0]:[rank32]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+8: [default0]:[rank32]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+8: [default0]:[rank32]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+8: [default0]:[rank32]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+8: [default0]:[rank32]:     opt_param_scheduler = OptimizerParamScheduler(
+8: [default0]:[rank32]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+8: [default0]:[rank32]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+8: [default0]:[rank32]:     assert self.lr_warmup_steps < self.lr_decay_steps
+8: [default0]:[rank32]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+8: [default0]:[rank32]: AssertionError
+8: [default3]:[rank35]: Traceback (most recent call last):
+8: [default3]:[rank35]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+8: [default3]:[rank35]:     pretrain(
+8: [default3]:[rank35]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+8: [default3]:[rank35]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+8: [default3]:[rank35]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+8: [default3]:[rank35]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+8: [default3]:[rank35]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+8: [default3]:[rank35]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+8: [default3]:[rank35]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+8: [default3]:[rank35]:     opt_param_scheduler = OptimizerParamScheduler(
+8: [default3]:[rank35]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+8: [default3]:[rank35]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+8: [default3]:[rank35]:     assert self.lr_warmup_steps < self.lr_decay_steps
+8: [default3]:[rank35]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+8: [default3]:[rank35]: AssertionError
+5: [default2]:[rank22]: Traceback (most recent call last):
+5: [default0]:[rank20]: Traceback (most recent call last):
+5: [default0]:[rank20]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+5: [default1]:[rank21]: Traceback (most recent call last):
+5: [default1]:[rank21]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+5: [default2]:[rank22]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+5: [default0]:[rank20]:     pretrain(
+5: [default1]:[rank21]:     pretrain(
+5: [default0]:[rank20]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+5: [default1]:[rank21]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+5: [default2]:[rank22]:     pretrain(
+5: [default2]:[rank22]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+5: [default1]:[rank21]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+5: [default0]:[rank20]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+5: [default1]:[rank21]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+5: [default0]:[rank20]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+5: [default0]:[rank20]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+5: [default2]:[rank22]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+5: [default1]:[rank21]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+5: [default0]:[rank20]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+5: [default2]:[rank22]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+5: [default1]:[rank21]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+5: [default0]:[rank20]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+5: [default1]:[rank21]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+5: [default2]:[rank22]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+5: [default2]:[rank22]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+5: [default0]:[rank20]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+5: [default0]:[rank20]:     opt_param_scheduler = OptimizerParamScheduler(
+5: [default1]:[rank21]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+5: [default0]:[rank20]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+5: [default0]:[rank20]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+5: [default1]:[rank21]:     opt_param_scheduler = OptimizerParamScheduler(
+5: [default2]:[rank22]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+5: [default0]:[rank20]:     assert self.lr_warmup_steps < self.lr_decay_steps
+5: [default1]:[rank21]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+5: [default1]:[rank21]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+5: [default0]:[rank20]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+5: [default0]:[rank20]: AssertionError
+5: [default1]:[rank21]:     assert self.lr_warmup_steps < self.lr_decay_steps
+5: [default1]:[rank21]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+5: [default2]:[rank22]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+5: [default2]:[rank22]:     opt_param_scheduler = OptimizerParamScheduler(
+5: [default1]:[rank21]: AssertionError
+5: [default2]:[rank22]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+5: [default2]:[rank22]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+5: [default2]:[rank22]:     assert self.lr_warmup_steps < self.lr_decay_steps
+5: [default2]:[rank22]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+5: [default2]:[rank22]: AssertionError
+8: [default2]:[rank34]: Traceback (most recent call last):
+8: [default2]:[rank34]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+8: [default2]:[rank34]:     pretrain(
+8: [default2]:[rank34]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+8: [default2]:[rank34]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+8: [default2]:[rank34]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+8: [default2]:[rank34]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+8: [default2]:[rank34]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+8: [default2]:[rank34]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+8: [default2]:[rank34]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+8: [default2]:[rank34]:     opt_param_scheduler = OptimizerParamScheduler(
+8: [default2]:[rank34]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+8: [default2]:[rank34]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+8: [default2]:[rank34]:     assert self.lr_warmup_steps < self.lr_decay_steps
+8: [default2]:[rank34]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+8: [default2]:[rank34]: AssertionError
+5: [default3]:[rank23]: Traceback (most recent call last):
+5: [default3]:[rank23]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+5: [default3]:[rank23]:     pretrain(
+5: [default3]:[rank23]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+5: [default3]:[rank23]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+5: [default3]:[rank23]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+5: [default3]:[rank23]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+5: [default3]:[rank23]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+5: [default3]:[rank23]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+5: [default3]:[rank23]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+5: [default3]:[rank23]:     opt_param_scheduler = OptimizerParamScheduler(
+5: [default3]:[rank23]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+5: [default3]:[rank23]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+5: [default3]:[rank23]:     assert self.lr_warmup_steps < self.lr_decay_steps
+5: [default3]:[rank23]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+5: [default3]:[rank23]: AssertionError
+6: [default2]:[rank26]: Traceback (most recent call last):
+6: [default1]:[rank25]: Traceback (most recent call last):
+6: [default1]:[rank25]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+6: [default2]:[rank26]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+6: [default1]:[rank25]:     pretrain(
+6: [default3]:[rank27]: Traceback (most recent call last):
+6: [default3]:[rank27]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+3: [default2]:[rank14]: Traceback (most recent call last):
+6: [default1]:[rank25]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+6: [default1]:[rank25]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+3: [default2]:[rank14]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+3: [default2]:[rank14]:     pretrain(
+6: [default3]:[rank27]:     pretrain(
+6: [default0]:[rank24]: Traceback (most recent call last):
+6: [default0]:[rank24]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+3: [default2]:[rank14]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+3: [default2]:[rank14]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+6: [default3]:[rank27]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+6: [default2]:[rank26]:     pretrain(
+6: [default2]:[rank26]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+6: [default1]:[rank25]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+6: [default2]:[rank26]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+3: [default2]:[rank14]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+3: [default2]:[rank14]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+3: [default2]:[rank14]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+6: [default0]:[rank24]:     pretrain(
+6: [default1]:[rank25]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+6: [default1]:[rank25]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+6: [default3]:[rank27]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+3: [default2]:[rank14]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+3: [default2]:[rank14]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+3: [default2]:[rank14]:     opt_param_scheduler = OptimizerParamScheduler(
+6: [default0]:[rank24]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+3: [default2]:[rank14]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+6: [default2]:[rank26]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+6: [default2]:[rank26]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+6: [default3]:[rank27]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+3: [default2]:[rank14]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+6: [default3]:[rank27]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+3: [default2]:[rank14]:     assert self.lr_warmup_steps < self.lr_decay_steps
+6: [default2]:[rank26]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+3: [default2]:[rank14]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+6: [default0]:[rank24]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+6: [default0]:[rank24]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+3: [default2]:[rank14]: AssertionError
+6: [default1]:[rank25]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+6: [default2]:[rank26]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+6: [default3]:[rank27]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+6: [default0]:[rank24]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+6: [default0]:[rank24]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+3: [default0]:[rank12]: Traceback (most recent call last):
+6: [default3]:[rank27]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+6: [default2]:[rank26]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+3: [default0]:[rank12]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+6: [default2]:[rank26]:     opt_param_scheduler = OptimizerParamScheduler(
+6: [default0]:[rank24]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+3: [default0]:[rank12]:     pretrain(
+6: [default0]:[rank24]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+3: [default0]:[rank12]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+6: [default2]:[rank26]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+3: [default0]:[rank12]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+3: [default0]:[rank12]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+6: [default1]:[rank25]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+6: [default0]:[rank24]:     opt_param_scheduler = OptimizerParamScheduler(
+3: [default0]:[rank12]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+3: [default0]:[rank12]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+6: [default0]:[rank24]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+6: [default2]:[rank26]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+6: [default1]:[rank25]:     opt_param_scheduler = OptimizerParamScheduler(
+3: [default0]:[rank12]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+3: [default0]:[rank12]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+6: [default1]:[rank25]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+6: [default0]:[rank24]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+3: [default0]:[rank12]:     opt_param_scheduler = OptimizerParamScheduler(
+3: [default0]:[rank12]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+3: [default0]:[rank12]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+3: [default0]:[rank12]:     assert self.lr_warmup_steps < self.lr_decay_steps
+3: [default0]:[rank12]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+3: [default0]:[rank12]: AssertionError
+6: [default0]:[rank24]:     assert self.lr_warmup_steps < self.lr_decay_steps
+6: [default1]:[rank25]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+6: [default1]:[rank25]:     assert self.lr_warmup_steps < self.lr_decay_steps
+6: [default2]:[rank26]:     assert self.lr_warmup_steps < self.lr_decay_steps
+6: [default2]:[rank26]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+6: [default3]:[rank27]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+6: [default1]:[rank25]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+6: [default2]:[rank26]: AssertionError
+6: [default1]:[rank25]: AssertionError
+6: [default3]:[rank27]:     opt_param_scheduler = OptimizerParamScheduler(
+6: [default3]:[rank27]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+6: [default3]:[rank27]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+6: [default0]:[rank24]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+6: [default0]:[rank24]: AssertionError
+6: [default3]:[rank27]:     assert self.lr_warmup_steps < self.lr_decay_steps
+6: [default3]:[rank27]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+6: [default3]:[rank27]: AssertionError
+8: [default1]:[rank33]: Traceback (most recent call last):
+8: [default1]:[rank33]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 338, in <module>
+8: [default1]:[rank33]:     pretrain(
+8: [default1]:[rank33]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 925, in pretrain
+8: [default1]:[rank33]:     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(
+8: [default1]:[rank33]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+8: [default1]:[rank33]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1556, in setup_model_and_optimizer
+8: [default1]:[rank33]:     opt_param_scheduler = get_optimizer_param_scheduler(optimizer)
+8: [default1]:[rank33]:                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+8: [default1]:[rank33]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1448, in get_optimizer_param_scheduler
+8: [default1]:[rank33]:     opt_param_scheduler = OptimizerParamScheduler(
+8: [default1]:[rank33]:                           ^^^^^^^^^^^^^^^^^^^^^^^^
+8: [default1]:[rank33]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/optimizer_param_scheduler.py", line 157, in __init__
+8: [default1]:[rank33]:     assert self.lr_warmup_steps < self.lr_decay_steps
+8: [default1]:[rank33]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+8: [default1]:[rank33]: AssertionError
+7: [default0]:[rank28]:[W414 20:13:14.945971224 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+9: [default0]:[rank36]:[W414 20:13:14.951802467 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+8: [default0]:[rank32]:[W414 20:13:14.734437682 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+6: [default0]:[rank24]:[W414 20:13:14.180422361 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [default0]:[rank0]:[W414 20:13:14.762893174 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+1: [default0]:[rank4]:[W414 20:13:14.128881963 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+4: [default0]:[rank16]:[W414 20:13:14.954017287 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+5: [default0]:[rank20]:[W414 20:13:14.344923057 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+2: [default0]:[rank8]:[W414 20:13:14.252371935 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+3: [default0]:[rank12]:[W414 20:13:14.999743788 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [default1]:[rank1]:[W414 20:13:16.443968375 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [default3]:[rank3]:[W414 20:13:16.433650426 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [default2]:[rank2]:[W414 20:13:16.443893466 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+1: [default3]:[rank7]:[W414 20:13:16.781514983 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+1: [default2]:[rank6]:[W414 20:13:16.771483713 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+1: [default1]:[rank5]:[W414 20:13:16.771584413 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+4: [default2]:[rank18]:[W414 20:13:16.614210072 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+4: [default1]:[rank17]:[W414 20:13:16.614217623 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+5: [default2]:[rank22]:[W414 20:13:16.075856354 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+5: [default1]:[rank21]:[W414 20:13:16.075832515 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+2: [default1]:[rank9]:[W414 20:13:16.929351143 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+2: [default2]:[rank10]:[W414 20:13:16.939261275 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+2: [default3]:[rank11]:[W414 20:13:16.959290845 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+3: [default3]:[rank15]:[W414 20:13:16.476346737 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+3: [default1]:[rank13]:[W414 20:13:16.456220917 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+4: [default3]:[rank19]:[W414 20:13:16.855642487 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+5: [default3]:[rank23]:[W414 20:13:16.297298539 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+6: [default1]:[rank25]:[W414 20:13:16.338593445 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+3: [default2]:[rank14]:[W414 20:13:16.466227589 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+7: [default3]:[rank31]:[W414 20:13:16.145617451 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+7: [default2]:[rank30]:[W414 20:13:16.135475384 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+7: [default1]:[rank29]:[W414 20:13:16.135552054 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+6: [default2]:[rank26]:[W414 20:13:16.348552879 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+6: [default3]:[rank27]:[W414 20:13:16.358672467 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+8: [default1]:[rank33]:[W414 20:13:16.939368785 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+9: [default1]:[rank37]:[W414 20:13:16.218453655 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+9: [default2]:[rank38]:[W414 20:13:16.218320156 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+8: [default3]:[rank35]:[W414 20:13:16.969518820 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+8: [default2]:[rank34]:[W414 20:13:16.959350528 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+9: W0414 20:13:18.235000 21550 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 21978 closing signal SIGTERM
+9: W0414 20:13:18.236000 21550 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 21979 closing signal SIGTERM
+9: W0414 20:13:18.237000 21550 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 21980 closing signal SIGTERM
+9: [default1]:Stack (most recent call first):
+9: [default1]:  <no Python frame>
+9: [default0]:Stack (most recent call first):
+9: [default0]:  <no Python frame>
+9: [default2]:Stack (most recent call first):
+9: [default2]:  <no Python frame>
+9: E0414 20:13:18.794000 21550 torch/distributed/elastic/multiprocessing/api.py:880] failed (exitcode: 1) local_rank: 3 (pid: 21981) of binary: /opt/venv/bin/python
+9: Traceback (most recent call last):
+9:   File "/usr/local/bin/torchrun", line 7, in <module>
+9:     sys.exit(main())
+9:              ^^^^^^
+9:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 357, in wrapper
+9:     return f(*args, **kwargs)
+9:            ^^^^^^^^^^^^^^^^^^
+9:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 936, in main
+9:     run(args)
+9:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 927, in run
+9:     elastic_launch(
+9:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 151, in __call__
+9:     return launch_agent(self._config, self._entrypoint, list(args))
+9:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+9:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 288, in launch_agent
+9:     raise ChildFailedError(
+9: torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+9: ============================================================
+9: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py FAILED
+9: ------------------------------------------------------------
+9: Failures:
+9:   <NO_OTHER_FAILURES>
+9: ------------------------------------------------------------
+9: Root Cause (first observed failure):
+9: [0]:
+9:   time      : 2026-04-14_20:13:18
+9:   host      : nid007522
+9:   rank      : 39 (local_rank: 3)
+9:   exitcode  : 1 (pid: 21981)
+9:   error_file: <N/A>
+9:   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+9: ============================================================
+9: 
+srun: error: nid007522: task 9: Exited with exit code 1
+srun: Terminating StepId=1856639.1
+0: slurmstepd: error: *** STEP 1856639.1 ON nid006664 CANCELLED AT 2026-04-14T20:13:19 ***
+1: W0414 20:13:19.536000 126185 torch/distributed/elastic/agent/server/api.py:732] Received 15 death signal, shutting down workers
+6: W0414 20:13:19.536000 94022 torch/distributed/elastic/agent/server/api.py:732] Received 15 death signal, shutting down workers
+2: W0414 20:13:19.537000 72585 torch/distributed/elastic/agent/server/api.py:732] Received 15 death signal, shutting down workers
+8: W0414 20:13:19.537000 133380 torch/distributed/elastic/agent/server/api.py:732] Received 15 death signal, shutting down workers
+4: W0414 20:13:19.537000 53243 torch/distributed/elastic/agent/server/api.py:732] Received 15 death signal, shutting down workers
+5: W0414 20:13:19.537000 57814 torch/distributed/elastic/agent/server/api.py:732] Received 15 death signal, shutting down workers
+7: W0414 20:13:19.537000 5141 torch/distributed/elastic/agent/server/api.py:732] Received 15 death signal, shutting down workers
+1: W0414 20:13:19.538000 126185 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 126611 closing signal SIGTERM
+6: W0414 20:13:19.538000 94022 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 94458 closing signal SIGTERM
+2: W0414 20:13:19.538000 72585 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 73006 closing signal SIGTERM
+3: W0414 20:13:19.537000 43219 torch/distributed/elastic/agent/server/api.py:732] Received 15 death signal, shutting down workers
+4: W0414 20:13:19.538000 53243 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 53677 closing signal SIGTERM
+8: W0414 20:13:19.538000 133380 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 133822 closing signal SIGTERM
+0: W0414 20:13:19.537000 56774 torch/distributed/elastic/agent/server/api.py:732] Received 15 death signal, shutting down workers
+5: W0414 20:13:19.538000 57814 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 58252 closing signal SIGTERM
+7: W0414 20:13:19.538000 5141 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 5580 closing signal SIGTERM
+1: W0414 20:13:19.539000 126185 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 126612 closing signal SIGTERM
+6: W0414 20:13:19.539000 94022 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 94459 closing signal SIGTERM
+3: W0414 20:13:19.539000 43219 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 43640 closing signal SIGTERM
+2: W0414 20:13:19.539000 72585 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 73007 closing signal SIGTERM
+0: W0414 20:13:19.539000 56774 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 57210 closing signal SIGTERM
+4: W0414 20:13:19.539000 53243 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 53678 closing signal SIGTERM
+8: W0414 20:13:19.539000 133380 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 133823 closing signal SIGTERM
+5: W0414 20:13:19.539000 57814 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 58253 closing signal SIGTERM
+0: W0414 20:13:19.540000 56774 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 57211 closing signal SIGTERM
+4: W0414 20:13:19.540000 53243 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 53679 closing signal SIGTERM
+4: W0414 20:13:19.540000 53243 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 53680 closing signal SIGTERM
+3: W0414 20:13:19.540000 43219 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 43641 closing signal SIGTERM
+1: W0414 20:13:19.539000 126185 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 126613 closing signal SIGTERM
+1: W0414 20:13:19.540000 126185 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 126614 closing signal SIGTERM
+6: W0414 20:13:19.539000 94022 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 94460 closing signal SIGTERM
+6: W0414 20:13:19.540000 94022 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 94461 closing signal SIGTERM
+0: W0414 20:13:19.540000 56774 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 57212 closing signal SIGTERM
+0: W0414 20:13:19.541000 56774 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 57213 closing signal SIGTERM
+8: W0414 20:13:19.540000 133380 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 133824 closing signal SIGTERM
+8: W0414 20:13:19.540000 133380 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 133825 closing signal SIGTERM
+2: W0414 20:13:19.539000 72585 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 73008 closing signal SIGTERM
+2: W0414 20:13:19.540000 72585 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 73009 closing signal SIGTERM
+5: W0414 20:13:19.540000 57814 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 58254 closing signal SIGTERM
+5: W0414 20:13:19.540000 57814 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 58255 closing signal SIGTERM
+7: W0414 20:13:19.539000 5141 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 5581 closing signal SIGTERM
+7: W0414 20:13:19.540000 5141 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 5582 closing signal SIGTERM
+7: W0414 20:13:19.541000 5141 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 5583 closing signal SIGTERM
+3: W0414 20:13:19.540000 43219 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 43642 closing signal SIGTERM
+3: W0414 20:13:19.541000 43219 torch/distributed/elastic/multiprocessing/api.py:906] Sending process 43643 closing signal SIGTERM
+0: [default0]:Stack (most recent call first):
+0: [default0]:  <no Python frame>
+0: [default1]:Stack (most recent call first):
+0: [default1]:  <no Python frame>
+0: [default3]:Stack (most recent call first):
+0: [default2]:Stack (most recent call first):
+0: [default2]:  <no Python frame>
+0: [default3]:  <no Python frame>
+2: [default0]:Stack (most recent call first):
+2: [default0]:  <no Python frame>
+2: [default1]:Stack (most recent call first):
+2: [default1]:  <no Python frame>
+2: [default2]:Stack (most recent call first):
+2: [default2]:  <no Python frame>
+2: [default3]:Stack (most recent call first):
+2: [default3]:  <no Python frame>
+7: [default3]:Stack (most recent call first):
+7: [default3]:  <no Python frame>
+7: [default2]:Stack (most recent call first):
+7: [default2]:  <no Python frame>
+7: [default0]:Stack (most recent call first):
+7: [default0]:  <no Python frame>
+7: [default1]:Stack (most recent call first):
+7: [default1]:  <no Python frame>
+3: [default3]:Stack (most recent call first):
+3: [default3]:  <no Python frame>
+3: [default1]:Stack (most recent call first):
+3: [default1]:  <no Python frame>
+1: [default3]:Stack (most recent call first):
+1: [default3]:  <no Python frame>
+1: [default2]:Stack (most recent call first):
+1: [default2]:  <no Python frame>
+1: [default0]:Stack (most recent call first):
+1: [default0]:  <no Python frame>
+1: [default1]:Stack (most recent call first):
+1: [default1]:  <no Python frame>
+4: [default2]:Stack (most recent call first):
+4: [default0]:Stack (most recent call first):
+4: [default0]:  <no Python frame>
+4: [default1]:Stack (most recent call first):
+4: [default1]:  <no Python frame>
+4: [default2]:  <no Python frame>
+4: [default3]:Stack (most recent call first):
+4: [default3]:  <no Python frame>
+8: [default3]:Stack (most recent call first):
+8: [default0]:Stack (most recent call first):
+8: [default3]:  <no Python frame>
+8: [default0]:  <no Python frame>
+5: [default0]:Stack (most recent call first):
+5: [default1]:Stack (most recent call first):
+5: [default0]:  <no Python frame>
+5: [default1]:  <no Python frame>
+5: [default2]:Stack (most recent call first):
+5: [default2]:  <no Python frame>
+8: [default2]:Stack (most recent call first):
+8: [default2]:  <no Python frame>
+6: [default2]:Stack (most recent call first):
+6: [default1]:Stack (most recent call first):
+6: [default1]:  <no Python frame>
+6: [default2]:  <no Python frame>
+6: [default0]:Stack (most recent call first):
+6: [default0]:  <no Python frame>
+6: [default3]:Stack (most recent call first):
+6: [default3]:  <no Python frame>
+5: [default3]:Stack (most recent call first):
+5: [default3]:  <no Python frame>
+3: [default2]:Stack (most recent call first):
+3: [default2]:  <no Python frame>
+3: [default0]:Stack (most recent call first):
+3: [default0]:  <no Python frame>
+8: [default1]:Stack (most recent call first):
+8: [default1]:  <no Python frame>
+7: Traceback (most recent call last):
+7:   File "/usr/local/bin/torchrun", line 7, in <module>
+7:     sys.exit(main())
+7:              ^^^^^^
+7:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 357, in wrapper
+7:     return f(*args, **kwargs)
+7:            ^^^^^^^^^^^^^^^^^^
+7:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 936, in main
+7:     run(args)
+7:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 927, in run
+7:     elastic_launch(
+7:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 151, in __call__
+7:     return launch_agent(self._config, self._entrypoint, list(args))
+7:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+7:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 279, in launch_agent
+7:     result = agent.run()
+7:              ^^^^^^^^^^^
+7:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/metrics/api.py", line 138, in wrapper
+7:     result = f(*args, **kwargs)
+7:              ^^^^^^^^^^^^^^^^^^
+7:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/agent/server/api.py", line 724, in run
+7:     result = self._invoke_run(role)
+7:              ^^^^^^^^^^^^^^^^^^^^^^
+7:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/agent/server/api.py", line 888, in _invoke_run
+7:     time.sleep(monitor_interval)
+7:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/api.py", line 85, in _terminate_process_handler
+7:     raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+7: torch.distributed.elastic.multiprocessing.api.SignalException: Process 5141 got signal: 15
+1: Traceback (most recent call last):
+1:   File "/usr/local/bin/torchrun", line 7, in <module>
+1:     sys.exit(main())
+1:              ^^^^^^
+1:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 357, in wrapper
+1:     return f(*args, **kwargs)
+1:            ^^^^^^^^^^^^^^^^^^
+1:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 936, in main
+1:     run(args)
+1:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 927, in run
+1:     elastic_launch(
+1:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 151, in __call__
+8: Traceback (most recent call last):
+8:   File "/usr/local/bin/torchrun", line 7, in <module>
+1:     return launch_agent(self._config, self._entrypoint, list(args))
+1:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 279, in launch_agent
+8:     sys.exit(main())
+8:              ^^^^^^
+8:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 357, in wrapper
+1:     result = agent.run()
+1:              ^^^^^^^^^^^
+1:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/metrics/api.py", line 138, in wrapper
+1:     result = f(*args, **kwargs)
+1:              ^^^^^^^^^^^^^^^^^^
+1:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/agent/server/api.py", line 724, in run
+8:     return f(*args, **kwargs)
+8:            ^^^^^^^^^^^^^^^^^^
+8:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 936, in main
+1:     result = self._invoke_run(role)
+1:              ^^^^^^^^^^^^^^^^^^^^^^
+1:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/agent/server/api.py", line 888, in _invoke_run
+1:     time.sleep(monitor_interval)
+1:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/api.py", line 85, in _terminate_process_handler
+8:     run(args)
+8:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 927, in run
+1:     raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+1: torch.distributed.elastic.multiprocessing.api.SignalException: Process 126185 got signal: 15
+5: Traceback (most recent call last):
+5:   File "/usr/local/bin/torchrun", line 7, in <module>
+8:     elastic_launch(
+8:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 151, in __call__
+8:     return launch_agent(self._config, self._entrypoint, list(args))
+5:     sys.exit(main())
+8:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+8:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 279, in launch_agent
+5:              ^^^^^^
+5:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 357, in wrapper
+8:     result = agent.run()
+6: Traceback (most recent call last):
+6:   File "/usr/local/bin/torchrun", line 7, in <module>
+5:     return f(*args, **kwargs)
+8:              ^^^^^^^^^^^
+8:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/metrics/api.py", line 138, in wrapper
+5:            ^^^^^^^^^^^^^^^^^^
+5:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 936, in main
+8:     result = f(*args, **kwargs)
+8:              ^^^^^^^^^^^^^^^^^^
+8:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/agent/server/api.py", line 724, in run
+6:     sys.exit(main())
+6:              ^^^^^^
+6:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 357, in wrapper
+5:     run(args)
+5:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 927, in run
+8:     result = self._invoke_run(role)
+8:              ^^^^^^^^^^^^^^^^^^^^^^
+8:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/agent/server/api.py", line 888, in _invoke_run
+6:     return f(*args, **kwargs)
+6:            ^^^^^^^^^^^^^^^^^^
+6:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 936, in main
+8:     time.sleep(monitor_interval)
+8:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/api.py", line 85, in _terminate_process_handler
+5:     elastic_launch(
+5:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 151, in __call__
+6:     run(args)
+6:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 927, in run
+5:     return launch_agent(self._config, self._entrypoint, list(args))
+8:     raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+5:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+5:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 279, in launch_agent
+8: torch.distributed.elastic.multiprocessing.api.SignalException: Process 133380 got signal: 15
+6:     elastic_launch(
+6:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 151, in __call__
+5:     result = agent.run()
+5:              ^^^^^^^^^^^
+5:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/metrics/api.py", line 138, in wrapper
+6:     return launch_agent(self._config, self._entrypoint, list(args))
+6:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+6:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 279, in launch_agent
+5:     result = f(*args, **kwargs)
+5:              ^^^^^^^^^^^^^^^^^^
+5:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/agent/server/api.py", line 724, in run
+6:     result = agent.run()
+6:              ^^^^^^^^^^^
+6:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/metrics/api.py", line 138, in wrapper
+6:     result = f(*args, **kwargs)
+6:              ^^^^^^^^^^^^^^^^^^
+6:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/agent/server/api.py", line 724, in run
+5:     result = self._invoke_run(role)
+5:              ^^^^^^^^^^^^^^^^^^^^^^
+5:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/agent/server/api.py", line 888, in _invoke_run
+6:     result = self._invoke_run(role)
+6:              ^^^^^^^^^^^^^^^^^^^^^^
+6:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/agent/server/api.py", line 888, in _invoke_run
+5:     time.sleep(monitor_interval)
+6:     time.sleep(monitor_interval)
+5:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/api.py", line 85, in _terminate_process_handler
+6:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/api.py", line 85, in _terminate_process_handler
+6:     raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+5:     raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+6: torch.distributed.elastic.multiprocessing.api.SignalException: Process 94022 got signal: 15
+5: torch.distributed.elastic.multiprocessing.api.SignalException: Process 57814 got signal: 15
+0: Traceback (most recent call last):
+0:   File "/usr/local/bin/torchrun", line 7, in <module>
+0:     sys.exit(main())
+0:              ^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 357, in wrapper
+0:     return f(*args, **kwargs)
+0:            ^^^^^^^^^^^^^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 936, in main
+0:     run(args)
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 927, in run
+0:     elastic_launch(
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 151, in __call__
+0:     return launch_agent(self._config, self._entrypoint, list(args))
+0:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 279, in launch_agent
+0:     result = agent.run()
+0:              ^^^^^^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/metrics/api.py", line 138, in wrapper
+0:     result = f(*args, **kwargs)
+0:              ^^^^^^^^^^^^^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/agent/server/api.py", line 724, in run
+0:     result = self._invoke_run(role)
+0:              ^^^^^^^^^^^^^^^^^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/agent/server/api.py", line 888, in _invoke_run
+0:     time.sleep(monitor_interval)
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/api.py", line 85, in _terminate_process_handler
+0:     raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+0: torch.distributed.elastic.multiprocessing.api.SignalException: Process 56774 got signal: 15
+2: Traceback (most recent call last):
+2:   File "/usr/local/bin/torchrun", line 7, in <module>
+2:     sys.exit(main())
+2:              ^^^^^^
+2:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 357, in wrapper
+2:     return f(*args, **kwargs)
+2:            ^^^^^^^^^^^^^^^^^^
+2:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 936, in main
+2:     run(args)
+2:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 927, in run
+2:     elastic_launch(
+2:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 151, in __call__
+2:     return launch_agent(self._config, self._entrypoint, list(args))
+2:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 279, in launch_agent
+2:     result = agent.run()
+2:              ^^^^^^^^^^^
+2:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/metrics/api.py", line 138, in wrapper
+2:     result = f(*args, **kwargs)
+2:              ^^^^^^^^^^^^^^^^^^
+2:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/agent/server/api.py", line 724, in run
+2:     result = self._invoke_run(role)
+2:              ^^^^^^^^^^^^^^^^^^^^^^
+2:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/agent/server/api.py", line 888, in _invoke_run
+2:     time.sleep(monitor_interval)
+2:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/api.py", line 85, in _terminate_process_handler
+2:     raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+2: torch.distributed.elastic.multiprocessing.api.SignalException: Process 72585 got signal: 15
+4: Traceback (most recent call last):
+4:   File "/usr/local/bin/torchrun", line 7, in <module>
+4:     sys.exit(main())
+4:              ^^^^^^
+4:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 357, in wrapper
+4:     return f(*args, **kwargs)
+4:            ^^^^^^^^^^^^^^^^^^
+4:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 936, in main
+4:     run(args)
+4:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 927, in run
+4:     elastic_launch(
+4:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 151, in __call__
+4:     return launch_agent(self._config, self._entrypoint, list(args))
+4:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+4:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 279, in launch_agent
+4:     result = agent.run()
+4:              ^^^^^^^^^^^
+4:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/metrics/api.py", line 138, in wrapper
+4:     result = f(*args, **kwargs)
+4:              ^^^^^^^^^^^^^^^^^^
+4:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/agent/server/api.py", line 724, in run
+4:     result = self._invoke_run(role)
+4:              ^^^^^^^^^^^^^^^^^^^^^^
+4:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/agent/server/api.py", line 888, in _invoke_run
+4:     time.sleep(monitor_interval)
+4:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/api.py", line 85, in _terminate_process_handler
+4:     raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+4: torch.distributed.elastic.multiprocessing.api.SignalException: Process 53243 got signal: 15
+3: Traceback (most recent call last):
+3:   File "/usr/local/bin/torchrun", line 7, in <module>
+3:     sys.exit(main())
+3:              ^^^^^^
+3:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 357, in wrapper
+3:     return f(*args, **kwargs)
+3:            ^^^^^^^^^^^^^^^^^^
+3:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 936, in main
+3:     run(args)
+3:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 927, in run
+3:     elastic_launch(
+3:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 151, in __call__
+3:     return launch_agent(self._config, self._entrypoint, list(args))
+3:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+3:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 279, in launch_agent
+3:     result = agent.run()
+3:              ^^^^^^^^^^^
+3:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/metrics/api.py", line 138, in wrapper
+3:     result = f(*args, **kwargs)
+3:              ^^^^^^^^^^^^^^^^^^
+3:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/agent/server/api.py", line 724, in run
+3:     result = self._invoke_run(role)
+3:              ^^^^^^^^^^^^^^^^^^^^^^
+3:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/agent/server/api.py", line 888, in _invoke_run
+3:     time.sleep(monitor_interval)
+3:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/api.py", line 85, in _terminate_process_handler
+3:     raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+3: torch.distributed.elastic.multiprocessing.api.SignalException: Process 43219 got signal: 15
+srun: error: nid007496: task 6: Exited with exit code 1
+srun: error: nid006844: task 2: Exited with exit code 1
+srun: error: nid007514: task 7: Exited with exit code 1
+srun: error: nid006676: task 1: Exited with exit code 1
+srun: error: nid006664: task 0: Exited with exit code 1
+srun: error: nid006863: task 3: Exited with exit code 1
+srun: error: nid007495: task 5: Exited with exit code 1
+srun: error: nid007521: task 8: Exited with exit code 1
+srun: error: nid007479: task 4: Exited with exit code 1

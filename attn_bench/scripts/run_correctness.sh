@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Runs the correctness benchmark with parallelism args set as env vars (see submissions/submit_correctness_1node_1gpu.slurm)
+# Runs the correctness benchmark with parallelism args set as env vars (see submissions/test_correctness_1node_1gpu.slurm)
 # All the default args about the model and the training are set here.
 
 # Args:
@@ -72,7 +72,7 @@ echo "[$(date)] GPU memory logged to ${GPU_MEM_LOGGING}"
 # export TORCH_NCCL_AVOID_RECORD_STREAMS=1  # now the default behaviour in PyTorch, no longer needs to be set explicitly
 export TORCH_NCCL_ASYNC_ERROR_HANDLING=1  # surface NCCL errors immediately instead of hanging
 export CUDA_DEVICE_MAX_CONNECTIONS=1       # limit CUDA kernel launch queues to improve gradient communication overlap
-export NCCL_IB_TIMEOUT=22                 # increasing the default timeout (2^22 ms ~4s), avoids false failures under network load
+export NCCL_IB_TIMEOUT=19                 # increasing the default timeout (2^19 * 4.096µs ≈ 36min), avoids false failures under network load
 export OMP_NUM_THREADS=$((SLURM_CPUS_PER_TASK / SLURM_GPUS_PER_NODE))  # CPU threads per GPU for OpenMP operations
 
 TP_SIZE="${TP_SIZE:-1}"
@@ -214,7 +214,7 @@ BENCHMARK_ARGS=(
 # CMD_PREFIX="numactl --membind=0-3"  # bind memory to NUMA nodes for better locality (disabled until node NUMA topology is verified)
 CMD_PREFIX=""
 
-TRAINING_CMD="torchrun ${TORCHRUN_ARGS[*]} ${ATTN_BENCH_ROOT}/benchmarks/correctness.py \
+TRAINING_CMD="torchrun ${TORCHRUN_ARGS[*]} ${ATTN_BENCH_ROOT}/tests/correctness.py \
     ${BENCHMARK_ARGS[*]} \
     ${TRANSFORMER_ENGINE_ARGS[*]} \
     ${DISTRIBUTED_ARGS[*]} \
@@ -261,6 +261,12 @@ SEP=$(printf '=%.0s' {1..100})
     echo -e "$(date)"
     echo -e "${SEP}"
     echo -e "\nCMD: ${CMD_PREFIX} ${TRAINING_CMD}"
+    echo -e "${SEP}"
+    echo -e "\nSlurm file: $0\n"
+    cat "$0"
+    echo -e "${SEP}"
+    echo -e "\nTOML file: ${SLURM_SPANK__SLURM_SPANK_OPTION_pyxis_environment}\n"
+    cat "${SLURM_SPANK__SLURM_SPANK_OPTION_pyxis_environment}"
     echo -e "${SEP}"
     echo -e "\nNODES: $(scontrol show hostnames "${SLURM_JOB_NODELIST}")"
     echo -e "${SEP}"

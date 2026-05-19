@@ -1,0 +1,86 @@
+START TIME: Tue Apr 14 18:37:36 CEST 2026
+[Tue Apr 14 18:37:59 CEST 2026] W&B logging disabled.
+Training: fineweb-llama-test nodes=10 gpus_per_node=4 gbs=80 steps=500
+[Tue Apr 14 18:38:04 CEST 2026] Launching training...
+9: [default3]:INFO 04-14 18:38:52 [__init__.py:241] Automatically detected platform cuda.
+9: [default0]:INFO 04-14 18:38:52 [__init__.py:241] Automatically detected platform cuda.
+9: [default2]:INFO 04-14 18:38:52 [__init__.py:241] Automatically detected platform cuda.
+6: [default2]:INFO 04-14 18:38:52 [__init__.py:241] Automatically detected platform cuda.
+6: [default1]:INFO 04-14 18:38:52 [__init__.py:241] Automatically detected platform cuda.
+7: [default0]:INFO 04-14 18:38:52 [__init__.py:241] Automatically detected platform cuda.
+7: [default1]:INFO 04-14 18:38:52 [__init__.py:241] Automatically detected platform cuda.
+9: [default1]:INFO 04-14 18:38:52 [__init__.py:241] Automatically detected platform cuda.
+0: [default3]:INFO 04-14 18:38:52 [__init__.py:241] Automatically detected platform cuda.
+3: [default0]:INFO 04-14 18:38:53 [__init__.py:241] Automatically detected platform cuda.
+3: [default3]:INFO 04-14 18:38:53 [__init__.py:241] Automatically detected platform cuda.
+3: [default1]:INFO 04-14 18:38:53 [__init__.py:241] Automatically detected platform cuda.
+3: [default2]:INFO 04-14 18:38:53 [__init__.py:241] Automatically detected platform cuda.
+8: [default1]:INFO 04-14 18:38:53 [__init__.py:241] Automatically detected platform cuda.
+7: [default2]:INFO 04-14 18:38:53 [__init__.py:241] Automatically detected platform cuda.
+6: [default0]:INFO 04-14 18:38:53 [__init__.py:241] Automatically detected platform cuda.
+6: [default3]:INFO 04-14 18:38:53 [__init__.py:241] Automatically detected platform cuda.
+7: [default3]:INFO 04-14 18:38:53 [__init__.py:241] Automatically detected platform cuda.
+8: [default3]:INFO 04-14 18:38:53 [__init__.py:241] Automatically detected platform cuda.
+8: [default2]:INFO 04-14 18:38:53 [__init__.py:241] Automatically detected platform cuda.
+8: [default0]:INFO 04-14 18:38:53 [__init__.py:241] Automatically detected platform cuda.
+0: [default1]:INFO 04-14 18:38:53 [__init__.py:241] Automatically detected platform cuda.
+0: [default0]:INFO 04-14 18:38:53 [__init__.py:241] Automatically detected platform cuda.
+0: [default2]:INFO 04-14 18:38:53 [__init__.py:241] Automatically detected platform cuda.
+5: [default0]:INFO 04-14 18:38:54 [__init__.py:241] Automatically detected platform cuda.
+5: [default2]:INFO 04-14 18:38:54 [__init__.py:241] Automatically detected platform cuda.
+5: [default3]:INFO 04-14 18:38:54 [__init__.py:241] Automatically detected platform cuda.
+5: [default1]:INFO 04-14 18:38:54 [__init__.py:241] Automatically detected platform cuda.
+4: [default3]:INFO 04-14 18:38:55 [__init__.py:241] Automatically detected platform cuda.
+4: [default0]:INFO 04-14 18:38:55 [__init__.py:241] Automatically detected platform cuda.
+2: [default0]:INFO 04-14 18:38:55 [__init__.py:241] Automatically detected platform cuda.
+2: [default3]:INFO 04-14 18:38:55 [__init__.py:241] Automatically detected platform cuda.
+2: [default1]:INFO 04-14 18:38:55 [__init__.py:241] Automatically detected platform cuda.
+2: [default2]:INFO 04-14 18:38:55 [__init__.py:241] Automatically detected platform cuda.
+4: [default1]:INFO 04-14 18:38:55 [__init__.py:241] Automatically detected platform cuda.
+4: [default2]:INFO 04-14 18:38:55 [__init__.py:241] Automatically detected platform cuda.
+1: [default0]:INFO 04-14 18:38:55 [__init__.py:241] Automatically detected platform cuda.
+1: [default3]:INFO 04-14 18:38:55 [__init__.py:241] Automatically detected platform cuda.
+1: [default1]:INFO 04-14 18:38:55 [__init__.py:241] Automatically detected platform cuda.
+1: [default2]:INFO 04-14 18:38:55 [__init__.py:241] Automatically detected platform cuda.
+3: [default3]:LANG_RL Log directory: None
+3: [default1]:LANG_RL Log directory: None
+3: [default0]:LANG_RL Log directory: None
+3: [default2]:LANG_RL Log directory: None
+0: [default3]:LANG_RL Log directory: None
+0: [default0]:LANG_RL Log directory: None
+0: [default1]:LANG_RL Log directory: None
+0: [default2]:LANG_RL Log directory: None
+6: [default2]:LANG_RL Log directory: None
+6: [default0]:LANG_RL Log directory: None
+6: [default1]:LANG_RL Log directory: None
+7: [default0]:LANG_RL Log directory: None
+7: [default1]:LANG_RL Log directory: None
+7: [default3]:LANG_RL Log directory: None
+6: [default3]:LANG_RL Log directory: None
+8: [default3]:LANG_RL Log directory: None
+8: [default1]:LANG_RL Log directory: None
+8: [default0]:LANG_RL Log directory: None
+8: [default2]:LANG_RL Log directory: None
+7: [default2]:LANG_RL Log directory: None
+9: [default0]:LANG_RL Log directory: None
+9: [default3]:LANG_RL Log directory: None
+9: [default2]:LANG_RL Log directory: None
+9: [default1]:LANG_RL Log directory: None
+5: [default0]:LANG_RL Log directory: None
+5: [default1]:LANG_RL Log directory: None
+5: [default3]:LANG_RL Log directory: None
+5: [default2]:LANG_RL Log directory: None
+4: [default3]:LANG_RL Log directory: None
+4: [default0]:LANG_RL Log directory: None
+4: [default2]:LANG_RL Log directory: None
+1: [default3]:LANG_RL Log directory: None
+1: [default1]:LANG_RL Log directory: None
+1: [default2]:LANG_RL Log directory: None
+1: [default0]:LANG_RL Log directory: None
+2: [default3]:LANG_RL Log directory: None
+2: [default0]:LANG_RL Log directory: None
+2: [default1]:LANG_RL Log directory: None
+2: [default2]:LANG_RL Log directory: None
+4: [default1]:LANG_RL Log directory: None
+END TIME: Tue Apr 14 18:39:02 CEST 2026
+Done. Results in /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/results/pretrain/fineweb-160B/llama3-1b-fineweb160B-test

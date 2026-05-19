@@ -1,0 +1,30 @@
+START TIME: Mon May 11 18:48:28 CEST 2026
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loading dataset from /iopsstor/scratch/cscs/elyulina/datasets/raw/gutenberg-laion/raw-hf-full...
+Loaded: 56,982 books, columns: ['id', 'epub', 'gutenberg_id', 'title', 'author', 'language', 'subjects', 'date_published', 'date_converted', 'source', 'rights', 'contributor', 'identifier']
+Init columns stats -> /iopsstor/scratch/cscs/elyulina/datasets/preprocessing/gutenberg-laion/hf-full-output/stats/01_init_columns/init_columns.txt
+  [02_extract_text] checkpoint saved (35.14 GB)
+Empty text (2) -> /iopsstor/scratch/cscs/elyulina/datasets/preprocessing/gutenberg-laion/hf-full-output/stats/02_extract_text/empty_text.txt
+Duplicate IDs (767) -> /iopsstor/scratch/cscs/elyulina/datasets/preprocessing/gutenberg-laion/hf-full-output/stats/03_dedup_id/duplicate_ids.txt
+Duplicate titles (923) -> /iopsstor/scratch/cscs/elyulina/datasets/preprocessing/gutenberg-laion/hf-full-output/stats/04_dedup_title/duplicate_titles.txt
+Embedding 55289 titles...
+  [05_add_title_embeddings] checkpoint saved (35.31 GB)
+Clustering 55289 active titles...
+Cluster stats -> /iopsstor/scratch/cscs/elyulina/datasets/preprocessing/gutenberg-laion/hf-full-output/stats/06_build_title_clusters/cluster_stats.txt
+Gutenberg strip stats (1376 suspicious books) -> /iopsstor/scratch/cscs/elyulina/datasets/preprocessing/gutenberg-laion/hf-full-output/stats/07_strip_gutenberg/gutenberg_strip_stats.txt
+Gutenberg position histogram -> /iopsstor/scratch/cscs/elyulina/datasets/preprocessing/gutenberg-laion/hf-full-output/stats/07_strip_gutenberg/gutenberg_positions.png
+  [08_normalize_text] checkpoint saved (34.12 GB)
+Content bounds samples (300 books) -> /iopsstor/scratch/cscs/elyulina/datasets/preprocessing/gutenberg-laion/hf-full-output/stats/09_set_content_bounds/content_bounds_samples.txt
+Too-short (8594) -> /iopsstor/scratch/cscs/elyulina/datasets/preprocessing/gutenberg-laion/hf-full-output/stats/10_mark_too_short/too_short.txt
+  [12_compute_content_chunk_sigs] checkpoint saved (36.99 GB)
+content_dedup: 3261 duplicates found (sim=0.3, min_matches=1)
+Content dedup stats -> /iopsstor/scratch/cscs/elyulina/datasets/preprocessing/gutenberg-laion/hf-full-output/stats/13_dedup_content_minhash/content_dedup_stats.txt
+Content match HTML files -> /iopsstor/scratch/cscs/elyulina/datasets/preprocessing/gutenberg-laion/hf-full-output/stats/13_dedup_content_minhash/matches
+  [13_dedup_content_minhash] checkpoint saved (36.99 GB)
+  [14_sample_window] checkpoint saved (36.99 GB)
+  [15_find_excerpt_start] checkpoint saved (36.99 GB)
+No-excerpt-start examples (42) -> /iopsstor/scratch/cscs/elyulina/datasets/preprocessing/gutenberg-laion/hf-full-output/stats/15_find_excerpt_start/no_excerpt_start.txt
+  [16_tokenize_excerpt] checkpoint saved (38.88 GB)
+Not-enough-tokens (119) -> /iopsstor/scratch/cscs/elyulina/datasets/preprocessing/gutenberg-laion/hf-full-output/stats/16_tokenize_excerpt/not_enough_tokens.txt
+Verify failures -> /iopsstor/scratch/cscs/elyulina/datasets/preprocessing/gutenberg-laion/hf-full-output/stats/17_verify_tokenization/verify_failures.txt
+  [18_compute_excerpt_chunk_sigs] checkpoint saved (40.49 GB)
