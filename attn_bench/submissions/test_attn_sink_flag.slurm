@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --account=infra01
-#SBATCH --time=00:10:00
-#SBATCH --job-name=test-xdoc-attn-sink-te
+#SBATCH --time=00:05:00
+#SBATCH --job-name=test-attn-sink-flag
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
 #SBATCH --nodes=1
@@ -12,17 +12,15 @@
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=clariden-jobs-elyulin-aaaauapxybdkdx42ppvef2c2eq@swissai-initiative.slack.com
 
-# Cross-document attention masking test for sink/te (TP=1, 1 node).
-#
-# Uses SinkTEAttention (TEDotProductAttention with softmax_type=learnable) with packed sequences.
-# Cross-doc masking is enforced via --use-packed-seq-params (cu_seqlens), not a 2D mask.
+# Sink attention via --softmax-type learnable (native Megatron flag, no module swap) with --use-packed-seq-params.
+# Runs all three test suites: xdoc and sink should PASS, gated should FAIL.
 #
 # Usage:
-#   sbatch attn_bench/submissions/test_xdoc_attn_sink_te.slurm
+#   sbatch attn_bench/submissions/test_attn_sink_flag.slurm
 
 echo "START TIME: $(date)"
 
-CONTAINER_ENV=nemo
+CONTAINER_ENV=nemo_26
 
 MEGATRON_LM_DIR=/iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark
 cd $MEGATRON_LM_DIR
@@ -31,16 +29,13 @@ export PYTHONPATH=$MEGATRON_LM_DIR:${PYTHONPATH:-}
 ### PATHS ###
 PROJECT_NAME="test"
 PROJECT_DIR=$MEGATRON_LM_DIR/attn_bench/results/$PROJECT_NAME
-EXP_NAME=xdoc_attn_sink_te
+EXP_NAME=attn_sink_flag
 EXP_DIR=$PROJECT_DIR/$EXP_NAME
 DEBUG_DIR=$EXP_DIR/debug/$SLURM_JOB_ID
 LOGGING_DIR=$EXP_DIR/logging
 TENSORBOARD_DIR=$LOGGING_DIR/tensorboard
 
 mkdir -p $PROJECT_DIR $EXP_DIR $DEBUG_DIR $LOGGING_DIR $TENSORBOARD_DIR
-
-dump_env() { printenv | grep -v '^WANDB_API_KEY='; }
-dump_env > $DEBUG_DIR/env_before.txt
 
 ### ENV ###
 export HF_HUB_OFFLINE=1
@@ -80,7 +75,6 @@ NETWORK_SIZE_ARGS=(
 LOGGING_ARGS=(
     --log-throughput
     --log-progress
-    --log-params-norm
     --log-interval 1
     --tensorboard-dir $TENSORBOARD_DIR
     --log-timers-to-tensorboard
@@ -143,12 +137,14 @@ DATA_ARGS=(
     --mock-data
 )
 
+# Sink attention via native Megatron flag — no module swap, DotProductAttention gains softmax_offset param.
+# Expected: xdoc PASS, sink PASS, gated FAIL.
 BENCHMARK_ARGS=(
-    --attn sink
-    --impl te
+    --softmax-type learnable
+    --tests xdoc sink gated
 )
 
-TRAINING_CMD="python3 $MEGATRON_LM_DIR/attn_bench/tests/xdoc_attn_pretrain_gpt.py \
+TRAINING_CMD="python3 $MEGATRON_LM_DIR/attn_bench/tests/pretrain_gpt_native.py \
     ${TRANSFORMER_ENGINE_ARGS[@]} \
     ${NETWORK_SIZE_ARGS[@]} \
     ${LOGGING_ARGS[@]} \
@@ -181,26 +177,10 @@ ulimit -c 0
 srun -l bash -c 'echo $(hostname) $(nvidia-smi | grep -o "|\s*[0-9]*MiB")' > $DEBUG_DIR/memory_logging.txt
 cp $0 $DEBUG_DIR
 
-SEP=$(printf '=%.0s' {1..100})
-{
-    echo "$(date)"
-    echo "${SEP}"
-    echo "CMD: ${TRAINING_CMD}"
-    echo "${SEP}"
-    echo "Slurm file: $0"
-    cat "$0"
-    echo "${SEP}"
-    echo "Repo: ${MEGATRON_LM_DIR} ($(git -C ${MEGATRON_LM_DIR} rev-parse --verify HEAD))"
-    echo "${SEP}"
-    echo "$(nvidia-smi)"
-    echo "${SEP}"
-    echo "Environment Variables:"
-    dump_env
-} > "$DEBUG_DIR/compute_environment.txt"
-
 ### LAUNCH ###
-echo "xdoc attn sink/te test: seq_len=$SEQ_LEN"
-srun --ntasks=1 --environment=$CONTAINER_ENV bash -c "python3 -c 'import transformer_engine; print(\"TE version:\", transformer_engine.__version__)'"
+# grep -E "PASS|FAIL|### Test|### Summary|IMPLEMENTATION|EXPECTED" attn_bench/logs/<jobid>.out
+echo "=== IMPLEMENTATION: sink attention (--softmax-type learnable) ==="
+echo "=== EXPECTED: xdoc PASS  |  sink PASS  |  gated FAIL ==="
 echo "[$(date)] Launching..."
 
 srun \

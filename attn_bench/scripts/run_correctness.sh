@@ -266,7 +266,7 @@ SEP=$(printf '=%.0s' {1..100})
     cat "$0"
     echo -e "${SEP}"
     echo -e "\nTOML file: ${SLURM_SPANK__SLURM_SPANK_OPTION_pyxis_environment}\n"
-    cat "${SLURM_SPANK__SLURM_SPANK_OPTION_pyxis_environment}"
+    cat "${SLURM_SPANK__SLURM_SPANK_OPTION_pyxis_environment}" 2>/dev/null || true
     echo -e "${SEP}"
     echo -e "\nNODES: $(scontrol show hostnames "${SLURM_JOB_NODELIST}")"
     echo -e "${SEP}"
