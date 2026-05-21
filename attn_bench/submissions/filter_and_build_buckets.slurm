@@ -7,7 +7,7 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=32GB
-#SBATCH --time=00:30:00
+#SBATCH --time=00:15:00
 #SBATCH --environment=nemo
 #SBATCH --partition=normal
 #SBATCH --no-requeue
@@ -28,6 +28,7 @@ echo "START TIME: $(date)"
 MEGATRON_DIR=/iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark
 INPUT=/iopsstor/scratch/cscs/$USER/datasets/preprocessing/gutenberg-laion/hf-full-output/sampled_containment.jsonl
 OUTPUT=/iopsstor/scratch/cscs/$USER/datasets/preprocessing/gutenberg-laion/hf-full-output/repetition_buckets.jsonl
+UNSEEN_OUTPUT=/iopsstor/scratch/cscs/$USER/datasets/preprocessing/gutenberg-laion/hf-full-output/unseen_buckets.jsonl
 STATS_DIR=/iopsstor/scratch/cscs/$USER/datasets/preprocessing/gutenberg-laion/hf-full-output/stats/repetition-buckets
 
 export PYTHONPATH=$MEGATRON_DIR:${PYTHONPATH:-}
@@ -37,14 +38,16 @@ cd $MEGATRON_DIR
 ### FILTER AND BUILD BUCKETS ###
 
 python3 -u attn_bench/data_processing/books/filter_and_build_buckets.py \
-    --input      $INPUT \
-    --output     $OUTPUT \
-    --stats-dir  $STATS_DIR \
-    --ppl-lo-q   10 \
-    --ppl-hi-q   90 \
-    --seed       42
+    --input          $INPUT \
+    --output         $OUTPUT \
+    --unseen-output  $UNSEEN_OUTPUT \
+    --stats-dir      $STATS_DIR \
+    --ppl-lo-q       10 \
+    --ppl-hi-q       90 \
+    --seed           42
 
 
 echo "END TIME: $(date)"
-echo "Done. Output in $OUTPUT"
+echo "Done. Training output in $OUTPUT"
+echo "Done. Unseen output in $UNSEEN_OUTPUT"
 echo "Sample in $STATS_DIR/filtered_sample_300.txt"

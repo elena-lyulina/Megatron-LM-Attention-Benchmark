@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --account=infra01
 #SBATCH --time=8:00:00
-#SBATCH --job-name=pretrain-llama1B-full-attn-fineweb40B-gutenberg3B
+#SBATCH --job-name=pretrain-llama1B-off-by-one-attn-fineweb40B-gutenberg3B
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
 #SBATCH --nodes=14
@@ -11,14 +11,16 @@
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=clariden-jobs-elyulin-aaaauapxybdkdx42ppvef2c2eq@swissai-initiative.slack.com
 
-# Train a standard LLaMA 3.2 1B model (full attention, no gate, no sink) on a blended dataset:
+# Train a LLaMA 3.2 1B model with off-by-one attention (--softmax-type off-by-one) on a blended dataset:
 #   - FineWeb-Edu-Dedup 40B (0.25 partition of 160B)  — 40,038,865,413 tokens
 #   - Gutenberg (all rep levels, rep_1_256)           — 2,762,833,920  tokens
 #   - Total                                           — 42,801,699,333 tokens (~42.8B)
-# Serves as the full-attention baseline for comparison with gated and sink attention variants.
+# Off-by-one attention variant for comparison with full, gated, and sink attention baselines.
+# Off-by-one is sink attention with a fixed (non-learnable) sink logit of 0:
+#   denominator = 1 + sum_j exp(x_j)  instead of sum_j exp(x_j)
 #
 # Usage:
-#   sbatch attn_bench/submissions/pretrain_llama3_1b_full_attn_fineweb40B_gutenberg3B.slurm
+#   sbatch attn_bench/submissions/pretrain_llama3_1b_off_by_one_attn_fineweb40B_gutenberg3B.slurm
 
 echo "START TIME: $(date)"
 
@@ -85,7 +87,7 @@ PYTHON_CACHE_DIR=/tmp/.python_cache
 # Logging directories & artifacts
 PROJECT_NAME="fineweb-40B_gutenberg-3B"
 PROJECT_DIR=$MEGATRON_LM_DIR/attn_bench/results/pretrain/$PROJECT_NAME
-EXP_NAME="llama3-1b-full-attn-fineweb40B-gutenberg3B"
+EXP_NAME="llama3-1b-off-by-one-attn-fineweb40B-gutenberg3B"
 EXP_DIR=$PROJECT_DIR/$EXP_NAME
 CKPT_DIR=$EXP_DIR/checkpoints
 TRIGGER_DIR=$EXP_DIR/triggers
@@ -274,6 +276,13 @@ DATA_ARGS=(
 #CMD_PREFIX="numactl --membind=0-3"
 
 
+
+### ATTENTION ARGS ###
+
+ATTENTION_ARGS=(
+    --softmax-type off-by-one
+)
+
 ### TRAINING CMD ###
 
 TRAINING_CMD="python3 $MEGATRON_LM_DIR/pretrain_gpt.py \
@@ -289,7 +298,8 @@ TRAINING_CMD="python3 $MEGATRON_LM_DIR/pretrain_gpt.py \
     ${DISTRIBUTED_ARGS[@]} \
     ${TOKENIZER_ARGS[@]} \
     ${VOCAB_ARGS[@]} \
-    ${DATA_ARGS[@]}"
+    ${DATA_ARGS[@]} \
+    ${ATTENTION_ARGS[@]}"
 
 # W&B Logging
 if [ -n "$WANDB_API_KEY" ]; then
@@ -373,7 +383,7 @@ SEP=$(printf '=%.0s' {1..100})
 
 ### LAUNCH ###
 
-echo "Training: llama3-1b full-attn fineweb40B+gutenberg3B  nodes=${SLURM_NNODES}  gbs=${GBS}  steps=${TRAINING_STEPS}  datasets=${#DATA_PATH_LIST[@]}"
+echo "Training: llama3-1b off-by-one-attn fineweb40B+gutenberg3B  nodes=${SLURM_NNODES}  gbs=${GBS}  steps=${TRAINING_STEPS}  datasets=${#DATA_PATH_LIST[@]}"
 echo "[$(date)] Launching training..."
 
 srun \
