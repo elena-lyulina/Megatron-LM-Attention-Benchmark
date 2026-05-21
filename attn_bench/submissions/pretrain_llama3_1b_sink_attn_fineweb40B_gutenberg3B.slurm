@@ -44,7 +44,7 @@ fi
 # no weights — Megatron blends proportionally by sequence count = token count (all seqs are 8192 tokens)
 # 40,038,865,413 tokens
 FINEWEB_DIR="/iopsstor/scratch/cscs/$USER/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_0.25"
-# 3,068,420,096 tokens
+# 2,762,833,920 tokens
 GUTENBERG_DIR="/iopsstor/scratch/cscs/$USER/datasets/tokenized/gutenberg_rep_1_256"
 
 DATA_PATH_LIST=($(find -L $FINEWEB_DIR $GUTENBERG_DIR -name '*.bin' | sed 's/\.bin$//' | sort))
@@ -63,10 +63,10 @@ SEQ_LEN=8192
 MBS=4
 # seq_length * MBS * DP * GAS = 8192 * 4 * 28 * 3 = 2.75 M tokens/step
 GBS=336
-# 40,038,865,413 (fineweb 40B) + 3,068,420,096 (gutenberg 3B) = 43,107,285,509 tokens
-TARGET_TOKENS=43107285509
+# 40,038,865,413 (fineweb 40B) + 2,762,833,920 (gutenberg 3B) = 42,801,699,333 tokens
+TARGET_TOKENS=42801699333
 #  tokens/step = GBS × SEQ_LEN = 336 × 8192 = 2,752,512
-#  raw steps = 43,107,285,509 / 2,752,512 = 15,661
+#  raw steps = 42,801,699,333 / 2,752,512 = 15550
 CHECKPOINT_STEPS=2000
 CHECKPOINT_RETAIN_STEPS=50000
 TRAINING_STEPS=$((TARGET_TOKENS / (GBS * SEQ_LEN)))
@@ -302,6 +302,8 @@ TRAINING_CMD="python3 $MEGATRON_LM_DIR/pretrain_gpt.py \
 # W&B Logging
 if [ -n "$WANDB_API_KEY" ]; then
     echo "[$(date)] WANDB API key detected. Enabling WANDB logging."
+
+    pip install --quiet wandb --upgrade
 
     # Get and display WandB entity/workspace
     WANDB_ENTITY=$(python3 -c "import wandb; api = wandb.Api(); print(api.default_entity)" 2>/dev/null || echo "unknown")

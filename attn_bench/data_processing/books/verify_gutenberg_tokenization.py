@@ -126,9 +126,9 @@ def bucket_summary_lines(name: str, rep: int, r: dict) -> list[str]:
     return lines
 
 
-def write_summary(stats_dir: Path, lines: list[str]):
+def write_summary(stats_dir: Path, lines: list[str], name: str = 'summary'):
     stats_dir.mkdir(parents=True, exist_ok=True)
-    path = stats_dir / 'summary.txt'
+    path = stats_dir / f'{name}.txt'
     with open(path, 'w') as f:
         f.write('\n'.join(lines) + '\n')
     print(f"\nSummary written to {path}")
@@ -162,6 +162,7 @@ def main():
     parser.add_argument('--tokenized-dir', required=True)
     parser.add_argument('--tokenizer-path', required=True)
     parser.add_argument('--stats-dir', required=True)
+    parser.add_argument('--summary-name', default='summary')
     args = parser.parse_args()
 
     from transformers import AutoTokenizer
@@ -195,7 +196,7 @@ def main():
     for line in totals:
         print(line)
 
-    write_summary(Path(args.stats_dir), summary_lines + totals)
+    write_summary(Path(args.stats_dir), summary_lines + totals, name=args.summary_name)
 
 
 if __name__ == '__main__':
