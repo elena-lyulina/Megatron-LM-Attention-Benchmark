@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --account=infra01
-#SBATCH --time=8:00:00
+#SBATCH --time=1:00:00
 #SBATCH --job-name=pretrain-llama1B-sink-attn-fineweb40B-gutenberg3B
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
@@ -13,8 +13,8 @@
 
 # Train a LLaMA 3.2 1B model with sink attention (--softmax-type learnable) on a blended dataset:
 #   - FineWeb-Edu-Dedup 40B (0.25 partition of 160B)  — 40,038,865,413 tokens
-#   - Gutenberg (all rep levels, rep_1_256)            —  3,068,420,096 tokens
-#   - Total                                            — 43,107,285,509 tokens (~43.1B)
+#   - Gutenberg (all rep levels, rep_1_256)           — 2,762,833,920 tokens
+#   - Total                                           — 42,801,699,333 tokens (~42.8B)
 # Sink attention variant for comparison with full and gated attention baselines.
 #
 # Usage:
@@ -67,11 +67,12 @@ GBS=336
 TARGET_TOKENS=42801699333
 #  tokens/step = GBS × SEQ_LEN = 336 × 8192 = 2,752,512
 #  raw steps = 42,801,699,333 / 2,752,512 = 15550
-CHECKPOINT_STEPS=2000
-CHECKPOINT_RETAIN_STEPS=50000
-TRAINING_STEPS=$((TARGET_TOKENS / (GBS * SEQ_LEN)))
+TRAINING_STEPS=$((TARGET_TOKENS / (GBS * SEQ_LEN)))  # = 15550; must match original run (LR scheduler checkpoint assertion)
 # round to nearest multiple of CHECKPOINT_STEPS -- drop for memorization studies to ensure no under / over seeing
 #TRAINING_STEPS=$((((TRAINING_STEPS + CHECKPOINT_STEPS/2) / CHECKPOINT_STEPS) * CHECKPOINT_STEPS))
+# data exhausts at step 15550; checkpoint at step 15549 (last valid step) saves before crash
+CHECKPOINT_STEPS=15549
+#CHECKPOINT_RETAIN_STEPS=50000
 
 #### Debugging ####
 LOG_NCCL=false  # Log NCCL_DEBUG=info. Every process will dump the logging into separate files, check `NCCL_DEBUG_FILE`
@@ -212,9 +213,9 @@ CHECKPOINTING_ARGS=(
     --load $CKPT_DIR  # delete this to NOT reload from the latest checkpoint
     --save $CKPT_DIR
     --save-interval $CHECKPOINT_STEPS
-    --save-retain-interval $CHECKPOINT_RETAIN_STEPS
+    #--save-retain-interval $CHECKPOINT_RETAIN_STEPS
     --ckpt-format torch_dist
-    --async-save
+    #--async-save  # disabled: sync save ensures checkpoint at step 15549 completes before crash at step 15550
     --ckpt-fully-parallel-load # all ranks load checkpoint shards in parallel instead of sequentially
     --dist-ckpt-strictness assume_ok_unexpected # suppresses errors when checkpoint has keys not in the current model (in case of minor model changes)
 )
