@@ -71,9 +71,117 @@ def _make_test_sink_output_sensitivity(base_forward_step):
     return test_sink_output_sensitivity
 
 
+# ── init values ──────────────────────────────────────────────────────────────
+# diagnose what TE initialises softmax_offset to; explains why params norm starts at 4k
+
+def test_softmax_offset_init_values(model):
+    print_rank_0("\n### Test: softmax_offset_init_values ###")
+    params = _find_sink_params(model)
+    if not params:
+        print_rank_0("[FAIL] softmax_offset_init_values: no sink parameter found")
+        return False
+    all_vals = []
+    for name, p in params:
+        vals = p.data.float()
+        all_vals.append(vals.flatten())
+        print_rank_0(
+            f"  {name}: shape={list(p.shape)}"
+            f"  mean={vals.mean():.4f}  std={vals.std():.4f}"
+            f"  min={vals.min():.4f}  max={vals.max():.4f}"
+        )
+    all_vals = torch.cat(all_vals)
+    print_rank_0(
+        f"  total: count={len(all_vals)}"
+        f"  norm={all_vals.norm():.3f}"
+        f"  mean_abs={all_vals.abs().mean():.4f}"
+    )
+    print_rank_0("[PASS] softmax_offset_init_values: diagnostic complete")
+    return True
+
+
+# ── norm decomposition ────────────────────────────────────────────────────────
+# verify that the 4k logged params norm comes from softmax_offset, not a logging artifact
+
+def test_norm_decomposition(model):
+    print_rank_0("\n### Test: norm_decomposition ###")
+    sink_params = _find_sink_params(model)
+    sink_names = {n for n, _ in sink_params}
+    other_params = [(n, p) for n, p in model.named_parameters() if n not in sink_names]
+
+    def local_norm_sq(param_list):
+        return sum(p.data.float().pow(2).sum().item() for _, p in param_list)
+
+    sink_sq = local_norm_sq(sink_params)
+    other_sq = local_norm_sq(other_params)
+    combined = (sink_sq + other_sq) ** 0.5
+    print_rank_0(f"  softmax_offset  (this rank): norm={sink_sq**0.5:.3f}")
+    print_rank_0(f"  all other params (this rank): norm={other_sq**0.5:.3f}")
+    print_rank_0(f"  combined         (this rank): norm={combined:.3f}")
+    print_rank_0(
+        "  note: Megatron's logged 'params norm' all-reduces across TP/PP groups"
+        " and skips TP-duplicate params — compare rank 0 combined with the logged value"
+    )
+    print_rank_0("[PASS] norm_decomposition: diagnostic complete")
+    return True
+
+
+# ── gradient flows ────────────────────────────────────────────────────────────
+# check whether TE's flash-attention training kernel backprops through softmax_offset;
+# FAIL = grad is None / zero → kernel ignores the param (training is effectively full attention)
+# PASS = grad is nonzero  → kernel trains the param (saturation may still prevent convergence)
+
+def _make_test_gradient_flows(base_forward_step):
+    def test_gradient_flows(model):
+        print_rank_0("\n### Test: gradient_flows ###")
+        params = _find_sink_params(model)
+        if not params:
+            print_rank_0("[FAIL] gradient_flows: no sink parameter found")
+            return False
+
+        was_training = model.training
+        model.train()
+        model.zero_grad()
+
+        out, _ = base_forward_step(make_simple_iter(), model)
+        if out is None:
+            print_rank_0("[SKIP] gradient_flows: forward returned None (not a loss-computing pipeline stage)")
+            if not was_training:
+                model.eval()
+            return True
+
+        out.sum().backward()
+
+        any_nonzero = False
+        for name, p in params:
+            if p.grad is None:
+                print_rank_0(f"  {name}: grad=None → no gradient path through this parameter")
+            else:
+                gnorm = p.grad.float().norm().item()
+                nonzero = gnorm > 1e-10
+                any_nonzero = any_nonzero or nonzero
+                print_rank_0(f"  {name}: grad_norm={gnorm:.6e}  ({'nonzero' if nonzero else 'ZERO'})")
+
+        if not was_training:
+            model.eval()
+
+        if any_nonzero:
+            print_rank_0("[PASS] gradient_flows: softmax_offset receives nonzero gradients → parameter is trainable")
+        else:
+            print_rank_0("[FAIL] gradient_flows: softmax_offset has zero/no gradient → TE flash-attn kernel ignores the parameter")
+        return any_nonzero
+
+    return test_gradient_flows
+
+
 # ── registration ──────────────────────────────────────────────────────────────
 
 def register(base_forward_step):
     # called by registry.py to resolve test functions for the 'sink' suite;
     # each returned function has signature (model)->bool
-    return [test_softmax_offset_param, _make_test_sink_output_sensitivity(base_forward_step)]
+    return [
+        test_softmax_offset_param,
+        _make_test_sink_output_sensitivity(base_forward_step),
+        test_softmax_offset_init_values,
+        test_norm_decomposition,
+        _make_test_gradient_flows(base_forward_step),
+    ]
