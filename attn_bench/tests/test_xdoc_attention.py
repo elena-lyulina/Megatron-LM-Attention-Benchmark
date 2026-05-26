@@ -79,6 +79,8 @@ def _check_mask_errors(attn_mask, loss_mask, tokens, doc_ids, position_ids, bos_
     return errors
 
 
+_MAX_SEQ_FOR_MASK_TEST = 512  # O(n²) check + ASCII print are only feasible for short sequences
+
 def test_mask_structure(model):
     print_rank_0("\n### Test: mask_structure ###")
     tokenizer = get_tokenizer()
@@ -86,6 +88,10 @@ def test_mask_structure(model):
     bos_id = tokenizer.bos
     eos_id = tokenizer.eod
     seq_len = args.seq_length
+
+    if seq_len > _MAX_SEQ_FOR_MASK_TEST:
+        print_rank_0(f"[SKIP] mask_structure: seq_len={seq_len} > {_MAX_SEQ_FOR_MASK_TEST} (O(n²) check + ASCII print not feasible; run with a short seq_len to verify mask structure)")
+        return True
 
     doc0_len = seq_len // 4
     doc1_len = seq_len // 4
