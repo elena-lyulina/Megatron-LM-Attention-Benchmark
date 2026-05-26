@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --account=infra01
-#SBATCH --time=00:05:00
+#SBATCH --time=00:10:00
 #SBATCH --job-name=test-attn-sink-flag-tp2-2nodes
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
@@ -118,7 +118,7 @@ LEARNING_RATE_ARGS=(
     --lr 0.0004
     --min-lr 0.00004
     --lr-decay-style cosine
-    --lr-warmup-iters 2000
+    --lr-warmup-iters 1
 )
 
 MIXED_PRECISION_ARGS=(
