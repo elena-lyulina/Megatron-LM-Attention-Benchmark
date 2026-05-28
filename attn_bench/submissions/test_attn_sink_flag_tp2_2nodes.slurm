@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --account=infra01
-#SBATCH --time=00:10:00
+#SBATCH --time=00:5:00
 #SBATCH --job-name=test-attn-sink-flag-tp2-2nodes
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
@@ -22,7 +22,7 @@
 
 echo "START TIME: $(date)"
 
-CONTAINER_ENV=nemo_26
+CONTAINER_ENV=nemo_26.04_te2.15
 
 MEGATRON_LM_DIR=/iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark
 cd $MEGATRON_LM_DIR

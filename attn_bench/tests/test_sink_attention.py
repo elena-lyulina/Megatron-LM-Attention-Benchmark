@@ -127,8 +127,8 @@ def test_norm_decomposition(model):
 
 # ── gradient flows ────────────────────────────────────────────────────────────
 # check whether TE's flash-attention training kernel backprops through softmax_offset;
-# FAIL = grad is None / zero → kernel ignores the param (training is effectively full attention)
-# PASS = grad is nonzero  → kernel trains the param (saturation may still prevent convergence)
+# FAIL = grad is None / zero -> kernel ignores the param (training is effectively full attention)
+# PASS = grad is nonzero -> kernel trains the param (saturation may still prevent convergence)
 
 def _make_test_gradient_flows(base_forward_step):
     def test_gradient_flows(model):
@@ -153,13 +153,18 @@ def _make_test_gradient_flows(base_forward_step):
 
         any_nonzero = False
         for name, p in params:
-            if p.grad is None:
-                print_rank_0(f"  {name}: grad=None → no gradient path through this parameter")
+            # Megatron DDP hooks accumulate gradients into p.main_grad (contiguous bucket buffer),
+            # not p.grad — check both so the test works inside and outside the DDP wrapper
+            main_grad = getattr(p, 'main_grad', None)
+            grad = main_grad if main_grad is not None else p.grad
+            if grad is None:
+                print_rank_0(f"  {name}: grad=None (checked main_grad and grad) → no gradient path through this parameter")
             else:
-                gnorm = p.grad.float().norm().item()
+                gnorm = grad.float().norm().item()
                 nonzero = gnorm > 1e-10
                 any_nonzero = any_nonzero or nonzero
-                print_rank_0(f"  {name}: grad_norm={gnorm:.6e}  ({'nonzero' if nonzero else 'ZERO'})")
+                grad_source = 'main_grad' if main_grad is not None else 'grad'
+                print_rank_0(f"  {name}: {grad_source}_norm={gnorm:.6e}  ({'nonzero' if nonzero else 'ZERO'})")
 
         if not was_training:
             model.eval()

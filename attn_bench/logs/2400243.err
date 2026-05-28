@@ -1,0 +1,101 @@
+1: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+1:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+1: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+0: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+0: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+0:   sentry_sdk.init(
+1: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:36: UserWarning: transformers version 5.3.0 is not tested with nvidia-modelopt and may cause issues. Please install recommended version with `pip install nvidia-modelopt[hf]` if working with HF models.
+0:   _warnings.warn(
+1: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:36: UserWarning: transformers version 5.3.0 is not tested with nvidia-modelopt and may cause issues. Please install recommended version with `pip install nvidia-modelopt[hf]` if working with HF models.
+1:   _warnings.warn(
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: Overriding default arguments for tokenizer_type:GPT2BPETokenizer with tokenizer_type:HuggingFaceTokenizer
+0:   warnings.warn(message)
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-use-fast argument is deprecated and will be removed soon. `use_fast` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-use-fast if you want to disable `use_fast`.
+0:   warnings.warn(message)
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-include-special-tokens argument is deprecated and will be removed soon. `include_special_tokens` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-include-special-tokens if you want to disable `include_special_tokens`.
+0:   warnings.warn(message)
+1: wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+1: wandb: Currently logged in as: elyulina (elyulina-thesis) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+1: wandb: setting up run tmh369mc
+1: wandb: Tracking run with wandb version 0.26.0
+1: wandb: Run data is saved locally in /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/results/test/attn_sink_flag_tp2_2nodes/logging/wandb/run-20260526_213117-tmh369mc
+1: wandb: Run `wandb offline` to turn off syncing.
+1: wandb: Syncing run attn_sink_flag_tp2_2nodes-2400243
+1: wandb: ⭐️ View project at https://wandb.ai/elyulina-thesis/test
+1: wandb: 🚀 View run at https://wandb.ai/elyulina-thesis/test/runs/tmh369mc
+1: wandb: Detected [mcp, openai] in use.
+1: wandb: Use W&B Weave for improved LLM call tracing. Install Weave with `pip install weave` then add `import weave` to the top of your script.
+1: wandb: For more information, check out the docs at: https://weave-docs.wandb.ai
+0: /usr/local/lib/python3.12/dist-packages/torch/autograd/graph.py:865: UserWarning: The AccumulateGrad node's stream does not match the stream of the node that produced the incoming gradient. This may incur unnecessary synchronization and break CUDA graph capture if the AccumulateGrad node's stream is the default stream. This mismatch is caused by an AccumulateGrad node created prior to the current iteration being kept alive. This can happen if the autograd graph is still being kept alive by tensors such as the loss, or if you are using DDP, which will stash a reference to the node. To resolve the mismatch, delete all references to the autograd graph or ensure that DDP initialization is performed under the same stream as subsequent forwards. If the mismatch is intentional, you can use torch.autograd.graph.set_warn_on_accumulate_grad_stream_mismatch(False) to suppress this warning. (Triggered internally at /opt/pytorch/pytorch/torch/csrc/autograd/input_buffer.cpp:240.)
+0:   return Variable._execution_engine.run_bac
+0: kward(  # Calls into the C++ engine to run the backward pass
+1: wandb: updating run metadata
+1: wandb: uploading wandb-summary.json; uploading config.yaml; uploading output.log
+0: [rank0]:[W526 21:31:35.184031553 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+1: wandb: uploading data
+1: wandb: 
+1: wandb: Run history:
+1: wandb:       batch-size ▁▁
+1: wandb:        grad-norm █▁
+1: wandb:   iteration-time ▁
+1: wandb:    learning-rate █▁
+1: wandb:          lm loss ▁█
+1: wandb:      params-norm █▁
+1: wandb: samples vs steps ▁█
+1: wandb:       throughput ▁█
+1: wandb: 
+1: wandb: Run summary:
+1: wandb:       batch-size 4
+1: wandb:        grad-norm 22.49429
+1: wandb:   iteration-time 4.27965
+1: wandb:    learning-rate 4e-05
+1: wandb:          lm loss 12.2092
+1: wandb:      params-norm 656.95745
+1: wandb: samples vs steps 8
+1: wandb:       throughput 34.55119
+1: wandb: 
+1: wandb: 🚀 View run attn_sink_flag_tp2_2nodes-2400243 at: https://wandb.ai/elyulina-thesis/test/runs/tmh369mc
+1: wandb: ⭐️ View project at: https://wandb.ai/elyulina-thesis/test
+1: wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+1: wandb: Find logs at: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/results/test/attn_sink_flag_tp2_2nodes/logging/wandb/run-20260526_213117-tmh369mc/logs
+1: [rank1]:[W526 21:31:36.801281351 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+1: [rank1]:[W526 21:31:45.753319363 TCPStore.cpp:125] [c10d] recvValue failed on SocketImpl(fd=63, addr=[nid007287]:55740, remote=[nid007285]:8888): Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+1: Exception raised from recvBytes at /opt/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:682 (most recent call first):
+1: frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0xd4 (0x4002b9d939f4 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+1: frame #1: <unknown function> + 0x655f304 (0x4002b746f304 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+1: frame #2: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x164 (0x4002b7474474 in /usr/local/lib/python3.12/dist-packages/torch/lib/l
+1: ibtorch_cpu.so)
+1: frame #3: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x2ec (0x4002c0ea2c9c in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+1: frame #4: <unknown function> + 0xe1ae0 (0x4002baa01ae0 in /usr/lib/aarch64-linux-gnu/libstdc++.so.6)
+1: frame #5: <unknown function> + 0x8595c (0x4002aef2595c in /usr/lib/aarch64-linux-gnu/libc.so.6)
+1: frame #6: <unknown function> + 0xebb4c (0x4002aef8bb4c in /usr/lib/aarch64-linux-gnu/libc.so.6)
+1: 
+1: [rank1]:[W526 21:31:45.755322926 ProcessGroupNCCL.cpp:1818] [PG ID 0 PG GUID 0(default_pg) Rank 1] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+1: [rank1]:[W526 21:31:46.755409326 TCPStore.cpp:106] [c10d] sendBytes failed on SocketImpl(fd=63, addr=[nid007287]:55740, remote=[nid007285]:8888): Broken pipe
+1: Exception raised from sendBytes at /opt/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:653 (most recent call first):
+1: frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0xd4 (0x4002b9d939f4 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+1: frame #1: <unknown function> + 0x655df84 (0x4002b746df84 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+1: frame #2: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x148 (0x4002b7474458 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+1: frame #3: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x2ec (0
+1: x4002c0ea2c9c in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+1: frame #4: <unknown function> + 0xe1ae0 (0x4002baa01ae0 in /usr/lib/aarch64-linux-gnu/libstdc++.so.6)
+1: frame #5: <unknown function> + 0x8595c (0x4002aef2595c in /usr/lib/aarch64-linux-gnu/libc.so.6)
+1: frame #6: <unknown function> + 0xebb4c (0x4002aef8bb4c in /usr/lib/aarch64-linux-gnu/libc.so.6)
+1: 
+1: [rank1]:[W526 21:31:46.756966117 ProcessGroupNCCL.cpp:1818] [PG ID 0 PG GUID 0(default_pg) Rank 1] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Broken pipe
+1: [rank1]:[W526 21:31:47.757074213 TCPStore.cpp:106] [c10d] sendBytes failed on SocketImpl(fd=63, addr=[nid007287]:55740, remote=[nid007285]:8888): Broken pipe
+1: Exception raised from sendBytes at /opt/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:653 (most recent call first):
+1: frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0xd4 (0x4002b9d939f4 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+1: frame #1: <unknown function> + 0x655df84 (0x4002b746df84 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+1: frame #2: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x148 (0x4002b7474458 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+1: frame #3: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x2ec (0
+1: x4002c0ea2c9c in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+1: frame #4: <unknown function> + 0xe1ae0 (0x4002baa01ae0 in /usr/lib/aarch64-linux-gnu/libstdc++.so.6)
+1: frame #5: <unknown function> + 0x8595c (0x4002aef2595c in /usr/lib/aarch64-linux-gnu/libc.so.6)
+1: frame #6: <unknown function> + 0xebb4c (0x4002aef8bb4c in /usr/lib/aarch64-linux-gnu/libc.so.6)
+1: 
+1: [rank1]:[W526 21:31:47.758661339 ProcessGroupNCCL.cpp:1818] [PG ID 0 PG GUID 0(default_pg) Rank 1] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Broken pipe
