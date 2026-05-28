@@ -1,0 +1,10 @@
+FROM nvcr.io/nvidia/nemo:26.04
+
+# Uninstall old TE
+RUN pip uninstall -y transformer-engine 2>/dev/null || true
+
+# Update build tools, then install TE 2.15
+RUN pip install -U pip setuptools wheel
+RUN pip install --no-build-isolation --no-cache-dir transformer-engine==2.15
+
+RUN pip install datatrove wandb numba

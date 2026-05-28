@@ -45,6 +45,23 @@ Logs: `attn_bench/logs/2340717.{out,err}` (full), `2340721.{out,err}` (gated), `
 
 ---
 
+## Re-training: sink attention with TE 2.15
+
+Sink attention was re-trained from scratch using TransformerEngine 2.15 (container `nemo_26` → updated container with TE 2.15). All other config identical to the initial training.
+
+| variant | Slurm job | start (CEST) | end (CEST) | run time | status | final lm loss | throughput (TFLOP/s/GPU) |
+|---|---|---|---|---|---|---|---|
+| sink | `2403506` | 2026-05-28 02:36 | 2026-05-28 08:35 | 5h 59m | COMPLETED | 2.3796 | ~318–327 |
+
+W&B run: `llama3-1b-sink-attn-fineweb40B-gutenberg3B-te215-2403506` (`xmjqh0ty`).
+
+Checkpoint saved at step 15549. Results under:
+`attn_bench/results/pretrain/fineweb-40B_gutenberg-3B/llama3-1b-sink-attn-fineweb40B-gutenberg3B-te215/`
+
+Logs: `attn_bench/logs/2403506.{out,err}`.
+
+---
+
 ## Attention variants
 
 All variants share the same architecture and training setup; only the attention softmax changes.
