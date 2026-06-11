@@ -167,10 +167,14 @@ def compute_nll(model, input_ids: torch.Tensor, suffix_length: int):
 
 
 @torch.no_grad()
-def greedy_generate(model, prompt_ids: torch.Tensor, suffix_length: int):
+def greedy_generate(model, prompt_ids: torch.Tensor, suffix_length: int,
+                    step_callback=None):
     """Greedy generation with StaticInferenceContext KV cache.
 
     prompt_ids: [B, prompt_len]   — prefix tokens (BOS already included as token 0)
+    step_callback: optional callable(t: int) called after each decode step with the
+                   0-indexed step number (t=0 for first decode step, etc.).
+                   n_steps total = suffix_length - 1; prefill is not a step.
     Returns:    [B, suffix_length] — generated tokens
     """
     from megatron.core.inference.contexts import StaticInferenceContext
@@ -195,13 +199,15 @@ def greedy_generate(model, prompt_ids: torch.Tensor, suffix_length: int):
     generated = [next_token]
 
     # Decode: one new token per step, KV of previous tokens served from cache
-    for _ in range(suffix_length - 1):
+    for step_t in range(suffix_length - 1):
         pos = torch.full((B, 1), ctx.sequence_len_offset, dtype=torch.long, device=device)
         logits = model(next_token, pos, attention_mask=None, inference_context=ctx,
                        runtime_gather_output=True)
         ctx.sequence_len_offset += 1
         next_token = logits[:, 0, :].argmax(dim=-1, keepdim=True)
         generated.append(next_token)
+        if step_callback is not None:
+            step_callback(step_t)
 
     return torch.cat(generated, dim=1)  # [B, suffix_length]
 
@@ -223,10 +229,11 @@ def text_metrics(true_seq: list, gen_seq: list) -> dict:
 BOS_TOKEN_ID = 128000  # Llama-3 BOS; present at token 0 when offset=0, must be prepended when offset>0
 
 def run_bucket(model, dataset, prefix_length, suffix_length, batch_size, inference_dir,
-               rank, world_size, needs_bos: bool):
+               rank, world_size, needs_bos: bool, capture=None):
     """Run inference for one repetition bucket.
 
     needs_bos: True when offset > 0, i.e. the excerpts don't start with BOS and we must prepend it.
+    capture: AttentionCapture instance (or None to skip attention capture).
     """
     device = next(model.parameters()).device
 
@@ -234,6 +241,8 @@ def run_bucket(model, dataset, prefix_length, suffix_length, batch_size, inferen
     loader = DataLoader(dataset, batch_size=batch_size, sampler=sampler, collate_fn=lambda b: b)
 
     inference_dir.mkdir(parents=True, exist_ok=True)
+
+    sample_start = 0  # tracks first global sample index of each batch (within this rank's slice)
 
     with open(inference_dir / f"rank{rank}.jsonl", "w") as f:
         for batch in loader:
@@ -257,7 +266,16 @@ def run_bucket(model, dataset, prefix_length, suffix_length, batch_size, inferen
 
             # Greedy generation with KV cache
             prompt = seq[:, :prompt_end]                               # [B, prompt_end]
-            generated = greedy_generate(model, prompt, suffix_length)  # [B, suffix]
+
+            if capture is not None:
+                batch_slice = slice(sample_start, sample_start + B)
+                is_sample_0 = (rank == 0 and sample_start == 0)
+                step_cb = lambda t, _bs=batch_slice, _s0=is_sample_0: (
+                    capture.collect_step(t, _bs, _s0)
+                )
+                generated = greedy_generate(model, prompt, suffix_length, step_callback=step_cb)
+            else:
+                generated = greedy_generate(model, prompt, suffix_length)
 
             # NLL on the generated suffix
             gen_full = torch.cat([prompt, generated], dim=1)
@@ -296,9 +314,14 @@ def run_bucket(model, dataset, prefix_length, suffix_length, batch_size, inferen
                 f.write("\n")
                 f.flush()
 
+            sample_start += B
             del batch_tensor, seq, prompt, generated, gen_full
             del ref_mean, ref_std, ref_ppl, gen_mean, gen_std, gen_ppl
             torch.cuda.empty_cache()
+
+    if capture is not None:
+        capture.save(inference_dir, rank)
+        capture.remove()
 
     dist.barrier()
 
@@ -327,6 +350,10 @@ def parse_args():
                              "Supports off-by-one and learnable attention. "
                              "Original per-head values saved to sink_scale_metadata.json. "
                              "Appends _sscale{X} to experiment path.")
+    parser.add_argument("--capture-attention", action="store_true",
+                        help="Capture decode-time attention weights for visualization. "
+                             "Writes attn_stats_rank{N}.npz and attn_matrix_exmpl_rank{N}.npz "
+                             "alongside each rep_*_greedy/rank*.jsonl.")
     return parser.parse_args()
 
 
@@ -354,6 +381,31 @@ def load_rep_bucket(path: Path, offset: int, prefix_length: int, suffix_length: 
     return dataset
 
 
+def _make_capture(model, args, n_samples_on_rank, rank):
+    """Instantiate and register an AttentionCapture for one bucket."""
+    from attn_bench.evaluation.attn_capture import AttentionCapture
+
+    cfg = model.config
+    n_layers = cfg.num_layers
+    n_heads  = cfg.num_attention_heads
+    n_steps  = args.suffix_length - 1
+    max_seq  = args.prefix_length + args.suffix_length
+    is_gated = getattr(cfg, 'attention_output_gate', False)
+
+    capture = AttentionCapture(
+        n_samples=n_samples_on_rank,
+        n_layers=n_layers,
+        n_heads=n_heads,
+        n_steps=n_steps,
+        max_seq_len=max_seq,
+        is_gated=is_gated,
+        is_rank0=(rank == 0),
+        prompt_len=args.prefix_length,
+    )
+    capture.register(model)
+    return capture
+
+
 def run_inference(model, args, rank, world_size):
     output_path = (
         Path(args.experiment_path)
@@ -370,7 +422,10 @@ def run_inference(model, args, rank, world_size):
         inference_dir = output_path / f"rep_{rep}_greedy"
 
         rank0_file = inference_dir / "rank0.jsonl"
-        if rank0_file.exists() and rank0_file.stat().st_size > 0:
+        attn_done  = (inference_dir / f"attn_stats_rank{rank}.npz").exists()
+        jsonl_done = rank0_file.exists() and rank0_file.stat().st_size > 0
+
+        if jsonl_done and (not args.capture_attention or attn_done):
             if rank == 0:
                 print(f"Skipping rep={rep} (already done)")
             continue
@@ -384,12 +439,19 @@ def run_inference(model, args, rank, world_size):
         if rank == 0:
             print(f"  {len(dataset)} sequences")
 
+        # Build capture per-bucket (fresh state each repetition level)
+        capture = None
+        if args.capture_attention and not attn_done:
+            sampler_size = math.ceil(len(dataset) / world_size)
+            capture = _make_capture(model, args, sampler_size, rank)
+
         run_bucket(
             model, dataset,
             args.prefix_length, args.suffix_length,
             args.batch_size, inference_dir,
             rank, world_size,
             needs_bos=needs_bos,
+            capture=capture,
         )
 
         if rank == 0:
