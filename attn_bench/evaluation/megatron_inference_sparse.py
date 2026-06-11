@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import sys
 from functools import partial
 from pathlib import Path
@@ -89,6 +90,54 @@ def load_megatron_model(ckpt_dir: str, tokenizer_path: str, extra_megatron_args:
         return model
     finally:
         sys.argv = saved_argv
+
+
+def patch_sink_scale(model, sink_scale: float) -> list:
+    """Scale the virtual sink weight at inference: offset_new = offset_trained + log(sink_scale).
+
+    Equivalently: exp(offset_new) = sink_scale × exp(offset_trained).
+    sink_scale=1 is identity; >1 strengthens the sink, <1 weakens it.
+    Supports off-by-one (trained offset=0, so offset_new=log(sink_scale)) and learnable.
+    Raises for vanilla attention (no softmax_offset). Returns original per-layer
+    per-head values as list of lists for metadata.
+    """
+    from megatron.core.transformer.dot_product_attention import DotProductAttention as MegatronDPA
+    try:
+        import transformer_engine.pytorch as te
+        TE_DPA = te.DotProductAttention
+    except ImportError:
+        TE_DPA = None
+
+    if sink_scale < 0:
+        raise ValueError(f"sink_scale must be >= 0, got {sink_scale}")
+    log_scale = math.log(sink_scale) if sink_scale > 0 else float("-inf")
+    originals = []
+    count = 0
+    for module in model.modules():
+        if isinstance(module, MegatronDPA) and module.softmax_offset is not None:
+            assert module.config.softmax_type in ("off-by-one", "learnable"), (
+                f"patch_sink_scale only supports off-by-one and learnable attention, "
+                f"got softmax_type='{module.config.softmax_type}'"
+            )
+            originals.append(module.softmax_offset.detach().cpu().tolist())
+            module.softmax_offset.data.add_(log_scale)
+            count += 1
+        elif TE_DPA is not None and isinstance(module, TE_DPA) and module.softmax_offset is not None:
+            assert module.softmax_type in ("off-by-one", "learnable"), (
+                f"patch_sink_scale only supports off-by-one and learnable attention, "
+                f"got softmax_type='{module.softmax_type}'"
+            )
+            originals.append(module.softmax_offset.detach().cpu().tolist())
+            module.softmax_offset.data.add_(log_scale)
+            count += 1
+
+    if count == 0:
+        raise RuntimeError(
+            "patch_sink_scale: no patchable attention layers found "
+            "(neither MegatronDPA nor TE DPA with softmax_offset != None)."
+        )
+    print(f"Patched softmax_offset += log({sink_scale}) = {log_scale:.4f} in {count} attention layers")
+    return originals
 
 
 ### INFERENCE ###
@@ -272,6 +321,12 @@ def parse_args():
     parser.add_argument("--megatron-extra-args", nargs=argparse.REMAINDER, default=None,
                         help="Extra Megatron args forwarded verbatim to initialize_megatron "
                              "(e.g. --megatron-extra-args --attention-output-gate)")
+    parser.add_argument("--sink-scale", type=float, default=None,
+                        help="Scale the virtual sink weight at inference: offset_new = offset_trained + log(sink_scale). "
+                             "sink_scale=1 is identity, >1 strengthens the sink, <1 weakens it. "
+                             "Supports off-by-one and learnable attention. "
+                             "Original per-head values saved to sink_scale_metadata.json. "
+                             "Appends _sscale{X} to experiment path.")
     return parser.parse_args()
 
 
@@ -347,7 +402,21 @@ def run_inference(model, args, rank, world_size):
 
 def main():
     args = parse_args()
+
+    if args.sink_scale is not None:
+        args.experiment_path = args.experiment_path.rstrip('/') + f"_sscale{args.sink_scale:g}"
+
     model = load_megatron_model(args.ckpt_dir, args.tokenizer_path, args.megatron_extra_args)
+
+    if args.sink_scale is not None:
+        originals = patch_sink_scale(model, args.sink_scale)
+        if dist.get_rank() == 0:
+            meta_path = Path(args.experiment_path) / "sink_scale_metadata.json"
+            meta_path.parent.mkdir(parents=True, exist_ok=True)
+            with open(meta_path, "w") as f:
+                json.dump({"sink_scale": args.sink_scale, "original_softmax_offset": originals}, f, indent=2)
+            print(f"Saved sink scale metadata to {meta_path}")
+
     rank = dist.get_rank()
     world_size = dist.get_world_size()
     run_inference(model, args, rank, world_size)

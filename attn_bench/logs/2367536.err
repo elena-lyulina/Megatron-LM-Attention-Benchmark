@@ -1,0 +1,561 @@
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:64: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: W0525 01:11:15.454000 15482 torch/distributed/run.py:811] 
+0: W0525 01:11:15.454000 15482 torch/distributed/run.py:811] *****************************************
+0: W0525 01:11:15.454000 15482 torch/distributed/run.py:811] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+0: W0525 01:11:15.454000 15482 torch/distributed/run.py:811] *****************************************
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:64: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:64: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:64: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:64: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/utils/logging.py:115: UserWarning: Failed to import diffusers plugin due to: ImportError('peft>=0.17.0 is required for a normal functioning of this module, but found peft==0.13.2.'). You may ignore this warning if you do not need this plugin.
+0:   warnings.warn(message, *args, **kwargs)
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/utils/logging.py:115: UserWarning: Failed to import diffusers plugin due to: ImportError('peft>=0.17.0 is required for a normal functioning of this module, but found peft==0.13.2.'). You may ignore this warning if you do not need this plugin.
+0:   warnings.warn(message, *args, **kwargs)
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/utils/logging.py:115: UserWarning: Failed to import diffusers plugin due to: ImportError('peft>=0.17.0 is required for a normal functioning of this module, but found peft==0.13.2.'). You may ignore this warning if you do not need this plugin.
+0:   warnings.warn(message, *args, **kwargs)
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/utils/logging.py:115: UserWarning: Failed to import diffusers plugin due to: ImportError('peft>=0.17.0 is required for a normal functioning of this module, but found peft==0.13.2.'). You may ignore this warning if you do not need this plugin.
+0:   warnings.warn(message, *args, **kwargs)
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/utils/logging.py:115: UserWarning: Failed to import peft plugin due to: ImportError("cannot import name 'ParamWrapper' from 'peft.tuners.lora.layer' (/opt/venv/lib/python3.12/site-packages/peft/tuners/lora/layer.py)"). You may ignore this warning if you do not need this plugin.
+0:   warnings.warn(message, *args, **kwargs)
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/utils/logging.py:115: UserWarning: Failed to import peft plugin due to: ImportError("cannot import name 'ParamWrapper' from 'peft.tuners.lora.layer' (/opt/venv/lib/python3.12/site-packages/peft/tuners/lora/layer.py)"). You may ignore this warning if you do not need this plugin.
+0:   warnings.warn(message, *args, **kwargs)
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/utils/logging.py:115: UserWarning: Failed to import peft plugin due to: ImportError("cannot import name 'ParamWrapper' from 'peft.tuners.lora.layer' (/opt/venv/lib/python3.12/site-packages/peft/tuners/lora/layer.py)"). You may ignore this warning if you do not need this plugin.
+0:   warnings.warn(message, *args, **kwargs)
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/utils/logging.py:115: UserWarning: Failed to import peft plugin due to: ImportError("cannot import name 'ParamWrapper' from 'peft.tuners.lora.layer' (/opt/venv/lib/python3.12/site-packages/peft/tuners/lora/layer.py)"). You may ignore this warning if you do not need this plugin.
+0:   warnings.warn(message, *args, **kwargs)
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-use-fast argument is deprecated and will be removed soon. `use_fast` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-use-fast if you want to disable `use_fast`.
+0:   warnings.warn(message)
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-include-special-tokens argument is deprecated and will be removed soon. `include_special_tokens` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-include-special-tokens if you want to disable `include_special_tokens`.
+0:   warnings.warn(message)
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py:808: FutureWarning: `load_state_dict` is deprecated and will be removed in future versions. Please use `load` instead.
+0:   checkpoint.load_state_dict(
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py:808: FutureWarning: `load_state_dict` is deprecated and will be removed in future versions. Please use `load` instead.
+0:   checkpoint.load_state_dict(
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py:808: FutureWarning: `load_state_dict` is deprecated and will be removed in future versions. Please use `load` instead.
+0:   checkpoint.load_state_dict(
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py:808: FutureWarning: `load_state_dict` is deprecated and will be removed in future versions. Please use `load` instead.
+0:   checkpoint.load_state_dict(
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/planner_helpers.py:419: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   device = getattr(value, "device", None)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/planner_helpers.py:419: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   device = getattr(value, "device", None)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/planner_helpers.py:419: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   device = getattr(value, "device", None)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/planner_helpers.py:419: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   device = getattr(value, "device", None)
+0: [rank3]: Traceback (most recent call last):
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py", line 348, in <module>
+0: [rank3]:     main()
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py", line 341, in main
+0: [rank3]:     model = load_megatron_model(args.ckpt_dir, args.tokenizer_path)
+0: [rank3]:             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py", line 83, in load_megatron_model
+0: [rank3]:     load_checkpoint(model, optimizer=None, opt_param_scheduler=None)
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/checkpointing.py", line 1794, in load_checkpoint
+0: [rank3]:     state_dict, checkpoint_name, release, ckpt_type = _load_base_checkpoint(
+0: [rank3]:            
+0:                                            ^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/checkpointing.py", line 1305, in _load_base_checkpoint
+0: [rank3]:     return _load_global_dist_base_checkpoint(
+0: [rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/checkpointing.py", line 1195, in _load_global_dist_base_checkpoint
+0: [rank3]:     state_dict = dist_checkpointing.load(sharded_state_dict, checkpoint_name, load_strategy, strict=args.dist_ckpt_strictness)
+0: [rank3]:                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/serialization.py", line 162, in load
+0: [rank3]:     loaded_state_dict = sharded_strategy.load(sharded_state_dict, checkpoint_dir)
+0: [rank3]:      
+0:                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py", line 808, in load
+0: [rank3]:     checkpoint.load_state_dict(
+0: [rank3]:   File "/opt/venv/lib/python3.12/site-packages/typing_extensions.py", line 3004, in wrapper
+0: [rank3]:     return arg(*args, **kwargs)
+0: [rank3]:            ^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/state_dict_loader.py", line 48, in load_state_dict
+0: [rank3]:     return _load_state_dict(
+0: [rank3]:            ^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/state_dict_loader.py", line 279, in _load_state_dict
+0: [rank3]:     central_plan = distW.reduce_scatter("plan", local_step, global_step)
+0: [rank3]:                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/usr/local/lib/python3.12/dist-packa
+0: ges/torch/distributed/checkpoint/utils.py", line 219, in reduce_scatter
+0: [rank3]:     raise result
+0: [rank3]: torch.distributed.checkpoint.api.CheckpointException: CheckpointException ranks:dict_keys([0, 1, 2, 3])
+0: [rank3]: Traceback (most recent call last): (RANK 0)
+0: [rank3]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py", line 192, in reduce_scatter
+0: [rank3]:     local_data = map_fun()
+0: [rank3]:                  ^^^^^^^^^
+0: [rank3]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py", line 88, in wrapper
+0: [rank3]:     result = func(*args, **kwargs)
+0: [rank3]:              ^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/state_dict_loader.py", line 266, in local_step
+0: [rank3]:     local_plan = planner.create_local_plan()
+0: [rank3]:                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/st
+0: rategies/torch.py", line 547, in create_local_plan
+0: [rank3]:     self._validate_global_shapes(self.metadata, self.shapes_validation_sharded_tensors)
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py", line 518, in _validate_global_shapes
+0: [rank3]:     raise CheckpointingException(_msg)
+0: [rank3]: megatron.core.dist_checkpointing.core.CheckpointingException: Global shape mismatch for loaded (torch.Size([16, 5120, 2048])) and expected ((16, 3072, 2048)) tensor for key decoder.layers.self_attention.linear_qkv.weight
+0: [rank3]: Traceback (most recent call last): (RANK 1)
+0: [rank3]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py", line 192, in reduce_scatter
+0: [rank3]:     local_data = map_fun()
+0: [rank3]:                  ^^^^^^^^^
+0: [rank3]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py", line 88, in wrapper
+0: [rank3]:     result = func(*args, **kwargs)
+0: [rank3]:     
+0:          ^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/state_dict_loader.py", line 266, in local_step
+0: [rank3]:     local_plan = planner.create_local_plan()
+0: [rank3]:                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py", line 547, in create_local_plan
+0: [rank3]:     self._validate_global_shapes(self.metadata, self.shapes_validation_sharded_tensors)
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py", line 518, in _validate_global_shapes
+0: [rank3]:     raise CheckpointingException(_msg)
+0: [rank3]: megatron.core.dist_checkpointing.core.CheckpointingException: Global shape mismatch for loaded (torch.Size([16, 5120, 2048])) and expected ((16, 3072, 2048)) tensor for key decoder.layers.self_attention.linear_qkv.weight
+0: [rank3]: Traceback (most recent call 
+0: last): (RANK 2)
+0: [rank3]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py", line 192, in reduce_scatter
+0: [rank3]:     local_data = map_fun()
+0: [rank3]:                  ^^^^^^^^^
+0: [rank3]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py", line 88, in wrapper
+0: [rank3]:     result = func(*args, **kwargs)
+0: [rank3]:              ^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/state_dict_loader.py", line 266, in local_step
+0: [rank3]:     local_plan = planner.create_local_plan()
+0: [rank3]:                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py", line 547, in create_local_plan
+0: [rank3]:     self._validate_global_shapes(self.metadata, self.shapes_validation_sharded_tensors)
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_
+0: checkpointing/strategies/torch.py", line 518, in _validate_global_shapes
+0: [rank3]:     raise CheckpointingException(_msg)
+0: [rank3]: megatron.core.dist_checkpointing.core.CheckpointingException: Global shape mismatch for loaded (torch.Size([16, 5120, 2048])) and expected ((16, 3072, 2048)) tensor for key decoder.layers.self_attention.linear_qkv.weight
+0: [rank3]: Traceback (most recent call last): (RANK 3)
+0: [rank3]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py", line 192, in reduce_scatter
+0: [rank3]:     local_data = map_fun()
+0: [rank3]:                  ^^^^^^^^^
+0: [rank3]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py", line 88, in wrapper
+0: [rank3]:     result = func(*args, **kwargs)
+0: [rank3]:              ^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/state_dict_loader.py", line 266, in local_step
+0: [rank3]:     local_plan = planner.create_local_plan()
+0: [rank3]:                  ^^^^
+0: ^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py", line 547, in create_local_plan
+0: [rank3]:     self._validate_global_shapes(self.metadata, self.shapes_validation_sharded_tensors)
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py", line 518, in _validate_global_shapes
+0: [rank3]:     raise CheckpointingException(_msg)
+0: [rank3]: megatron.core.dist_checkpointing.core.CheckpointingException: Global shape mismatch for loaded (torch.Size([16, 5120, 2048])) and expected ((16, 3072, 2048)) tensor for key decoder.layers.self_attention.linear_qkv.weight
+0: 
+0: [rank0]: Traceback (most recent call last):
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py", line 348, in <module>
+0: [rank0]:     main()
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py", line 341, in main
+0: [rank0]:     model = load_megatron_model(args.ckpt_dir, args.tokenizer_path)
+0: [rank0]:             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py", line 83, in load_megatron_model
+0: [rank0]:     load_checkpoint(model, optimizer=None, opt_param_scheduler=None)
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/checkpointing.py", line 1794, in load_checkpoint
+0: [rank0]:     state_dict, checkpoint_name, release, ckpt_type = _load_base_checkpoint(
+0: [rank0]:            
+0:                                            ^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/checkpointing.py", line 1305, in _load_base_checkpoint
+0: [rank0]:     return _load_global_dist_base_checkpoint(
+0: [rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/checkpointing.py", line 1195, in _load_global_dist_base_checkpoint
+0: [rank0]:     state_dict = dist_checkpointing.load(sharded_state_dict, checkpoint_name, load_strategy, strict=args.dist_ckpt_strictness)
+0: [rank0]:                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/serialization.py", line 162, in load
+0: [rank0]:     loaded_state_dict = sharded_strategy.load(sharded_state_dict, checkpoint_dir)
+0: [rank0]:      
+0:                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py", line 808, in load
+0: [rank0]:     checkpoint.load_state_dict(
+0: [rank0]:   File "/opt/venv/lib/python3.12/site-packages/typing_extensions.py", line 3004, in wrapper
+0: [rank0]:     return arg(*args, **kwargs)
+0: [rank0]:            ^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/state_dict_loader.py", line 48, in load_state_dict
+0: [rank0]:     return _load_state_dict(
+0: [rank0]:            ^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/state_dict_loader.py", line 279, in _load_state_dict
+0: [rank0]:     central_plan = distW.reduce_scatter("plan", local_step, global_step)
+0: [rank0]:                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/usr/local/lib/python3.12/dist-packa
+0: ges/torch/distributed/checkpoint/utils.py", line 219, in reduce_scatter
+0: [rank0]:     raise result
+0: [rank0]: torch.distributed.checkpoint.api.CheckpointException: CheckpointException ranks:dict_keys([0, 1, 2, 3])
+0: [rank0]: Traceback (most recent call last): (RANK 0)
+0: [rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py", line 192, in reduce_scatter
+0: [rank0]:     local_data = map_fun()
+0: [rank0]:                  ^^^^^^^^^
+0: [rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py", line 88, in wrapper
+0: [rank0]:     result = func(*args, **kwargs)
+0: [rank0]:              ^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/state_dict_loader.py", line 266, in local_step
+0: [rank0]:     local_plan = planner.create_local_plan()
+0: [rank0]:                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/st
+0: rategies/torch.py", line 547, in create_local_plan
+0: [rank0]:     self._validate_global_shapes(self.metadata, self.shapes_validation_sharded_tensors)
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py", line 518, in _validate_global_shapes
+0: [rank0]:     raise CheckpointingException(_msg)
+0: [rank0]: megatron.core.dist_checkpointing.core.CheckpointingException: Global shape mismatch for loaded (torch.Size([16, 5120, 2048])) and expected ((16, 3072, 2048)) tensor for key decoder.layers.self_attention.linear_qkv.weight
+0: [rank0]: Traceback (most recent call last): (RANK 1)
+0: [rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py", line 192, in reduce_scatter
+0: [rank0]:     local_data = map_fun()
+0: [rank0]:                  ^^^^^^^^^
+0: [rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py", line 88, in wrapper
+0: [rank0]:     result = func(*args, **kwargs)
+0: [rank0]:     
+0:          ^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/state_dict_loader.py", line 266, in local_step
+0: [rank0]:     local_plan = planner.create_local_plan()
+0: [rank0]:                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py", line 547, in create_local_plan
+0: [rank0]:     self._validate_global_shapes(self.metadata, self.shapes_validation_sharded_tensors)
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py", line 518, in _validate_global_shapes
+0: [rank0]:     raise CheckpointingException(_msg)
+0: [rank0]: megatron.core.dist_checkpointing.core.CheckpointingException: Global shape mismatch for loaded (torch.Size([16, 5120, 2048])) and expected ((16, 3072, 2048)) tensor for key decoder.layers.self_attention.linear_qkv.weight
+0: [rank0]: Traceback (most recent call 
+0: last): (RANK 2)
+0: [rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py", line 192, in reduce_scatter
+0: [rank0]:     local_data = map_fun()
+0: [rank0]:                  ^^^^^^^^^
+0: [rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py", line 88, in wrapper
+0: [rank0]:     result = func(*args, **kwargs)
+0: [rank0]:              ^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/state_dict_loader.py", line 266, in local_step
+0: [rank0]:     local_plan = planner.create_local_plan()
+0: [rank0]:                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py", line 547, in create_local_plan
+0: [rank0]:     self._validate_global_shapes(self.metadata, self.shapes_validation_sharded_tensors)
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_
+0: checkpointing/strategies/torch.py", line 518, in _validate_global_shapes
+0: [rank0]:     raise CheckpointingException(_msg)
+0: [rank0]: megatron.core.dist_checkpointing.core.CheckpointingException: Global shape mismatch for loaded (torch.Size([16, 5120, 2048])) and expected ((16, 3072, 2048)) tensor for key decoder.layers.self_attention.linear_qkv.weight
+0: [rank0]: Traceback (most recent call last): (RANK 3)
+0: [rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py", line 192, in reduce_scatter
+0: [rank0]:     local_data = map_fun()
+0: [rank0]:                  ^^^^^^^^^
+0: [rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py", line 88, in wrapper
+0: [rank0]:     result = func(*args, **kwargs)
+0: [rank0]:              ^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/state_dict_loader.py", line 266, in local_step
+0: [rank0]:     local_plan = planner.create_local_plan()
+0: [rank0]:                  ^^^^
+0: ^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py", line 547, in create_local_plan
+0: [rank0]:     self._validate_global_shapes(self.metadata, self.shapes_validation_sharded_tensors)
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py", line 518, in _validate_global_shapes
+0: [rank0]:     raise CheckpointingException(_msg)
+0: [rank0]: megatron.core.dist_checkpointing.core.CheckpointingException: Global shape mismatch for loaded (torch.Size([16, 5120, 2048])) and expected ((16, 3072, 2048)) tensor for key decoder.layers.self_attention.linear_qkv.weight
+0: 
+0: [rank2]: Traceback (most recent call last):
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py", line 348, in <module>
+0: [rank2]:     main()
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Att
+0: ention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py", line 341, in main
+0: [rank2]:     model = load_megatron_model(args.ckpt_dir, args.tokenizer_path)
+0: [rank2]:             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py", line 83, in load_megatron_model
+0: [rank2]:     load_checkpoint(model, optimizer=None, opt_param_scheduler=None)
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/checkpointing.py", line 1794, in load_checkpoint
+0: [rank2]:     state_dict, checkpoint_name, release, ckpt_type = _load_base_checkpoint(
+0: [rank2]:                                                       ^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/checkpointing.py", line 1305, in _load_base_checkpoint
+0: [rank2]:     return _load_global_dist_base_checkpoint(
+0: [rank2]: 
+0:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/checkpointing.py", line 1195, in _load_global_dist_base_checkpoint
+0: [rank2]:     state_dict = dist_checkpointing.load(sharded_state_dict, checkpoint_name, load_strategy, strict=args.dist_ckpt_strictness)
+0: [rank2]:                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/serialization.py", line 162, in load
+0: [rank2]:     loaded_state_dict = sharded_strategy.load(sharded_state_dict, checkpoint_dir)
+0: [rank2]:                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py", line 808, in load
+0: [rank2]:     checkpoint.load_state_dict(
+0: [rank2]:   F
+0: ile "/opt/venv/lib/python3.12/site-packages/typing_extensions.py", line 3004, in wrapper
+0: [rank2]:     return arg(*args, **kwargs)
+0: [rank2]:            ^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/state_dict_loader.py", line 48, in load_state_dict
+0: [rank2]:     return _load_state_dict(
+0: [rank2]:            ^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/state_dict_loader.py", line 279, in _load_state_dict
+0: [rank2]:     central_plan = distW.reduce_scatter("plan", local_step, global_step)
+0: [rank2]:                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py", line 219, in reduce_scatter
+0: [rank2]:     raise result
+0: [rank2]: torch.distributed.checkpoint.api.CheckpointException: CheckpointException ranks:dict_keys([0, 1, 2, 3])
+0: [rank2]: Traceback (most recent call last): (RANK 0)
+0: [rank2]:   File "/us
+0: r/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py", line 192, in reduce_scatter
+0: [rank2]:     local_data = map_fun()
+0: [rank2]:                  ^^^^^^^^^
+0: [rank2]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py", line 88, in wrapper
+0: [rank2]:     result = func(*args, **kwargs)
+0: [rank2]:              ^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/state_dict_loader.py", line 266, in local_step
+0: [rank2]:     local_plan = planner.create_local_plan()
+0: [rank2]:                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py", line 547, in create_local_plan
+0: [rank2]:     self._validate_global_shapes(self.metadata, self.shapes_validation_sharded_tensors)
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py", 
+0: line 518, in _validate_global_shapes
+0: [rank2]:     raise CheckpointingException(_msg)
+0: [rank2]: megatron.core.dist_checkpointing.core.CheckpointingException: Global shape mismatch for loaded (torch.Size([16, 5120, 2048])) and expected ((16, 3072, 2048)) tensor for key decoder.layers.self_attention.linear_qkv.weight
+0: [rank2]: Traceback (most recent call last): (RANK 1)
+0: [rank2]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py", line 192, in reduce_scatter
+0: [rank2]:     local_data = map_fun()
+0: [rank2]:                  ^^^^^^^^^
+0: [rank2]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py", line 88, in wrapper
+0: [rank2]:     result = func(*args, **kwargs)
+0: [rank2]:              ^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/state_dict_loader.py", line 266, in local_step
+0: [rank2]:     local_plan = planner.create_local_plan()
+0: [rank2]:                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   F
+0: ile "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py", line 547, in create_local_plan
+0: [rank2]:     self._validate_global_shapes(self.metadata, self.shapes_validation_sharded_tensors)
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py", line 518, in _validate_global_shapes
+0: [rank2]:     raise CheckpointingException(_msg)
+0: [rank2]: megatron.core.dist_checkpointing.core.CheckpointingException: Global shape mismatch for loaded (torch.Size([16, 5120, 2048])) and expected ((16, 3072, 2048)) tensor for key decoder.layers.self_attention.linear_qkv.weight
+0: [rank2]: Traceback (most recent call last): (RANK 2)
+0: [rank2]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py", line 192, in reduce_scatter
+0: [rank2]:     local_data = map_fun()
+0: [rank2]:                  ^^^^^^^^^
+0: [rank2]:   File "/usr/local/lib/python3.12/dist-packages/torch/distribu
+0: ted/checkpoint/logger.py", line 88, in wrapper
+0: [rank2]:     result = func(*args, **kwargs)
+0: [rank2]:              ^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/state_dict_loader.py", line 266, in local_step
+0: [rank2]:     local_plan = planner.create_local_plan()
+0: [rank2]:                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py", line 547, in create_local_plan
+0: [rank2]:     self._validate_global_shapes(self.metadata, self.shapes_validation_sharded_tensors)
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py", line 518, in _validate_global_shapes
+0: [rank2]:     raise CheckpointingException(_msg)
+0: [rank2]: megatron.core.dist_checkpointing.core.CheckpointingException: Global shape mismatch for loaded (torch.Size([16, 5120, 2048])) and expected ((16, 3072, 204
+0: 8)) tensor for key decoder.layers.self_attention.linear_qkv.weight
+0: [rank2]: Traceback (most recent call last): (RANK 3)
+0: [rank2]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py", line 192, in reduce_scatter
+0: [rank2]:     local_data = map_fun()
+0: [rank2]:                  ^^^^^^^^^
+0: [rank2]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py", line 88, in wrapper
+0: [rank2]:     result = func(*args, **kwargs)
+0: [rank2]:              ^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/state_dict_loader.py", line 266, in local_step
+0: [rank2]:     local_plan = planner.create_local_plan()
+0: [rank2]:                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py", line 547, in create_local_plan
+0: [rank2]:     self._validate_global_shapes(self.metadata, self.shapes_validation_sharded_tenso
+0: rs)
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py", line 518, in _validate_global_shapes
+0: [rank2]:     raise CheckpointingException(_msg)
+0: [rank2]: megatron.core.dist_checkpointing.core.CheckpointingException: Global shape mismatch for loaded (torch.Size([16, 5120, 2048])) and expected ((16, 3072, 2048)) tensor for key decoder.layers.self_attention.linear_qkv.weight
+0: 
+0: [rank1]: Traceback (most recent call last):
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py", line 348, in <module>
+0: [rank1]:     main()
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py", line 341, in main
+0: [rank1]:     model = load_megatron_model(args.ckpt_dir, args.tokenizer_path)
+0: [rank1]:             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py", line 83, in load_megatron_model
+0: [rank1]:     load_checkpoint(model, optimizer=None, opt_param_scheduler=None)
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/checkpointing.py", line 1794, in load_checkpoint
+0: [rank1]:     state_dict, checkpoint_name, release, ckpt_type = _load_base_checkpoint(
+0: [rank1]:            
+0:                                            ^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/checkpointing.py", line 1305, in _load_base_checkpoint
+0: [rank1]:     return _load_global_dist_base_checkpoint(
+0: [rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/checkpointing.py", line 1195, in _load_global_dist_base_checkpoint
+0: [rank1]:     state_dict = dist_checkpointing.load(sharded_state_dict, checkpoint_name, load_strategy, strict=args.dist_ckpt_strictness)
+0: [rank1]:                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/serialization.py", line 162, in load
+0: [rank1]:     loaded_state_dict = sharded_strategy.load(sharded_state_dict, checkpoint_dir)
+0: [rank1]:      
+0:                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py", line 808, in load
+0: [rank1]:     checkpoint.load_state_dict(
+0: [rank1]:   File "/opt/venv/lib/python3.12/site-packages/typing_extensions.py", line 3004, in wrapper
+0: [rank1]:     return arg(*args, **kwargs)
+0: [rank1]:            ^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/state_dict_loader.py", line 48, in load_state_dict
+0: [rank1]:     return _load_state_dict(
+0: [rank1]:            ^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/state_dict_loader.py", line 279, in _load_state_dict
+0: [rank1]:     central_plan = distW.reduce_scatter("plan", local_step, global_step)
+0: [rank1]:                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/usr/local/lib/python3.12/dist-packa
+0: ges/torch/distributed/checkpoint/utils.py", line 219, in reduce_scatter
+0: [rank1]:     raise result
+0: [rank1]: torch.distributed.checkpoint.api.CheckpointException: CheckpointException ranks:dict_keys([0, 1, 2, 3])
+0: [rank1]: Traceback (most recent call last): (RANK 0)
+0: [rank1]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py", line 192, in reduce_scatter
+0: [rank1]:     local_data = map_fun()
+0: [rank1]:                  ^^^^^^^^^
+0: [rank1]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py", line 88, in wrapper
+0: [rank1]:     result = func(*args, **kwargs)
+0: [rank1]:              ^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/state_dict_loader.py", line 266, in local_step
+0: [rank1]:     local_plan = planner.create_local_plan()
+0: [rank1]:                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/st
+0: rategies/torch.py", line 547, in create_local_plan
+0: [rank1]:     self._validate_global_shapes(self.metadata, self.shapes_validation_sharded_tensors)
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py", line 518, in _validate_global_shapes
+0: [rank1]:     raise CheckpointingException(_msg)
+0: [rank1]: megatron.core.dist_checkpointing.core.CheckpointingException: Global shape mismatch for loaded (torch.Size([16, 5120, 2048])) and expected ((16, 3072, 2048)) tensor for key decoder.layers.self_attention.linear_qkv.weight
+0: [rank1]: Traceback (most recent call last): (RANK 1)
+0: [rank1]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py", line 192, in reduce_scatter
+0: [rank1]:     local_data = map_fun()
+0: [rank1]:                  ^^^^^^^^^
+0: [rank1]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py", line 88, in wrapper
+0: [rank1]:     result = func(*args, **kwargs)
+0: [rank1]:     
+0:          ^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/state_dict_loader.py", line 266, in local_step
+0: [rank1]:     local_plan = planner.create_local_plan()
+0: [rank1]:                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py", line 547, in create_local_plan
+0: [rank1]:     self._validate_global_shapes(self.metadata, self.shapes_validation_sharded_tensors)
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py", line 518, in _validate_global_shapes
+0: [rank1]:     raise CheckpointingException(_msg)
+0: [rank1]: megatron.core.dist_checkpointing.core.CheckpointingException: Global shape mismatch for loaded (torch.Size([16, 5120, 2048])) and expected ((16, 3072, 2048)) tensor for key decoder.layers.self_attention.linear_qkv.weight
+0: [rank1]: Traceback (most recent call 
+0: last): (RANK 2)
+0: [rank1]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py", line 192, in reduce_scatter
+0: [rank1]:     local_data = map_fun()
+0: [rank1]:                  ^^^^^^^^^
+0: [rank1]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py", line 88, in wrapper
+0: [rank1]:     result = func(*args, **kwargs)
+0: [rank1]:              ^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/state_dict_loader.py", line 266, in local_step
+0: [rank1]:     local_plan = planner.create_local_plan()
+0: [rank1]:                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py", line 547, in create_local_plan
+0: [rank1]:     self._validate_global_shapes(self.metadata, self.shapes_validation_sharded_tensors)
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_
+0: checkpointing/strategies/torch.py", line 518, in _validate_global_shapes
+0: [rank1]:     raise CheckpointingException(_msg)
+0: [rank1]: megatron.core.dist_checkpointing.core.CheckpointingException: Global shape mismatch for loaded (torch.Size([16, 5120, 2048])) and expected ((16, 3072, 2048)) tensor for key decoder.layers.self_attention.linear_qkv.weight
+0: [rank1]: Traceback (most recent call last): (RANK 3)
+0: [rank1]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py", line 192, in reduce_scatter
+0: [rank1]:     local_data = map_fun()
+0: [rank1]:                  ^^^^^^^^^
+0: [rank1]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py", line 88, in wrapper
+0: [rank1]:     result = func(*args, **kwargs)
+0: [rank1]:              ^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/state_dict_loader.py", line 266, in local_step
+0: [rank1]:     local_plan = planner.create_local_plan()
+0: [rank1]:                  ^^^^
+0: ^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py", line 547, in create_local_plan
+0: [rank1]:     self._validate_global_shapes(self.metadata, self.shapes_validation_sharded_tensors)
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py", line 518, in _validate_global_shapes
+0: [rank1]:     raise CheckpointingException(_msg)
+0: [rank1]: megatron.core.dist_checkpointing.core.CheckpointingException: Global shape mismatch for loaded (torch.Size([16, 5120, 2048])) and expected ((16, 3072, 2048)) tensor for key decoder.layers.self_attention.linear_qkv.weight
+0: 
+0: [rank0]:[W525 01:12:22.022111165 ProcessGroupNCCL.cpp:1566] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [rank2]:[W525 01:12:23.586374117 ProcessGroupNCCL.cpp:1566] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [rank1]:[W525 01:12:23.590069764 ProcessGroupNCCL.cpp:1566] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [rank3]:[W525 01:12:24.194018435 ProcessGroupNCCL.cpp:1566] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: W0525 01:12:34.860000 15482 torch/distributed/elastic/multiprocessing/api.py:940] Sending process 16000 closing signal SIGTERM
+0: Stack (most recent call first):
+0:   <no Python frame>
+0: W0525 01:12:34.861000 15482 torch/distributed/elastic/multiprocessing/api.py:940] Sending process 16001 closing signal SIGTERM
+0: Stack (most recent call first):
+0:   <no Python frame>
+0: W0525 01:12:34.862000 15482 torch/distributed/elastic/multiprocessing/api.py:940] Sending process 16003 closing signal SIGTERM
+0: Stack (most recent call first):
+0:   <no Python frame>
+0: E0525 01:12:35.027000 15482 torch/distributed/elastic/multiprocessing/api.py:914] failed (exitcode: 1) local_rank: 2 (pid: 16002) of binary: /opt/venv/bin/python
+0: Traceback (most recent call last):
+0:   File "/usr/local/bin/torchrun", line 7, in <module>
+0:     sys.exit(main())
+0:              ^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 358, in wrapper
+0:     return f(*args, **kwargs)
+0:            ^^^^^^^^^^^^^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 945, in main
+0:     run(args)
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 936, in run
+0:     elastic_launch(
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 159, in __call__
+0:     return launch_agent(self._config, self._entrypoint, list(args))
+0:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 300, in launch_agent
+0:     raise ChildFailedError(
+0: torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+0: ============================================================
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py FAILED
+0: ------------------------------------------------------------
+0: Failures:
+0: [1]:
+0:   time      : 2026-05-25_01:12:35
+0:   host      : nid006079
+0:   rank      : 0 (local_rank: 0)
+0:   exitcode  : -15 (pid: 16000)
+0:   error_file: <N/A>
+0:   traceback : Signal 15 (SIGTERM) received by PID 16000
+0: [2]:
+0:   time      : 2026-05-25_01:12:35
+0:   host      : nid006079
+0:   rank      : 1 (local_rank: 1)
+0:   exitcode  : -15 (pid: 16001)
+0:   error_file: <N/A>
+0:   traceback : Signal 15 (SIGTERM) received by PID 16001
+0: [3]:
+0:   time      : 2026-05-25_01:12:35
+0:   host      : nid006079
+0:   rank      : 3 (local_rank: 3)
+0:   exitcode  : -15 (pid: 16003)
+0:   error_file: <N/A>
+0:   traceback : Signal 15 (SIGTERM) received by PID 16003
+0: ------------------------------------------------------------
+0: Root Ca
+0: use (first observed failure):
+0: [0]:
+0:   time      : 2026-05-25_01:12:34
+0:   host      : nid006079
+0:   rank      : 2 (local_rank: 2)
+0:   exitcode  : 1 (pid: 16002)
+0:   error_file: <N/A>
+0:   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+0: ============================================================
+0: 
+srun: error: nid006079: task 0: Exited with exit code 1
+srun: Terminating StepId=2367536.0
+0: Traceback (most recent call last):
+0:   File "/iopsstor/scratch/cscs/elyulina/PDM/src/verbatim_eval/controlled_expr.py", line 11, in <module>
+0:     from .rouge_ttr import batch_rouge_ttr_calc
+0: ImportError: attempted relative import with no known parent package
+0: 
+0: During handling of the above exception, another exception occurred:
+0: 
+0: Traceback (most recent call last):
+0:   File "/iopsstor/scratch/cscs/elyulina/PDM/src/verbatim_eval/rouge_ttr.py", line 5, in <module>
+0:     from .utils import load_inference_data
+0: ImportError: attempted relative import with no known parent package
+0: 
+0: During handling of the above exception, another exception occurred:
+0: 
+0: Traceback (most recent call last):
+0:   File "/users/elyulina/scratch/PDM/src/verbatim_eval/main.py", line 14, in <module>
+0:     from controlled_expr import (
+0:   File "/iopsstor/scratch/cscs/elyulina/PDM/src/verbatim_eval/controlled_expr.py", line 14, in <module>
+0:     from rouge_ttr import batch_rouge_ttr_calc
+0:   File "/iopsstor/scratch/cscs/elyulina/PDM/src/verbatim_eval/rouge_ttr.py", line 8, in <module>
+0:     from src.verbatim_eval.utils import load_inference_data
+0: ModuleNotFoundError: No module named 'src'
+srun: error: nid006079: task 0: Exited with exit code 1
+srun: Terminating StepId=2367536.1

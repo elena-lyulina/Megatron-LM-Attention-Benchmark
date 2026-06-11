@@ -1,0 +1,266 @@
+cat: '': No such file or directory
+/var/spool/slurmd/job2403450/slurm_script: line 373: python: command not found
+ 0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+ 0:   import pynvml  # type: ignore[import]
+42: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+41: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+40: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+43: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+22: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+21: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+20: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+23: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 2: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 3: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 0: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 1: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 8: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+46: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+11: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+45: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+47: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 9: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+44: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+10: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+31: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+30: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+29: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+28: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+18: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+16: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+17: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+19: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+51: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+48: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+49: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+50: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+14: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+12: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+13: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+26: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+15: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+25: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+24: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+27: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+39: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+36: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+38: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+37: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 4: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 6: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 7: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 5: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+52: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+54: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+55: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+53: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+35: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+34: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+32: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+33: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 0: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+ 0:   sentry_sdk.init(
+55: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+53: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+42: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 9: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 2: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+35: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+33: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+44: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+13: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+48: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 5: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+29: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 4: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 3: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+12: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+39: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+31: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+23: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+25: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+27: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+41: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+46: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+11: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+21: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+47: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+36: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+17: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+18: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+19: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+16: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+30: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+22: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+14: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+28: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+26: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+38: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+52: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+32: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+51: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+15: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 7: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+34: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+24: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 8: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+45: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+20: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+49: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 1: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+50: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+43: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 6: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+54: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+40: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+10: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+37: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:36: UserWarning: transformers version 5.3.0 is not tested with nvidia-modelopt and may cause issues. Please install recommended version with `pip install nvidia-modelopt[hf]` if working with HF models.
+ 0:   _warnings.warn(
+ 0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: Overriding default arguments for tokenizer_type:GPT2BPETokenizer with tokenizer_type:HuggingFaceTokenizer
+ 0:   warnings.warn(message)
+ 0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --async-save is not supported without --use-persistent-ckpt-worker. Disabling --async-save.
+ 0:   warnings.warn(message)
+ 0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-use-fast argument is deprecated and will be removed soon. `use_fast` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-use-fast if you want to disable `use_fast`.
+ 0:   warnings.warn(message)
+ 0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-include-special-tokens argument is deprecated and will be removed soon. `include_special_tokens` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-include-special-tokens if you want to disable `include_special_tokens`.
+ 0:   warnings.warn(message)
+17: [W527 00:18:15.530146231 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+19: [W527 00:18:15.532214142 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+41: [W527 00:18:15.509422894 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+18: [W527 00:18:15.534047819 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+55: wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+52: [W527 00:18:15.399803826 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+44: [W527 00:18:15.632782658 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+47: [W527 00:18:15.658063087 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+45: [W527 00:18:15.661554622 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+14: [W527 00:18:15.625808761 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+53: [W527 00:18:15.449521429 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+46: [W527 00:18:15.681374075 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+54: [W527 00:18:15.453338788 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+38: [W527 00:18:15.493062813 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+23: [W527 00:18:15.782668413 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+28: [W527 00:18:15.030106919 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 5: [W527 00:18:15.282528200 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+39: [W527 00:18:15.521629299 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+20: [W527 00:18:15.810291562 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+21: [W527 00:18:15.810835832 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+22: [W527 00:18:15.811331719 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+15: [W527 00:18:15.698467821 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+12: [W527 00:18:15.698538635 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+13: [W527 00:18:15.698536011 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+37: [W527 00:18:15.545127258 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+36: [W527 00:18:15.546241178 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 7: [W527 00:18:15.330776845 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+31: [W527 00:18:15.089750596 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+30: [W527 00:18:15.089764612 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+29: [W527 00:18:15.097750768 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 4: [W527 00:18:15.357843968 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 6: [W527 00:18:15.357871743 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 9: [W527 00:18:15.697900931 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+48: [W527 00:18:15.694888703 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+27: [W527 00:18:15.078990223 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+32: [W527 00:18:15.838984570 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 3: [W527 00:18:15.727479631 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+49: [W527 00:18:15.725797826 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+51: [W527 00:18:15.726335538 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+42: [W527 00:18:15.823363302 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 8: [W527 00:18:15.779676380 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+55: wandb: Currently logged in as: elyulina (elyulina-thesis) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+10: [W527 00:18:15.795609395 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+26: [W527 00:18:15.158172318 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 1: [W527 00:18:15.847548174 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+35: [W527 00:18:15.969843143 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+43: [W527 00:18:15.942159110 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+16: [W527 00:18:15.003384824 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+11: [W527 00:18:15.981948311 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 2: [W527 00:18:15.021409425 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+33: [W527 00:18:15.136184236 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+25: [W527 00:18:15.423007090 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+34: [W527 00:18:15.252712512 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+40: [W527 00:18:15.218403908 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+55: wandb: setting up run v7dfv9ym
+55: wandb: Tracking run with wandb version 0.26.0
+55: wandb: Run data is saved locally in /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/results/pretrain/fineweb-40B_gutenberg-3B/test-llama3-1b-sink-attn-fineweb40B-gutenberg3B-te215/logging/wandb/run-20260527_001815-v7dfv9ym
+55: wandb: Run `wandb offline` to turn off syncing.
+55: wandb: Syncing run test-llama3-1b-sink-attn-fineweb40B-gutenberg3B-te215-2403450
+55: wandb: ⭐️ View project at https://wandb.ai/elyulina-thesis/fineweb-40B_gutenberg-3B
+55: wandb: 🚀 View run at https://wandb.ai/elyulina-thesis/fineweb-40B_gutenberg-3B/runs/v7dfv9ym
+55: wandb: Detected [mcp, openai] in use.
+55: wandb: Use W&B Weave for improved LLM call tracing. Install Weave with `pip install weave` then add `import weave` to the top of your script.
+55: wandb: For more information, check out the docs at: https://weave-docs.wandb.ai
+55: [W527 00:18:17.634295849 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+24: [W527 00:18:20.746793011 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+50: [W527 00:18:20.731438951 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 0: [W527 00:18:20.751411702 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+24: [rank24]:W0527 00:19:08.340000 50695 torch/_inductor/codecache.py:1052] [1/1] fx graph cache unable to load compiled graph
+24: [rank24]:W0527 00:19:08.340000 50695 torch/_inductor/codecache.py:1052] [1/1] Traceback (most recent call last):
+24: [rank24]:W0527 00:19:08.340000 50695 torch/_inductor/codecache.py:1052] [1/1]   File "/usr/local/lib/python3.12/dist-packages/torch/_inductor/codecache.py", line 1048, in iterate_over_candidates
+24: [rank24]:W0527 00:19:08.340000 50695 torch/_inductor/codecache.py:1052] [1/1]     with open(os.path.join(subdir, path), "rb") as f:
+24: [rank24]:W0527 00:19:08.340000 50695 torch/_inductor/codecache.py:1052] [1/1]          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+24: [rank24]:W0527 00:19:08.340000 50695 torch/_inductor/codecache.py:1052] [1/1] FileNotFoundError: [Errno 2] No such file or directory: '/iopsstor/scratch/cscs/elyulina/tmp/torchinductor_elyulina/fxgraph/ta/ftarrkxgew326ydbzd5kl7ujybtuwznhrjdscs5nysbblhfe7xsm/.43973.70378169714848.tmp'
+11: [rank11]:W0527 00:19:13.488000 263699 torch/_inductor/triton_bundler.py:228] [3/0] Failed to reload cubin file statically launchable autotuner triton_red_fused__to_copy_max_0
+11: [rank11]:W0527 00:19:13.488000 263699 torch/_inductor/triton_bundler.py:228] [3/0] Traceback (most recent call last):
+11: [rank11]:W0527 00:19:13.488000 263699 torch/_inductor/triton_bundler.py:228] [3/0]   File "/usr/local/lib/python3.12/dist-packages/torch/_inductor/triton_bundler.py", line 226, in load_autotuners
+11: [rank11]:W0527 00:19:13.488000 263699 torch/_inductor/triton_bundler.py:228] [3/0]     compile_result.reload_cubin_path()
+11: [rank11]:W0527 00:19:13.488000 263699 torch/_inductor/triton_bundler.py:228] [3/0]   File "/usr/local/lib/python3.12/dist-packages/torch/_inductor/runtime/triton_heuristics.py", line 1759, in reload_cubin_path
+11: [rank11]:W0527 00:19:13.488000 263699 torch/_inductor/triton_bundler.py:228] [3/0]     raise RuntimeError(
+11: [rank11]:W0527 00:19:13.488000 263699 torch/_inductor/triton_bundler.py:228] [3/0] RuntimeError:
+11:  ('Cubin file saved by TritonBundler not found at %s', '/tmp/.triton/cache/ASFIS6SFC7KIC3MXP7VTCL5ZKZJJYS2Z5FDD2GIMFIOBXOVQ2V6A/triton_red_fused__to_copy_max_0.cubin')
+21: [rank21]:W0527 00:19:13.532000 54488 torch/_inductor/triton_bundler.py:228] [3/0] Failed to reload cubin file statically launchable autotuner triton_red_fused__to_copy_max_0
+21: [rank21]:W0527 00:19:13.532000 54488 torch/_inductor/triton_bundler.py:228] [3/0] Traceback (most recent call last):
+21: [rank21]:W0527 00:19:13.532000 54488 torch/_inductor/triton_bundler.py:228] [3/0]   File "/usr/local/lib/python3.12/dist-packages/torch/_inductor/triton_bundler.py", line 226, in load_autotuners
+21: [rank21]:W0527 00:19:13.532000 54488 torch/_inductor/triton_bundler.py:228] [3/0]     compile_result.reload_cubin_path()
+21: [rank21]:W0527 00:19:13.532000 54488 torch/_inductor/triton_bundler.py:228] [3/0]   File "/usr/local/lib/python3.12/dist-packages/torch/_inductor/runtime/triton_heuristics.py", line 1759, in reload_cubin_path
+21: [rank21]:W0527 00:19:13.532000 54488 torch/_inductor/triton_bundler.py:228] [3/0]     raise RuntimeError(
+21: [rank21]:W0527 00:19:13.532000 54488 torch/_inductor/triton_bundler.py:228] [3/0] RuntimeError: ('Cubi
+21: n file saved by TritonBundler not found at %s', '/tmp/.triton/cache/ASFIS6SFC7KIC3MXP7VTCL5ZKZJJYS2Z5FDD2GIMFIOBXOVQ2V6A/triton_red_fused__to_copy_max_0.cubin')
+39: [rank39]:W0527 00:19:13.534000 219530 torch/_inductor/triton_bundler.py:228] [3/0] Failed to reload cubin file statically launchable autotuner triton_red_fused__to_copy_max_0
+39: [rank39]:W0527 00:19:13.534000 219530 torch/_inductor/triton_bundler.py:228] [3/0] Traceback (most recent call last):
+39: [rank39]:W0527 00:19:13.534000 219530 torch/_inductor/triton_bundler.py:228] [3/0]   File "/usr/local/lib/python3.12/dist-packages/torch/_inductor/triton_bundler.py", line 226, in load_autotuners
+39: [rank39]:W0527 00:19:13.534000 219530 torch/_inductor/triton_bundler.py:228] [3/0]     compile_result.reload_cubin_path()
+39: [rank39]:W0527 00:19:13.534000 219530 torch/_inductor/triton_bundler.py:228] [3/0]   File "/usr/local/lib/python3.12/dist-packages/torch/_inductor/runtime/triton_heuristics.py", line 1759, in reload_cubin_path
+39: [rank39]:W0527 00:19:13.534000 219530 torch/_inductor/triton_bundler.py:228] [3/0]     raise RuntimeError(
+39: [rank39]:W0527 00:19:13.534000 219530 torch/_inductor/triton_bundler.py:228] [3/0] RuntimeError:
+39:  ('Cubin file saved by TritonBundler not found at %s', '/tmp/.triton/cache/ASFIS6SFC7KIC3MXP7VTCL5ZKZJJYS2Z5FDD2GIMFIOBXOVQ2V6A/triton_red_fused__to_copy_max_0.cubin')
+37: [rank37]:W0527 00:19:13.536000 219528 torch/_inductor/triton_bundler.py:228] [3/0] Failed to reload cubin file statically launchable autotuner triton_red_fused__to_copy_max_0
+37: [rank37]:W0527 00:19:13.536000 219528 torch/_inductor/triton_bundler.py:228] [3/0] Traceback (most recent call last):
+37: [rank37]:W0527 00:19:13.536000 219528 torch/_inductor/triton_bundler.py:228] [3/0]   File "/usr/local/lib/python3.12/dist-packages/torch/_inductor/triton_bundler.py", line 226, in load_autotuners
+37: [rank37]:W0527 00:19:13.536000 219528 torch/_inductor/triton_bundler.py:228] [3/0]     compile_result.reload_cubin_path()
+37: [rank37]:W0527 00:19:13.536000 219528 torch/_inductor/triton_bundler.py:228] [3/0]   File "/usr/local/lib/python3.12/dist-packages/torch/_inductor/runtime/triton_heuristics.py", line 1759, in reload_cubin_path
+37: [rank37]:W0527 00:19:13.536000 219528 torch/_inductor/triton_bundler.py:228] [3/0]     raise RuntimeError(
+37: [rank37]:W0527 00:19:13.536000 219528 torch/_inductor/triton_bundler.py:228] [3/0] RuntimeError:
+37:  ('Cubin file saved by TritonBundler not found at %s', '/tmp/.triton/cache/ASFIS6SFC7KIC3MXP7VTCL5ZKZJJYS2Z5FDD2GIMFIOBXOVQ2V6A/triton_red_fused__to_copy_max_0.cubin')
+38: [rank38]:W0527 00:19:13.539000 219529 torch/_inductor/triton_bundler.py:228] [3/0] Failed to reload cubin file statically launchable autotuner triton_red_fused__to_copy_max_0
+38: [rank38]:W0527 00:19:13.539000 219529 torch/_inductor/triton_bundler.py:228] [3/0] Traceback (most recent call last):
+38: [rank38]:W0527 00:19:13.539000 219529 torch/_inductor/triton_bundler.py:228] [3/0]   File "/usr/local/lib/python3.12/dist-packages/torch/_inductor/triton_bundler.py", line 226, in load_autotuners
+38: [rank38]:W0527 00:19:13.539000 219529 torch/_inductor/triton_bundler.py:228] [3/0]     compile_result.reload_cubin_path()
+38: [rank38]:W0527 00:19:13.539000 219529 torch/_inductor/triton_bundler.py:228] [3/0]   File "/usr/local/lib/python3.12/dist-packages/torch/_inductor/runtime/triton_heuristics.py", line 1759, in reload_cubin_path
+38: [rank38]:W0527 00:19:13.539000 219529 torch/_inductor/triton_bundler.py:228] [3/0]     raise RuntimeError(
+38: [rank38]:W0527 00:19:13.539000 219529 torch/_inductor/triton_bundler.py:228] [3/0] RuntimeError:
+38:  ('Cubin file saved by TritonBundler not found at %s', '/tmp/.triton/cache/ASFIS6SFC7KIC3MXP7VTCL5ZKZJJYS2Z5FDD2GIMFIOBXOVQ2V6A/triton_red_fused__to_copy_max_0.cubin')
+22: [rank22]:W0527 00:19:13.548000 54489 torch/_inductor/triton_bundler.py:228] [3/0] Failed to reload cubin file statically launchable autotuner triton_red_fused__to_copy_max_0
+22: [rank22]:W0527 00:19:13.548000 54489 torch/_inductor/triton_bundler.py:228] [3/0] Traceback (most recent call last):
+22: [rank22]:W0527 00:19:13.548000 54489 torch/_inductor/triton_bundler.py:228] [3/0]   File "/usr/local/lib/python3.12/dist-packages/torch/_inductor/triton_bundler.py", line 226, in load_autotuners
+22: [rank22]:W0527 00:19:13.548000 54489 torch/_inductor/triton_bundler.py:228] [3/0]     compile_result.reload_cubin_path()
+22: [rank22]:W0527 00:19:13.548000 54489 torch/_inductor/triton_bundler.py:228] [3/0]   File "/usr/local/lib/python3.12/dist-packages/torch/_inductor/runtime/triton_heuristics.py", line 1759, in reload_cubin_path
+22: [rank22]:W0527 00:19:13.548000 54489 torch/_inductor/triton_bundler.py:228] [3/0]     raise RuntimeError(
+22: [rank22]:W0527 00:19:13.548000 54489 torch/_inductor/triton_bundler.py:228] [3/0] RuntimeError: ('Cubi
+22: n file saved by TritonBundler not found at %s', '/tmp/.triton/cache/ASFIS6SFC7KIC3MXP7VTCL5ZKZJJYS2Z5FDD2GIMFIOBXOVQ2V6A/triton_red_fused__to_copy_max_0.cubin')
+23: [rank23]:W0527 00:19:13.550000 54490 torch/_inductor/triton_bundler.py:228] [3/0] Failed to reload cubin file statically launchable autotuner triton_red_fused__to_copy_max_0
+23: [rank23]:W0527 00:19:13.550000 54490 torch/_inductor/triton_bundler.py:228] [3/0] Traceback (most recent call last):
+23: [rank23]:W0527 00:19:13.550000 54490 torch/_inductor/triton_bundler.py:228] [3/0]   File "/usr/local/lib/python3.12/dist-packages/torch/_inductor/triton_bundler.py", line 226, in load_autotuners
+23: [rank23]:W0527 00:19:13.550000 54490 torch/_inductor/triton_bundler.py:228] [3/0]     compile_result.reload_cubin_path()
+23: [rank23]:W0527 00:19:13.550000 54490 torch/_inductor/triton_bundler.py:228] [3/0]   File "/usr/local/lib/python3.12/dist-packages/torch/_inductor/runtime/triton_heuristics.py", line 1759, in reload_cubin_path
+23: [rank23]:W0527 00:19:13.550000 54490 torch/_inductor/triton_bundler.py:228] [3/0]     raise RuntimeError(
+23: [rank23]:W0527 00:19:13.550000 54490 torch/_inductor/triton_bundler.py:228] [3/0] RuntimeError: ('Cubi
+23: n file saved by TritonBundler not found at %s', '/tmp/.triton/cache/ASFIS6SFC7KIC3MXP7VTCL5ZKZJJYS2Z5FDD2GIMFIOBXOVQ2V6A/triton_red_fused__to_copy_max_0.cubin')
+ 0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/pipeline_parallel/schedules.py:188: UserWarning: The AccumulateGrad node's stream does not match the stream of the node that produced the incoming gradient. This may incur unnecessary synchronization and break CUDA graph capture if the AccumulateGrad node's stream is the default stream. This mismatch is caused by an AccumulateGrad node created prior to the current iteration being kept alive. This can happen if the autograd graph is still being kept alive by tensors such as the loss, or if you are using DDP, which will stash a reference to the node. To resolve the mismatch, delete all references to the autograd graph or ensure that DDP initialization is performed under the same stream as subsequent forwards. If the mismatch is intentional, you can use torch.autograd.graph.set_warn_on_accumulate_grad_stream_mismatch(False) to suppress this warning. (Triggered internally at /opt/pytorch/pytorch/torch/csrc/autograd/input_buffer.cpp:240.
+ 0: )
+ 0:   Variable._execution_engine.run_backward(
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+ 0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+ 0:   import pynvml  # type: ignore[import]
+ 0: [2026-05-27T00:26:27.019] error: *** STEP 2403450.1 ON nid006239 CANCELLED AT 2026-05-27T00:26:27 DUE TO TIME LIMIT ***
+[2026-05-27T00:26:27.020] error: *** JOB 2403450 ON nid006239 CANCELLED AT 2026-05-27T00:26:27 DUE TO TIME LIMIT ***

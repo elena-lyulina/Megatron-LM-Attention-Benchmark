@@ -1,0 +1,115 @@
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:64: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: W0526 12:37:46.659000 234029 torch/distributed/run.py:811] 
+0: W0526 12:37:46.659000 234029 torch/distributed/run.py:811] *****************************************
+0: W0526 12:37:46.659000 234029 torch/distributed/run.py:811] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+0: W0526 12:37:46.659000 234029 torch/distributed/run.py:811] *****************************************
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:64: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:64: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:64: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:64: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: usage: megatron_inference_sparse.py [-h] --ckpt-dir CKPT_DIR --tokenizer-path
+0:                                     TOKENIZER_PATH --experiment-path
+0:                                     EXPERIMENT_PATH --data-folder DATA_FOLDER
+0:                                     --repetitions REPETITIONS
+0:                                     [--offset OFFSET]
+0:                                     [--prefix-length PREFIX_LENGTH]
+0:                                     [--suffix-length SUFFIX_LENGTH]
+0:                                     [--batch-size BATCH_SIZE]
+0:                                     [--max-samples MAX_SAMPLES]
+0:                                     [--megatron-extra-args [MEGATRON_EXTRA_ARGS ...]]
+0: megatron_inference_sparse.py: error: unrecognized arguments: --softmax-type learnable
+0: usage: megatron_inference_sparse.py [-h] --ckpt-dir CKPT_DIR --tokenizer-path
+0:                                     TOKENIZER_PATH --experiment-path
+0:                                     EXPERIMENT_PATH --data-folder DATA_FOLDER
+0:                                     --repetitions REPETITIONS
+0:                                     [--offset OFFSET]
+0:                                     [--prefix-length PREFIX_LENGTH]
+0:                                     [--suffix-length SUFFIX_LENGTH]
+0:                                     [--batch-size BATCH_SIZE]
+0:                                     [--max-samples MAX_SAMPLES]
+0:                                     [--megatron-extra-args [MEGATRON_EXTRA_ARGS ...]]
+0: megatron_inference_sparse.py: error: unrecognized arguments: --softmax-type learnable
+0: usage: megatron_inference_sparse.py [-h] --ckpt-dir CKPT_DIR --tokenizer-path
+0:                                     TOKENIZER_PATH --experiment-path
+0:                                     EXPERIMENT_PATH --data-folder DATA_FOLDER
+0:                                     --repetitions REPETITIONS
+0:                                     [--offset OFFSET]
+0:                                     [--prefix-length PREFIX_LENGTH]
+0:                                     [--suffix-length SUFFIX_LENGTH]
+0:                                     [--batch-size BATCH_SIZE]
+0:                                     [--max-samples MAX_SAMPLES]
+0:                                     [--megatron-extra-args [MEGATRON_EXTRA_ARGS ...]]
+0: megatron_inference_sparse.py: error: unrecognized arguments: --softmax-type learnable
+0: usage: megatron_inference_sparse.py [-h] --ckpt-dir CKPT_DIR --tokenizer-path
+0:                                     TOKENIZER_PATH --experiment-path
+0:                                     EXPERIMENT_PATH --data-folder DATA_FOLDER
+0:                                     --repetitions REPETITIONS
+0:                                     [--offset OFFSET]
+0:                                     [--prefix-length PREFIX_LENGTH]
+0:                                     [--suffix-length SUFFIX_LENGTH]
+0:                                     [--batch-size BATCH_SIZE]
+0:                                     [--max-samples MAX_SAMPLES]
+0:                                     [--megatron-extra-args [MEGATRON_EXTRA_ARGS ...]]
+0: megatron_inference_sparse.py: error: unrecognized arguments: --softmax-type learnable
+0: E0526 12:38:01.626000 234029 torch/distributed/elastic/multiprocessing/api.py:914] failed (exitcode: 2) local_rank: 0 (pid: 234525) of binary: /opt/venv/bin/python
+0: Traceback (most recent call last):
+0:   File "/usr/local/bin/torchrun", line 7, in <module>
+0:     sys.exit(main())
+0:              ^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 358, in wrapper
+0:     return f(*args, **kwargs)
+0:            ^^^^^^^^^^^^^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 945, in main
+0:     run(args)
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 936, in run
+0:     elastic_launch(
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 159, in __call__
+0:     return launch_agent(self._config, self._entrypoint, list(args))
+0:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 300, in launch_agent
+0:     raise ChildFailedError(
+0: torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+0: ============================================================
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py FAILED
+0: ------------------------------------------------------------
+0: Failures:
+0: [1]:
+0:   time      : 2026-05-26_12:38:01
+0:   host      : nid006234
+0:   rank      : 1 (local_rank: 1)
+0:   exitcode  : 2 (pid: 234526)
+0:   error_file: <N/A>
+0:   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+0: [2]:
+0:   time      : 2026-05-26_12:38:01
+0:   host      : nid006234
+0:   rank      : 2 (local_rank: 2)
+0:   exitcode  : 2 (pid: 234527)
+0:   error_file: <N/A>
+0:   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+0: [3]:
+0:   time      : 2026-05-26_12:38:01
+0:   host      : nid006234
+0:   rank      : 3 (local_rank: 3)
+0:   exitcode  : 2 (pid: 234528)
+0:   error_file: <N/A>
+0:   traceback : To enable traceback see: https://pytorch.or
+0: g/docs/stable/elastic/errors.html
+0: ------------------------------------------------------------
+0: Root Cause (first observed failure):
+0: [0]:
+0:   time      : 2026-05-26_12:38:01
+0:   host      : nid006234
+0:   rank      : 0 (local_rank: 0)
+0:   exitcode  : 2 (pid: 234525)
+0:   error_file: <N/A>
+0:   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+0: ============================================================
+0: 
+srun: error: nid006234: task 0: Exited with exit code 1
+srun: Terminating StepId=2394719.0

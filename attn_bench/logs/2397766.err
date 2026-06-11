@@ -1,0 +1,71 @@
+srun: Step created for StepId=2397766.1
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:64: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+1: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:64: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+1:   import pynvml  # type: ignore[import]
+1: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+0: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+1: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/utils/logging.py:115: UserWarning: Failed to import diffusers plugin due to: ImportError('peft>=0.17.0 is required for a normal functioning of this module, but found peft==0.13.2.'). You may ignore this warning if you do not need this plugin.
+0:   warnings.warn(message, *args, **kwargs)
+1: /opt/venv/lib/python3.12/site-packages/modelopt/torch/utils/logging.py:115: UserWarning: Failed to import diffusers plugin due to: ImportError('peft>=0.17.0 is required for a normal functioning of this module, but found peft==0.13.2.'). You may ignore this warning if you do not need this plugin.
+1:   warnings.warn(message, *args, **kwargs)
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/utils/logging.py:115: UserWarning: Failed to import peft plugin due to: ImportError("cannot import name 'ParamWrapper' from 'peft.tuners.lora.layer' (/opt/venv/lib/python3.12/site-packages/peft/tuners/lora/layer.py)"). You may ignore this warning if you do not need this plugin.
+0:   warnings.warn(message, *args, **kwargs)
+1: /opt/venv/lib/python3.12/site-packages/modelopt/torch/utils/logging.py:115: UserWarning: Failed to import peft plugin due to: ImportError("cannot import name 'ParamWrapper' from 'peft.tuners.lora.layer' (/opt/venv/lib/python3.12/site-packages/peft/tuners/lora/layer.py)"). You may ignore this warning if you do not need this plugin.
+1:   warnings.warn(message, *args, **kwargs)
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: Overriding default arguments for tokenizer_type:GPT2BPETokenizer with tokenizer_type:HuggingFaceTokenizer
+0:   warnings.warn(message)
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-use-fast argument is deprecated and will be removed soon. `use_fast` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-use-fast if you want to disable `use_fast`.
+0:   warnings.warn(message)
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-include-special-tokens argument is deprecated and will be removed soon. `include_special_tokens` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-include-special-tokens if you want to disable `include_special_tokens`.
+0:   warnings.warn(message)
+1: wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+1: wandb: Currently logged in as: elyulina (elyulina-thesis) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+1: wandb: setting up run akt0hure
+1: wandb: Tracking run with wandb version 0.24.0
+1: wandb: Run data is saved locally in /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/results/test/attn_sink_flag_tp2_2nodes/logging/wandb/run-20260526_175010-akt0hure
+1: wandb: Run `wandb offline` to turn off syncing.
+1: wandb: Syncing run attn_sink_flag_tp2_2nodes-2397766
+1: wandb: ⭐️ View project at https://wandb.ai/elyulina-thesis/test
+1: wandb: 🚀 View run at https://wandb.ai/elyulina-thesis/test/runs/akt0hure
+1: wandb: Detected [openai] in use.
+1: wandb: Use W&B Weave for improved LLM call tracing. Install Weave with `pip install weave` then add `import weave` to the top of your script.
+1: wandb: For more information, check out the docs at: https://weave-docs.wandb.ai/
+1: Stack (most recent call first):
+1:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/tests/test_xdoc_attention.py", line 65 in _check_mask_errors
+[2026-05-26T18:04:03.010] error: *** JOB 2397766 ON nid007030 CANCELLED AT 2026-05-26T18:04:03 DUE TO TIME LIMIT ***
+1:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/tests/test_xdoc_attention.py", line 112 in test_mask_structure
+1:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/tests/util/registry.py", line 31 in forward_step
+1:   File 
+1: "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/pipeline_parallel/schedules.py", line 404 in forward_step
+1:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/pipeline_parallel/schedules.py", line 637 in forward_backward_no_pipelining
+1:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py"
+0: [2026-05-26T18:04:03.010] error: *** STEP 2397766.1 ON nid007030 CANCELLED AT 2026-05-26T18:04:03 DUE TO TIME LIMIT ***
+1: , line 1730 in train_step
+1:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 2926 in train
+1:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1077 in pretrain
+1:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/tests/pretrain_gpt_native.py", line 43
+1:  in <module>
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+0: Stack (most recent call first):
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/tests/test_xdoc_attention.py", line 33 in _tok_label
+0: 
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/tests/test_xdoc_attention.py", line 67 in _check_mask_errors
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/tests/test_xdoc_attention.py"
+0: , line 112 in test_mask_structure
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/tests/util/registry.py", line 31 in forward_step
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/pipeline_parallel/schedules.py", line 404 in forward_step
+0:   File 
+0: "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/pipeline_parallel/schedules.py", line 637 in forward_backward_no_pipelining
+0: 
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 
+0: 1730 in train_step
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py"
+0: , line 2926 in train
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py
+0: "
+0: , line 1077 in pretrain
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/tests/pretrain_gpt_native.py", line 
+0: 43 in <module>

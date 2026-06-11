@@ -27,6 +27,9 @@ CONTAINER_ENV=nemo_26
 MEGATRON_LM_DIR=/iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark
 PDM_DIR=/users/elyulina/scratch/PDM
 
+OFFSET=${OFFSET:-0}
+PREFIX_LENGTH=${PREFIX_LENGTH:-500}
+
 EXP_NAME=llama3-1b-full-attn-fineweb40B-gutenberg3B
 MODEL_DIR=/users/elyulina/store/pretrain-results/$EXP_NAME
 MEM_BASE=/users/elyulina/store/mem-results
@@ -37,6 +40,7 @@ TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b
 export PYTHONPATH=$MEGATRON_LM_DIR:$PDM_DIR:$PDM_DIR/src:${PYTHONPATH:-}
 export CUDA_DEVICE_MAX_CONNECTIONS=1
 
+echo "RUN: exp=$EXP_NAME  offset=$OFFSET  prefix=$PREFIX_LENGTH  suffix=500"
 
 ### STEP 1: sparse Gutenberg inference ###
 # Loads torch_dist checkpoint directly (DCP resharding merges TP=2 shards on the fly).
@@ -60,8 +64,8 @@ srun \
         --experiment-path $MEM_DIR \
         --data-folder $GUTENBERG_JSONL_DIR \
         --repetitions 0,1,2,4,8,16,32,64,128,256 \
-        --offset 0 \
-        --prefix-length 500 \
+        --offset $OFFSET \
+        --prefix-length $PREFIX_LENGTH \
         --suffix-length 500 \
         --batch-size 20"
 
@@ -82,8 +86,8 @@ srun \
         --mode sparse \
         --base-path $MEM_BASE \
         --save-path $MEM_BASE/SparseGutenberg \
-        --offsets 0 \
-        --prefix-lengths 500 \
+        --offsets $OFFSET \
+        --prefix-lengths $PREFIX_LENGTH \
         --suffix-lengths 500"
 
 echo "END TIME: $(date)"

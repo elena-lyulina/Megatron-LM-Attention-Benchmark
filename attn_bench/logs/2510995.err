@@ -1,0 +1,164 @@
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: W0610 01:21:49.030000 101099 torch/distributed/run.py:851] 
+0: W0610 01:21:49.030000 101099 torch/distributed/run.py:851] *****************************************
+0: W0610 01:21:49.030000 101099 torch/distributed/run.py:851] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+0: W0610 01:21:49.030000 101099 torch/distributed/run.py:851] *****************************************
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+0:   sentry_sdk.init(
+0: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+0:   sentry_sdk.init(
+0: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+0:   sentry_sdk.init(
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:36: UserWarning: transformers version 5.3.0 is not tested with nvidia-modelopt and may cause issues. Please install recommended version with `pip install nvidia-modelopt[hf]` if working with HF models.
+0:   _warnings.warn(
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:36: UserWarning: transformers version 5.3.0 is not tested with nvidia-modelopt and may cause issues. Please install recommended version with `pip install nvidia-modelopt[hf]` if working with HF models.
+0:   _warnings.warn(
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:36: UserWarning: transformers version 5.3.0 is not tested with nvidia-modelopt and may cause issues. Please install recommended version with `pip install nvidia-modelopt[hf]` if working with HF models.
+0:   _warnings.warn(
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:36: UserWarning: transformers version 5.3.0 is not tested with nvidia-modelopt and may cause issues. Please install recommended version with `pip install nvidia-modelopt[hf]` if working with HF models.
+0:   _warnings.warn(
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-use-fast argument is deprecated and will be removed soon. `use_fast` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-use-fast if you want to disable `use_fast`.
+0:   warnings.warn(message)
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-include-special-tokens argument is deprecated and will be removed soon. `include_special_tokens` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-include-special-tokens if you want to disable `include_special_tokens`.
+0:   warnings.warn(message)
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py:808: FutureWarning: `load_state_dict` is deprecated and will be removed in future versions. Please use `load` instead.
+0:   checkpoint.load_state_dict(
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py:808: FutureWarning: `load_state_dict` is deprecated and will be removed in future versions. Please use `load` instead.
+0:   checkpoint.load_state_dict(
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py:808: FutureWarning: `load_state_dict` is deprecated and will be removed in future versions. Please use `load` instead.
+0:   checkpoint.load_state_dict(
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py:808: FutureWarning: `load_state_dict` is deprecated and will be removed in future versions. Please use `load` instead.
+0:   checkpoint.load_state_dict(
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/planner_helpers.py:489: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   device = getattr(value, "device", None)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/default_planner.py:483: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   and md.size != obj.size()
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/planner_helpers.py:489: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   device = getattr(value, "device", None)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/default_planner.py:483: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   and md.size != obj.size()
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/planner_helpers.py:489: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   device = getattr(value, "device", None)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/default_planner.py:483: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   and md.size != obj.size()
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/planner_helpers.py:489: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   device = getattr(value, "device", None)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/default_planner.py:483: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   and md.size != obj.size()
+0: [rank3]: Traceback (most recent call last):
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py", line 426, in <module>
+0: [rank3]:     main()
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py", line 412, in main
+0: [rank3]:     originals = patch_sink_scale(model, args.sink_scale)
+0: [rank3]:                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py", line 131, in patch_sink_scale
+0: [rank3]:     module.softmax_offset.add_(log_scale)
+0: [rank3]: RuntimeError: a leaf Variable that requires grad is being used in an in-place operation.
+0: [rank0]: Traceback (most recent call last):
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py", line 426, in <module>
+0: [rank0]
+0: :     main()
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py", line 412, in main
+0: [rank0]:     originals = patch_sink_scale(model, args.sink_scale)
+0: [rank0]:                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py", line 131, in patch_sink_scale
+0: [rank0]:     module.softmax_offset.add_(log_scale)
+0: [rank0]: RuntimeError: a leaf Variable that requires grad is being used in an in-place operation.
+0: [rank1]: Traceback (most recent call last):
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py", line 426, in <module>
+0: [rank1]:     main()
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py", line 412, in main
+0: [rank1]:     originals = patch_sink_scale(
+0: model, args.sink_scale)
+0: [rank1]:                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py", line 131, in patch_sink_scale
+0: [rank1]:     module.softmax_offset.add_(log_scale)
+0: [rank1]: RuntimeError: a leaf Variable that requires grad is being used in an in-place operation.
+0: [rank2]: Traceback (most recent call last):
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py", line 426, in <module>
+0: [rank2]:     main()
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py", line 412, in main
+0: [rank2]:     originals = patch_sink_scale(model, args.sink_scale)
+0: [rank2]:                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_infer
+0: ence_sparse.py", line 131, in patch_sink_scale
+0: [rank2]:     module.softmax_offset.add_(log_scale)
+0: [rank2]: RuntimeError: a leaf Variable that requires grad is being used in an in-place operation.
+0: [rank0]:[W610 01:23:09.536183329 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [rank1]:[W610 01:23:11.431571061 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [rank2]:[W610 01:23:11.431830093 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [rank3]:[W610 01:23:11.472760442 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: W0610 01:23:23.405000 101099 torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 101657 closing signal SIGTERM
+0: W0610 01:23:23.406000 101099 torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 101658 closing signal SIGTERM
+0: W0610 01:23:23.407000 101099 torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 101659 closing signal SIGTERM
+0: Stack (most recent call first):
+0:   <no Python frame>
+0: E0610 01:23:23.587000 101099 torch/distributed/elastic/multiprocessing/api.py:984] failed (exitcode: 1) local_rank: 3 (pid: 101660) of binary: /opt/venv/bin/python3
+0: Traceback (most recent call last):
+0:   File "/usr/local/bin/torchrun", line 6, in <module>
+0:     sys.exit(main())
+0:              ^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+0:     return f(*args, **kwargs)
+0:            ^^^^^^^^^^^^^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 990, in main
+0:     run(args)
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 981, in run
+0:     elastic_launch(
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 170, in __call__
+0:     return launch_agent(self._config, self._entrypoint, list(args))
+0:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 317, in launch_agent
+0:     raise ChildFailedError(
+0: torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+0: ============================================================
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py FAILED
+0: ------------------------------------------------------------
+0: Failures:
+0: [1]:
+0:   time      : 2026-06-10_01:23:23
+0:   host      : nid007470
+0:   rank      : 0 (local_rank: 0)
+0:   exitcode  : -15 (pid: 101657)
+0:   error_file: <N/A>
+0:   traceback : Signal 15 (SIGTERM) received by PID 101657
+0: [2]:
+0:   time      : 2026-06-10_01:23:23
+0:   host      : nid007470
+0:   rank      : 1 (local_rank: 1)
+0:   exitcode  : -15 (pid: 101658)
+0:   error_file: <N/A>
+0:   traceback : Signal 15 (SIGTERM) received by PID 101658
+0: [3]:
+0:   time      : 2026-06-10_01:23:23
+0:   host      : nid007470
+0:   rank      : 2 (local_rank: 2)
+0:   exitcode  : -15 (pid: 101659)
+0:   error_file: <N/A>
+0:   traceback : Signal 15 (SIGTERM) received by PID 101659
+0: ------------------------------------------------------------
+0: Root Cause (first observed fa
+0: ilure):
+0: [0]:
+0:   time      : 2026-06-10_01:23:23
+0:   host      : nid007470
+0:   rank      : 3 (local_rank: 3)
+0:   exitcode  : 1 (pid: 101660)
+0:   error_file: <N/A>
+0:   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+0: ============================================================
+srun: error: nid007470: task 0: Exited with exit code 1
+srun: Terminating StepId=2510995.0
