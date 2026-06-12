@@ -35,7 +35,7 @@ EXP_NAME=llama3-1b-sink-attn-fineweb40B-gutenberg3B-te215
 MODEL_DIR=/users/elyulina/store/pretrain-results/$EXP_NAME
 MEM_BASE=/users/elyulina/store/mem-results
 MEM_DIR=$MEM_BASE/SparseGutenberg/$EXP_NAME
-GUTENBERG_JSONL_DIR=/users/elyulina/scratch/datasets/tokenized/gutenberg_rep_jsonl
+GUTENBERG_JSONL_DIR=/users/elyulina/store/datasets/tokenized/gutenberg_rep_jsonl
 TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b
 
 export PYTHONPATH=$MEGATRON_LM_DIR:$PDM_DIR:$PDM_DIR/src:${PYTHONPATH:-}

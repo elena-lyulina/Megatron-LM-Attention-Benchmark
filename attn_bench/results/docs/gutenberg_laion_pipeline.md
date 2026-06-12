@@ -207,7 +207,7 @@ Scripts: `attn_bench/data_processing/books/check_fineweb_containment.py`, `attn_
 
 ---
 
-## Planned: perplexity-based filtering (step 22)
+## Planned: perplexity-based / ngram contaminaiton filtering (step 22)
 
 After the full scoring run completes, apply bilateral cutoffs informed by the pilot observations:
 
@@ -216,6 +216,9 @@ After the full scoring run completes, apply bilateral cutoffs informed by the pi
 - **Decontamination via Min-K%++**: flags excerpts the model likely saw during training, complementing the low-perplexity cut.
 
 Specific thresholds TBD after examining the full-dataset distribution; pilot observations above guide where to look.
+
+Final: PPl cut p10/p90 percentiles -- after ppl cut 21 452 / 26 816 
+Then take only excerpt with 0 n-13 duplication against fineweb edu (6600 / 21452) and split into 10 repetition buckets (0, 1, 2 .. 256)
 
 ## Megatron tokenization (2026-05-19)
 

@@ -29,7 +29,7 @@ PDM_DIR=/users/elyulina/scratch/PDM
 EXP_NAME=llama3-1b-gated-attn-fineweb40B-gutenberg3B
 MODEL_DIR=/users/elyulina/store/pretrain-results/$EXP_NAME
 TEST_OUT=/users/elyulina/store/mem-results/SparseGutenberg/test/$EXP_NAME
-GUTENBERG_JSONL_DIR=/users/elyulina/scratch/datasets/tokenized/gutenberg_rep_jsonl
+GUTENBERG_JSONL_DIR=/users/elyulina/store/datasets/tokenized/gutenberg_rep_jsonl
 TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b
 
 export PYTHONPATH=$MEGATRON_LM_DIR:$PDM_DIR:$PDM_DIR/src:${PYTHONPATH:-}
