@@ -168,10 +168,12 @@ def compute_nll(model, input_ids: torch.Tensor, suffix_length: int):
 
 @torch.no_grad()
 def greedy_generate(model, prompt_ids: torch.Tensor, suffix_length: int,
-                    step_callback=None):
+                    prefill_callback=None, step_callback=None):
     """Greedy generation with StaticInferenceContext KV cache.
 
     prompt_ids: [B, prompt_len]   — prefix tokens (BOS already included as token 0)
+    prefill_callback: optional callable() invoked right after the prefill forward
+                      (before any decode forward overwrites the attention buffers).
     step_callback: optional callable(t: int) called after each decode step with the
                    0-indexed step number (t=0 for first decode step, etc.).
                    n_steps total = suffix_length - 1; prefill is not a step.
@@ -194,6 +196,9 @@ def greedy_generate(model, prompt_ids: torch.Tensor, suffix_length: int,
     # logits: [B, 1, V]  (StaticInferenceContext sets materialize_only_last_token_logits=True)
     ctx.sequence_len_offset = prompt_len
     ctx.enable_decode_mode()
+
+    if prefill_callback is not None:
+        prefill_callback()
 
     next_token = logits[:, 0, :].argmax(dim=-1, keepdim=True)  # [B, 1]
     generated = [next_token]
@@ -233,7 +238,9 @@ def run_bucket(model, dataset, prefix_length, suffix_length, batch_size, inferen
     """Run inference for one repetition bucket.
 
     needs_bos: True when offset > 0, i.e. the excerpts don't start with BOS and we must prepend it.
-    capture: AttentionCapture instance (or None to skip attention capture).
+    capture: shared AttentionCapture instance (or None). When set, the full attention map of
+             each sample is captured and routed into a Rouge-L bucket; the capture spans all
+             repetition buckets and is saved once by the caller after the last rep.
     """
     device = next(model.parameters()).device
 
@@ -241,8 +248,6 @@ def run_bucket(model, dataset, prefix_length, suffix_length, batch_size, inferen
     loader = DataLoader(dataset, batch_size=batch_size, sampler=sampler, collate_fn=lambda b: b)
 
     inference_dir.mkdir(parents=True, exist_ok=True)
-
-    sample_start = 0  # tracks first global sample index of each batch (within this rank's slice)
 
     with open(inference_dir / f"rank{rank}.jsonl", "w") as f:
         for batch in loader:
@@ -268,12 +273,12 @@ def run_bucket(model, dataset, prefix_length, suffix_length, batch_size, inferen
             prompt = seq[:, :prompt_end]                               # [B, prompt_end]
 
             if capture is not None:
-                batch_slice = slice(sample_start, sample_start + B)
-                is_sample_0 = (rank == 0 and sample_start == 0)
-                step_cb = lambda t, _bs=batch_slice, _s0=is_sample_0: (
-                    capture.collect_step(t, _bs, _s0)
+                capture.begin_batch(B)
+                generated = greedy_generate(
+                    model, prompt, suffix_length,
+                    prefill_callback=capture.collect_prefill,
+                    step_callback=capture.collect_decode,
                 )
-                generated = greedy_generate(model, prompt, suffix_length, step_callback=step_cb)
             else:
                 generated = greedy_generate(model, prompt, suffix_length)
 
@@ -296,6 +301,8 @@ def run_bucket(model, dataset, prefix_length, suffix_length, batch_size, inferen
             gen_std_l = gen_std.tolist()
             gen_ppl_l = gen_ppl.tolist()
 
+            metrics = [text_metrics(true_suffixes[i], gen_suffixes[i]) for i in range(B)]
+
             for i in range(B):
                 record = {
                     "prefix": prefixes[i],
@@ -308,20 +315,19 @@ def run_bucket(model, dataset, prefix_length, suffix_length, batch_size, inferen
                     "ref_nll_std": ref_std_l[i],
                     "ref_perplexity": ref_ppl_l[i],
                     "lcs_norm": lcs_norm[i],
-                    **text_metrics(true_suffixes[i], gen_suffixes[i]),
+                    **metrics[i],
                 }
                 json.dump(record, f)
                 f.write("\n")
                 f.flush()
 
-            sample_start += B
+            # Route this batch's attention maps into Rouge-L buckets
+            if capture is not None:
+                capture.flush_batch([m["Rouge-L"] for m in metrics])
+
             del batch_tensor, seq, prompt, generated, gen_full
             del ref_mean, ref_std, ref_ppl, gen_mean, gen_std, gen_ppl
             torch.cuda.empty_cache()
-
-    if capture is not None:
-        capture.save(inference_dir, rank)
-        capture.remove()
 
     dist.barrier()
 
@@ -351,9 +357,11 @@ def parse_args():
                              "Original per-head values saved to sink_scale_metadata.json. "
                              "Appends _sscale{X} to experiment path.")
     parser.add_argument("--capture-attention", action="store_true",
-                        help="Capture decode-time attention weights for visualization. "
-                             "Writes attn_stats_rank{N}.npz and attn_matrix_exmpl_rank{N}.npz "
-                             "alongside each rep_*_greedy/rank*.jsonl.")
+                        help="Capture full causal attention maps (prefill + decode), averaged into "
+                             "Rouge-L buckets across all repetition buckets. Writes "
+                             "attn_scores_rouge_l_{NN-MM}_rank{N}.npz, norm_attn_rouge_l_{NN-MM}_rank{N}.npz "
+                             "and (gated only) gating_scores_rank{N}.npz at the run-level inference dir. "
+                             "Requires prefix+suffix <= 600 (maps are O((prefix+suffix)^2) per layer/head).")
     return parser.parse_args()
 
 
@@ -381,32 +389,27 @@ def load_rep_bucket(path: Path, offset: int, prefix_length: int, suffix_length: 
     return dataset
 
 
-def _make_capture(model, args, n_samples_on_rank, rank):
-    """Instantiate and register an AttentionCapture for one bucket."""
+def _make_capture(model, args, needs_bos: bool):
+    """Instantiate and register a shared AttentionCapture spanning all repetition buckets."""
     from attn_bench.evaluation.attn_capture import AttentionCapture
 
     cfg = model.config
-    n_layers = cfg.num_layers
-    n_heads  = cfg.num_attention_heads
-    n_steps  = args.suffix_length - 1
-    max_seq  = args.prefix_length + args.suffix_length
-    is_gated = getattr(cfg, 'attention_output_gate', False)
+    prompt_len = args.prefix_length + (1 if needs_bos else 0)
 
     capture = AttentionCapture(
-        n_samples=n_samples_on_rank,
-        n_layers=n_layers,
-        n_heads=n_heads,
-        n_steps=n_steps,
-        max_seq_len=max_seq,
-        is_gated=is_gated,
-        is_rank0=(rank == 0),
-        prompt_len=args.prefix_length,
+        n_layers=cfg.num_layers,
+        n_heads=cfg.num_attention_heads,
+        prompt_len=prompt_len,
+        suffix_length=args.suffix_length,
+        is_gated=getattr(cfg, 'attention_output_gate', False),
     )
     capture.register(model)
     return capture
 
 
 def run_inference(model, args, rank, world_size):
+    from attn_bench.evaluation.attn_capture import N_BUCKETS, bucket_label
+
     output_path = (
         Path(args.experiment_path)
         / "inference"
@@ -417,15 +420,25 @@ def run_inference(model, args, rank, world_size):
     paths = find_rep_paths(Path(args.data_folder), {int(r) for r in args.repetitions.split(",")})
     needs_bos = args.offset > 0  # offset==0: BOS already at token 0; offset>0: must prepend
 
+    # Attention capture (when requested) aggregates full maps across ALL repetition buckets
+    # into Rouge-L buckets, written once at run level. A run-level marker decides resume.
+    last_bucket = bucket_label(N_BUCKETS - 1)
+    capture_marker = output_path / f"attn_scores_rouge_l_{last_bucket}_rank{rank}.npz"
+    do_capture = args.capture_attention and not capture_marker.exists()
+    capture = _make_capture(model, args, needs_bos) if do_capture else None
+    if args.capture_attention and not do_capture and rank == 0:
+        print("Attention capture already done — skipping capture (jsonl still processed as needed).")
+
     for path in paths:
         rep = int(path.stem.split("_")[1])
         inference_dir = output_path / f"rep_{rep}_greedy"
 
         rank0_file = inference_dir / "rank0.jsonl"
-        attn_done  = (inference_dir / f"attn_stats_rank{rank}.npz").exists()
         jsonl_done = rank0_file.exists() and rank0_file.stat().st_size > 0
 
-        if jsonl_done and (not args.capture_attention or attn_done):
+        # When capturing we must regenerate every rep (the maps need the forward passes),
+        # so we only honor the per-rep jsonl skip when capture is not active.
+        if jsonl_done and capture is None:
             if rank == 0:
                 print(f"Skipping rep={rep} (already done)")
             continue
@@ -438,12 +451,6 @@ def run_inference(model, args, rank, world_size):
 
         if rank == 0:
             print(f"  {len(dataset)} sequences")
-
-        # Build capture per-bucket (fresh state each repetition level)
-        capture = None
-        if args.capture_attention and not attn_done:
-            sampler_size = math.ceil(len(dataset) / world_size)
-            capture = _make_capture(model, args, sampler_size, rank)
 
         run_bucket(
             model, dataset,
@@ -458,12 +465,23 @@ def run_inference(model, args, rank, world_size):
             print(f"  Done rep={rep}")
         torch.cuda.empty_cache()
 
+    if capture is not None:
+        capture.save(output_path, rank)
+        capture.remove()
+
     if rank == 0:
         print(f"\nAll repetitions done. Results in: {output_path}")
 
 
 def main():
     args = parse_args()
+
+    if args.capture_attention and (args.prefix_length + args.suffix_length) > 600:
+        raise ValueError(
+            f"--capture-attention requires prefix+suffix <= 600 (full attention maps are "
+            f"O((prefix+suffix)^2) per layer/head); got "
+            f"{args.prefix_length}+{args.suffix_length}={args.prefix_length + args.suffix_length}."
+        )
 
     if args.sink_scale is not None:
         args.experiment_path = args.experiment_path.rstrip('/') + f"_sscale{args.sink_scale:g}"

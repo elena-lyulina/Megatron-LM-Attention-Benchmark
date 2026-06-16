@@ -9,11 +9,14 @@
 #SBATCH --cpus-per-task=72
 #SBATCH --gres=gpu:4
 #SBATCH --no-requeue
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-user=clariden-jobs-elyulin-aaaauapxybdkdx42ppvef2c2eq@swissai-initiative.slack.com
 
 # Quick smoke test for --capture-attention on the gated model.
 # Uses --max-samples 4 and --suffix-length 50 to finish fast.
 # Output goes to store/mem-results/SparseGutenberg/test/ so it doesn't pollute real results.
-# Checks: hooks fire, .npz files are written with correct shapes, gate_matrix present.
+# Checks: hooks fire, the per-Rouge-L-bucket attn_scores / norm_attn maps and the gating
+# histogram are written at run level with correct shapes.
 #
 # Usage:
 #   sbatch attn_bench/submissions/test_capture_attn_gated.slurm
@@ -66,35 +69,43 @@ srun \
     python - <<'EOF'
 import numpy as np, pathlib, sys
 
+# Capture is aggregated across all reps and written at the run level (not per-rep).
 base = pathlib.Path('/users/elyulina/store/mem-results/SparseGutenberg/test/$EXP_NAME/inference/offset_0_prefix_50_suffix_50')
+EXP_L, EXP_H = 16, 32          # llama3-1b gated
+S = 50 + 50 - 1                # prompt_len + suffix - 1
+BUCKETS = [f'{i:02d}-{i+1:02d}' for i in range(10)]
 ok = True
-for rep in [0, 16]:
-    d = base / f'rep_{rep}_greedy'
-    stats_files = sorted(d.glob('attn_stats_rank*.npz'))
-    exmpl_files = sorted(d.glob('attn_matrix_exmpl_rank*.npz'))
-    if not stats_files or not exmpl_files:
-        print(f'FAIL rep={rep}: missing .npz files in {d}')
+
+for kind in ['attn_scores', 'norm_attn']:
+    for label in BUCKETS:
+        files = sorted(base.glob(f'{kind}_rouge_l_{label}_rank*.npz'))
+        if not files:
+            print(f'FAIL: no {kind}_rouge_l_{label}_rank*.npz in {base}')
+            ok = False
+            continue
+        a = np.load(files[0])
+        if a['mean'].shape != (EXP_L, EXP_H, S, S):
+            print(f'FAIL {kind} {label}: mean {a[\"mean\"].shape} expect ({EXP_L},{EXP_H},{S},{S})')
+            ok = False
+
+print('Rouge-L bucket sample counts (attn_scores, summed over ranks):')
+for label in BUCKETS:
+    files = sorted(base.glob(f'attn_scores_rouge_l_{label}_rank*.npz'))
+    total = sum(int(np.load(f)['count']) for f in files)
+    print(f'  {label}: {total}')
+
+gfiles = sorted(base.glob('gating_scores_rank*.npz'))
+if not gfiles:
+    print('FAIL: gating_scores_rank*.npz missing (gated model)')
+    ok = False
+else:
+    g = np.load(gfiles[0])
+    print(f'  gating hist: {g[\"hist\"].shape}  expect (10, {EXP_L}, {EXP_H}, 100)')
+    if g['hist'].shape != (10, EXP_L, EXP_H, 100):
+        print('FAIL: gating hist shape mismatch')
         ok = False
-        continue
-    s = np.load(stats_files[0])
-    m = np.load(exmpl_files[0])
-    n_s = s['mean_attn'].shape[0]
-    L, H = s['mean_attn'].shape[1], s['mean_attn'].shape[2]
-    print(f'rep={rep}  n_samples={n_s}  layers={L}  heads={H}')
-    print(f'  mean_attn:    {s[\"mean_attn\"].shape}   expect (*, {L}, {H}, 100)')
-    print(f'  entropy:      {s[\"entropy\"].shape}    expect (*, {L}, {H}, 49)')
-    print(f'  sink_mass:    {s[\"sink_mass\"].shape}  expect (*, {L}, {H}, 49)')
-    print(f'  gate_mean:    {s[\"gate_mean\"].shape if \"gate_mean\" in s else \"MISSING\"}')
-    print(f'  matrix:       {m[\"matrix\"].shape}    expect ({L}, {H}, 49, 100)')
-    print(f'  gate_matrix:  {m[\"gate_matrix\"].shape if \"gate_matrix\" in m else \"MISSING\"}')
-    if 'gate_mean' not in s:
-        print(f'FAIL rep={rep}: gate_mean missing from attn_stats')
-        ok = False
-    if 'gate_matrix' not in m:
-        print(f'FAIL rep={rep}: gate_matrix missing from attn_matrix_exmpl')
-        ok = False
-    if m['matrix'].shape != (L, H, 49, 100):
-        print(f'FAIL rep={rep}: matrix shape mismatch')
+    if g['bin_edges'].shape != (101,):
+        print('FAIL: gating bin_edges shape mismatch')
         ok = False
 
 sys.exit(0 if ok else 1)

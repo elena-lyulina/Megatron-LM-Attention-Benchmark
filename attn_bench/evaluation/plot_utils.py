@@ -399,6 +399,101 @@ def _load_examples(tok, exp_name, rep, indices, results_base, prefix, suffix, of
     } for i in indices]
 
 
+# --- Rouge-L distribution ---
+
+def load_reps_from_jsonl(exp_name, results_base, prefix, suffix, offset=0, policy='greedy'):
+    """Return sorted rep values found in the inference jsonl folders (no pkl needed)."""
+    folder = Path(f'{results_base}/{exp_name}/inference/offset_{offset}_prefix_{prefix}_suffix_{suffix}')
+    if not folder.exists():
+        return []
+    reps = []
+    for d in folder.iterdir():
+        if d.name.startswith('rep_') and d.name.endswith(f'_{policy}'):
+            try:
+                reps.append(int(d.name[4:-(len(policy) + 1)]))
+            except ValueError:
+                pass
+    return sorted(reps)
+
+
+def _load_rouge_per_rep(exp_names, results_base, reps, prefix, suffix, offset=0, policy='greedy'):
+    data = {}
+    for name, exp in exp_names.items():
+        per_rep = {}
+        for rep in reps:
+            try:
+                records = _load_jsonl_reordered(exp, rep, results_base, prefix, suffix, offset, policy)
+                per_rep[rep] = np.array([r['Rouge-L'] for r in records])
+            except (FileNotFoundError, OSError):
+                pass
+        data[name] = per_rep
+    return data
+
+
+def plot_rouge_hist(exp_names, results_base, reps, prefix, suffix, offset=0, policy='greedy', n_bins=30):
+    """Rouge-L histogram per model, all reps pooled."""
+    rouge_data = _load_rouge_per_rep(exp_names, results_base, reps, prefix, suffix, offset, policy)
+    n_models = len(exp_names)
+    bins = np.linspace(0, 1, n_bins + 1)
+
+    fig, axes = plt.subplots(1, n_models, figsize=(5 * n_models, 4), sharey=True)
+    if n_models == 1:
+        axes = [axes]
+
+    for ax, (name, per_rep) in zip(axes, rouge_data.items()):
+        color = MODEL_COLORS.get(name, '#888888')
+        all_vals = np.concatenate(list(per_rep.values())) if per_rep else np.array([])
+        ax.hist(all_vals, bins=bins, density=True, color=color, alpha=0.75, edgecolor='white', linewidth=0.4)
+        ax.set_title(name, fontsize=11, weight='bold')
+        ax.set_xlabel('Rouge-L', fontsize=10)
+        ax.set_xlim(0, 1)
+        ax.grid(True, alpha=0.2)
+
+    axes[0].set_ylabel('density', fontsize=10)
+    plt.tight_layout(rect=[0, 0, 1, 0.94])
+    _suptitle_centered(fig, axes,
+                       f'Rouge-L distribution (all reps)  prefix={prefix}, suffix={suffix}, offset={offset}',
+                       fontsize=14, weight='bold')
+    plt.show()
+
+
+def plot_rouge_heatmap(exp_names, results_base, reps, prefix, suffix, offset=0, policy='greedy', n_bins=10):
+    """Rep × Rouge-L-bin heatmap per model. Cells = row-normalised fraction."""
+    rouge_data = _load_rouge_per_rep(exp_names, results_base, reps, prefix, suffix, offset, policy)
+    n_models = len(exp_names)
+    bins = np.linspace(0, 1, n_bins + 1)
+    bin_labels = [f'{bins[i]:.1f}–{bins[i+1]:.1f}' for i in range(n_bins)]
+
+    fig, axes = plt.subplots(1, n_models, figsize=(3.5 * n_models, len(reps) * 0.55 + 1.5))
+    if n_models == 1:
+        axes = [axes]
+
+    for i, (ax, (name, per_rep)) in enumerate(zip(axes, rouge_data.items())):
+        available = [r for r in reps if r in per_rep]
+        mat = np.zeros((len(available), n_bins))
+        for j, rep in enumerate(available):
+            counts, _ = np.histogram(per_rep[rep], bins=bins)
+            total = counts.sum()
+            mat[j] = counts / total if total > 0 else counts
+
+        df = pd.DataFrame(mat, index=available, columns=bin_labels)
+        df.index.name = 'rep'
+
+        sns.heatmap(df, ax=ax, cmap='YlOrRd', vmin=0, vmax=1,
+                    annot=True, fmt='.2f', annot_kws={'size': 7},
+                    linewidths=0.3, linecolor='white', cbar=(i == n_models - 1))
+        ax.set_title(name, fontsize=11, weight='bold')
+        ax.set_xlabel('Rouge-L bin', fontsize=10)
+        ax.set_ylabel('rep' if i == 0 else '', fontsize=10)
+        ax.tick_params(axis='x', labelrotation=45, labelsize=8)
+
+    plt.tight_layout(rect=[0, 0, 1, 0.94])
+    _suptitle_centered(fig, axes,
+                       f'Rouge-L by rep  prefix={prefix}, suffix={suffix}, offset={offset}',
+                       fontsize=14, weight='bold')
+    plt.show()
+
+
 def show_examples(tok, rep, exp_map, col_bg, sample_indices,
                   results_base, prefix=500, suffix=500, offset=0, policy='greedy'):
     data_by_attn = {

@@ -1,41 +1,42 @@
 """
 Attention pattern visualization for the four pretrained models.
 
+Works on the Rouge-L-bucketed capture written by attn_capture.AttentionCapture:
+  attn_scores_rouge_l_{NN-MM}_rank{N}.npz   – mean attention map [L, H, S, S] per bucket
+  norm_attn_rouge_l_{NN-MM}_rank{N}.npz     – mean norm-based map [L, H, S, S] per bucket
+  gating_scores_rank{N}.npz                 – per-(bucket, layer, head) gate histogram (gated only)
+
+S = prompt_len + suffix_length - 1; row = query position, col = key position. Maps are
+NOT renormalized: for sink/off-by-one models the row-sum deficit is the virtual-sink mass,
+and BOS attention is simply column 0 — compute those yourself at whatever granularity.
+
 Functions:
-  load_stats(exp_base, model_name, rep)     – load and merge per-rank stats npz
-  load_example(exp_base, model_name, rep)   – load rank-0 example matrix npz
-  plot_heatmap(examples, rep, layer, head)  – 4-panel attention heatmap
-  plot_sink_strength(stats_by_rep, models)  – BOS/sink mass vs. repetition
-  plot_entropy(stats_by_rep, models)        – mean entropy vs. repetition
-  plot_gate(example, rep, layer)            – gate scalar heatmap (gated model)
+  load_maps(exp_base, model, kind, bucket)  – load+merge per-rank maps for one bucket
+  load_all_maps(exp_base, model, kind)      – {bucket_label: merged map} for all buckets
+  load_gating(exp_base, model)              – load+merge gating histogram
+  plot_map(maps, bucket, layer, head)       – multi-panel attention/norm heatmap
+  plot_full_grid(maps, bucket)              – full grid: cols=layers, rows=heads×models (+avg)
+  plot_gating_distribution(gating, ...)     – normalized gate-score density per layer
 
 Usage example:
   from attn_bench.evaluation.plot_attention_patterns import *
 
   EXP_BASE = "/users/elyulina/store/mem-results/SparseGutenberg"
   MODELS = {
-      "full":    "llama3-1b-full-attn-fineweb40B-gutenberg3B",
-      "gated":   "llama3-1b-gated-attn-fineweb40B-gutenberg3B",
-      "obo":     "llama3-1b-off-by-one-attn-fineweb40B-gutenberg3B-te215",
-      "sink":    "llama3-1b-sink-attn-fineweb40B-gutenberg3B-te215",
+      "full":  "llama3-1b-full-attn-fineweb40B-gutenberg3B",
+      "gated": "llama3-1b-gated-attn-fineweb40B-gutenberg3B",
+      "obo":   "llama3-1b-off-by-one-attn-fineweb40B-gutenberg3B-te215",
+      "sink":  "llama3-1b-sink-attn-fineweb40B-gutenberg3B-te215",
   }
-  REPS = [0, 1, 2, 4, 8, 16, 32, 64, 128, 256]
-  PREFIX_LEN, SUFFIX_LEN, OFFSET = 500, 500, 0
+  PREFIX_LEN, SUFFIX_LEN, OFFSET = 500, 50, 0
 
-  stats = {
-      model_key: {rep: load_stats(EXP_BASE, name, rep, OFFSET, PREFIX_LEN, SUFFIX_LEN)
-                  for rep in REPS}
-      for model_key, name in MODELS.items()
-  }
-  examples = {
-      model_key: {rep: load_example(EXP_BASE, name, rep, OFFSET, PREFIX_LEN, SUFFIX_LEN)
-                  for rep in REPS}
-      for model_key, name in MODELS.items()
-  }
-  plot_heatmap(examples, rep=16, layer=8, head=0)
-  plot_sink_strength(stats, MODELS)
-  plot_entropy(stats, MODELS)
-  plot_gate(examples["gated"][16], rep=16, layer=8)
+  attn = {k: load_all_maps(EXP_BASE, n, "attn_scores", offset=OFFSET,
+                           prefix_len=PREFIX_LEN, suffix_len=SUFFIX_LEN)
+          for k, n in MODELS.items()}
+  plot_map({k: v["09-10"] for k, v in attn.items()}, bucket="09-10", layer=8, head=0)
+  gating = load_gating(EXP_BASE, MODELS["gated"], offset=OFFSET,
+                       prefix_len=PREFIX_LEN, suffix_len=SUFFIX_LEN)
+  plot_gating_distribution(gating, layer=8)
 """
 from __future__ import annotations
 
@@ -44,71 +45,132 @@ from typing import Any
 
 import numpy as np
 
+N_BUCKETS = 10
+
+
+def bucket_label(bi: int) -> str:
+    """'00-01', ..., '09-10' for bucket index 0..9."""
+    return f"{bi:02d}-{bi + 1:02d}"
+
+
+ALL_BUCKETS = [bucket_label(bi) for bi in range(N_BUCKETS)]
+
 
 # ---------------------------------------------------------------------------
 # Path helpers
 # ---------------------------------------------------------------------------
 
-def _inference_dir(
+def _run_dir(
     exp_base: str | Path,
     model_name: str,
-    rep: int,
     offset: int = 0,
     prefix_len: int = 500,
-    suffix_len: int = 500,
+    suffix_len: int = 50,
 ) -> Path:
-    base = Path(exp_base) / model_name / "inference"
-    run = f"offset_{offset}_prefix_{prefix_len}_suffix_{suffix_len}"
-    return base / run / f"rep_{rep}_greedy"
+    return (Path(exp_base) / model_name / "inference"
+            / f"offset_{offset}_prefix_{prefix_len}_suffix_{suffix_len}")
+
+
+def _as_label(bucket: int | str) -> str:
+    return bucket if isinstance(bucket, str) else bucket_label(bucket)
 
 
 # ---------------------------------------------------------------------------
 # Data loading
 # ---------------------------------------------------------------------------
 
-def load_stats(
+def load_maps(
     exp_base: str | Path,
     model_name: str,
-    rep: int,
+    kind: str,
+    bucket: int | str,
     offset: int = 0,
     prefix_len: int = 500,
-    suffix_len: int = 500,
-) -> dict[str, np.ndarray]:
-    """Load and concatenate per-rank attn_stats_rank*.npz files.
+    suffix_len: int = 50,
+) -> dict[str, Any]:
+    """Load and count-weighted-merge per-rank maps for one Rouge-L bucket.
 
-    Returns a dict with the same keys as the per-rank files, but with
-    arrays concatenated along axis 0 (samples dimension).
+    kind   : 'attn_scores' | 'norm_attn'
+    bucket : bucket index 0..9 or label like '09-10'
+    Returns {'mean': [L,H,S,S] float32, 'count': int, 'prompt_len': int}.
     """
-    d = _inference_dir(exp_base, model_name, rep, offset, prefix_len, suffix_len)
-    rank_files = sorted(d.glob("attn_stats_rank*.npz"))
+    if kind not in ("attn_scores", "norm_attn"):
+        raise ValueError(f"kind must be 'attn_scores' or 'norm_attn', got {kind!r}")
+    label = _as_label(bucket)
+    d = _run_dir(exp_base, model_name, offset, prefix_len, suffix_len)
+    rank_files = sorted(d.glob(f"{kind}_rouge_l_{label}_rank*.npz"))
     if not rank_files:
-        raise FileNotFoundError(f"No attn_stats_rank*.npz in {d}")
+        raise FileNotFoundError(f"No {kind}_rouge_l_{label}_rank*.npz in {d}")
 
-    parts: dict[str, list[np.ndarray]] = {}
+    weighted_sum = None
+    total = 0
+    prompt_len = None
     for f in rank_files:
         npz = np.load(f)
-        for k in npz.files:
-            parts.setdefault(k, []).append(npz[k].astype(np.float32))
+        c = int(npz["count"])
+        prompt_len = int(npz["prompt_len"])
+        if c == 0:
+            continue
+        contrib = npz["mean"].astype(np.float32) * c
+        weighted_sum = contrib if weighted_sum is None else weighted_sum + contrib
+        total += c
 
-    return {k: np.concatenate(v, axis=0) for k, v in parts.items()}
+    if weighted_sum is None or total == 0:
+        # No samples landed in this bucket on any rank
+        ref = np.load(rank_files[0])
+        mean = np.zeros_like(ref["mean"], dtype=np.float32)
+    else:
+        mean = weighted_sum / total
+    return {"mean": mean, "count": total, "prompt_len": prompt_len}
 
 
-def load_example(
+def load_all_maps(
     exp_base: str | Path,
     model_name: str,
-    rep: int,
+    kind: str,
     offset: int = 0,
     prefix_len: int = 500,
-    suffix_len: int = 500,
-    rank: int = 0,
+    suffix_len: int = 50,
+) -> dict[str, dict[str, Any]]:
+    """{bucket_label: load_maps(...)} for every bucket that has files."""
+    out = {}
+    for label in ALL_BUCKETS:
+        try:
+            out[label] = load_maps(exp_base, model_name, kind, label,
+                                   offset, prefix_len, suffix_len)
+        except FileNotFoundError:
+            pass
+    return out
+
+
+def load_gating(
+    exp_base: str | Path,
+    model_name: str,
+    offset: int = 0,
+    prefix_len: int = 500,
+    suffix_len: int = 50,
 ) -> dict[str, Any]:
-    """Load the rank-0 example matrix npz (attn_matrix_exmpl_rank{rank}.npz)."""
-    d = _inference_dir(exp_base, model_name, rep, offset, prefix_len, suffix_len)
-    f = d / f"attn_matrix_exmpl_rank{rank}.npz"
-    if not f.exists():
-        raise FileNotFoundError(f"Not found: {f}")
-    npz = np.load(f)
-    return {k: npz[k] for k in npz.files}
+    """Load and sum-merge the per-rank gating histograms (gated model only).
+
+    Returns {'hist': [n_buckets,L,H,n_bins] int64, 'bin_edges': [n_bins+1],
+             'count': [n_buckets] int64}.
+    """
+    d = _run_dir(exp_base, model_name, offset, prefix_len, suffix_len)
+    rank_files = sorted(d.glob("gating_scores_rank*.npz"))
+    if not rank_files:
+        raise FileNotFoundError(f"No gating_scores_rank*.npz in {d}")
+
+    hist = None
+    count = None
+    edges = None
+    for f in rank_files:
+        npz = np.load(f)
+        edges = npz["bin_edges"]
+        h = npz["hist"].astype(np.int64)
+        c = npz["count"].astype(np.int64)
+        hist = h if hist is None else hist + h
+        count = c if count is None else count + c
+    return {"hist": hist, "bin_edges": edges, "count": count}
 
 
 # ---------------------------------------------------------------------------
@@ -120,69 +182,62 @@ def _model_label(key: str) -> str:
 
 
 def _model_color(key: str) -> str:
-    return {"full": "steelblue", "gated": "darkorange", "obo": "forestgreen", "sink": "crimson"}.get(key, "black")
+    return {"full": "steelblue", "gated": "darkorange",
+            "obo": "forestgreen", "sink": "crimson"}.get(key, "black")
 
 
 # ---------------------------------------------------------------------------
-# plot_heatmap
+# plot_map
 # ---------------------------------------------------------------------------
 
-def plot_heatmap(
-    examples: dict[str, dict[int, dict]],
-    rep: int,
+def plot_map(
+    maps: dict[str, dict],
+    bucket: int | str,
     layer: int,
     head: int,
     *,
     figsize: tuple[float, float] | None = None,
+    vmin: float = 1e-4,
     vmax: float | None = None,
     save_path: str | Path | None = None,
 ) -> Any:
-    """4-panel heatmap of decode-step × key-position attention weights.
+    """Multi-panel heatmap of the (query × key) attention/norm map, one panel per model.
 
     Parameters
     ----------
-    examples : {model_key: {rep: load_example(...)}}
-    rep      : repetition bucket to plot
-    layer    : 0-based layer index
-    head     : 0-based head index
+    maps   : {model_key: load_maps(...)}  — all for the same kind and bucket
+    bucket : bucket index/label (used only for the title)
+    layer  : 0-based layer index
+    head   : 0-based head index
     """
     import matplotlib.pyplot as plt
     from matplotlib.colors import LogNorm
 
-    model_keys = list(examples.keys())
+    model_keys = list(maps.keys())
     n = len(model_keys)
     fig, axes = plt.subplots(1, n, figsize=figsize or (5 * n, 5), sharey=True)
     if n == 1:
         axes = [axes]
 
     for ax, key in zip(axes, model_keys):
-        ex = examples[key][rep]
-        mat = ex["matrix"][layer, head].astype(np.float32)   # [T, S]
-        prompt_len = int(ex["prompt_len"])
+        m = maps[key]
+        mat = m["mean"][layer, head].astype(np.float32)   # [S, S]
+        prompt_len = int(m["prompt_len"])
 
-        vm = vmax or float(np.quantile(mat[mat > 0], 0.995)) if mat.max() > 0 else 1.0
-        im = ax.imshow(
-            mat,
-            aspect="auto",
-            origin="lower",
-            norm=LogNorm(vmin=1e-4, vmax=vm),
-            cmap="viridis",
-        )
-        ax.axvline(prompt_len - 0.5, color="white", linewidth=0.8, linestyle="--")
-        ax.set_title(_model_label(key))
+        pos = mat[mat > 0]
+        vm = vmax if vmax is not None else (float(np.quantile(pos, 0.995)) if pos.size else 1.0)
+        im = ax.imshow(mat, aspect="auto", origin="upper",
+                       norm=LogNorm(vmin=vmin, vmax=max(vm, vmin * 10)), cmap="viridis")
+        # prefix/suffix divider on both axes
+        ax.axvline(prompt_len - 0.5, color="white", linewidth=1.0, linestyle="--")
+        ax.axhline(prompt_len - 0.5, color="white", linewidth=1.0, linestyle="--")
+        ax.set_title(f"{_model_label(key)}  (n={m['count']})")
         ax.set_xlabel("Key position")
         if ax is axes[0]:
-            ax.set_ylabel("Decode step")
+            ax.set_ylabel("Query position")
         plt.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
 
-        # Annotate sink mass if available
-        if "sink_mass_matrix" in ex:
-            sink = ex["sink_mass_matrix"][layer, head]   # [T]
-            mean_sink = float(sink.mean())
-            if mean_sink > 1e-3:
-                ax.set_title(f"{_model_label(key)}\n(sink={mean_sink:.3f})")
-
-    fig.suptitle(f"rep={rep}  layer={layer}  head={head}", fontsize=11)
+    fig.suptitle(f"Rouge-L {_as_label(bucket)}  layer={layer}  head={head}", fontsize=11)
     plt.tight_layout()
     if save_path:
         fig.savefig(save_path, dpi=150, bbox_inches="tight")
@@ -190,165 +245,169 @@ def plot_heatmap(
 
 
 # ---------------------------------------------------------------------------
-# plot_sink_strength
+# plot_full_grid
 # ---------------------------------------------------------------------------
 
-def plot_sink_strength(
-    stats: dict[str, dict[int, dict]],
-    models: dict[str, str],
+def plot_full_grid(
+    maps: dict[str, dict],
+    bucket: int | str,
     *,
-    figsize: tuple[float, float] = (10, 5),
+    cell_w: float = 1.5,
+    cell_h: float = 0.8,
+    vmin: float = 1e-4,
     save_path: str | Path | None = None,
 ) -> Any:
-    """Two-panel plot: BOS attention (pos 0) and explicit virtual-sink mass vs. repetition.
+    """Full grid: cols=layers, rows=(heads + head-avg) × models.
 
-    Panel 1 — mean_attn[:, :, :, 0].mean() across layers/heads/samples (BOS position).
-    Panel 2 — sink_mass.mean() across steps/layers/heads/samples (only non-zero for sink/obo).
+    Each cell is a (query × key) heatmap with LogNorm. Color scale is shared within each
+    (head-group, layer) block so the models are directly comparable.
 
     Parameters
     ----------
-    stats  : {model_key: {rep: load_stats(...)}}
-    models : {model_key: human-readable name or exp_name} — used for ordering/labels
+    maps   : {model_key: load_maps(...)}  — same kind and bucket for all models
+    bucket : bucket index/label (used only for the title)
     """
     import matplotlib.pyplot as plt
+    from matplotlib.colors import LogNorm
 
-    reps = sorted(next(iter(stats.values())).keys())
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=figsize, sharex=True)
+    model_keys = list(maps.keys())
+    n_models = len(model_keys)
 
-    for key in models:
-        if key not in stats:
-            continue
-        color = _model_color(key)
-        label = _model_label(key)
+    matrices = {key: maps[key]["mean"].astype(np.float32) for key in model_keys}
+    prompt_len = int(maps[model_keys[0]]["prompt_len"])
 
-        bos_vals, sink_vals = [], []
-        for rep in reps:
-            s = stats[key][rep]
-            # BOS: mean over samples, layers, heads
-            bos_vals.append(float(s["mean_attn"][..., 0].mean()))
-            # Virtual sink mass: mean over all dimensions
-            sink_vals.append(float(s["sink_mass"].mean()))
+    ref = next(iter(matrices.values()))
+    n_layers, n_heads, _, _ = ref.shape
 
-        ax1.plot(reps, bos_vals, marker="o", color=color, label=label)
-        ax2.plot(reps, sink_vals, marker="o", color=color, label=label)
+    head_avg = {key: matrices[key].mean(axis=1) for key in model_keys}  # (L, S, S)
 
-    ax1.set_xscale("symlog", linthresh=1)
-    ax1.set_xlabel("Repetitions")
-    ax1.set_ylabel("Mean attention to BOS (pos 0)")
-    ax1.set_title("BOS attention vs. repetition")
-    ax1.legend()
+    n_groups = n_heads + 1
+    n_rows = n_groups * n_models
+    n_cols = n_layers
 
-    ax2.set_xscale("symlog", linthresh=1)
-    ax2.set_xlabel("Repetitions")
-    ax2.set_ylabel("Mean virtual-sink mass")
-    ax2.set_title("Explicit sink mass vs. repetition\n(0 for full/gated)")
-    ax2.legend()
+    fig, axes = plt.subplots(n_rows, n_cols,
+                             figsize=(cell_w * n_cols, cell_h * n_rows), squeeze=False)
+    fig.subplots_adjust(hspace=0.05, wspace=0.05)
 
-    plt.tight_layout()
+    def _fill_group(group_idx: int, group_label: str, mats: dict[str, np.ndarray]) -> None:
+        for col in range(n_layers):
+            pos_vals = np.concatenate([mats[k][col].ravel() for k in model_keys])
+            pos_vals = pos_vals[pos_vals > 0]
+            vmax = float(np.quantile(pos_vals, 0.995)) if len(pos_vals) > 0 else 1.0
+            norm = LogNorm(vmin=vmin, vmax=max(vmax, vmin * 10))
+
+            for mi, key in enumerate(model_keys):
+                row = group_idx * n_models + mi
+                ax = axes[row, col]
+                ax.imshow(mats[key][col], aspect="auto", origin="upper",
+                          norm=norm, cmap="viridis", interpolation="nearest")
+                ax.axvline(prompt_len - 0.5, color="white", linewidth=0.4, linestyle="--")
+                ax.set_xticks([])
+                ax.set_yticks([])
+
+                if col == 0:
+                    ax.set_ylabel(f"{group_label}\n{_model_label(key)}", fontsize=4,
+                                  rotation=0, ha="right", va="center", labelpad=2)
+                if group_idx == 0 and mi == 0:
+                    ax.set_title(f"L{col}", fontsize=6, pad=2)
+
+                for spine in ax.spines.values():
+                    spine.set_linewidth(0.3)
+                if mi == 0:
+                    ax.spines["top"].set_linewidth(1.5)
+                    ax.spines["top"].set_color("white")
+
+    for h in range(n_heads):
+        _fill_group(h, f"H{h}", {key: matrices[key][:, h, :, :] for key in model_keys})
+    _fill_group(n_heads, "avg", head_avg)
+
+    fig.suptitle(
+        f"Attention maps  Rouge-L {_as_label(bucket)}  |  rows: head × model  |  cols: layer",
+        fontsize=8, y=1.001,
+    )
     if save_path:
-        fig.savefig(save_path, dpi=150, bbox_inches="tight")
+        fig.savefig(save_path, bbox_inches="tight")
     return fig
 
 
 # ---------------------------------------------------------------------------
-# plot_entropy
+# plot_gating_distribution
 # ---------------------------------------------------------------------------
 
-def plot_entropy(
-    stats: dict[str, dict[int, dict]],
-    models: dict[str, str],
+def plot_gating_distribution(
+    gating: dict[str, Any],
     *,
-    figsize: tuple[float, float] = (7, 5),
+    layer: int | None = None,
+    head: int | None = None,
+    buckets: list[int | str] | None = None,
+    figsize: tuple[float, float] = (8, 5),
     save_path: str | Path | None = None,
 ) -> Any:
-    """Mean attention entropy vs. repetition bucket (cross-model comparable).
+    """Normalized gate-score density (as in the Gated Attention paper).
 
-    Entropy is computed over the full distribution including the virtual-sink
-    column, so all 4 models are directly comparable.
+    Aggregates the per-(bucket, layer, head) histogram down to the requested granularity
+    and plots normalized density vs gating score. If `buckets` is given, one curve per
+    Rouge-L bucket (to compare memorized vs non-memorized); otherwise a single pooled curve.
 
     Parameters
     ----------
-    stats  : {model_key: {rep: load_stats(...)}}
-    models : {model_key: ...} — used for ordering/labels
+    gating : load_gating(...) result
+    layer  : restrict to one layer (default: all layers pooled)
+    head   : restrict to one head (default: all heads pooled)
+    buckets: list of bucket indices/labels to overlay (default: all pooled into one curve)
     """
     import matplotlib.pyplot as plt
 
-    reps = sorted(next(iter(stats.values())).keys())
+    hist = gating["hist"].astype(np.float64)   # [n_buckets, L, H, n_bins]
+    edges = gating["bin_edges"]
+    centers = 0.5 * (edges[:-1] + edges[1:])
+    widths = np.diff(edges)
+
+    def _density(sel_hist: np.ndarray) -> np.ndarray | None:
+        # sum over all axes except the bin axis
+        counts = sel_hist.reshape(-1, sel_hist.shape[-1]).sum(axis=0)
+        total = counts.sum()
+        if total == 0:
+            return None
+        return counts / (total * widths)
+
     fig, ax = plt.subplots(figsize=figsize)
 
-    for key in models:
-        if key not in stats:
-            continue
-        ent_vals = []
-        for rep in reps:
-            s = stats[key][rep]
-            ent_vals.append(float(s["entropy"].mean()))
-        ax.plot(reps, ent_vals, marker="o", color=_model_color(key), label=_model_label(key))
+    def _slice(bucket_idx):
+        h = hist[bucket_idx] if bucket_idx is not None else hist
+        # h: [..., L, H, n_bins]
+        if layer is not None:
+            h = h[..., layer, :, :]   # index the L axis (3rd from last)
+        if head is not None:
+            h = h[..., head, :]       # index the H axis (2nd from last)
+        return h
 
-    ax.set_xscale("symlog", linthresh=1)
-    ax.set_xlabel("Repetitions")
-    ax.set_ylabel("Mean entropy (nats)")
-    ax.set_title("Attention entropy vs. repetition\n(full distribution, cross-model comparable)")
-    ax.legend()
-    plt.tight_layout()
-    if save_path:
-        fig.savefig(save_path, dpi=150, bbox_inches="tight")
-    return fig
+    if buckets is None:
+        dens = _density(_slice(None))
+        if dens is not None:
+            ax.plot(centers, dens, color="black", lw=2)
+        title_extra = "all buckets pooled"
+    else:
+        cmap = plt.cm.viridis(np.linspace(0, 1, len(buckets)))
+        for c, b in zip(cmap, buckets):
+            bi = b if isinstance(b, int) else ALL_BUCKETS.index(b)
+            dens = _density(_slice(bi))
+            if dens is not None:
+                ax.plot(centers, dens, color=c, lw=1.8, label=f"Rouge-L {_as_label(b)}")
+        ax.legend(fontsize=8)
+        title_extra = "by Rouge-L bucket"
 
+    loc = []
+    if layer is not None:
+        loc.append(f"layer={layer}")
+    if head is not None:
+        loc.append(f"head={head}")
+    loc_str = ", ".join(loc) if loc else "all layers/heads"
 
-# ---------------------------------------------------------------------------
-# plot_gate
-# ---------------------------------------------------------------------------
-
-def plot_gate(
-    example: dict[str, Any],
-    rep: int,
-    layer: int,
-    *,
-    figsize: tuple[float, float] = (8, 4),
-    save_path: str | Path | None = None,
-) -> Any:
-    """Heatmap of the gate scalar (head × decode-step) for the gated model.
-
-    Also shows an effective-attention heatmap for head 0 when both
-    gate_matrix and matrix are present in the example.
-
-    Parameters
-    ----------
-    example : load_example(...) result for the gated model at the given rep
-    rep     : repetition bucket (used only for the figure title)
-    layer   : 0-based layer index
-    """
-    import matplotlib.pyplot as plt
-
-    if "gate_matrix" not in example:
-        raise ValueError("example does not contain gate_matrix — was it captured with a gated model?")
-
-    gate = example["gate_matrix"][layer].astype(np.float32)   # [H, T]
-    n_panels = 2 if "matrix" in example else 1
-    fig, axes = plt.subplots(1, n_panels, figsize=figsize)
-    if n_panels == 1:
-        axes = [axes]
-
-    im0 = axes[0].imshow(gate, aspect="auto", origin="lower", cmap="plasma", vmin=0, vmax=1)
-    axes[0].set_title(f"Gate scalar  (rep={rep} layer={layer})")
-    axes[0].set_xlabel("Decode step")
-    axes[0].set_ylabel("Head")
-    plt.colorbar(im0, ax=axes[0], fraction=0.046, pad=0.04, label="sigmoid(gate).mean(hn)")
-
-    if n_panels == 2:
-        # Effective attention for head 0: attn × gate (broadcast over key positions)
-        attn = example["matrix"][layer, 0].astype(np.float32)   # [T, S]
-        g0   = gate[0, :, np.newaxis]                            # [T, 1]
-        eff  = attn * g0                                          # [T, S]
-        prompt_len = int(example["prompt_len"])
-        im1 = axes[1].imshow(eff, aspect="auto", origin="lower", cmap="viridis")
-        axes[1].axvline(prompt_len - 0.5, color="white", linewidth=0.8, linestyle="--")
-        axes[1].set_title(f"Effective attn head 0 (gate × attn)")
-        axes[1].set_xlabel("Key position")
-        axes[1].set_ylabel("Decode step")
-        plt.colorbar(im1, ax=axes[1], fraction=0.046, pad=0.04)
-
+    ax.set_xlabel("gating score  sigmoid(gate)")
+    ax.set_ylabel("normalized density")
+    ax.set_xlim(0, 1)
+    ax.set_title(f"Gate-score distribution ({loc_str}; {title_extra})", fontsize=11)
     plt.tight_layout()
     if save_path:
         fig.savefig(save_path, dpi=150, bbox_inches="tight")
