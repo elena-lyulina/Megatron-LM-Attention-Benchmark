@@ -173,6 +173,29 @@ def load_gating(
     return {"hist": hist, "bin_edges": edges, "count": count}
 
 
+def pool_buckets(buckets: dict[str, dict]) -> dict[str, Any]:
+    """Count-weighted pool of per-bucket maps into one mean map over ALL samples.
+
+    buckets : output of load_all_maps for one model ({bucket_label: load_maps(...)}).
+    Returns {'mean': [L,H,S,S] float32, 'count': int, 'prompt_len': int}.
+    """
+    acc = None
+    total = 0
+    prompt_len = None
+    for b in buckets.values():
+        c = int(b["count"])
+        prompt_len = int(b["prompt_len"])
+        if c == 0:
+            continue
+        contrib = b["mean"].astype(np.float64) * c
+        acc = contrib if acc is None else acc + contrib
+        total += c
+    if acc is None or total == 0:
+        ref = next(iter(buckets.values()))["mean"]
+        return {"mean": np.zeros_like(ref, dtype=np.float32), "count": 0, "prompt_len": prompt_len}
+    return {"mean": (acc / total).astype(np.float32), "count": total, "prompt_len": prompt_len}
+
+
 # ---------------------------------------------------------------------------
 # Plotting helpers
 # ---------------------------------------------------------------------------
@@ -184,6 +207,63 @@ def _model_label(key: str) -> str:
 def _model_color(key: str) -> str:
     return {"full": "steelblue", "gated": "darkorange",
             "obo": "forestgreen", "sink": "crimson"}.get(key, "black")
+
+
+# ---------------------------------------------------------------------------
+# plot_first_token_attention  (attention sinks)
+# ---------------------------------------------------------------------------
+
+def plot_first_token_attention(
+    attn_by_model: dict[str, dict[str, dict]],
+    *,
+    query_slice: slice | None = None,
+    figsize: tuple[float, float] = (8, 5),
+    save_path: str | Path | None = None,
+) -> Any:
+    """Mean attention to the first token (key position 0) per layer — the attention sink.
+
+    For each model the Rouge-L buckets are pooled (all samples), then attention to key 0 is
+    averaged over heads and query positions, giving one value per layer. One line per model.
+
+    Parameters
+    ----------
+    attn_by_model : {model_key: load_all_maps(..., 'attn_scores', ...)}
+    query_slice   : optional slice over query positions before averaging, e.g.
+                    slice(prompt_len, None) to use only decode rows. Default: all positions.
+                    (Early query rows see very few keys, so they inflate attention to key 0;
+                    restrict the slice if you want to exclude that boundary effect.)
+    """
+    import matplotlib.pyplot as plt
+
+    fig, ax = plt.subplots(figsize=figsize)
+    entries = []  # (overall_mean, line) for legend sorting
+    for key, buckets in attn_by_model.items():
+        if not buckets:
+            print(f"skip {key}: no attn_scores files found")
+            continue
+        pooled = pool_buckets(buckets)
+        col0 = pooled["mean"][:, :, :, 0]          # [L, H, S]  attention to key position 0
+        if query_slice is not None:
+            col0 = col0[:, :, query_slice]
+        per_layer = col0.mean(axis=(1, 2))          # [L]
+        overall = float(per_layer.mean())            # mean over layers too
+        line, = ax.plot(range(len(per_layer)), per_layer, marker="o", color=_model_color(key),
+                        label=f"{_model_label(key)} (mean={overall:.3f}, n={pooled['count']})")
+        entries.append((overall, line))
+
+    ax.set_xlabel("Layer")
+    ax.set_ylabel("Mean attention to first token (key 0)")
+    ax.set_title("Attention sink: first-token attention per layer\n"
+                 "(avg over heads, query positions, all samples)")
+    # legend sorted by overall mean (highest sink first)
+    entries.sort(key=lambda e: e[0], reverse=True)
+    handles = [e[1] for e in entries]
+    ax.legend(handles=handles, labels=[h.get_label() for h in handles])
+    ax.grid(True, alpha=0.3)
+    plt.tight_layout()
+    if save_path:
+        fig.savefig(save_path, dpi=150, bbox_inches="tight")
+    return fig
 
 
 # ---------------------------------------------------------------------------
@@ -242,6 +322,34 @@ def plot_map(
     if save_path:
         fig.savefig(save_path, dpi=150, bbox_inches="tight")
     return fig
+
+
+def plot_bucket_maps(
+    maps_by_model: dict[str, dict[str, dict]],
+    bucket: int | str,
+    layer: int,
+    head: int,
+    **kwargs: Any,
+) -> Any:
+    """Pick one Rouge-L bucket from per-model all-bucket maps and draw the 4-panel heatmap.
+
+    Convenience over plot_map: pass the full all-buckets dict (load_all_maps output) plus a
+    bucket / layer / head and get one heatmap panel per model. Works for either kind
+    (attn_scores or norm_attn). Run it twice with different buckets to compare e.g.
+    high (09-10) vs low (00-01) memorization.
+
+    Parameters
+    ----------
+    maps_by_model : {model_key: load_all_maps(...)}
+    bucket        : bucket index 0..9 or label like '09-10'
+    layer, head   : 0-based indices
+    """
+    label = _as_label(bucket)
+    selected = {k: b[label] for k, b in maps_by_model.items() if label in b}
+    if not selected:
+        print(f"no maps for bucket {label} in any model")
+        return None
+    return plot_map(selected, bucket=label, layer=layer, head=head, **kwargs)
 
 
 # ---------------------------------------------------------------------------
@@ -340,26 +448,42 @@ def plot_gating_distribution(
     layer: int | None = None,
     head: int | None = None,
     buckets: list[int | str] | None = None,
+    density: bool = False,
+    merge_bins: int = 1,
     figsize: tuple[float, float] = (8, 5),
     save_path: str | Path | None = None,
 ) -> Any:
-    """Normalized gate-score density (as in the Gated Attention paper).
+    """Gate-score distribution (as in the Gated Attention paper).
 
     Aggregates the per-(bucket, layer, head) histogram down to the requested granularity
-    and plots normalized density vs gating score. If `buckets` is given, one curve per
-    Rouge-L bucket (to compare memorized vs non-memorized); otherwise a single pooled curve.
+    and plots it vs gating score. If `buckets` is given, one curve per Rouge-L bucket (to
+    compare memorized vs non-memorized); otherwise a single pooled curve.
 
     Parameters
     ----------
-    gating : load_gating(...) result
-    layer  : restrict to one layer (default: all layers pooled)
-    head   : restrict to one head (default: all heads pooled)
-    buckets: list of bucket indices/labels to overlay (default: all pooled into one curve)
+    gating     : load_gating(...) result
+    layer      : restrict to one layer (default: all layers pooled)
+    head       : restrict to one head (default: all heads pooled)
+    buckets    : list of bucket indices/labels to overlay (default: all pooled into one curve)
+    density    : if True, plot a probability density (area = 1, divides by bin width); if
+                 False (default, paper convention), plot the fraction of gate values per bin
+                 (bar heights sum to 1).
+    merge_bins : aggregate this many adjacent bins into one before plotting (must divide the
+                 captured bin count, 100). Wider bins -> taller peaks, matching the paper's
+                 coarser binning.
     """
     import matplotlib.pyplot as plt
 
     hist = gating["hist"].astype(np.float64)   # [n_buckets, L, H, n_bins]
     edges = gating["bin_edges"]
+
+    if merge_bins > 1:
+        n_bins = hist.shape[-1]
+        if n_bins % merge_bins != 0:
+            raise ValueError(f"merge_bins ({merge_bins}) must divide the captured bin count ({n_bins})")
+        hist = hist.reshape(*hist.shape[:-1], n_bins // merge_bins, merge_bins).sum(axis=-1)
+        edges = edges[::merge_bins]
+
     centers = 0.5 * (edges[:-1] + edges[1:])
     widths = np.diff(edges)
 
@@ -369,7 +493,8 @@ def plot_gating_distribution(
         total = counts.sum()
         if total == 0:
             return None
-        return counts / (total * widths)
+        frac = counts / total                    # fraction per bin (sums to 1)
+        return frac / widths if density else frac
 
     fig, ax = plt.subplots(figsize=figsize)
 
@@ -388,12 +513,14 @@ def plot_gating_distribution(
             ax.plot(centers, dens, color="black", lw=2)
         title_extra = "all buckets pooled"
     else:
+        counts = gating.get("count")
         cmap = plt.cm.viridis(np.linspace(0, 1, len(buckets)))
         for c, b in zip(cmap, buckets):
             bi = b if isinstance(b, int) else ALL_BUCKETS.index(b)
             dens = _density(_slice(bi))
             if dens is not None:
-                ax.plot(centers, dens, color=c, lw=1.8, label=f"Rouge-L {_as_label(b)}")
+                n = f", n={int(counts[bi])}" if counts is not None else ""
+                ax.plot(centers, dens, color=c, lw=1.8, label=f"Rouge-L {_as_label(b)}{n}")
         ax.legend(fontsize=8)
         title_extra = "by Rouge-L bucket"
 
@@ -405,7 +532,7 @@ def plot_gating_distribution(
     loc_str = ", ".join(loc) if loc else "all layers/heads"
 
     ax.set_xlabel("gating score  sigmoid(gate)")
-    ax.set_ylabel("normalized density")
+    ax.set_ylabel("normalized density" if density else "fraction of gate values")
     ax.set_xlim(0, 1)
     ax.set_title(f"Gate-score distribution ({loc_str}; {title_extra})", fontsize=11)
     plt.tight_layout()
