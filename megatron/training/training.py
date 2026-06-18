@@ -2507,6 +2507,26 @@ def checkpoint_and_decide_exit(
 
         return True
 
+    # Exit cleanly when the non-repeating dataset is exhausted: save a final checkpoint
+    # and stop, instead of crashing with StopIteration at the next step. The exact number
+    # of available iterations (len(dataset) // global_batch_size) is computed at startup,
+    # because data is read only on TP rank 0 and broadcast, so a try/except on StopIteration
+    # would deadlock the other ranks waiting in the data broadcast collective.
+    data_exhaustion_iters = getattr(args, 'data_exhaustion_iters', 0)
+    if data_exhaustion_iters and iteration >= data_exhaustion_iters:
+        if args.save and not saved_checkpoint:
+            save_checkpoint_and_time(
+                iteration,
+                model,
+                optimizer,
+                opt_param_scheduler,
+                num_floating_point_operations_so_far,
+                checkpointing_context,
+                train_data_iterator=train_data_iterator,
+            )
+        print_datetime(f'exiting program after consuming all available data at iteration {iteration}')
+        return True
+
     return False
 
 
@@ -3485,6 +3505,7 @@ def build_train_valid_test_data_loaders(build_train_valid_test_datasets_provider
     args = get_args()
 
     (train_dataloader, valid_dataloaders, test_dataloader) = (None, None, None)
+    data_exhaustion_iters = 0
 
     print_rank_0('> building train, validation, and test datasets ...')
 
@@ -3532,6 +3553,11 @@ def build_train_valid_test_data_loaders(build_train_valid_test_datasets_provider
                 train_dataloader = None
             else:
                 train_dataloader = build_pretraining_data_loader(train_ds, consumed_train_samples_in_current_phase)
+            # Max full-batch iterations the (non-repeating) data supports. Used to stop
+            # cleanly and save a final checkpoint instead of crashing with StopIteration
+            # when the data runs out. Only meaningful for the non-cyclic 'single' loader.
+            if train_dataloader is not None and args.dataloader_type == 'single':
+                data_exhaustion_iters = len(train_ds) // args.global_batch_size
             valid_dataloaders = []
             for valid_d in valid_ds:
                 if args.skip_train or args.full_validation:
@@ -3550,16 +3576,22 @@ def build_train_valid_test_data_loaders(build_train_valid_test_datasets_provider
             do_test = test_dataloader is not None and (args.full_validation or args.eval_iters > 0)
 
         flags = torch.tensor(
-            [int(do_train), int(do_valid), int(do_test)], dtype=torch.long, device='cuda'
+            [int(do_train), int(do_valid), int(do_test), int(data_exhaustion_iters)],
+            dtype=torch.long, device='cuda'
         )
     else:
-        flags = torch.tensor([0, 0, 0], dtype=torch.long, device='cuda')
+        flags = torch.tensor([0, 0, 0, 0], dtype=torch.long, device='cuda')
 
     torch.distributed.broadcast(flags, 0)
 
     args.do_train = getattr(args, "do_train", False) or flags[0].item()
     args.do_valid = getattr(args, "do_valid", False) or flags[1].item()
     args.do_test = getattr(args, "do_test", False) or flags[2].item()
+    args.data_exhaustion_iters = int(flags[3].item())
+    if args.data_exhaustion_iters and args.data_exhaustion_iters < args.train_iters:
+        print_rank_0(f'> data supports {args.data_exhaustion_iters} iterations '
+                     f'(< train_iters {args.train_iters}); training will stop and save a '
+                     f'final checkpoint at iteration {args.data_exhaustion_iters}')
     return train_dataloader, valid_dataloaders, test_dataloader
 
 
