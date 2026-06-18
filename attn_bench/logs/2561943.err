@@ -1,0 +1,62 @@
+1: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+1: /opt/TensorRT-Model-Optimizer/modelopt/torch/utils/import_utils.py:32: UserWarning: Failed to import diffusers plugin due to: ImportError('peft>=0.17.0 is required for a normal functioning of this module, but found peft==0.13.2.'). You may ignore this warning if you do not need this plugin.
+1:   warnings.warn(
+1: /opt/TensorRT-Model-Optimizer/modelopt/torch/utils/import_utils.py:32: UserWarning: Failed to import peft plugin due to: ImportError("cannot import name 'ParamWrapper' from 'peft.tuners.lora.layer' (/opt/venv/lib/python3.12/site-packages/peft/tuners/lora/layer.py)"). You may ignore this warning if you do not need this plugin.
+1:   warnings.warn(
+1: /opt/TensorRT-Model-Optimizer/modelopt/torch/__init__.py:36: UserWarning: transformers version 4.57.3 is incompatible with nvidia-modelopt and may cause issues. Please install recommended version with `pip install nvidia-modelopt[hf]` if working with HF models.
+1:   _warnings.warn(
+1: wandb: Currently logged in as: elyulina (elyulina-thesis) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+1: wandb: setting up run lsx9dwaa
+1: wandb: Tracking run with wandb version 0.23.1
+1: wandb: Run data is saved locally in /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/results/test/xdoc_attn_leak_te_tp2_2nodes/logging/wandb/run-20260618_182734-lsx9dwaa
+1: wandb: Run `wandb offline` to turn off syncing.
+1: wandb: Syncing run xdoc_attn_leak_te_tp2_2nodes-2561943
+1: wandb: ⭐️ View project at https://wandb.ai/elyulina-thesis/test
+1: wandb: 🚀 View run at https://wandb.ai/elyulina-thesis/test/runs/lsx9dwaa
+1: wandb: Detected [openai] in use.
+1: wandb: Use W&B Weave for improved LLM call tracing. Install Weave with `pip install weave` then add `import weave` to the top of your script.
+1: wandb: For more information, check out the docs at: https://weave-docs.wandb.ai/
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: /opt/TensorRT-Model-Optimizer/modelopt/torch/utils/import_utils.py:32: UserWarning: Failed to import diffusers plugin due to: ImportError('peft>=0.17.0 is required for a normal functioning of this module, but found peft==0.13.2.'). You may ignore this warning if you do not need this plugin.
+0:   warnings.warn(
+0: /opt/TensorRT-Model-Optimizer/modelopt/torch/utils/import_utils.py:32: UserWarning: Failed to import peft plugin due to: ImportError("cannot import name 'ParamWrapper' from 'peft.tuners.lora.layer' (/opt/venv/lib/python3.12/site-packages/peft/tuners/lora/layer.py)"). You may ignore this warning if you do not need this plugin.
+0:   warnings.warn(
+0: /opt/TensorRT-Model-Optimizer/modelopt/torch/__init__.py:36: UserWarning: transformers version 4.57.3 is incompatible with nvidia-modelopt and may cause issues. Please install recommended version with `pip install nvidia-modelopt[hf]` if working with HF models.
+0:   _warnings.warn(
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: Overriding default arguments for tokenizer_type:GPT2BPETokenizer with tokenizer_type:HuggingFaceTokenizer
+0:   warnings.warn(message)
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-use-fast argument is deprecated and will be removed soon. `use_fast` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-use-fast if you want to disable `use_fast`.
+0:   warnings.warn(message)
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-include-special-tokens argument is deprecated and will be removed soon. `include_special_tokens` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-include-special-tokens if you want to disable `include_special_tokens`.
+0:   warnings.warn(message)
+1: wandb: updating run metadata
+1: wandb: updating run metadata; uploading wandb-summary.json
+0: [rank0]:[W618 18:28:22.562995966 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+1: wandb: uploading history steps 0-1, summary, console lines 4-22
+1: wandb: uploading data
+1: wandb: 
+1: wandb: Run history:
+1: wandb:       batch-size ▁▁
+1: wandb:        grad-norm ▁█
+1: wandb:   iteration-time ▁
+1: wandb:    learning-rate █▁
+1: wandb:          lm loss █▁
+1: wandb:      params-norm █▁
+1: wandb: samples vs steps ▁█
+1: wandb:       throughput ▁█
+1: wandb: 
+1: wandb: Run summary:
+1: wandb:       batch-size 2
+1: wandb:        grad-norm 2.18353
+1: wandb:   iteration-time 2.62537
+1: wandb:    learning-rate 0.0001
+1: wandb:          lm loss 11.77457
+1: wandb:      params-norm 85.71892
+1: wandb: samples vs steps 4
+1: wandb:       throughput 0.00248
+1: wandb: 
+1: wandb: 🚀 View run xdoc_attn_leak_te_tp2_2nodes-2561943 at: https://wandb.ai/elyulina-thesis/test/runs/lsx9dwaa
+1: wandb: ⭐️ View project at: https://wandb.ai/elyulina-thesis/test
+1: wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+1: wandb: Find logs at: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/results/test/xdoc_attn_leak_te_tp2_2nodes/logging/wandb/run-20260618_182734-lsx9dwaa/logs
+1: [rank1]:[W618 18:28:23.041258694 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())

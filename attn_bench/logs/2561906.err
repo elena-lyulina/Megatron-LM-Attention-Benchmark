@@ -1,0 +1,54 @@
+0: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: /opt/TensorRT-Model-Optimizer/modelopt/torch/utils/import_utils.py:32: UserWarning: Failed to import diffusers plugin due to: ImportError('peft>=0.17.0 is required for a normal functioning of this module, but found peft==0.13.2.'). You may ignore this warning if you do not need this plugin.
+0:   warnings.warn(
+0: /opt/TensorRT-Model-Optimizer/modelopt/torch/utils/import_utils.py:32: UserWarning: Failed to import peft plugin due to: ImportError("cannot import name 'ParamWrapper' from 'peft.tuners.lora.layer' (/opt/venv/lib/python3.12/site-packages/peft/tuners/lora/layer.py)"). You may ignore this warning if you do not need this plugin.
+0:   warnings.warn(
+0: /opt/TensorRT-Model-Optimizer/modelopt/torch/__init__.py:36: UserWarning: transformers version 4.57.3 is incompatible with nvidia-modelopt and may cause issues. Please install recommended version with `pip install nvidia-modelopt[hf]` if working with HF models.
+0:   _warnings.warn(
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: Overriding default arguments for tokenizer_type:GPT2BPETokenizer with tokenizer_type:HuggingFaceTokenizer
+0:   warnings.warn(message)
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-use-fast argument is deprecated and will be removed soon. `use_fast` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-use-fast if you want to disable `use_fast`.
+0:   warnings.warn(message)
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-include-special-tokens argument is deprecated and will be removed soon. `include_special_tokens` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-include-special-tokens if you want to disable `include_special_tokens`.
+0:   warnings.warn(message)
+0: wandb: Currently logged in as: elyulina (elyulina-thesis) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+0: wandb: setting up run akxbrz0k
+0: wandb: Tracking run with wandb version 0.23.1
+0: wandb: Run data is saved locally in /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/results/test/xdoc_attn_pretrain_gpt_te/logging/wandb/run-20260618_181502-akxbrz0k
+0: wandb: Run `wandb offline` to turn off syncing.
+0: wandb: Syncing run xdoc_attn_pretrain_gpt_te-2561906
+0: wandb: ⭐️ View project at https://wandb.ai/elyulina-thesis/test
+0: wandb: 🚀 View run at https://wandb.ai/elyulina-thesis/test/runs/akxbrz0k
+0: wandb: Detected [openai] in use.
+0: wandb: Use W&B Weave for improved LLM call tracing. Install Weave with `pip install weave` then add `import weave` to the top of your script.
+0: wandb: For more information, check out the docs at: https://weave-docs.wandb.ai/
+0: wandb: updating run metadata
+0: wandb: uploading wandb-summary.json
+0: wandb: uploading history steps 0-1, summary, console lines 1-202
+0: wandb: 
+0: wandb: Run history:
+0: wandb:       batch-size ▁▁
+0: wandb:        grad-norm ▁█
+0: wandb:   iteration-time ▁
+0: wandb:    learning-rate █▁
+0: wandb:          lm loss █▁
+0: wandb:      params-norm █▁
+0: wandb: samples vs steps ▁█
+0: wandb:       throughput ▁█
+0: wandb: 
+0: wandb: Run summary:
+0: wandb:       batch-size 2
+0: wandb:        grad-norm 2.25593
+0: wandb:   iteration-time 2.47612
+0: wandb:    learning-rate 0.0001
+0: wandb:          lm loss 11.77875
+0: wandb:      params-norm 85.67453
+0: wandb: samples vs steps 4
+0: wandb:       throughput 0.00526
+0: wandb: 
+0: wandb: 🚀 View run xdoc_attn_pretrain_gpt_te-2561906 at: https://wandb.ai/elyulina-thesis/test/runs/akxbrz0k
+0: wandb: ⭐️ View project at: https://wandb.ai/elyulina-thesis/test
+0: wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+0: wandb: Find logs at: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/results/test/xdoc_attn_pretrain_gpt_te/logging/wandb/run-20260618_181502-akxbrz0k/logs
+0: [rank0]:[W618 18:15:16.152835086 ProcessGroupNCCL.cpp:1534] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
