@@ -150,7 +150,8 @@ DATA_ARGS=(
     --mock-data
 )
 
-TRAINING_CMD="python3 $MEGATRON_LM_DIR/attn_bench/tests/xdoc_attn_pretrain_gpt.py \
+TRAINING_CMD="python3 $MEGATRON_LM_DIR/attn_bench/tests/pretrain_gpt_native.py \
+    --tests xdoc \
     ${TRANSFORMER_ENGINE_ARGS[@]} \
     ${NETWORK_SIZE_ARGS[@]} \
     ${LOGGING_ARGS[@]} \

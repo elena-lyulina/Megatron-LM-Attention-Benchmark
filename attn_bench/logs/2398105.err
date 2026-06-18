@@ -1,0 +1,98 @@
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:64: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+1: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:64: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+1:   import pynvml  # type: ignore[import]
+0: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+1: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+1: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+1: /opt/venv/lib/python3.12/site-packages/modelopt/torch/utils/logging.py:115: UserWarning: Failed to import diffusers plugin due to: ImportError('peft>=0.17.0 is required for a normal functioning of this module, but found peft==0.13.2.'). You may ignore this warning if you do not need this plugin.
+1:   warnings.warn(message, *args, **kwargs)
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/utils/logging.py:115: UserWarning: Failed to import diffusers plugin due to: ImportError('peft>=0.17.0 is required for a normal functioning of this module, but found peft==0.13.2.'). You may ignore this warning if you do not need this plugin.
+0:   warnings.warn(message, *args, **kwargs)
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/utils/logging.py:115: UserWarning: Failed to import peft plugin due to: ImportError("cannot import name 'ParamWrapper' from 'peft.tuners.lora.layer' (/opt/venv/lib/python3.12/site-packages/peft/tuners/lora/layer.py)"). You may ignore this warning if you do not need this plugin.
+0:   warnings.warn(message, *args, **kwargs)
+1: /opt/venv/lib/python3.12/site-packages/modelopt/torch/utils/logging.py:115: UserWarning: Failed to import peft plugin due to: ImportError("cannot import name 'ParamWrapper' from 'peft.tuners.lora.layer' (/opt/venv/lib/python3.12/site-packages/peft/tuners/lora/layer.py)"). You may ignore this warning if you do not need this plugin.
+1:   warnings.warn(message, *args, **kwargs)
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: Overriding default arguments for tokenizer_type:GPT2BPETokenizer with tokenizer_type:HuggingFaceTokenizer
+0:   warnings.warn(message)
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-use-fast argument is deprecated and will be removed soon. `use_fast` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-use-fast if you want to disable `use_fast`.
+0:   warnings.warn(message)
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-include-special-tokens argument is deprecated and will be removed soon. `include_special_tokens` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-include-special-tokens if you want to disable `include_special_tokens`.
+0:   warnings.warn(message)
+1: wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+1: wandb: Currently logged in as: elyulina (elyulina-thesis) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+1: wandb: setting up run rab8e5gg
+1: wandb: Tracking run with wandb version 0.24.0
+1: wandb: Run data is saved locally in /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/results/test/attn_sink_flag_tp2_2nodes/logging/wandb/run-20260526_182316-rab8e5gg
+1: wandb: Run `wandb offline` to turn off syncing.
+1: wandb: Syncing run attn_sink_flag_tp2_2nodes-2398105
+1: wandb: ⭐️ View project at https://wandb.ai/elyulina-thesis/test
+1: wandb: 🚀 View run at https://wandb.ai/elyulina-thesis/test/runs/rab8e5gg
+1: wandb: Detected [openai] in use.
+1: wandb: Use W&B Weave for improved LLM call tracing. Install Weave with `pip install weave` then add `import weave` to the top of your script.
+1: wandb: For more information, check out the docs at: https://weave-docs.wandb.ai/
+1: [rank1]:W0526 18:23:24.582000 41601 torch/_inductor/triton_bundler.py:396] [3/0] Directory /iopsstor/scratch/cscs/elyulina/tmp/torchinductor_elyulina/triton/0/tmp.2044e2f7-af6d-4306-80e1-f9c47be90338 is not empty - skipping!
+1: [rank1]:W0526 18:23:24.591000 41601 torch/_inductor/triton_bundler.py:396] [3/0] Directory /iopsstor/scratch/cscs/elyulina/tmp/torchinductor_elyulina/triton/0/tmp.a368ddf4-b34b-46f5-aea3-3fa67f36c8c2 is not empty - skipping!
+1: [rank1]:W0526 18:23:26.527000 41601 torch/_inductor/triton_bundler.py:396] [1/2_1] Directory /iopsstor/scratch/cscs/elyulina/tmp/torchinductor_elyulina/triton/0/tmp.067d82d6-3ab7-4200-bd8d-fc2cb5e2f547 is not empty - skipping!
+1: [rank1]:W0526 18:23:26.537000 41601 torch/_inductor/triton_bundler.py:396] [1/2_1] Directory /iopsstor/scratch/cscs/elyulina/tmp/torchinductor_elyulina/triton/0/tmp.8a44afe8-bc27-406a-ad64-24bf6e476000 is not empty - skipping!
+1: [rank1]:W0526 18:23:27.221000 41601 torch/_inductor/triton_bundler.py:396] [4/0] Directory /iopsstor/scratch/cscs/elyulina/tmp/torchinductor_elyulina/triton/0/tmp.952b3dd5-0c2d-400c-9dfc-643f582a9a05 is not empty - skipping!
+1: [rank1]:W0526 18:23:27.230000 41601 torch/_inductor/triton_bundler.py:396] [4/0] Directory /iopsstor/scratch/cscs/elyulina/tmp/torchinductor_elyulina/triton/0/tmp.fb0a0fd1-3e7d-40e2-a543-ba973a3419f1 is not empty - skipping!
+1: wandb: updating run metadata
+1: wandb: uploading wandb-summary.json; uploading output.log
+0: [rank0]:[W526 18:23:31.193087946 ProcessGroupNCCL.cpp:1566] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+1: wandb: uploading history steps 0-1, summary, console lines 1-28
+1: wandb: 
+1: wandb: Run history:
+1: wandb:       batch-size ▁▁
+1: wandb:        grad-norm █▁
+1: wandb:   iteration-time ▁
+1: wandb:    learning-rate █▁
+1: wandb:          lm loss ▁█
+1: wandb:      params-norm █▁
+1: wandb: samples vs steps ▁█
+1: wandb:       throughput ▁█
+1: wandb: 
+1: wandb: Run summary:
+1: wandb:       batch-size 4
+1: wandb:        grad-norm 22.90948
+1: wandb:   iteration-time 3.98019
+1: wandb:    learning-rate 4e-05
+1: wandb:          lm loss 12.20672
+1: wandb:      params-norm 4034.92677
+1: wandb: samples vs steps 8
+1: wandb:       throughput 37.15075
+1: wandb: 
+1: wandb: 🚀 View run attn_sink_flag_tp2_2nodes-2398105 at: https://wandb.ai/elyulina-thesis/test/runs/rab8e5gg
+1: wandb: ⭐️ View project at: https://wandb.ai/elyulina-thesis/test
+1: wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+1: wandb: Find logs at: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/results/test/attn_sink_flag_tp2_2nodes/logging/wandb/run-20260526_182316-rab8e5gg/logs
+1: [rank1]:[W526 18:23:33.339699985 ProcessGroupNCCL.cpp:1566] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+1: [rank1]:[W526 18:23:42.905934821 TCPStore.cpp:125] [c10d] recvValue failed on SocketImpl(fd=63, addr=[nid006255-hsn2]:58276, remote=[nid006242]:8888): Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+1: Exception raised from recvBytes at /opt/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:697 (most recent call first):
+1: frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0xbc (0x4003baed92fc in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+1: frame #1: <unknown function> + 0x5c59c90 (0x40039a1b9c90 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+1: frame #2: <unknown function> + 0x5c5cf24 (0x40039a1bcf24 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+1: frame #3: <unknown function> + 0x5c5e044 (0x40039a1be044 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+1: frame #4: c10d::TCPStore::check(std::vector<std::__
+1: cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x1d4 (0x40039a1c2964 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+1: frame #5: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x2d0 (0x40039d25d860 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+1: frame #6: <unknown function> + 0xe1ae0 (0x400393371ae0 in /usr/lib/aarch64-linux-gnu/libstdc++.so.6)
+1: frame #7: <unknown function> + 0x8595c (0x4003923d595c in /usr/lib/aarch64-linux-gnu/libc.so.6)
+1: frame #8: <unknown function> + 0xebb0c (0x40039243bb0c in /usr/lib/aarch64-linux-gnu/libc.so.6)
+1: 
+1: [rank1]:[W526 18:23:42.908527291 ProcessGroupNCCL.cpp:1815] [PG ID 0 PG GUID 0(default_pg) Rank 1] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+1: [rank1]:[W526 18:23:43.908629614 TCPStore.cpp:106] [c10d] sendBytes failed on SocketImpl(fd=63, addr=[nid006255-hsn2]:58276, remote=[nid006242]:8888): Broken pipe
+1: Exception raised from sendBytes at /opt/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:668 (most recent call first):
+1: frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0xbc (0x4003baed92fc in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+1: frame #1: <unknown function> + 0x5c59c90 (0x40039a1b9c90 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+1: frame #2: <unknown function> + 0x5c5bb9c (0x40039a1bbb9c in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+1: frame #3: <unknown function> + 0x5c5e414 (0x40039a1be414 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+1: frame #4: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator
+1: <std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x1c8 (0x40039a1c2958 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+1: frame #5: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x2d0 (0x40039d25d860 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+1: frame #6: <unknown function> + 0xe1ae0 (0x400393371ae0 in /usr/lib/aarch64-linux-gnu/libstdc++.so.6)
+1: frame #7: <unknown function> + 0x8595c (0x4003923d595c in /usr/lib/aarch64-linux-gnu/libc.so.6)
+1: frame #8: <unknown function> + 0xebb0c (0x40039243bb0c in /usr/lib/aarch64-linux-gnu/libc.so.6)
+1: 
+1: [rank1]:[W526 18:23:43.910803632 ProcessGroupNCCL.cpp:1815] [PG ID 0 PG GUID 0(default_pg) Rank 1] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Broken pipe

@@ -1,0 +1,306 @@
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: W0527 13:31:35.263000 73293 torch/distributed/run.py:851] 
+0: W0527 13:31:35.263000 73293 torch/distributed/run.py:851] *****************************************
+0: W0527 13:31:35.263000 73293 torch/distributed/run.py:851] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+0: W0527 13:31:35.263000 73293 torch/distributed/run.py:851] *****************************************
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: Future
+0: Warning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+0:   sentry_sdk.init(
+0: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+0:   sentry_sdk.init(
+0: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+0:   sentry_sdk.init(
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:36: UserWarning: transformers version 5.3.0 is not tested with nvidia-modelopt and may cause issues. Please install recommended version with `pip install nvidia-modelopt[hf]` if working with HF models.
+0:   _warnings.warn(
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:36: UserWarning: transformers version 5.3.0 is not tested with nvidia-modelopt and may cause issues. Please install recommended version with `pip install nvidia-modelopt[hf]` if working with HF models.
+0:   _warnings.warn(
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:36: UserWarning: transformers version 5.3.0 is not tested with nvidia-modelopt and may cause issues. Please install recommended version with `pip install nvidia-modelopt[hf]` if working with HF models.
+0:   _warnings.warn(
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:36: UserWarning: transformers version 5.3.0 is not tested with nvidia-modelopt and may cause issues. Please install recommended version with `pip install nvidia-modelopt[hf]` if working with HF models.
+0:   _warnings.warn(
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-use-fast argument is deprecated and will be removed soon. `use_fast` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-use-fast if you want to disable `use_fast`.
+0:   warnings.warn(message)
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-include-special-tokens argument is deprecated and will be removed soon. `include_special_tokens` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-include-special-tokens if you want to disable `include_special_tokens`.
+0:   warnings.warn(message)
+0: [rank1]: Traceback (most recent call last):
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py", line 357, in <module>
+0: [rank1]:     main()
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py", line 350, in main
+0: [rank1]:     model = load_megatron_model(args.ckpt_dir, args.tokenizer_path, args.megatron_extra_args)
+0: [rank1]:             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py", line 85, in load_megatron_model
+0: [rank1]:     model = get_model(partial(model_provider, gpt_builder), wrap_with_ddp=False)
+0: [rank1]:             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/t
+0: raining.py", line 1272, in get_model
+0: [rank1]:     model = build_model()
+0: [rank1]:             ^^^^^^^^^^^^^
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1258, in build_model
+0: [rank1]:     model = model_provider_func(
+0: [rank1]:             ^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/model_provider.py", line 63, in model_provider
+0: [rank1]:     return model_builder(args, pre_process, post_process, vp_stage, config=config, pg_collection=pg_collection)
+0: [rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/gpt_builders.py", line 94, in gpt_builder
+0: [rank1]:     model = GPTModel(
+0: [rank1]:             ^^^^^^^^^
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/models/gpt/gpt_model.py", line 111, in __ini
+0: t__
+0: [rank1]:     super().__init__(config=config, pg_collection=pg_collection)
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/models/common/language_module/language_module.py", line 48, in __init__
+0: [rank1]:     self._set_attention_backend()
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/models/common/language_module/language_module.py", line 126, in _set_attention_backend
+0: [rank1]:     check_and_set_env_variable("NVTE_FUSED_ATTN", 1, AttnBackend.auto)
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/models/common/language_module/language_module.py", line 103, in check_and_set_env_variable
+0: [rank1]:     assert current_value is None or current_value == str(
+0: [rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]: AssertionError: NVTE_FUSED_ATTN set to 0, but expected 1 for attention backend type auto. unset NVTE_FLASH_ATTN, NVTE_FUSED_ATTN and NVTE_UNFUSED
+0: _ATTN. Use the --attention-backend argument if you want to choose between (flash/fused/unfused/auto/local). Default is auto.
+0: [rank3]: Traceback (most recent call last):
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py", line 357, in <module>
+0: [rank3]:     main()
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py", line 350, in main
+0: [rank3]:     model = load_megatron_model(args.ckpt_dir, args.tokenizer_path, args.megatron_extra_args)
+0: [rank3]:             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py", line 85, in load_megatron_model
+0: [rank3]:     model = get_model(partial(model_provider, gpt_builder), wrap_with_ddp=False)
+0: [rank3]:             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: ^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1272, in get_model
+0: [rank3]:     model = build_model()
+0: [rank3]:             ^^^^^^^^^^^^^
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1258, in build_model
+0: [rank3]:     model = model_provider_func(
+0: [rank3]:             ^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/model_provider.py", line 63, in model_provider
+0: [rank3]:     return model_builder(args, pre_process, post_process, vp_stage, config=config, pg_collection=pg_collection)
+0: [rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/gpt_builders.py", line 94, in gpt_builder
+0: [rank3]:     model = GPTModel(
+0: [rank3]:             ^^^^^^^^^
+0: [rank3]:   Fil
+0: e "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/models/gpt/gpt_model.py", line 111, in __init__
+0: [rank3]:     super().__init__(config=config, pg_collection=pg_collection)
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/models/common/language_module/language_module.py", line 48, in __init__
+0: [rank3]:     self._set_attention_backend()
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/models/common/language_module/language_module.py", line 126, in _set_attention_backend
+0: [rank3]:     check_and_set_env_variable("NVTE_FUSED_ATTN", 1, AttnBackend.auto)
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/models/common/language_module/language_module.py", line 103, in check_and_set_env_variable
+0: [rank3]:     assert current_value is None or current_value == str(
+0: [rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]: AssertionError: NVTE
+0: _FUSED_ATTN set to 0, but expected 1 for attention backend type auto. unset NVTE_FLASH_ATTN, NVTE_FUSED_ATTN and NVTE_UNFUSED_ATTN. Use the --attention-backend argument if you want to choose between (flash/fused/unfused/auto/local). Default is auto.
+0: [rank0]: Traceback (most recent call last):
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py", line 357, in <module>
+0: [rank0]:     main()
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py", line 350, in main
+0: [rank0]:     model = load_megatron_model(args.ckpt_dir, args.tokenizer_path, args.megatron_extra_args)
+0: [rank0]:             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py", line 85, in load_megatron_model
+0: [rank0]:     model = get_model
+0: (partial(model_provider, gpt_builder), wrap_with_ddp=False)
+0: [rank0]:             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1272, in get_model
+0: [rank0]:     model = build_model()
+0: [rank0]:             ^^^^^^^^^^^^^
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1258, in build_model
+0: [rank0]:     model = model_provider_func(
+0: [rank0]:             ^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/model_provider.py", line 63, in model_provider
+0: [rank0]:     return model_builder(args, pre_process, post_process, vp_stage, config=config, pg_collection=pg_collection)
+0: [rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Ben
+0: chmark/gpt_builders.py", line 94, in gpt_builder
+0: [rank0]:     model = GPTModel(
+0: [rank0]:             ^^^^^^^^^
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/models/gpt/gpt_model.py", line 111, in __init__
+0: [rank0]:     super().__init__(config=config, pg_collection=pg_collection)
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/models/common/language_module/language_module.py", line 48, in __init__
+0: [rank0]:     self._set_attention_backend()
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/models/common/language_module/language_module.py", line 126, in _set_attention_backend
+0: [rank0]:     check_and_set_env_variable("NVTE_FUSED_ATTN", 1, AttnBackend.auto)
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/models/common/language_module/language_module.py", line 103, in check_and_set_env_variable
+0: [rank0]:     assert current_value is N
+0: one or current_value == str(
+0: [rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]: AssertionError: NVTE_FUSED_ATTN set to 0, but expected 1 for attention backend type auto. unset NVTE_FLASH_ATTN, NVTE_FUSED_ATTN and NVTE_UNFUSED_ATTN. Use the --attention-backend argument if you want to choose between (flash/fused/unfused/auto/local). Default is auto.
+0: [rank2]: Traceback (most recent call last):
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py", line 357, in <module>
+0: [rank2]:     main()
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py", line 350, in main
+0: [rank2]:     model = load_megatron_model(args.ckpt_dir, args.tokenizer_path, args.megatron_extra_args)
+0: [rank2]:             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py", line 85, in load_megatron_model
+0: [rank2]:     model = get_model(partial(model_provider, gpt_builder), wrap_with_ddp=False)
+0: [rank2]:             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/t
+0: raining.py", line 1272, in get_model
+0: [rank2]:     model = build_model()
+0: [rank2]:             ^^^^^^^^^^^^^
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/training.py", line 1258, in build_model
+0: [rank2]:     model = model_provider_func(
+0: [rank2]:             ^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/model_provider.py", line 63, in model_provider
+0: [rank2]:     return model_builder(args, pre_process, post_process, vp_stage, config=config, pg_collection=pg_collection)
+0: [rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/gpt_builders.py", line 94, in gpt_builder
+0: [rank2]:     model = GPTModel(
+0: [rank2]:             ^^^^^^^^^
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/models/gpt/gpt_model.py", line 111, in __ini
+0: t__
+0: [rank2]:     super().__init__(config=config, pg_collection=pg_collection)
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/models/common/language_module/language_module.py", line 48, in __init__
+0: [rank2]:     self._set_attention_backend()
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/models/common/language_module/language_module.py", line 126, in _set_attention_backend
+0: [rank2]:     check_and_set_env_variable("NVTE_FUSED_ATTN", 1, AttnBackend.auto)
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/models/common/language_module/language_module.py", line 103, in check_and_set_env_variable
+0: [rank2]:     assert current_value is None or current_value == str(
+0: [rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]: AssertionError: NVTE_FUSED_ATTN set to 0, but expected 1 for attention backend type auto. unset NVTE_FLASH_ATTN, NVTE_FUSED_ATTN and NVTE_UNFUSED
+0: _ATTN. Use the --attention-backend argument if you want to choose between (flash/fused/unfused/auto/local). Default is auto.
+0: [rank0]:[W527 13:32:54.176561953 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [rank1]:[W527 13:32:55.511656889 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [rank3]:[W527 13:32:55.521603066 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [rank2]:[W527 13:32:55.984114744 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: W0527 13:33:05.807000 73293 torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 73856 closing signal SIGTERM
+0: W0527 13:33:05.808000 73293 torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 73857 closing signal SIGTERM
+0: Stack (most recent call first):
+0:   <no Python frame>
+0: W0527 13:33:05.808000 73293 torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 73858 closing signal SIGTERM
+0: Stack (most recent call first):
+0:   <no Python frame>
+0: E0527 13:33:05.930000 73293 torch/distributed/elastic/multiprocessing/api.py:984] failed (exitcode: 1) local_rank: 3 (pid: 73859) of binary: /opt/venv/bin/python3
+0: Traceback (most recent call last):
+0:   File "/usr/local/bin/torchrun", line 6, in <module>
+0:     sys.exit(main())
+0:              ^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+0:     return f(*args, **kwargs)
+0:            ^^^^^^^^^^^^^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 990, in main
+0:     run(args)
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 981, in run
+0:     elastic_launch(
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 170, in __call__
+0:     return launch_agent(self._config, self._entrypoint, list(args))
+0:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 317, in launch_agent
+0:     raise ChildFailedError(
+0: torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+0: ============================================================
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py FAILED
+0: ------------------------------------------------------------
+0: Failures:
+0: [1]:
+0:   time      : 2026-05-27_13:33:05
+0:   host      : nid006884
+0:   rank      : 0 (local_rank: 0)
+0:   exitcode  : 1 (pid: 73856)
+0:   error_file: <N/A>
+0:   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+0: [2]:
+0:   time      : 2026-05-27_13:33:05
+0:   host      : nid006884
+0:   rank      : 1 (local_rank: 1)
+0:   exitcode  : -15 (pid: 73857)
+0:   error_file: <N/A>
+0:   traceback : Signal 15 (SIGTERM) received by PID 73857
+0: [3]:
+0:   time      : 2026-05-27_13:33:05
+0:   host      : nid006884
+0:   rank      : 2 (local_rank: 2)
+0:   exitcode  : -15 (pid: 73858)
+0:   error_file: <N/A>
+0:   traceback : Signal 15 (SIGTERM) received by PID 73858
+0: ------------------------------------------------------------
+0: Ro
+0: ot Cause (first observed failure):
+0: [0]:
+0:   time      : 2026-05-27_13:33:05
+0:   host      : nid006884
+0:   rank      : 3 (local_rank: 3)
+0:   exitcode  : 1 (pid: 73859)
+0:   error_file: <N/A>
+0:   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+0: ============================================================
+srun: error: nid006884: task 0: Exited with exit code 1
+srun: Terminating StepId=2406375.0
+0: Processing repetitions:   0%|          | 0/1 [00:00<?, ?it/s]
+0: 
+0: Processing offsets:   0%|          | 0/1 [00:00<?, ?it/s][A
+0: 
+0: 
+0:   0%|          | 0/1 [00:00<?, ?it/s][A[A
+0: 
+0: 
+0: 
+0:   0%|          | 0/1 [00:00<?, ?it/s][A[A[A
+0: 
+0: 
+0: 
+0: 
+0: Generating train split: 0 examples [00:00, ? examples/s][A[A[A[A
+0: Generating train split: 0 examples [00:00, ? examples/s]
+0: 
+0: 
+0: 
+0:                                      
+0: [A[A[A
+0: 
+0: 
+0:                                      
+0: [A[A
+0: 
+0:                                                          [A
+0: Processing repetitions:   0%|          | 0/1 [00:00<?, ?it/s]
+0: Traceback (most recent call last):
+0:   File "/opt/venv/lib/python3.12/site-packages/datasets/builder.py", line 1886, in _prepare_split_single
+0:     num_examples, num_bytes = writer.finalize()
+0:                               ^^^^^^^^^^^^^^^^^
+0:   File "/opt/venv/lib/python3.12/site-packages/datasets/arrow_writer.py", line 648, in finalize
+0:     raise SchemaInferenceError("Please pass `features` or at least one example when writing data")
+0: datasets.arrow_writer.SchemaInferenceError: Please pass `features` or at least one example when writing data
+0: 
+0: The above exception was the direct cause of the following exception:
+0: 
+0: Traceback (most recent call last):
+0:   File "/users/elyulina/scratch/PDM/src/verbatim_eval/main.py", line 87, in <module>
+0:     main()
+0:   File "/users/elyulina/scratch/PDM/src/verbatim_eval/main.py", line 80, in main
+0:     result = eval_expr(eval_config)
+0:              ^^^^^^^^^^^^^^^^^^^^^^
+0:   File "/iopsstor/scratch/cscs/elyulina/PDM/src/verbatim_eval/controlled_expr.py", line 234, in eval_expr
+0:     metrics = calculate_metrics(config, r, offset, prefix_length, suffix_length)
+0:               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0:   File "/iopsstor/scratch/cscs/elyulina/PDM/src/verbatim_eval/controlled_expr.py", line 241, in calculate_metrics
+0:     data = load_inference_data(
+0:            ^^^^^^^^^^^^^^^^^^^^
+0:   File "/iopsstor/scratch/cscs/elyulina/PDM/src/verbatim_eval/utils.py", line 50, in load_inference_data
+0:     dataset = load_dataset(
+0:               ^^^^^^^^^^^^^
+0:   File "/opt/venv/lib/python3.12/site-packages/datasets/load.py", line 2154, in load_dataset
+0:     builder_instance.download_and_prepare(
+0:   File "/opt/venv/lib/python3.12/site-packages/datasets/builder.py", line 924, in download_and_prepare
+0:     self._download_and_prepare(
+0:   File "/opt/venv/lib/python3.12/site-packages/datasets/builder.py", line 1000, in _download_and_prepare
+0:     self._prepare_split(split_generator, **prepare_split_kwargs)
+0:   File "/opt/venv/lib/python3.12/site-packages/datasets/builder.py", line 1741, in _prepare_split
+0:     for job_id, done, content in self._prepare_split_single(
+0:   File "/opt/venv/lib/python3.12/site-packages/datasets/builder.py", line 1897, in _prepare_split_single
+0:     raise DatasetGenerationError("An error occurred while generating the dataset") from e
+0: datasets.exceptions.DatasetGenerationError: An error occurred while generating the dataset
+srun: error: nid006884: task 0: Exited with exit code 1
+srun: Terminating StepId=2406375.1

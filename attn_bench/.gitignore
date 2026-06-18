@@ -1,3 +1,18 @@
 !logs/
 results/**/checkpoints/
 results/wandb_export*.csv
+
+# local-only archive for big logs stripped from history
+_logs/
+# backup files
+backup 
+
+# relevant papers' pdf for local usage
+papers
+
+# results artifacts (kept locally only)
+results/data/
+results/datasets/
+results/diagrams/
+results/mem-results/
+results/plots/

@@ -1,0 +1,132 @@
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:64: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: W0525 15:06:50.176000 55847 torch/distributed/run.py:811] 
+0: W0525 15:06:50.176000 55847 torch/distributed/run.py:811] *****************************************
+0: W0525 15:06:50.176000 55847 torch/distributed/run.py:811] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+0: W0525 15:06:50.176000 55847 torch/distributed/run.py:811] *****************************************
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:64: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:64: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:64: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:64: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/utils/logging.py:115: UserWarning: Failed to import diffusers plugin due to: ImportError('peft>=0.17.0 is required for a normal functioning of this module, but found peft==0.13.2.'). You may ignore this warning if you do not need this plugin.
+0:   warnings.warn(message, *args, **kwargs)
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/utils/logging.py:115: UserWarning: Failed to import diffusers plugin due to: ImportError('peft>=0.17.0 is required for a normal functioning of this module, but found peft==0.13.2.'). You may ignore this warning if you do not need this plugin.
+0:   warnings.warn(message, *args, **kwargs)
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/utils/logging.py:115: UserWarning: Failed to import diffusers plugin due to: ImportError('peft>=0.17.0 is required for a normal functioning of this module, but found peft==0.13.2.'). You may ignore this warning if you do not need this plugin.
+0:   warnings.warn(message, *args, **kwargs)
+0: /opt/ve
+0: nv/lib/python3.12/site-packages/modelopt/torch/utils/logging.py:115: UserWarning: Failed to import diffusers plugin due to: ImportError('peft>=0.17.0 is required for a normal functioning of this module, but found peft==0.13.2.'). You may ignore this warning if you do not need this plugin.
+0:   warnings.warn(message, *args, **kwargs)
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/utils/logging.py:115: UserWarning: Failed to import peft plugin due to: ImportError("cannot import name 'ParamWrapper' from 'peft.tuners.lora.layer' (/opt/venv/lib/python3.12/site-packages/peft/tuners/lora/layer.py)"). You may ignore this warning if you do not need this plugin.
+0:   warnings.warn(message, *args, **kwargs)
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/utils/logging.py:115: UserWarning: Failed to import peft plugin due to: ImportError("cannot import name 'ParamWrapper' from 'peft.tuners.lora.layer' (/opt/venv/lib/python3.12/site-packages/peft/tuners/lora/layer.py)"). You may ignore this warning if you do not need this plugin.
+0:   warnings.warn(message, *args, **kwargs)
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/utils/logging.py:115: UserWarning: Failed to import peft plugin due to: ImportError("cannot import name 'ParamWrapper' from 'peft.tuners.lora.layer' (/opt/venv/lib/python3.12/site-packages/peft/tuners/lora/layer.py)"). You may ignore this warning if you do not need this plugin.
+0:   warnings.warn(message, *args, **kwargs)
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/utils/logging.py:115: UserWarning: Failed to import peft plugin due to: ImportError("cannot import name 'ParamWrapper' from 'peft.tuners.lora.layer' (/opt/venv/lib/python3.12/site-packages/peft/tuners/lora/layer.py)"). You may ignore this warning if you do not need this plugin.
+0:   warnings.warn(message, *args, **kwargs)
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-use-fast argument is deprecated and will be removed soon. `use_fast` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-use-fast if you want to disable `use_fast`.
+0:   warnings.warn(message)
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-include-special-tokens argument is deprecated and will be removed soon. `include_special_tokens` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-include-special-tokens if you want to disable `include_special_tokens`.
+0:   warnings.warn(message)
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py:808: FutureWarning: `load_state_dict` is deprecated and will be removed in future versions. Please use `load` instead.
+0:   checkpoint.load_state_dict(
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py:808: FutureWarning: `load_state_dict` is deprecated and will be removed in future versions. Please use `load` instead.
+0:   checkpoint.load_state_dict(
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py:808: FutureWarning: `load_state_dict` is deprecated and will be removed in future versions. Please use `load` instead.
+0:   checkpoint.load_state_dict(
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py:808: FutureWarning: `load_state_dict` is deprecated and will be removed in future versions. Please use `load` instead.
+0:   checkpoint.load_state_dict(
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/planner_helpers.py:419: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   device = getattr(value, "device", None)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/planner_helpers.py:419: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   device = getattr(value, "device", None)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/planner_helpers.py:419: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   device = getattr(value, "device", None)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/planner_helpers.py:419: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   device = getattr(value, "device", None)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/default_planner.py:479: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   and md.size != obj.size()
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/default_planner.py:479: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   and md.size != obj.size()
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/default_planner.py:479: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   and md.size != obj.size()
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/default_planner.py:479: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   and md.size != obj.size()
+0: [rank0]:[W525 15:08:07.145443801 ProcessGroupNCCL.cpp:1566] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [rank1]:[W525 15:08:08.844822592 ProcessGroupNCCL.cpp:1566] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [rank3]:[W525 15:08:09.387421855 ProcessGroupNCCL.cpp:1566] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [rank2]:[W525 15:08:09.538793831 ProcessGroupNCCL.cpp:1566] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: Processing repetitions:   0%|          | 0/1 [00:00<?, ?it/s]
+0: 
+0: Processing offsets:   0%|          | 0/1 [00:00<?, ?it/s][A
+0: 
+0: 
+0:   0%|          | 0/1 [00:00<?, ?it/s][A[A
+0: 
+0: 
+0: 
+0:   0%|          | 0/1 [00:00<?, ?it/s][A[A[A
+0: 
+0: 
+0: 
+0: 
+0: Generating train split: 0 examples [00:00, ? examples/s][A[A[A[A
+0: Generating train split: 0 examples [00:00, ? examples/s]
+0: 
+0: 
+0: 
+0:                                      
+0: [A[A[A
+0: 
+0: 
+0:                                      [A[A
+0: 
+0:                                                          [A
+0: Processing repetitions:   0%|          | 0/1 [00:00<?, ?it/s]
+0: Traceback (most recent call last):
+0:   File "/opt/venv/lib/python3.12/site-packages/datasets/builder.py", line 1886, in _prepare_split_single
+0:     num_examples, num_bytes = writer.finalize()
+0:                               ^^^^^^^^^^^^^^^^^
+0:   File "/opt/venv/lib/python3.12/site-packages/datasets/arrow_writer.py", line 648, in finalize
+0:     raise SchemaInferenceError("Please pass `features` or at least one example when writing data")
+0: datasets.arrow_writer.SchemaInferenceError: Please pass `features` or at least one example when writing data
+0: 
+0: The above exception was the direct cause of the following exception:
+0: 
+0: Traceback (most recent call last):
+0:   File "/users/elyulina/scratch/PDM/src/verbatim_eval/main.py", line 87, in <module>
+0:     main()
+0:   File "/users/elyulina/scratch/PDM/src/verbatim_eval/main.py", line 80, in main
+0:     result = eval_expr(eval_config)
+0:              ^^^^^^^^^^^^^^^^^^^^^^
+0:   File "/iopsstor/scratch/cscs/elyulina/PDM/src/verbatim_eval/controlled_expr.py", line 234, in eval_expr
+0:     metrics = calculate_metrics(config, r, offset, prefix_length, suffix_length)
+0:               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0:   File "/iopsstor/scratch/cscs/elyulina/PDM/src/verbatim_eval/controlled_expr.py", line 241, in calculate_metrics
+0:     data = load_inference_data(
+0:            ^^^^^^^^^^^^^^^^^^^^
+0:   File "/iopsstor/scratch/cscs/elyulina/PDM/src/verbatim_eval/utils.py", line 50, in load_inference_data
+0:     dataset = load_dataset(
+0:               ^^^^^^^^^^^^^
+0:   File "/opt/venv/lib/python3.12/site-packages/datasets/load.py", line 2154, in load_dataset
+0:     builder_instance.download_and_prepare(
+0:   File "/opt/venv/lib/python3.12/site-packages/datasets/builder.py", line 924, in download_and_prepare
+0:     self._download_and_prepare(
+0:   File "/opt/venv/lib/python3.12/site-packages/datasets/builder.py", line 1000, in _download_and_prepare
+0:     self._prepare_split(split_generator, **prepare_split_kwargs)
+0:   File "/opt/venv/lib/python3.12/site-packages/datasets/builder.py", line 1741, in _prepare_split
+0:     for job_id, done, content in self._prepare_split_single(
+0:   File "/opt/venv/lib/python3.12/site-packages/datasets/builder.py", line 1897, in _prepare_split_single
+0:     raise DatasetGenerationError("An error occurred while generating the dataset") from e
+0: datasets.exceptions.DatasetGenerationError: An error occurred while generating the dataset
+srun: error: nid006097: task 0: Exited with exit code 1
+srun: Terminating StepId=2381701.1

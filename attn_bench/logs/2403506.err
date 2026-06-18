@@ -1,0 +1,545 @@
+cat: '': No such file or directory
+/var/spool/slurmd/job2403506/slurm_script: line 374: python: command not found
+ 0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+ 0:   import pynvml  # type: ignore[import]
+40: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+43: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+42: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+41: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+37: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+39: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+36: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+38: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+46: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+44: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+47: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+45: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 3: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 1: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 0: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 2: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 4: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 7: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 6: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 5: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+51: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+49: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+50: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+30: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+29: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+31: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+28: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+48: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+53: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+54: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+52: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+55: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 9: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 8: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+10: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+11: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+23: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+21: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+22: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+20: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+13: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+12: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+14: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+15: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+34: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+32: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+33: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+35: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+24: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+26: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+25: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+27: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+17: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+16: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+19: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+18: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 0: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+ 0:   sentry_sdk.init(
+17: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+38: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+47: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+11: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 8: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+26: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+25: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+49: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+48: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 1: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+30: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 5: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+13: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 3: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+14: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+53: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+55: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+33: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+15: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 4: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+34: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+43: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 6: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+41: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+40: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+27: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 2: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+42: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+21: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+39: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+23: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+20: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+22: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+10: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+37: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+18: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+32: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 7: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+54: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+19: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+50: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+24: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+29: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+52: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+51: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+28: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 9: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+35: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+46: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+45: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+16: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+36: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+31: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+12: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+44: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:36: UserWarning: transformers version 5.3.0 is not tested with nvidia-modelopt and may cause issues. Please install recommended version with `pip install nvidia-modelopt[hf]` if working with HF models.
+ 0:   _warnings.warn(
+ 0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: Overriding default arguments for tokenizer_type:GPT2BPETokenizer with tokenizer_type:HuggingFaceTokenizer
+ 0:   warnings.warn(message)
+ 0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-use-fast argument is deprecated and will be removed soon. `use_fast` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-use-fast if you want to disable `use_fast`.
+ 0:   warnings.warn(message)
+ 0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-include-special-tokens argument is deprecated and will be removed soon. `include_special_tokens` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-include-special-tokens if you want to disable `include_special_tokens`.
+ 0:   warnings.warn(message)
+ 1: [W528 02:36:18.638246201 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 2: [W528 02:36:18.638252665 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+32: [W528 02:36:18.785094473 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+34: [W528 02:36:18.785487613 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+16: [W528 02:36:18.770410621 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+18: [W528 02:36:18.770417180 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+19: [W528 02:36:18.770411357 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+51: [W528 02:36:18.614172502 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+31: [W528 02:36:18.502002090 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+30: [W528 02:36:18.503243876 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+28: [W528 02:36:18.525107877 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+40: [W528 02:36:18.169535445 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+49: [W528 02:36:18.658483452 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+50: [W528 02:36:18.658531227 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+48: [W528 02:36:18.658548026 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+14: [W528 02:36:18.551807961 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+21: [W528 02:36:18.203762119 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+52: [W528 02:36:18.336306115 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+53: [W528 02:36:18.336303235 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+54: [W528 02:36:18.336294275 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+47: [W528 02:36:18.106168170 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+55: wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+41: [W528 02:36:18.217982805 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+43: [W528 02:36:18.218037876 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+42: [W528 02:36:18.218047123 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+15: [W528 02:36:18.613948782 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+46: [W528 02:36:18.150208567 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+12: [W528 02:36:18.621088872 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+20: [W528 02:36:18.274084958 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+23: [W528 02:36:18.274138332 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+22: [W528 02:36:18.274150556 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+39: [W528 02:36:18.750857126 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+44: [W528 02:36:18.174414651 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+45: [W528 02:36:18.174413787 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+36: [W528 02:36:18.775423395 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 6: [W528 02:36:18.667064170 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 7: [W528 02:36:18.700164306 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+29: [W528 02:36:18.724439717 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 3: [W528 02:36:18.910655555 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 4: [W528 02:36:18.727777826 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+35: [W528 02:36:18.103351443 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 8: [W528 02:36:18.276933323 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+26: [W528 02:36:18.339178999 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+17: [W528 02:36:18.096829984 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+55: wandb: Currently logged in as: elyulina (elyulina-thesis) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+ 5: [W528 02:36:18.806002431 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+11: [W528 02:36:18.405668672 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+24: [W528 02:36:18.474225094 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+37: [W528 02:36:18.075599030 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+33: [W528 02:36:18.333132581 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+27: [W528 02:36:18.579286247 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 9: [W528 02:36:18.601278617 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+10: [W528 02:36:18.605214932 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+25: [W528 02:36:18.685633955 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+55: wandb: setting up run xmjqh0ty
+55: wandb: Tracking run with wandb version 0.26.0
+55: wandb: Run data is saved locally in /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/results/pretrain/fineweb-40B_gutenberg-3B/llama3-1b-sink-attn-fineweb40B-gutenberg3B-te215/logging/wandb/run-20260528_023618-xmjqh0ty
+55: wandb: Run `wandb offline` to turn off syncing.
+55: wandb: Syncing run llama3-1b-sink-attn-fineweb40B-gutenberg3B-te215-2403506
+55: wandb: ⭐️ View project at https://wandb.ai/elyulina-thesis/fineweb-40B_gutenberg-3B
+55: wandb: 🚀 View run at https://wandb.ai/elyulina-thesis/fineweb-40B_gutenberg-3B/runs/xmjqh0ty
+55: wandb: Detected [mcp, openai] in use.
+55: wandb: Use W&B Weave for improved LLM call tracing. Install Weave with `pip install weave` then add `import weave` to the top of your script.
+55: wandb: For more information, check out the docs at: https://weave-docs.wandb.ai
+55: [W528 02:36:20.332251656 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+38: [W528 02:36:22.885183847 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+13: [W528 02:36:23.619293348 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 0: [W528 02:36:23.792424282 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+26: [rank26]:W0528 02:37:15.674000 107367 torch/_inductor/triton_bundler.py:396] [2/0] Directory /tmp/.triton/cache/tmp.5622b4f5-914a-4276-b192-739d8fd7a255 is not empty - skipping!
+15: [rank15]:W0528 02:37:15.791000 139892 torch/_inductor/triton_bundler.py:396] [2/0] Directory /tmp/.triton/cache/tmp.51ba61b2-98e0-467e-b364-e3e2fd3b7202 is not empty - skipping!
+ 9: [rank9]:W0528 02:37:15.811000 81527 torch/_inductor/triton_bundler.py:396] [1/2_1] Directory /tmp/.triton/cache/tmp.25b26a44-faf9-4bc9-a867-32ab6920c43f is not empty - skipping!
+ 9: [rank9]:W0528 02:37:15.866000 81527 torch/_inductor/triton_bundler.py:396] [2/0] Directory /tmp/.triton/cache/tmp.45290b44-e6bc-4a38-918e-2a3c4419cce8 is not empty - skipping!
+ 9: [rank9]:W0528 02:37:16.151000 81527 torch/_inductor/triton_bundler.py:396] [3/0] Directory /tmp/.triton/cache/tmp.f4f6fafb-e736-40fe-b8af-8c8aa18e0c52 is not empty - skipping!
+35: [rank35]:W0528 02:37:16.198000 109642 torch/_inductor/triton_bundler.py:396] [4/0] Directory /tmp/.triton/cache/tmp.95de384e-c492-4549-9aec-90bd1759591c is not empty - skipping!
+26: [rank26]:W0528 02:37:16.253000 107367 torch/_inductor/triton_bundler.py:396] [6/0] Directory /tmp/.triton/cache/tmp.5ad7c4b8-83fb-49b4-9248-c0b23e316611 is not empty - skipping!
+26: [rank26]:W0528 02:37:16.253000 107367 torch/_inductor/triton_bundler.py:396] [6/0] Directory /tmp/.triton/cache/tmp.b7298ad8-47ab-4426-b95b-daa732014de5 is not empty - skipping!
+45: [rank45]:W0528 02:37:16.264000 179172 torch/_inductor/triton_bundler.py:396] [4/0] Directory /tmp/.triton/cache/tmp.19d48ae7-d685-4875-9f69-bf07963f6326 is not empty - skipping!
+53: [rank53]:W0528 02:37:16.274000 111134 torch/_inductor/triton_bundler.py:396] [4/0] Directory /tmp/.triton/cache/tmp.c195b91e-0448-465d-a718-0d2d880ee95c is not empty - skipping!
+54: [rank54]:W0528 02:37:16.281000 111135 torch/_inductor/triton_bundler.py:396] [4/0] Directory /tmp/.triton/cache/tmp.330098a8-26a2-4fa3-a2a9-15c35f179c27 is not empty - skipping!
+ 2: [rank2]:W0528 02:37:16.283000 1080 torch/_inductor/triton_bundler.py:396] [6/0] Directory /tmp/.triton/cache/tmp.99ead665-0346-4800-82ec-79518d505ab8 is not empty - skipping!
+ 9: [rank9]:W0528 02:37:16.287000 81527 torch/_inductor/triton_bundler.py:396] [4/0] Directory /tmp/.triton/cache/tmp.1fb0e0b6-8824-4d65-82a6-e421c8ca60d1 is not empty - skipping!
+ 9: [rank9]:W0528 02:37:16.288000 81527 torch/_inductor/triton_bundler.py:396] [4/0] Directory /tmp/.triton/cache/tmp.5d90c0a4-62f1-4158-8ec3-ff476132f26a is not empty - skipping!
+ 9: [rank9]:W0528 02:37:16.288000 81527 torch/_inductor/triton_bundler.py:396] [4/0] Directory /tmp/.triton/cache/tmp.a6322dcc-93f7-4285-8c16-201786c5fb81 is not empty - skipping!
+ 8: [rank8]:W0528 02:37:16.288000 81526 torch/_inductor/triton_bundler.py:396] [4/0] Directory /tmp/.triton/cache/tmp.db6fcab0-6ef7-46a7-90c8-f78d40391899 is not empty - skipping!
+53: [rank53]:W0528 02:37:16.378000 111134 torch/_inductor/triton_bundler.py:396] [5/0] Directory /tmp/.triton/cache/tmp.8522c3d9-b89c-4c42-ba57-df6a4ddab270 is not empty - skipping!
+53: [rank53]:W0528 02:37:16.378000 111134 torch/_inductor/triton_bundler.py:396] [5/0] Directory /tmp/.triton/cache/tmp.f5533a0d-488c-42a6-a874-5042dfb091f7 is not empty - skipping!
+46: [rank46]:W0528 02:37:16.421000 179173 torch/_inductor/triton_bundler.py:396] [6/0] Directory /tmp/.triton/cache/tmp.4b02fb02-7361-48e2-8ef4-9066289e4c94 is not empty - skipping!
+55: [rank55]:W0528 02:37:16.430000 111136 torch/_inductor/triton_bundler.py:396] [6/0] Directory /tmp/.triton/cache/tmp.879ccac6-e402-4060-930a-3fe14cbb8848 is not empty - skipping!
+47: [rank47]:W0528 02:37:16.512000 179174 torch/_inductor/triton_bundler.py:396] [7/0] Directory /tmp/.triton/cache/tmp.76afeb88-f930-4b4b-a1e6-b843feffc3b3 is not empty - skipping!
+ 5: [rank5]:W0528 02:37:16.517000 141550 torch/_inductor/triton_bundler.py:396] [7/0] Directory /tmp/.triton/cache/tmp.1c115910-5288-4e18-8ff6-45d4a72ea404 is not empty - skipping!
+28: [rank28]:W0528 02:37:16.536000 130427 torch/_inductor/triton_bundler.py:396] [7/0] Directory /tmp/.triton/cache/tmp.ea8e9524-4c53-485e-bff3-8a25138f4e2c is not empty - skipping!
+20: [rank20]:W0528 02:37:16.655000 52715 torch/_inductor/triton_bundler.py:396] [7/0] Directory /tmp/.triton/cache/tmp.d1057fa7-fc3d-4cbd-a415-dad2057097ca is not empty - skipping!
+21: [rank21]:W0528 02:37:16.656000 52716 torch/_inductor/triton_bundler.py:396] [7/0] Directory /tmp/.triton/cache/tmp.75b363d5-b01b-4c77-9b95-b5b7fd559de6 is not empty - skipping!
+48: [rank48]:W0528 02:37:16.655000 62292 torch/_inductor/triton_bundler.py:396] [7/0] Directory /tmp/.triton/cache/tmp.6c19d074-c759-46ad-aaaf-54a5077d8ee0 is not empty - skipping!
+ 0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/pipeline_parallel/schedules.py:188: UserWarning: The AccumulateGrad node's stream does not match the stream of the node that produced the incoming gradient. This may incur unnecessary synchronization and break CUDA graph capture if the AccumulateGrad node's stream is the default stream. This mismatch is caused by an AccumulateGrad node created prior to the current iteration being kept alive. This can happen if the autograd graph is still being kept alive by tensors such as the loss, or if you are using DDP, which will stash a reference to the node. To resolve the mismatch, delete all references to the autograd graph or ensure that DDP initialization is performed under the same stream as subsequent forwards. If the mismatch is intentional, you can use torch.autograd.graph.set_warn_on_accumulate_grad_stream_mismatch(False) to suppress this warning. (Triggered internally at /opt/pytorch/pytorch/torch/csrc/autograd/input_buffer.cpp:240.
+ 0: )
+ 0:   Variable._execution_engine.run_backward(
+ 0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+ 0:   import pynvml  # type: ignore[import]
+51: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+33: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+37: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+17: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 4: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 8: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+21: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+55: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+26: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+29: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 3: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+40: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+14: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+47: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+16: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+38: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+42: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+23: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+53: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+45: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+46: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+34: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+35: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+19: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+18: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+24: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 1: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+32: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+44: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+13: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+39: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+41: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+20: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 5: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+36: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+43: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+22: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 9: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+25: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 7: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+31: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 2: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+12: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 0: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+30: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 6: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+15: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+52: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+54: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+49: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+11: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+27: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+48: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+28: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+10: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+50: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+33: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+51: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+26: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+29: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+55: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+40: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 3: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+47: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+17: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+37: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 4: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 8: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+21: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+14: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+16: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+42: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+45: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+46: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+24: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+34: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+39: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+44: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+19: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 9: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+32: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+36: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+38: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+22: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+12: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 6: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+31: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+54: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+48: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+49: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+28: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+53: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+23: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+13: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+35: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 1: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+41: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+20: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+18: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 5: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+43: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+25: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+15: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 7: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+52: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 2: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+27: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+30: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+11: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+10: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+50: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:36: UserWarning: transformers version 5.3.0 is not tested with nvidia-modelopt and may cause issues. Please install recommended version with `pip install nvidia-modelopt[hf]` if working with HF models.
+ 0:   _warnings.warn(
+55: wandb: uploading artifact checkpoints; updating run metadata
+55: wandb: uploading artifact checkpoints
+33: Stack (most recent call first):
+33:   <no Python frame>
+29: Stack (most recent call first):
+29:   <no Python frame>
+ 7: Stack (most recent call first):
+ 7:   <no Python frame>
+17: Stack (most recent call first):
+17:   <no Python frame>
+ 9: Stack (most recent call first):
+ 9:   <no Python frame>
+51: Stack (most recent call first):
+51:   <no Python frame>
+45: Stack (most recent call first):
+45:   <no Python frame>
+31: Stack (most recent call first):
+31:   <no Python frame>
+ 5: Stack (most recent call first):
+ 5:   <no Python frame>
+47: Stack (most recent call first):
+47:   <no Python frame>
+ 3: Stack (most recent call first):
+ 3:   <no Python frame>
+13: Stack (most recent call first):
+13:   <no Python frame>
+43: Stack (most recent call first):
+43:   <no Python frame>
+41: Stack (most recent call first):
+41:   <no Python frame>
+21: Stack (most recent call first):
+21:   <no Python frame>
+37: Stack (most recent call first):
+37:   <no Python frame>
+19: Stack (most recent call first):
+19:   <no Python frame>
+15: Stack (most recent call first):
+15:   <no Python frame>
+11: Stack (most recent call first):
+11:   <no Python frame>
+23: Stack (most recent call first):
+23:   <no Python frame>
+39: Stack (most recent call first):
+39:   <no Python frame>
+27: Stack (most recent call first):
+27:   <no Python frame>
+ 1: Stack (most recent call first):
+ 1:   <no Python frame>
+35: Stack (most recent call first):
+35:   <no Python frame>
+25: Stack (most recent call first):
+25:   <no Python frame>
+53: Stack (most recent call first):
+53:   <no Python frame>
+49: Stack (most recent call first):
+49:   <no Python frame>
+46: Stack (most recent call first):
+46:   <no Python frame>
+38: Stack (most recent call first):
+38:   <no Python frame>
+ 8: Stack (most recent call first):
+ 8:   <no Python frame>
+26: Stack (most recent call first):
+26:   <no Python frame>
+ 4: Stack (most recent call first):
+ 4:   <no Python frame>
+54: Stack (most recent call first):
+54:   <no Python frame>
+ 2: Stack (most recent call first):
+ 2:   <no Python frame>
+30: Stack (most recent call first):
+30:   <no Python frame>
+14: Stack (most recent call first):
+14:   <no Python frame>
+34: Stack (most recent call first):
+34:   <no Python frame>
+42: Stack (most recent call first):
+42:   <no Python frame>
+20: Stack (most recent call first):
+20:   <no Python frame>
+16: Stack (most recent call first):
+16:   <no Python frame>
+50: Stack (most recent call first):
+50:   <no Python frame>
+40: Stack (most recent call first):
+40:   <no Python frame>
+48: Stack (most recent call first):
+48:   <no Python frame>
+32: Stack (most recent call first):
+32:   <no Python frame>
+24: Stack (most recent call first):
+24:   <no Python frame>
+22: Stack (most recent call first):
+22:   <no Python frame>
+ 0: Stack (most recent call first):
+ 0:   <no Python frame>
+12: Stack (most recent call first):
+12:   <no Python frame>
+52: Stack (most recent call first):
+52:   <no Python frame>
+ 6: Stack (most recent call first):
+ 6:   <no Python frame>
+10: Stack (most recent call first):
+10:   <no Python frame>
+36: Stack (most recent call first):
+36:   <no Python frame>
+18: Stack (most recent call first):
+18:   <no Python frame>
+28: Stack (most recent call first):
+28:   <no Python frame>
+44: Stack (most recent call first):
+44:   <no Python frame>
+33: [rank33]:[W528 08:35:34.833921558 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+17: [rank17]:[W528 08:35:34.815672316 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+ 9: [rank9]:[W528 08:35:34.022734247 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+49: [rank49]:[W528 08:35:34.673074636 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+25: [rank25]:[W528 08:35:34.090040858 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+41: [rank41]:[W528 08:35:34.214978076 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+ 1: [rank1]:[W528 08:35:34.750604052 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+ 8: [rank8]:[W528 08:35:34.066915920 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+48: [rank48]:[W528 08:35:34.739951751 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+16: [rank16]:[W528 08:35:34.901883698 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+40: [rank40]:[W528 08:35:34.278762609 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+24: [rank24]:[W528 08:35:34.162516445 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+32: [rank32]:[W528 08:35:34.953096581 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+ 0: [rank0]:[W528 08:35:34.825228030 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+ 4: [rank4]:[W528 08:35:35.710059107 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+14: [rank14]:[W528 08:35:35.806172953 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+ 2: [rank2]:[W528 08:35:35.984988849 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+26: [rank26]:[W528 08:35:35.373819260 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+55: wandb: uploading output.log; uploading wandb-summary.json; uploading config.yaml
+30: [rank30]:[W528 08:35:35.863834821 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+34: [rank34]:[W528 08:35:35.202020094 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+42: [rank42]:[W528 08:35:35.561155156 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+46: [rank46]:[W528 08:35:35.465879636 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+12: [rank12]:[W528 08:35:35.128053681 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+20: [rank20]:[W528 08:35:35.793361405 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+28: [rank28]:[W528 08:35:35.165497749 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+18: [rank18]:[W528 08:35:35.438425519 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+10: [rank10]:[W528 08:35:35.630793047 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+36: [rank36]:[W528 08:35:35.303674359 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+38: [rank38]:[W528 08:35:35.303691639 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+22: [rank22]:[W528 08:35:35.833798770 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+ 6: [rank6]:[W528 08:35:35.162927751 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+44: [rank44]:[W528 08:35:35.727477747 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+50: [rank50]:[W528 08:35:35.310605011 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+52: [rank52]:[W528 08:35:35.976591814 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+54: [rank54]:[W528 08:35:35.986686069 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+51: [rank51]:[W528 08:35:35.353339126 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+23: [rank23]:[W528 08:35:35.924441036 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+21: [rank21]:[W528 08:35:35.938157068 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+37: [rank37]:[W528 08:35:35.409775903 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+11: [rank11]:[W528 08:35:35.758385614 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+29: [rank29]:[W528 08:35:35.294007930 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+19: [rank19]:[W528 08:35:35.570074325 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+53: [rank53]:[W528 08:35:35.075204791 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+39: [rank39]:[W528 08:35:35.426829629 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+13: [rank13]:[W528 08:35:35.327457351 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+45: [rank45]:[W528 08:35:35.857779232 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+ 7: [rank7]:[W528 08:35:35.307445053 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+ 3: [rank3]:[W528 08:35:35.538515139 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+ 5: [rank5]:[W528 08:35:35.357599202 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+15: [rank15]:[W528 08:35:35.431102351 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+27: [rank27]:[W528 08:35:36.006224263 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+31: [rank31]:[W528 08:35:36.496336216 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+35: [rank35]:[W528 08:35:36.832856856 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+43: [rank43]:[W528 08:35:36.162034637 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+47: [rank47]:[W528 08:35:36.074391836 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+55: wandb: uploading output.log
+55: wandb: uploading history steps 15546-15548, summary, console lines 202152-202177
+55: wandb: 
+55: wandb: Run history:
+55: wandb:             all-grads-sync-time ▁▁█▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+55: wandb:           backward-compute-time ▅▁▃▃▆▆▂▃▂▆▄▃▄▆▄▂▇▆▂▃▄▁▃▅▄▆▆▄▆▅▄█▂▁▇▃▇▅▆▃
+55: wandb:            batch-generator-time ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁█▁▁
+55: wandb:                      batch-size ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+55: wandb: embedding-grads-all-reduce-time ▁▂▁▆▁▁▁█▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▃
+55: wandb:           forward-backward-time ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▂▁▁▁▁▁▁▁▁█▁
+55: wandb:            forward-compute-ti
+55: me ▅█▅▄▇▃▅▂▃▄▃▂▁▂▃▃▄▁▃▆▆▃▄▂▁▂▂▅▂▃▃▁▁▄▂▆▃▂▃▃
+55: wandb:                       grad-norm █▄▂▃▁▂▁▁▁▂▂▂▁▂▁▁▁▂▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+55: wandb:                  iteration-time ▂▄▄▂▃▂▂▅▅▁▅▅▅▂▄▃▄▂▄▄▄▅▄▅▃▂▅▁█▂▆▃▅▄▆▄▆▂▅▃
+55: wandb:                   learning-rate ▂▃▅▅▆████████▇▇▇▇▇▆▆▆▆▆▅▅▃▃▃▃▃▂▂▂▁▁▁▁▁▁▁
+55: wandb:                              +9 ...
+55: wandb: 
+55: wandb: Run summary:
+55: wandb:             all-grads-sync-time 0.00018
+55: wandb:           backward-compute-time 0.89619
+55: wandb:            batch-generator-time 0.00416
+55: wandb:                      batch-size 336
+55: wandb: embedding-grads-all-reduce-time 2e-05
+55: wandb:           forward-backward-time 1.37701
+55: wandb:            forward-compute-time 0.50649
+55: wandb:                    
+55:    grad-norm 0.13395
+55: wandb:                  iteration-time 1.39591
+55: wandb:                   learning-rate 4e-05
+55: wandb:                              +9 ...
+55: wandb: 
+55: wandb: 🚀 View run llama3-1b-sink-attn-fineweb40B-gutenberg3B-te215-2403506 at: https://wandb.ai/elyulina-thesis/fineweb-40B_gutenberg-3B/runs/xmjqh0ty
+55: wandb: ⭐️ View project at: https://wandb.ai/elyulina-thesis/fineweb-40B_gutenberg-3B
+55: wandb: Synced 5 W&B file(s), 0 media file(s), 22 artifact file(s) and 0 other file(s)
+55: wandb: Find logs at: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/results/pretrain/fineweb-40B_gutenberg-3B/llama3-1b-sink-attn-fineweb40B-gutenberg3B-te215/logging/wandb/run-20260528_023618-xmjqh0ty/logs
+55: Stack (most recent call first):
+55:   <no Python frame>
+55: [rank55]:[W528 08:35:40.618241732 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())

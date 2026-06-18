@@ -1,0 +1,165 @@
+diff --git a/src/infer/commons.py b/src/infer/commons.py
+index d5396ad..7d9619f 100644
+--- a/src/infer/commons.py
++++ b/src/infer/commons.py
+@@ -93,7 +93,7 @@ def process_dataset(
+         "json",
+         data_files=str(data_path),
+         split="train",
+-        cache_dir=f"/iopsstor/scratch/cscs/xyixuan/cache/{arch}",
++        cache_dir=f"/iopsstor/scratch/cscs/elyulina/cache/{arch}",
+         features=features,
+     )
+ 
+diff --git a/src/infer/distributed_inference_sparse.py b/src/infer/distributed_inference_sparse.py
+index bc3bd5c..a56e3c7 100644
+--- a/src/infer/distributed_inference_sparse.py
++++ b/src/infer/distributed_inference_sparse.py
+@@ -14,6 +14,7 @@ if __name__ == "__main__":
+     parser = argparse.ArgumentParser(description='Convert SwissAI Megatron checkpoint and run inference on Gutenberg dataset')
+     parser.add_argument('--experiment-path', type=str, required=True, 
+                         help='Path to experiment directory')
++    parser.add_argument('--model-path', type=str, default=None, help='Path to HF model directory (defaults to experiment-path/HF)')
+     parser.add_argument('--data-folder', type=str,
+                         default='/iopsstor/scratch/cscs/xyixuan/dataset/gutenberg',
+                         help='Path to Gutenberg dataset folder')
+@@ -45,7 +46,7 @@ if __name__ == "__main__":
+     set_seed(args.seed)
+ 
+     # Load model
+-    model_path = experiment_path / "HF"
++    model_path = Path(args.model_path) if args.model_path else experiment_path / "HF"
+     model = load_model(model_path)
+     
+     # Set up output directories
+diff --git a/src/verbatim_eval/controlled_expr.py b/src/verbatim_eval/controlled_expr.py
+index 99762c5..685dfa8 100644
+--- a/src/verbatim_eval/controlled_expr.py
++++ b/src/verbatim_eval/controlled_expr.py
+@@ -141,9 +141,7 @@ class Results:
+             'metrics': self.metrics
+         }
+     
+-    def save(self, folder='sparse'):
+-        base_path=f'/iopsstor/scratch/cscs/xyixuan/PDM/results/{folder}'
+-
++    def save(self, base_path):
+         offsets_str = '_'.join(map(str, self.offsets))
+         prefixes_str = '_'.join(map(str, self.prefixes))
+         suffixes_str = '_'.join(map(str, self.suffixes))
+@@ -352,6 +350,31 @@ def calculate_metrics(config, rep, offset, prefix_length, suffix_length) -> Dict
+         'std': 0
+     }
+ 
++    # Token-level accuracy: fraction of suffix tokens correct in position
++    # Divergence point: first position where generation diverges, normalised to [0, 1]
++    #   (1.0 = perfect match, 0.0 = diverged at token 0)
++    true_suffixes = data['true_suffix']
++    gen_suffixes = data['generated_suffix']
++    token_acc_scores = []
++    div_point_scores = []
++    for ts, gs in zip(true_suffixes, gen_suffixes):
++        n = len(ts)
++        gs = gs[:n]
++        token_acc_scores.append(sum(t == g for t, g in zip(ts, gs)) / n if n > 0 else 0.0)
++        div_point_scores.append(next((i / n for i, (t, g) in enumerate(zip(ts, gs)) if t != g), 1.0))
++    token_acc_scores = np.array(token_acc_scores)
++    div_point_scores = np.array(div_point_scores)
++    metrics['token_acc'] = {
++        'scores': token_acc_scores,
++        'mean': np.mean(token_acc_scores),
++        'std': np.std(token_acc_scores)
++    }
++    metrics['divergence_point'] = {
++        'scores': div_point_scores,
++        'mean': np.mean(div_point_scores),
++        'std': np.std(div_point_scores)
++    }
++
+     return metrics
+ 
+ 
+@@ -677,4 +700,4 @@ def compare_policies(
+                         row_parts.append(f"| {'N/A':>{policy_col_width}} ")
+             row_parts.append("|")
+         
+-        print("".join(row_parts))
+\ No newline at end of file
++        print("".join(row_parts))
+diff --git a/src/verbatim_eval/main.py b/src/verbatim_eval/main.py
+index 4b518ee..16e689b 100644
+--- a/src/verbatim_eval/main.py
++++ b/src/verbatim_eval/main.py
+@@ -37,6 +37,7 @@ def main():
+                         help="List of suffix lengths")
+     parser.add_argument("--repetitions", type=int, nargs="+", default=None,
+                         help="List of repetition frequencies; if omitted, will use all available repetitions.")
++    parser.add_argument("--save-path", type=str, required=True, help="Directory to save results pickle files")
+     
+     args = parser.parse_args()
+     
+@@ -48,6 +49,7 @@ def main():
+     elif args.mode == "swaps":
+         full_base_path = Path(args.base_path) / "Offset-Effect"
+     
++
+     # Process each experiment
+     for expr in args.exprs:
+         infer_path = full_base_path / expr / "inference" / f"offset_{args.offsets[0]}_prefix_{args.prefix_lengths[0]}_suffix_{args.suffix_lengths[0]}"
+@@ -78,8 +80,8 @@ def main():
+         result = eval_expr(eval_config)
+         
+         # Save results
+-        result.save(args.mode)
++        result.save(args.save_path)
+ 
+ 
+ if __name__ == "__main__":
+-    main()
+\ No newline at end of file
++    main()
+diff --git a/src/verbatim_eval/my_rouge.py b/src/verbatim_eval/my_rouge.py
+index 8f04afc..452cfd0 100644
+--- a/src/verbatim_eval/my_rouge.py
++++ b/src/verbatim_eval/my_rouge.py
+@@ -5,8 +5,7 @@ import logging
+ from transformers import AutoTokenizer
+ 
+ 
+-TOKENIZER = AutoTokenizer.from_pretrained("nvidia/OpenMath2-Llama3.1-8B")
+-TOKENIZER.model_max_length = 200_000
++TOKENIZER = None
+ 
+ logger = logging.getLogger(__name__)
+ 
+@@ -85,6 +84,10 @@ def find_contributing_tokens(ref, pred):
+ 
+ def show_contributing_tokens(tokens):
+     """Display contributing tokens."""
++    global TOKENIZER
++    if TOKENIZER is None:
++        TOKENIZER = AutoTokenizer.from_pretrained("nvidia/OpenMath2-Llama3.1-8B")
++        TOKENIZER.model_max_length = 200_000
+     unique_tokens, counts = np.unique(tokens, return_counts=True)
+     print(f"\nRouge L token counts: {len(tokens)}")
+     print("-" * 50)
+diff --git a/src/verbatim_eval/utils.py b/src/verbatim_eval/utils.py
+index 184700b..03cb10c 100644
+--- a/src/verbatim_eval/utils.py
++++ b/src/verbatim_eval/utils.py
+@@ -51,7 +51,7 @@ def load_inference_data(base_dir, step=None, consumed=None, offset=None, len_pre
+             'json', 
+             data_files=[str(f) for f in rank_files], 
+             split='train',
+-            cache_dir="/iopsstor/scratch/cscs/xyixuan/gutenberg"
++            cache_dir=f"/iopsstor/scratch/cscs/{os.environ['USER']}/hf_cache"
+         )
+     except ValueError as e:
+         print(f"Failed to load dataset from path: {file_path}")
+@@ -322,4 +322,4 @@ def threshold_metrics(results, threshold_metric, threshold_value, threshold_oper
+     mask = operators[threshold_operator](df[threshold_metric], threshold_value)
+     thresholded = df[mask].groupby(['exp', 'rep']).agg(['mean', 'std', 'count'])
+     
+-    return thresholded, df
+\ No newline at end of file
++    return thresholded, df

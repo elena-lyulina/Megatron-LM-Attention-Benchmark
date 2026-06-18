@@ -1,0 +1,28 @@
+START TIME: Wed Jun 10 12:39:18 PM CEST 2026
+RUN: exprs=llama3-1b-sink-attn-fineweb40B-gutenberg3B-te215_sscale0.75
+0: 
+0: === llama3-1b-sink-attn-fineweb40B-gutenberg3B-te215_sscale0.75  offset=0 prefix=500 suffix=500 policy=greedy reps=[0, 1, 2, 4, 8, 16, 32, 64, 128, 256] ===
+0: Loading reference model Qwen/Qwen2.5-1.5B ...
+0:   distinct-n (rep=0): {'1': 0.0223, '2': 0.1304, '3': 0.296}
+0:   perplexity (rep=0): 3.887
+0:   distinct-n (rep=1): {'1': 0.0225, '2': 0.1305, '3': 0.2935}
+0:   perplexity (rep=1): 3.7
+0:   distinct-n (rep=2): {'1': 0.0216, '2': 0.1231, '3': 0.2756}
+0:   perplexity (rep=2): 3.44
+0:   distinct-n (rep=4): {'1': 0.022, '2': 0.1259, '3': 0.2765}
+0:   perplexity (rep=4): 3.3
+0:   distinct-n (rep=8): {'1': 0.0275, '2': 0.1678, '3': 0.3642}
+0:   perplexity (rep=8): 4.577
+0:   distinct-n (rep=16): {'1': 0.0418, '2': 0.3034, '3': 0.6257}
+0:   perplexity (rep=16): 12.885
+0:   distinct-n (rep=32): {'1': 0.0516, '2': 0.3862, '3': 0.7531}
+0:   perplexity (rep=32): 20.946
+0:   distinct-n (rep=64): {'1': 0.0558, '2': 0.4207, '3': 0.7923}
+0:   perplexity (rep=64): 21.583
+0:   distinct-n (rep=128): {'1': 0.0575, '2': 0.4375, '3': 0.8098}
+0:   perplexity (rep=128): 21.281
+0:   distinct-n (rep=256): {'1': 0.0583, '2': 0.443, '3': 0.8165}
+0:   perplexity (rep=256): 20.828
+0: Saved: /users/elyulina/store/mem-results/SparseGutenberg/llama3-1b-sink-attn-fineweb40B-gutenberg3B-te215_sscale0.75/offset_0_prefix_500_suffix_500_greedy_distinct_n.json
+0: Saved: /users/elyulina/store/mem-results/SparseGutenberg/llama3-1b-sink-attn-fineweb40B-gutenberg3B-te215_sscale0.75/offset_0_prefix_500_suffix_500_greedy_perplexity.json
+END TIME: Wed Jun 10 12:41:07 PM CEST 2026

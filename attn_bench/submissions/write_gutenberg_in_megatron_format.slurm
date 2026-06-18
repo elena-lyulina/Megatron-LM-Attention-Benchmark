@@ -7,7 +7,7 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=64GB
-#SBATCH --time=01:00:00
+#SBATCH --time=00:15:00
 #SBATCH --environment=nemo
 #SBATCH --partition=normal
 #SBATCH --no-requeue
@@ -29,6 +29,8 @@ echo "START TIME: $(date)"
 MEGATRON_DIR=/iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark
 INPUT=/iopsstor/scratch/cscs/$USER/datasets/preprocessing/gutenberg-laion/hf-full-output/repetition_buckets.jsonl
 OUTPUT_DIR=/iopsstor/scratch/cscs/$USER/datasets/tokenized/gutenberg_rep_1_256
+UNSEEN_INPUT=/iopsstor/scratch/cscs/$USER/datasets/preprocessing/gutenberg-laion/hf-full-output/unseen_buckets.jsonl
+UNSEEN_OUTPUT_DIR=/iopsstor/scratch/cscs/$USER/datasets/tokenized/gutenberg_unseen
 TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b
 STATS_DIR=/iopsstor/scratch/cscs/$USER/datasets/preprocessing/gutenberg-laion/hf-full-output/stats/megatron-tokenization
 
@@ -44,14 +46,26 @@ python3 -u attn_bench/data_processing/books/write_megatron_books.py \
     --input      $INPUT \
     --output-dir $OUTPUT_DIR
 
+python3 -u attn_bench/data_processing/books/write_megatron_books.py \
+    --input      $UNSEEN_INPUT \
+    --output-dir $UNSEEN_OUTPUT_DIR
+
 
 ### VERIFY ###
 
 python3 -u attn_bench/data_processing/books/verify_gutenberg_tokenization.py \
     --tokenized-dir  $OUTPUT_DIR \
     --tokenizer-path $TOKENIZER_PATH \
-    --stats-dir      $STATS_DIR
+    --stats-dir      $STATS_DIR \
+    --summary-name   summary-repetitions
+
+python3 -u attn_bench/data_processing/books/verify_gutenberg_tokenization.py \
+    --tokenized-dir  $UNSEEN_OUTPUT_DIR \
+    --tokenizer-path $TOKENIZER_PATH \
+    --stats-dir      $STATS_DIR \
+    --summary-name   summary-unseen
 
 
 echo "END TIME: $(date)"
-echo "Done. Files in $OUTPUT_DIR"
+echo "Done. Training files in $OUTPUT_DIR"
+echo "Done. Unseen files in $UNSEEN_OUTPUT_DIR"

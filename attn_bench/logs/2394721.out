@@ -1,0 +1,3 @@
+START TIME: Tue May 26 12:37:22 CEST 2026
+0: Error: Inference path does not exist: /users/elyulina/store/mem-results/SparseGutenberg/llama3-1b-gated-attn-fineweb40B-gutenberg3B/inference/offset_0_prefix_500_suffix_500
+END TIME: Tue May 26 12:38:14 CEST 2026

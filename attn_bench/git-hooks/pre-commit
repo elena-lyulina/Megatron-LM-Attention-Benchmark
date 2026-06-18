@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# Reject staged LOG files larger than 3 MB (slurm .out/.err or anything under logs/).
+# Other files (notebooks, etc.) are not size-checked.
+# Big logs belong in attn_bench/_logs/ (gitignored), not in history.
+MAX=$((3 * 1024 * 1024))
+fail=0
+while IFS= read -r -d '' f; do
+  # only check log files; skip everything else
+  case "$f" in
+    *.out|*.err|*/logs/*) ;;
+    *) continue ;;
+  esac
+  size=$(git cat-file -s ":$f" 2>/dev/null) || continue
+  if [ "$size" -gt "$MAX" ]; then
+    printf 'BLOCKED: %s is %sMB (>3MB log)\n' "$f" "$((size / 1048576))" >&2
+    fail=1
+  fi
+done < <(git diff --cached -z --name-only --diff-filter=ACM)
+if [ "$fail" -ne 0 ]; then
+  echo "Commit aborted. Move large logs to attn_bench/_logs/ (gitignored)." >&2
+  exit 1
+fi
+exit 0

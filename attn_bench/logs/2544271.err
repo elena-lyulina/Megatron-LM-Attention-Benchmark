@@ -1,0 +1,82 @@
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:64: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: W0616 13:14:17.570000 81930 torch/distributed/run.py:811] 
+0: W0616 13:14:17.570000 81930 torch/distributed/run.py:811] *****************************************
+0: W0616 13:14:17.570000 81930 torch/distributed/run.py:811] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+0: W0616 13:14:17.570000 81930 torch/distributed/run.py:811] *****************************************
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:64: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:64: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:64: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:64: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/utils/logging.py:115: UserWarning: Failed to import diffusers plugin due to: ImportError('peft>=0.17.0 is required for a normal functioning of this module, but found peft==0.13.2.'). You may ignore this warning if you do not need this plugin.
+0:   warnings.warn(message, *args, **kwargs)
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/utils/logging.py:115: UserWarning: Failed to import diffusers plugin due to: ImportError('peft>=0.17.0 is required for a normal functioning of this module, but found peft==0.13.2.'). You may ignore this warning if you do not need this plugin.
+0:   warnings.warn(message, *args, **kwargs)
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/utils/logging.py:115: UserWarning: Failed to import diffusers plugin due to: ImportError('peft>=0.17.0 is required for a normal functioning of this module, but found peft==0.13.2.'). You may ignore this warning if you do not need this plugin.
+0:   warnings.warn(message, *args, **kwargs)
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/utils/logging.py:115: UserWarning: Failed to import diffusers plugin due to: ImportError('peft>=0.17.0 is required for a normal functioning of this module, but found peft==0.13.2.'). You may ignore this warning if you do not need this plugin.
+0:   warnings.warn(message, *args, **kwargs)
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/utils/logging.py:115: UserWarning: Failed to import peft plugin due to: ImportError("cannot import name 'ParamWrapper' from 'peft.tuners.lora.layer' (/opt/venv/lib/python3.12/site-packages/peft/tuners/lora/layer.py)"). You may ignore this warning if you do not need this plugin.
+0:   warnings.warn(message, *args, **kwargs)
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/utils/logging.py:115: UserWarning: Failed to import peft plugin due to: ImportError("cannot import name 'ParamWrapper' from 'peft.tuners.lora.layer' (/opt/venv/lib/python3.12/site-packages/peft/tuners/lora/layer.py)"). You may ignore this warning if you do not need this plugin.
+0:   warnings.warn(message, *args, **kwargs)
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/utils/logging.py:115: UserWarning: Failed to import peft plugin due to: ImportError("cannot import name 'ParamWrapper' from 'peft.tuners.lora.layer' (/opt/venv/lib/python3.12/site-packages/peft/tuners/lora/layer.py)"). You may ignore this warning if you do not need this plugin.
+0:   warnings.warn(message, *args, **kwargs)
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/utils/logging.py:115: UserWarning: Failed to import peft plugin due to: ImportError("cannot import name 'ParamWrapper' from 'peft.tuners.lora.layer' (/opt/venv/lib/python3.12/site-packages/peft/tuners/lora/layer.py)"). You may ignore this warning if you do not need this plugin.
+0:   warnings.warn(message, *args, **kwargs)
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-use-fast argument is deprecated and will be removed soon. `use_fast` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-use-fast if you want to disable `use_fast`.
+0:   warnings.warn(message)
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils.py:411: UserWarning: --tokenizer-hf-include-special-tokens argument is deprecated and will be removed soon. `include_special_tokens` is set to True by default for HF tokenizers.Use --tokenizer-hf-no-include-special-tokens if you want to disable `include_special_tokens`.
+0:   warnings.warn(message)
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py:808: FutureWarning: `load_state_dict` is deprecated and will be removed in future versions. Please use `load` instead.
+0:   checkpoint.load_state_dict(
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py:808: FutureWarning: `load_state_dict` is deprecated and will be removed in future versions. Please use `load` instead.
+0:   checkpoint.load_state_dict(
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py:808: FutureWarning: `load_state_dict` is deprecated and will be removed in future versions. Please use `load` instead.
+0:   checkpoint.load_state_dict(
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py:808: FutureWarning: `load_state_dict` is deprecated and will be removed in future versions. Please use `load` instead.
+0:   checkpoint.load_state_dict(
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/planner_helpers.py:419: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   device = getattr(value, "device", None)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/planner_helpers.py:419: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   device = getattr(value, "device", None)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/planner_helpers.py:419: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   device = getattr(value, "device", None)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/planner_helpers.py:419: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   device = getattr(value, "device", None)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/default_planner.py:479: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   and md.size != obj.size()
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/default_planner.py:479: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   and md.size != obj.size()
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/default_planner.py:479: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   and md.size != obj.size()
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/default_planner.py:479: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   and md.size != obj.size()
+0: /opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/utils.py:2078: UserWarning: window_size should be (-1, -1) or (>=0, >=0) for attn_mask_type=no_mask
+0:   warnings.warn(
+0: /opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/utils.py:2078: UserWarning: window_size should be (-1, -1) or (>=0, >=0) for attn_mask_type=no_mask
+0:   warnings.warn(
+0: /opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/utils.py:2078: UserWarning: window_size should be (-1, -1) or (>=0, >=0) for attn_mask_type=no_mask
+0:   warnings.warn(
+0: /opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/utils.py:2078: UserWarning: window_size should be (-1, -1) or (>=0, >=0) for attn_mask_type=no_mask
+0:   warnings.warn(
+0: /opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/utils.py:2078: UserWarning: window_size should be (-1, -1) or (>=0, >=0) for attn_mask_type=no_mask
+0:   warnings.warn(
+0: /opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/utils.py:2078: UserWarning: window_size should be (-1, -1) or (>=0, >=0) for attn_mask_type=no_mask
+0:   warnings.warn(
+0: /opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/utils.py:2078: UserWarning: window_size should be (-1, -1) or (>=0, >=0) for attn_mask_type=no_mask
+0:   warnings.warn(
+0: /opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/utils.py:2078: UserWarning: window_size should be (-1, -1) or (>=0, >=0) for attn_mask_type=no_mask
+0:   warnings.warn(
+0: [rank0]:[W616 13:15:27.684170342 ProcessGroupNCCL.cpp:1566] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [rank3]:[W616 13:15:28.481380355 ProcessGroupNCCL.cpp:1566] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [rank1]:[W616 13:15:28.489644029 ProcessGroupNCCL.cpp:1566] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [rank2]:[W616 13:15:28.497651615 ProcessGroupNCCL.cpp:1566] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())

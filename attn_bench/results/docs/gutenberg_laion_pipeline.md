@@ -207,7 +207,7 @@ Scripts: `attn_bench/data_processing/books/check_fineweb_containment.py`, `attn_
 
 ---
 
-## Planned: perplexity-based filtering (step 22)
+## Planned: perplexity-based / ngram contaminaiton filtering (step 22)
 
 After the full scoring run completes, apply bilateral cutoffs informed by the pilot observations:
 
@@ -217,26 +217,23 @@ After the full scoring run completes, apply bilateral cutoffs informed by the pi
 
 Specific thresholds TBD after examining the full-dataset distribution; pilot observations above guide where to look.
 
+Final: PPl cut p10/p90 percentiles -- after ppl cut 21 452 / 26 816 
+Then take only excerpt with 0 n-13 duplication against fineweb edu (6600 / 21452) and split into 10 repetition buckets (0, 1, 2 .. 256)
+
 ## Megatron tokenization (2026-05-19)
 
 Script: `attn_bench/submissions/write_gutenberg_in_megatron_format.slurm`  
-Input: `repetition_buckets.jsonl` (6,597 records — 733 books × 9 rep levels)  
+Input: `repetition_buckets.jsonl` (660 books × 9 rep levels)  
 Output: `/iopsstor/scratch/cscs/elyulina/datasets/tokenized/gutenberg_rep_1_256`  
 Job: `2305689`, runtime: 09:59→10:02 (~3 min)
 
 One `rep_N_tokens.bin/.idx` pair per repetition level. Each sequence is 8,192 tokens (BOS + content + EOS).
 
-| rep | books | sequences | tokens |
-|---|---|---|---|
-| 1 | 733 | 733 | 6,004,736 |
-| 2 | 733 | 1,466 | 12,009,472 |
-| 4 | 733 | 2,932 | 24,018,944 |
-| 8 | 733 | 5,864 | 48,037,888 |
-| 16 | 733 | 11,728 | 96,075,776 |
-| 32 | 733 | 23,456 | 192,151,552 |
-| 64 | 733 | 46,912 | 384,303,104 |
-| 128 | 733 | 93,824 | 768,606,208 |
-| 256 | 733 | 187,648 | 1,537,212,416 |
-| **total** | | **374,563** | **3,068,420,096 (3.07B)** |
 
 All verification checks passed (lengths, BOS/EOS position and count, repetition counts).
+
+SUMMARY
+  total sequences  : 374,563
+  total unique books (across all buckets): 6,597
+  total tokens     : 3,068,420,096  (3.07B)
+  ALL CHECKS PASSED
