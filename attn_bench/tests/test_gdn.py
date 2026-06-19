@@ -66,7 +66,12 @@ def _make_test_param_disturbance(base_forward_step):
         for label, tensor, sl in targets:
             view = tensor if sl is None else tensor[sl[0]:sl[1]]
             saved = view.clone()
-            view.add_(0.5 * torch.randn_like(view))   # perturb in place
+            # Deterministic, large, downward perturbation. Downward matters for the decay params:
+            # g = -exp(A_log) * softplus(alpha + dt_bias); when the decay exp(g) saturates near 0,
+            # pushing A_log/dt_bias UP leaves it ~0 (no output change), while pushing DOWN grows the
+            # decay -> guaranteed effect. -2.0 is also a large change for every other target.
+            # Deterministic (not randn) so the result doesn't depend on the RNG stream / TP shard shape.
+            view.add_(-2.0)   # perturb in place
             out_pert = forward()
             view.copy_(saved)                          # restore
 
