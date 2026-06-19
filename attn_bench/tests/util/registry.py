@@ -1,14 +1,18 @@
 from megatron.training import get_args, print_rank_0
 
 from attn_bench.tests.test_gated_attention import register as _register_gated
+from attn_bench.tests.test_gdn import register as _register_gdn
 from attn_bench.tests.test_sink_attention import register as _register_sink
-from attn_bench.tests.test_xdoc_attention import register as _register_xdoc
+from attn_bench.tests.test_xdoc_attention import register_loss as _register_xdoc_loss
+from attn_bench.tests.test_xdoc_attention import register_mask as _register_xdoc_mask
 
 # maps --tests name → register(base_forward_step) → [test_fn, ...]
 TEST_REGISTRY = {
-    "xdoc": _register_xdoc,
+    "xdoc_mask": _register_xdoc_mask,
+    "xdoc_loss": _register_xdoc_loss,
     "sink": _register_sink,
     "gated": _register_gated,
+    "gdn": _register_gdn,
 }
 
 

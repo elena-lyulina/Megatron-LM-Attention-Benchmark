@@ -141,7 +141,7 @@ DATA_ARGS=(
 # Expected: xdoc PASS, sink PASS, gated FAIL.
 BENCHMARK_ARGS=(
     --softmax-type learnable
-    --tests xdoc sink gated
+    --tests xdoc_mask xdoc_loss sink gated
 )
 
 TRAINING_CMD="python3 $MEGATRON_LM_DIR/attn_bench/tests/pretrain_gpt_native.py \

@@ -148,7 +148,7 @@ DATA_ARGS=(
 
 BENCHMARK_ARGS=(
     --softmax-type learnable
-    --tests xdoc sink
+    --tests xdoc_mask xdoc_loss sink
 )
 
 TRAINING_CMD="python3 $MEGATRON_LM_DIR/attn_bench/tests/pretrain_gpt_native.py \

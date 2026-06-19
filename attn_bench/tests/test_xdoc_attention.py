@@ -228,7 +228,13 @@ def _make_test_loss_isolation(base_forward_step):
 
 # ── registration ──────────────────────────────────────────────────────────────
 
-def register(base_forward_step):
-    # called by registry.py to resolve and return the test functions for the 'xdoc' suite;
-    # each returned function has signature (model)->bool
-    return [test_mask_structure, _make_test_loss_isolation(base_forward_step)]
+def register_mask(base_forward_step):
+    # 'xdoc_mask' suite: 2D block-diagonal attention mask check (pure function, no model forward).
+    # Relevant to mask-based variants (full/sink/gated); not to GDN, which isolates docs via cu_seqlens.
+    return [test_mask_structure]
+
+
+def register_loss(base_forward_step):
+    # 'xdoc_loss' suite: end-to-end cross-document loss isolation through the model forward.
+    # The relevant cross-doc check for GDN (proves cu_seqlens resets state at doc boundaries).
+    return [_make_test_loss_isolation(base_forward_step)]

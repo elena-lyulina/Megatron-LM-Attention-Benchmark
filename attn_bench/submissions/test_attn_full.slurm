@@ -140,7 +140,7 @@ DATA_ARGS=(
 # No sink or gate flags - standard full attention.
 # Expected: xdoc PASS, sink FAIL, gated FAIL.
 BENCHMARK_ARGS=(
-    --tests xdoc sink gated
+    --tests xdoc_mask xdoc_loss sink gated
 )
 
 TRAINING_CMD="python3 $MEGATRON_LM_DIR/attn_bench/tests/pretrain_gpt_native.py \

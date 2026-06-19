@@ -4,6 +4,10 @@ results/wandb_export*.csv
 
 # local-only archive for big logs stripped from history
 _logs/
+
+# local-only planning docs (not results)
+_plans/
+
 # backup files
 backup 
 
