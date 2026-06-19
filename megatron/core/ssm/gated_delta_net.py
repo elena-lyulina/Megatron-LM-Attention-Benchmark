@@ -344,8 +344,12 @@ class GatedDeltaNet(MegatronModule):
         beta = beta.reshape(batch, seq_len, -1)
         alpha = alpha.reshape(batch, seq_len, -1)
 
-        # Convolution on qkv
-        qkv = qkv.transpose(1, 2).contiguous()  # b, s, d -> b, d, s
+        # Convolution on qkv. With packed sequences, causal_conv1d_fn(seq_idx=...) requires a
+        # channels-last [b, d, s] layout; otherwise use the standard channel-first contiguous layout.
+        if seq_idx is not None:
+            qkv = qkv.contiguous().transpose(1, 2)  # [b, s, d] -> channels-last [b, d, s]
+        else:
+            qkv = qkv.transpose(1, 2).contiguous()  # b, s, d -> b, d, s
         nvtx_range_push(suffix="conv1d")
         if (causal_conv1d_fn is None) or self.config.deterministic_mode:
             qkv = self.act_fn(self.conv1d(qkv)[..., :seq_len])
