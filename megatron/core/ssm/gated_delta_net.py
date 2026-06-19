@@ -296,9 +296,29 @@ class GatedDeltaNet(MegatronModule):
             # TODO: support inference
             raise NotImplementedError("GDN does not support inference for now.")
 
+        # Packed (THD) sequence: reset the recurrent state and the causal conv at every
+        # document boundary. cu_seqlens drives the FLA kernel; seq_idx drives causal_conv1d_fn.
+        seq_idx = None
+        cu_seqlens = None
         if packed_seq_params is not None:
-            # TODO: support packed sequence
-            raise NotImplementedError("GDN does not support packed sequence for now.")
+            assert not self.config.deterministic_mode, (
+                "GDN does not support packed sequence in deterministic mode: the torch fallback "
+                "kernel/conv have no variable-length (document-boundary) path."
+            )
+            assert causal_conv1d_fn is not None, (
+                "GDN packed sequence requires the causal_conv1d package for "
+                "document-boundary-aware convolution."
+            )
+            assert batch == 1, (
+                "GDN packed sequence expects a flattened batch (B=1), got batch="
+                f"{batch}. Use --use-packed-seq-params, which flattens to [1, b*s]."
+            )
+            cu_seqlens = packed_seq_params.cu_seqlens_q.long()
+            seq_idx = packed_seq_params.seq_idx
+            assert seq_idx is not None, (
+                "GDN packed sequence requires packed_seq_params.seq_idx; ensure total_tokens is set "
+                "when building PackedSeqParams so seq_idx is computed."
+            )
 
         # Input projection
         nvtx_range_push(suffix="in_proj")
@@ -336,6 +356,7 @@ class GatedDeltaNet(MegatronModule):
                 weight=self.conv1d.weight.squeeze(1),  # d, 1, w -> d, w
                 bias=self.conv1d.bias,
                 activation=self.activation,
+                seq_idx=seq_idx,  # resets the conv at document boundaries (None if not packed)
             )
         nvtx_range_pop(suffix="conv1d")
         # Split qkv into query, key, and value
@@ -392,6 +413,7 @@ class GatedDeltaNet(MegatronModule):
                 initial_state=None,
                 output_final_state=False,
                 use_qk_l2norm_in_kernel=False,
+                cu_seqlens=cu_seqlens,  # resets the recurrent state at document boundaries
             )
         nvtx_range_pop(suffix="gated_delta_rule")
 

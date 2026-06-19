@@ -102,6 +102,9 @@ def tokens_to_packed_seq_params(input_ids, eod_token, orig_seq_len, qkv_format='
         qkv_format=qkv_format,
         cu_seqlens_q_padded=cu_seqlens_padded,
         cu_seqlens_kv_padded=cu_seqlens_padded,
+        # Populate total_tokens so PackedSeqParams computes seq_idx (needed by GDN's causal conv;
+        # discarded before TE attention, so inert for the other variants).
+        total_tokens=input_ids.size(-1),
     )
 
 def get_batch(data_iterator, vp_stage: Optional[int] = None):
