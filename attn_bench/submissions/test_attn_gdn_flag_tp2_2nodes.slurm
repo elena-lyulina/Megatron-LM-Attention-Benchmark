@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --account=infra01
-#SBATCH --time=00:05:00
-#SBATCH --job-name=test-attn-gdn-flag
+#SBATCH --time=00:10:00
+#SBATCH --job-name=test-attn-gdn-flag-tp2-2nodes
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
-#SBATCH --nodes=1
+#SBATCH --nodes=2
 #SBATCH --ntasks-per-node=1
 #SBATCH --gpus-per-node=1
 #SBATCH --cpus-per-task=72
@@ -12,16 +12,15 @@
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=clariden-jobs-elyulin-aaaauapxybdkdx42ppvef2c2eq@swissai-initiative.slack.com
 
-# Gated Delta Net via native Megatron flags (--experimental-attention-variant gated_delta_net),
-# pure GDN (all layers), with --use-packed-seq-params so the recurrent state + conv reset at every
-# document boundary.
+# Gated Delta Net (--experimental-attention-variant gated_delta_net), pure GDN, TINY model,
+# TP=2 across 2 nodes with sequence parallel — to exercise the TP/SP gather-scatter path for GDN
+# (cross-node TP), packed sequences (per-document state reset via cu_seqlens).
 # Runs: gdn (parameter disturbance) and xdoc_loss (cross-doc state isolation). Both should PASS.
-# (xdoc_mask is omitted: GDN has no 2D attention mask; it isolates docs via cu_seqlens.)
-# NOTE: GDN requires flash-linear-attention (fla) and causal_conv1d in the container; if either is
-# missing the GDN layer raises ImportError on init.
+# (xdoc_mask omitted: GDN has no 2D attention mask. --reset-position-ids omitted: GDN ignores RoPE.)
+# NOTE: GDN requires fla + causal_conv1d in the container (present in te215).
 #
 # Usage:
-#   sbatch attn_bench/submissions/test_attn_gdn_flag.slurm
+#   sbatch attn_bench/submissions/test_attn_gdn_flag_tp2_2nodes.slurm
 
 echo "START TIME: $(date)"
 
@@ -34,7 +33,7 @@ export PYTHONPATH=$MEGATRON_LM_DIR:${PYTHONPATH:-}
 ### PATHS ###
 PROJECT_NAME="test"
 PROJECT_DIR=$MEGATRON_LM_DIR/attn_bench/results/$PROJECT_NAME
-EXP_NAME=attn_gdn_flag
+EXP_NAME=attn_gdn_flag_tp2_2nodes
 EXP_DIR=$PROJECT_DIR/$EXP_NAME
 DEBUG_DIR=$EXP_DIR/debug/$SLURM_JOB_ID
 LOGGING_DIR=$EXP_DIR/logging
@@ -42,16 +41,17 @@ TENSORBOARD_DIR=$LOGGING_DIR/tensorboard
 
 mkdir -p $PROJECT_DIR $EXP_DIR $DEBUG_DIR $LOGGING_DIR $TENSORBOARD_DIR
 
+dump_env() { printenv | grep -v '^WANDB_API_KEY='; }
+dump_env > $DEBUG_DIR/env_before.txt
+
 ### ENV ###
 export HF_HUB_OFFLINE=1
 export CUDA_DEVICE_MAX_CONNECTIONS=1
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 
-export MASTER_ADDR=localhost
+export MASTER_ADDR=$(scontrol show hostnames $SLURM_JOB_NODELIST | head -n 1)
 export MASTER_PORT=8888
-export WORLD_SIZE=1
-export RANK=0
-export LOCAL_RANK=0
+export WORLD_SIZE=$SLURM_NPROCS
 
 ### MEGATRON ARGS ###
 
@@ -60,7 +60,7 @@ TRANSFORMER_ENGINE_ARGS=(
     --main-grads-dtype fp32
 )
 
-# Tiny model — seq_len=64 makes the printed xdoc attention mask readable
+# Tiny model — same as the 1-node GDN test; here only the parallelism changes (TP=2, 2 nodes, SP).
 SEQ_LEN=64
 
 NETWORK_SIZE_ARGS=(
@@ -78,7 +78,7 @@ NETWORK_SIZE_ARGS=(
 )
 
 # Gated Delta Net args. Pure GDN: --linear-attention-freq 999 > num_layers => no SDPA layers.
-# linear_num_value_heads is a multiple of linear_num_key_heads (GQA ratio 2) and of TP.
+# linear_num_{key,value}_heads must be multiples of TP=2; num_value_heads multiple of num_key_heads.
 GDN_ARGS=(
     --experimental-attention-variant gated_delta_net
     --linear-attention-freq 999
@@ -92,6 +92,7 @@ GDN_ARGS=(
 LOGGING_ARGS=(
     --log-throughput
     --log-progress
+    --log-params-norm
     --log-interval 1
     --tensorboard-dir $TENSORBOARD_DIR
     --log-timers-to-tensorboard
@@ -112,7 +113,7 @@ REGULARIZATION_ARGS=(
 TRAINING_ARGS=(
     --micro-batch-size 2
     --global-batch-size 2
-    --train-iters 2          # just enough for tests to run on the first forward step
+    --train-iters 2
     --no-check-for-nan-in-loss-and-grad
     --eval-interval 100000000000
     --eval-iters 0
@@ -135,9 +136,10 @@ MIXED_PRECISION_ARGS=(
 )
 
 DISTRIBUTED_ARGS=(
-    --tensor-model-parallel-size 1
+    --tensor-model-parallel-size 2
     --pipeline-model-parallel-size 1
     --context-parallel-size 1
+    --sequence-parallel
 )
 
 DATA_ARGS=(
@@ -192,17 +194,36 @@ ulimit -c 0
 srun -l bash -c 'echo $(hostname) $(nvidia-smi | grep -o "|\s*[0-9]*MiB")' > $DEBUG_DIR/memory_logging.txt
 cp $0 $DEBUG_DIR
 
+SEP=$(printf '=%.0s' {1..100})
+{
+    echo "$(date)"
+    echo "${SEP}"
+    echo "CMD: ${TRAINING_CMD}"
+    echo "${SEP}"
+    echo "Slurm file: $0"
+    cat "$0"
+    echo "${SEP}"
+    echo "Repo: ${MEGATRON_LM_DIR} ($(git -C ${MEGATRON_LM_DIR} rev-parse --verify HEAD))"
+    echo "${SEP}"
+    echo "$(nvidia-smi)"
+    echo "${SEP}"
+    echo "Environment Variables:"
+    dump_env
+} > "$DEBUG_DIR/compute_environment.txt"
+
 ### LAUNCH ###
-# grep -E "PASS|FAIL|### Test|### Summary|IMPLEMENTATION|EXPECTED" attn_bench/logs/<jobid>.out
-echo "=== IMPLEMENTATION: gated delta net (--experimental-attention-variant gated_delta_net), pure GDN, packed ==="
+# grep -E "PASS|FAIL|### Test|### Summary|IMPLEMENTATION|EXPECTED|Error|Traceback" attn_bench/logs/<jobid>.out
+echo "=== IMPLEMENTATION: gated delta net (--experimental-attention-variant gated_delta_net), pure GDN, TINY model, TP=2, 2 nodes, SP, packed ==="
 echo "=== EXPECTED: gdn PASS  |  xdoc_loss PASS ==="
 echo "[$(date)] Launching..."
 
 srun \
     --cpus-per-task $SLURM_CPUS_PER_TASK \
+    --mpi=pmix \
     --environment=$CONTAINER_ENV \
+    --network=disable_rdzv_get \
     -lu \
-    bash -c "export PYTHONPATH='${PYTHONPATH}'; ${TRAINING_CMD}"
+    bash -c "export PYTHONPATH='${PYTHONPATH}'; RANK=\$SLURM_PROCID LOCAL_RANK=\$SLURM_LOCALID ${TRAINING_CMD}"
 
 echo "END TIME: $(date)"
 echo "Done. Results in ${EXP_DIR}"
