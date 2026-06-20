@@ -217,13 +217,15 @@ echo "=== IMPLEMENTATION: gated delta net (--experimental-attention-variant gate
 echo "=== EXPECTED: gdn PASS  |  xdoc_loss PASS ==="
 echo "[$(date)] Launching..."
 
+# TRITON_CACHE_DIR: per-rank node-local cache so ranks don't share the default ~/.triton cache on the
+# shared FS -> avoids a stale-file-handle race when GDN's fla kernels autotune/compile on first backward.
 srun \
     --cpus-per-task $SLURM_CPUS_PER_TASK \
     --mpi=pmix \
     --environment=$CONTAINER_ENV \
     --network=disable_rdzv_get \
     -lu \
-    bash -c "export PYTHONPATH='${PYTHONPATH}'; RANK=\$SLURM_PROCID LOCAL_RANK=\$SLURM_LOCALID ${TRAINING_CMD}"
+    bash -c "export PYTHONPATH='${PYTHONPATH}'; export TRITON_CACHE_DIR=/tmp/triton_${USER}_${SLURM_JOB_ID}_\$SLURM_PROCID; RANK=\$SLURM_PROCID LOCAL_RANK=\$SLURM_LOCALID ${TRAINING_CMD}"
 
 echo "END TIME: $(date)"
 echo "Done. Results in ${EXP_DIR}"
