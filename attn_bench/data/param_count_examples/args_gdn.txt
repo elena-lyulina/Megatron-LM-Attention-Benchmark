@@ -1,0 +1,26 @@
+# Gated Delta Net, same base arch as args_attn.txt, swapping the mixer.
+# Linear dims are Megatron's DEFAULTS here on purpose -- run the comparison and
+# you'll see the mixer block blow up (~3x) vs softmax attention, driven by the
+# 2x value expansion (num_value_heads*value_head_dim = 32*128 = 4096 = 2*hidden).
+# Shrink linear-num-value-heads / linear-value-head-dim to bring it to parity.
+--num-layers 16
+--hidden-size 2048
+--ffn-hidden-size 8192
+--num-attention-heads 32
+--group-query-attention
+--num-query-groups 8
+--swiglu
+--disable-bias-linear
+--normalization RMSNorm
+--position-embedding-type rope
+--transformer-impl transformer_engine
+--seq-length 2048
+--max-position-embeddings 2048
+# --- GDN mixer (Megatron defaults) ---
+--experimental-attention-variant gated_delta_net
+--linear-attention-freq 999
+--linear-num-key-heads 16
+--linear-num-value-heads 32
+--linear-key-head-dim 128
+--linear-value-head-dim 128
+--linear-conv-kernel-dim 4
