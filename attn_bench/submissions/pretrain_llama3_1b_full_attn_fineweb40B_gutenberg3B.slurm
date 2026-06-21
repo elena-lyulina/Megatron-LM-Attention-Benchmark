@@ -190,7 +190,7 @@ TRAINING_ARGS=(
     --manual-gc-interval 500
     --exit-signal-handler # listen for SIGTERM/SIGINT and do a clean checkpoint save before exiting
     --eval-interval 100000000000  # must match or be a multiple of checkpoint interval, must be set to avoid TypeError even when EVAL_ITERS=0
-    --eval-iters 0                     # no validation split for pretraining (--split 100,0,0)
+    --eval-iters 0                # no validation split for pretraining (--split 100,0,0)
 )
 
 
