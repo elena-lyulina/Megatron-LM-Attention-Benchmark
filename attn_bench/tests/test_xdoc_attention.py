@@ -1,9 +1,15 @@
-# Cross-document attention masking tests: mask structure and loss isolation.
+# Cross-document attention tests: mask structure, position ids, and loss isolation.
+# Direction-aware: the same suite confirms masking when --use-packed-seq-params is on,
+# and confirms leakage when it is off.
 
 import torch
 
 from megatron.core.datasets.gpt_dataset import _get_ltor_masks_and_position_ids
 from megatron.training import get_args, get_tokenizer, print_rank_0
+
+# end-to-end cross-doc influence = max per-token loss diff on the shared target doc
+_ISOLATION_TOL = 1e-4   # below this → prefix left target-doc losses unchanged → masking applied
+_LEAK_MIN = 1e-3        # above this → prefix changed target-doc losses → attention leaked across docs
 
 
 # ── mask structure ────────────────────────────────────────────────────────────
@@ -192,7 +198,7 @@ def _make_test_loss_isolation(base_forward_step):
         args = get_args()
         eos_id = tokenizer.eod
 
-        print_rank_0(f"  use_packed_seq_params={args.use_packed_seq_params}  transformer_impl={args.transformer_impl}")
+        print_rank_0(f"  use_packed_seq_params={args.use_packed_seq_params}  reset_position_ids={args.reset_position_ids}  transformer_impl={args.transformer_impl}")
 
         seq_A, seq_B, prefix_A, prefix_B, target_start = _build_isolation_seqs(
             args.seq_length, tokenizer.bos, eos_id
@@ -214,16 +220,74 @@ def _make_test_loss_isolation(base_forward_step):
         print_rank_0(f"  prefix_A[:4]={prefix_A[:4].tolist()}  prefix_B[:4]={prefix_B[:4].tolist()}")
         print_rank_0(f"  max_diff={max_diff:.6f}  mean_diff={mean_diff:.6f}")
 
-        passed = max_diff < 1e-4
-        if passed:
-            print_rank_0("[PASS] loss_isolation: losses identical → cross-doc masking applied end-to-end")
-        elif args.use_packed_seq_params:
-            print_rank_0("[FAIL] loss_isolation: losses differ despite use_packed_seq_params=True")
+        # direction depends on the run config: with packing we expect isolation, without it we expect leakage
+        expect_isolation = getattr(args, 'use_packed_seq_params', False)
+        if expect_isolation:
+            passed = max_diff < _ISOLATION_TOL
+            if passed:
+                print_rank_0(f"[PASS] loss_isolation: max_diff < {_ISOLATION_TOL:g} → cross-doc masking applied end-to-end")
+            else:
+                print_rank_0(f"[FAIL] loss_isolation: use_packed_seq_params=True but max_diff={max_diff:.6f} ≥ {_ISOLATION_TOL:g} → masking NOT applied")
         else:
-            print_rank_0("[FAIL] loss_isolation: losses differ → cross-doc attn leaks; add --use-packed-seq-params")
+            passed = max_diff > _LEAK_MIN
+            if passed:
+                print_rank_0(f"[PASS] loss_isolation: max_diff > {_LEAK_MIN:g} → cross-doc attention leaks (expected without --use-packed-seq-params)")
+            else:
+                print_rank_0(f"[FAIL] loss_isolation: expected leakage but max_diff={max_diff:.6f} ≤ {_LEAK_MIN:g} → prefix had no effect")
         return passed
 
     return test_loss_isolation
+
+
+# ── position ids ──────────────────────────────────────────────────────────────
+# Verifies position_ids match the run config, using the same dataset function the real run uses.
+# With --reset-position-ids each packed document restarts at 0 (positions repeat across docs);
+# without it, positions run continuously 0..seq_len-1 (all unique). Guards against accidentally
+# leaving --reset-position-ids on for a leaking "one continuous document" run.
+
+def test_position_ids(model):
+    print_rank_0("\n### Test: position_ids ###")
+    tokenizer = get_tokenizer()
+    args = get_args()
+    eos_id = tokenizer.eod
+    seq_len = args.seq_length
+
+    # three packed docs separated by EOD, padded/truncated to exactly seq_len
+    doc_len = (seq_len - 3) // 3
+    tokens = torch.cat([
+        torch.randint(0, eos_id, (doc_len,)), torch.tensor([eos_id]),
+        torch.randint(0, eos_id, (doc_len,)), torch.tensor([eos_id]),
+        torch.randint(0, eos_id, (seq_len,)), torch.tensor([eos_id]),
+    ])[:seq_len]
+
+    _, _, position_ids = _get_ltor_masks_and_position_ids(
+        data=tokens, eod_token=eos_id,
+        reset_position_ids=args.reset_position_ids,
+        reset_attention_mask=False,
+        eod_mask_loss=args.eod_mask_loss,
+        create_attention_mask=False,
+    )
+
+    n_unique = position_ids.unique().numel()
+    print_rank_0(f"  reset_position_ids={args.reset_position_ids}  unique={n_unique}/{seq_len}")
+    print_rank_0(f"  position_ids[:24]={position_ids[:24].tolist()}")
+
+    if args.reset_position_ids:
+        # interior EOD boundaries must restart positions at 0 → positions repeat
+        eod_pos = (tokens == eos_id).nonzero(as_tuple=True)[0]
+        resets_ok = all(position_ids[p + 1].item() == 0 for p in eod_pos if p + 1 < seq_len)
+        passed = resets_ok and n_unique < seq_len
+        if passed:
+            print_rank_0("[PASS] position_ids: reset to 0 at each document boundary")
+        else:
+            print_rank_0("[FAIL] position_ids: expected per-document reset to 0 but none found")
+    else:
+        passed = torch.equal(position_ids, torch.arange(seq_len, dtype=position_ids.dtype))
+        if passed:
+            print_rank_0(f"[PASS] position_ids: continuous 0..{seq_len - 1}, all unique → packed docs have distinct positions")
+        else:
+            print_rank_0("[FAIL] position_ids: expected continuous unique ids but found repeats/gaps")
+    return passed
 
 
 # ── registration ──────────────────────────────────────────────────────────────
@@ -233,6 +297,9 @@ def register_mask(base_forward_step):
     # Relevant to mask-based variants (full/sink/gated); not to GDN, which isolates docs via cu_seqlens.
     return [test_mask_structure]
 
+def register_position_ids(base_forward_step):
+    # verifies --reset-position-ids works correctly
+    return [test_position_ids]
 
 def register_loss(base_forward_step):
     # 'xdoc_loss' suite: end-to-end cross-document loss isolation through the model forward.
