@@ -2,11 +2,10 @@
 
 """Supervised Finetuning GPT."""
 import itertools
-import json
 import os
 import sys
 from functools import partial
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../")))
 
@@ -17,18 +16,17 @@ import transformers
 from megatron.core import mpu, tensor_parallel
 from megatron.core.enums import ModelType
 from megatron.core.models.gpt import GPTModel
-from megatron.core.tokenizers.text.libraries.huggingface_tokenizer import HuggingFaceTokenizer
+from megatron.core.utils import get_batch_on_this_cp_rank
 from megatron.post_training.arguments import add_modelopt_args
 from megatron.post_training.loss_func import loss_func
-from megatron.post_training.model_builder import modelopt_gpt_mamba_builder
+from megatron.post_training.model_builder import modelopt_gpt_hybrid_builder
 from megatron.post_training.non_loss_data_func import report_draft_acceptance_length
-from megatron.training import get_args, get_timers, get_tokenizer, pretrain
-from megatron.training.utils import (
-    get_batch_on_this_cp_rank,
-    get_ltor_masks_and_position_ids,
-    print_rank_0,
-)
+from megatron.training import get_args, get_timers, pretrain
+from megatron.training.utils import get_ltor_masks_and_position_ids, print_rank_0
+from utils import get_hf_tokenizer
 from model_provider import model_provider
+from megatron.core.parallel_state import get_context_parallel_group
+
 
 REMOVE_THINK_CHAT_TEMPLATE = (
     "{% if '</think>' in content %}{% set content = content.split('</think>')[-1] %}{% endif %}"
@@ -49,8 +47,7 @@ def get_eos_id():
 
     We insert eos_token between two samples during packing. However, if the eos_token is used in message or after turns,
     we need to replace it with some other special tokens that do not appear in message."""
-    tokenizer = get_tokenizer()
-    hf_tokenizer = tokenizer._tokenizer
+    hf_tokenizer = get_hf_tokenizer()
 
     if hf_tokenizer.eos_token == "<|eot_id|>":
         return 128001
@@ -122,7 +119,7 @@ class SFTDataset(torch.utils.data.Dataset):
         self,
         num_packed_samples: int,
         hf_dataset: str,
-        tokenizer: HuggingFaceTokenizer,
+        tokenizer: transformers.PreTrainedTokenizerBase,
         seq_length: int,
         num_shards: int = 1,
         shard_index: int = 0,
@@ -143,8 +140,8 @@ class SFTDataset(torch.utils.data.Dataset):
             num_shards: number of shards for distributed training
             shard_index: shard index for distributed training
         """
-        if not isinstance(tokenizer, HuggingFaceTokenizer):
-            raise ValueError("SFTDataset only supports HuggingFaceTokenizer!")
+        if not isinstance(tokenizer, transformers.PreTrainedTokenizerBase):
+            raise ValueError("SFTDataset only supports transformers.PreTrainedTokenizerBase!")
 
         self.num_packed_samples = num_packed_samples
         self.hf_dataset = hf_dataset
@@ -284,7 +281,7 @@ class SFTDataset(torch.utils.data.Dataset):
                 return None
 
         # We always add eos between samples for training purpose.
-        input_ids = self.tokenizer.apply_chat_template(example, self.tokenizer.chat_template)["input_ids"]
+        input_ids = self.tokenizer.apply_chat_template(example)
         current_loss_mask = [1] * len(input_ids)
         input_ids = input_ids + [get_eos_id()]
         current_loss_mask += [0]
@@ -342,10 +339,9 @@ def train_valid_test_sft_datasets_provider(train_val_test_num_samples):
     """
     print_rank_0("> building train, validation, and test SFT datasets ...")
     args = get_args()
-    tokenizer = get_tokenizer()
-
-    if not isinstance(tokenizer._tokenizer, HuggingFaceTokenizer):
-        raise ValueError("SFTDataset only supports HuggingFaceTokenizer!")
+    hf_tokenizer = get_hf_tokenizer()
+    if not isinstance(hf_tokenizer, transformers.PreTrainedTokenizerBase):
+        raise ValueError("SFTDataset only supports transformers.PreTrainedTokenizerBase!")
 
     if args.micro_batch_size > 1:
         raise ValueError("SFTDataloader only supports micro_batch_size=1.")
@@ -359,7 +355,7 @@ def train_valid_test_sft_datasets_provider(train_val_test_num_samples):
     else:
         kwargs = {
             "hf_dataset": args.finetune_hf_dataset,
-            "tokenizer": tokenizer._tokenizer,
+            "tokenizer": hf_tokenizer,
             "seq_length": args.seq_length,
             # Optional kwargs
             "num_shards": mpu.get_expert_data_parallel_world_size(),
@@ -437,7 +433,7 @@ def get_batch(data_iterator):
         batch["hidden_states"] = feature_b["hidden_states"].transpose(0, 1)[:args.seq_length]
 
     # slice batch along sequence dimension for context parallelism
-    batch = get_batch_on_this_cp_rank(batch)
+    batch = get_batch_on_this_cp_rank(batch, is_hybrid_cp=False, cp_group=get_context_parallel_group())
 
     return batch
 
@@ -486,12 +482,18 @@ def forward_step(data_iterator, model: GPTModel):
 
 
 if __name__ == "__main__":
-    pretrain(
-        train_valid_test_sft_datasets_provider,
-        partial(model_provider, modelopt_gpt_mamba_builder),
-        ModelType.encoder_or_decoder,
-        forward_step,
+    from megatron.training.argument_utils import pretrain_cfg_container_from_args
+    from megatron.training.arguments import parse_and_validate_args
+
+    args = parse_and_validate_args(
         extra_args_provider=add_finetune_args,
         args_defaults={"tokenizer_type": "HuggingFaceTokenizer"},
+    )
+    pretrain(
+        pretrain_cfg_container_from_args(args),
+        train_valid_test_sft_datasets_provider,
+        partial(model_provider, modelopt_gpt_hybrid_builder),
+        ModelType.encoder_or_decoder,
+        forward_step,
         non_loss_data_func=non_loss_data_func,
     )
