@@ -2,7 +2,7 @@
 Count the parameters of a Megatron model built from a flag file.
 
 The file holds Megatron flags (like a slurm MODEL_ARGS array). See examples at
-attn_bench/data/param_count_examples/. The model is built through the real
+attn_bench/data/param_count_configs/. The model is built through the real
 gpt_builder so the count is exact. Prints the total, a category breakdown
 (embeddings / mlp / mixer -- mixer is attention/GDN/etc. by subtraction, the row
 that differs across architectures), then the per-param breakdown (same-named

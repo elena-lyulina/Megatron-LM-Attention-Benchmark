@@ -17,15 +17,13 @@
 # flash-linear-attention + causal_conv1d (GDN spec asserts TE), so it runs in the
 # container even though it only counts param shapes.
 #
-# Pass the config path via the `config` env var (exported by sbatch's default
-# --export=ALL); a positional arg also works. Examples in
-# attn_bench/data/param_count_examples/.
-#
-# The config path is relative to the repo root, or absolute.
+# Pass just the config file name via the `config` env var (exported by sbatch's
+# default --export=ALL); a positional arg also works. The file is looked up in
+# attn_bench/data/param_count_configs/.
 #
 # Usage:
-#   config=path/to/args.txt sbatch attn_bench/submissions/count_model_param.slurm
-#   sbatch attn_bench/submissions/count_model_param.slurm path/to/args.txt
+#   config=args.txt sbatch attn_bench/submissions/count_model_param.slurm
+#   sbatch attn_bench/submissions/count_model_param.slurm args.txt
 
 echo "START TIME: $(date)"
 
@@ -41,19 +39,14 @@ export CUDA_DEVICE_MAX_CONNECTIONS=1
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 
 ### ARGS ###
+CONFIG_DIR=$MEGATRON_LM_DIR/attn_bench/data/param_count_configs
 CONFIG=${config:-${1:-}}
 if [ -z "$CONFIG" ]; then
-    echo "ERROR: no config given. Pass config=path/to/args.txt or as a positional arg." >&2
+    echo "ERROR: no config given. Pass config=<file> or as a positional arg." >&2
     exit 1
 fi
-# Make a relative config absolute against the repo root; an absolute path is used
-# as-is. The container (srun --environment) does not inherit our cwd, so a relative
-# path would break inside it -- pass an absolute one. Then fail now (cheap) instead
-# of after the container + torch startup just to hit a FileNotFoundError.
-case "$CONFIG" in
-    /*) ;;
-    *) CONFIG=$MEGATRON_LM_DIR/$CONFIG ;;
-esac
+# Fail now (cheap) instead of after the container + torch startup just to hit a FileNotFoundError.
+CONFIG=$CONFIG_DIR/$CONFIG
 if [ ! -f "$CONFIG" ]; then
     echo "ERROR: config not found: $CONFIG" >&2
     exit 1

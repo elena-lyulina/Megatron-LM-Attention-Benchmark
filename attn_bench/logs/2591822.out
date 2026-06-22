@@ -1,0 +1,6 @@
+START TIME: Mon Jun 22 09:48:48 CEST 2026
+=== Counting params for: data/param_count_examples/full_attn_llama_1B_args.txt ===
+[Mon Jun 22 09:48:48 CEST 2026] Launching...
+0: LANG_RL Log directory: None
+0: 
+END TIME: Mon Jun 22 09:50:02 CEST 2026

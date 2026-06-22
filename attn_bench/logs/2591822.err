@@ -1,0 +1,189 @@
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:36: UserWarning: transformers version 5.3.0 is not tested with nvidia-modelopt and may cause issues. Please install recommended version with `pip install nvidia-modelopt[hf]` if working with HF models.
+0:   _warnings.warn(
+0: Traceback (most recent call last):
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/count_model_param.py", line 143, in <module>
+0:     
+0: main()
+0: 
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/count_model_param.py", line 97, in main
+0:     
+0: args, model = build_model(cli.config)
+0: 
+0:  
+0:  
+0:   
+0:   
+0:   
+0:   
+0:   
+0:   
+0:   
+0:   
+0: ^^
+0: ^^
+0: ^^
+0: ^^
+0: ^^^^^^
+0: ^^
+0: ^^
+0: ^^
+0: ^^
+0: ^
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/count_model_param.py", line 66, in build_model
+0:     sys.argv = [sys.argv[0]] + _read_flags(config_path) + overrides
+0: 
+0:  
+0:   
+0:     
+0:   
+0:   
+0:   
+0:   
+0:   
+0:   
+0:   
+0:   
+0:   
+0:   
+0:   
+0:   
+0: ^^
+0: ^^^^^^^^^^^
+0: ^
+0: ^^
+0: ^^
+0: ^
+0: ^^
+0: ^^
+0: ^
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/count_model_param.py", line 47, in _read_flags
+0:     for line in Path(path).read_text().splitlines():
+0: 
+0:  
+0:  
+0:   
+0:  
+0:   
+0:   
+0:  
+0:   
+0:   
+0:   
+0: ^^
+0: ^
+0: ^^^^^^^^
+0: ^^
+0: ^^^^^^^
+0: ^^
+0: 
+0:   File "/usr/lib/python3.12/pathlib.py", line 1029, in read_text
+0:     with self.open(mode='r', encoding=encoding, errors=errors) as f:
+0: 
+0:  
+0:   
+0:   
+0:   
+0:   
+0: ^^
+0: ^
+0: ^
+0: ^^
+0: ^^^^^
+0: ^^
+0: ^^
+0: ^^
+0: ^^
+0: ^^
+0: ^^
+0: ^^
+0: ^
+0: ^^
+0: ^^
+0: ^^
+0: ^^
+0: ^^
+0: ^
+0: ^^
+0: ^^
+0: ^^
+0: ^
+0: ^^^^^^^^
+0: ^
+0:   File "/usr/lib/python3.12/pathlib.py", line 1015, in open
+0:     return io.open(self, mode, buffering, encoding, errors, newline)
+0: 
+0:  
+0:   
+0:   
+0:  
+0:  
+0:   
+0:   
+0: ^^
+0: ^
+0: ^^
+0: ^^
+0: ^^
+0: ^^^^^^
+0: ^^^^
+0: ^
+0: ^^
+0: ^^
+0: ^^
+0: ^^
+0: ^^
+0: ^^
+0: ^^
+0: ^^
+0: ^^
+0: ^^
+0: ^^
+0: ^^^
+0: ^^^^^^
+0: ^^
+0: ^^^^
+0: 
+0: FileNotFoundError
+0: : [Errno 2] No such file or directory: 'data/param_count_examples/full_attn_llama_1B_args.txt'
+0: 
+0: E0622 09:49:59.657000 294411 torch/distributed/elastic/multiprocessing/api.py:984] failed (exitcode: 1) local_rank: 0 (pid: 294842) of binary: /opt/venv/bin/python3
+0: Traceback (most recent call last):
+0:   File "/usr/local/bin/torchrun", line 6, in <module>
+0:     sys.exit(main())
+0:              ^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+0:     return f(*args, **kwargs)
+0:            ^^^^^^^^^^^^^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 990, in main
+0:     run(args)
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 981, in run
+0:     elastic_launch(
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 170, in __call__
+0:     return launch_agent(self._config, self._entrypoint, list(args))
+0:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 317, in launch_agent
+0:     raise ChildFailedError(
+0: torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+0: ============================================================
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/count_model_param.py FAILED
+0: ------------------------------------------------------------
+0: Failures:
+0:   <NO_OTHER_FAILURES>
+0: ------------------------------------------------------------
+0: Root Cause (first observed failure):
+0: [0]:
+0:   time      : 2026-06-22_09:49:59
+0:   host      : nid006621
+0:   rank      : 0 (local_rank: 0)
+0:   exitcode  : 1 (pid: 294842)
+0:   error_file: <N/A>
+0:   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+0: ============================================================
+0: 
+srun: error: nid006621: task 0: Exited with exit code 1
+srun: Terminating StepId=2591822.0
