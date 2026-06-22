@@ -21,6 +21,8 @@
 # --export=ALL); a positional arg also works. Examples in
 # attn_bench/data/param_count_examples/.
 #
+# The config path is relative to the repo root, or absolute.
+#
 # Usage:
 #   config=path/to/args.txt sbatch attn_bench/submissions/count_model_param.slurm
 #   sbatch attn_bench/submissions/count_model_param.slurm path/to/args.txt
@@ -42,6 +44,18 @@ export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 CONFIG=${config:-${1:-}}
 if [ -z "$CONFIG" ]; then
     echo "ERROR: no config given. Pass config=path/to/args.txt or as a positional arg." >&2
+    exit 1
+fi
+# Make a relative config absolute against the repo root; an absolute path is used
+# as-is. The container (srun --environment) does not inherit our cwd, so a relative
+# path would break inside it -- pass an absolute one. Then fail now (cheap) instead
+# of after the container + torch startup just to hit a FileNotFoundError.
+case "$CONFIG" in
+    /*) ;;
+    *) CONFIG=$MEGATRON_LM_DIR/$CONFIG ;;
+esac
+if [ ! -f "$CONFIG" ]; then
+    echo "ERROR: config not found: $CONFIG" >&2
     exit 1
 fi
 
