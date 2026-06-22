@@ -152,7 +152,7 @@ NETWORK_SIZE_ARGS=(
     # rope_type: llama3
     --normalization RMSNorm
     --norm-epsilon 1e-5 # "rms_norm_eps": 1e-05  -- following Llama-3.2-1B config
-    --swiglu # "hidden_act": "silu"  -- following Llama-3.2-1B config
+    --swiglu # "hidden_act": "silu"  -- following Llama-3.2-1B config + gating
     --disable-bias-linear # "mlp_bias": false, "attention_bias": false  -- following Llama-3.2-1B config
     # Llama-3.2-1B config: "tie_word_embeddings": true -- embeddings tied by default; need to pass --untie-embeddings-and-output-weights to disable
     # Llama-3.2-1B config: "vocab_size": 128256 -- derived from the tokenizer

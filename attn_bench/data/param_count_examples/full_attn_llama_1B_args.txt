@@ -1,0 +1,45 @@
+############ LLAMA 1B CONFIG #################
+# Softmax-attention baseline: LLaMA-3.2-1B architecture
+# args values taken from: https://huggingface.co/meta-llama/Llama-3.2-1B/blob/main/config.json
+# args names taken from: megatron/core/transformer/transformer_config.py
+
+### Embeddings / input-output:
+--make-vocab-size-divisible-by 128      # sizes the mode's input / output embedding matrix (vocab x hidden / hidden x vocab))
+# Llama-3.2-1B config: "vocab_size": 128256 -- derived from the tokenizer
+# Llama-3.2-1B config: "tie_word_embeddings": true -- embeddings tied by default; need to pass --untie-embeddings-and-output-weights to disable
+
+### Global / model-wide
+--hidden-size 2048                      # representing 1 token
+--num-layers 16                         # how many blocks
+--normalization RMSNorm                 # used before the blocks (both attn and mlp) throughout the model
+--norm-epsilon 1e-5                     # "rms_norm_eps"
+--disable-bias-linear                   # "mlp_bias": false, "attention_bias": false  -- following Llama-3.2-1B config
+--transformer-impl transformer_engine
+--seq-length 8192                       # runtime, doesnt affect the model's size but required to build a model
+
+### MLP
+--ffn-hidden-size 8192
+--swiglu                                # "hidden_act": "silu"  -- following Llama-3.2-1B config + gating
+
+### Token mixer
+--num-attention-heads 32
+--group-query-attention
+--num-query-groups 8
+--position-embedding-type rope
+--max-position-embeddings 131072
+--rotary-base 500000
+--rope-scaling-factor 32
+--use-rope-scaling
+# hardcoded in Megatron (megatron/core/models/common/embeddings/rotary_pos_embedding.py:92-98), correspond to Llama-3.2-1B config:
+# high_freq_factor=4
+# low_freq_factor=1
+# original_max_position_embeddings=8192
+# rope_type: llama3
+## default params:
+# --kv-channels auto = hidden/heads
+# --add-qkv-bias false
+# --qk-layernorm false
+# --num-experts None (dense MLP)
+# --apply-layernorm-1p false (standard RMSNorm)
+# --rotary-percent 1.0
+# --multi-latent-attention false

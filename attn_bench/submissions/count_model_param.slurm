@@ -7,7 +7,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --gpus-per-node=1
-#SBATCH --cpus-per-task=72
+#SBATCH --cpus-per-task=8
 #SBATCH --no-requeue
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=clariden-jobs-elyulin-aaaauapxybdkdx42ppvef2c2eq@swissai-initiative.slack.com
