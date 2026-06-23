@@ -8,3 +8,9 @@ RUN pip install -U pip setuptools wheel
 RUN pip install --no-build-isolation --no-cache-dir transformer-engine==2.15
 
 RUN pip install datatrove wandb numba
+
+# Megatron upstream now requires nvidia-resiliency-ext >= 0.6.0 (nvrx.py); base ships older
+RUN pip install --no-cache-dir --no-deps nvidia-resiliency-ext==0.6.0
+
+# Fail the build now if the version is wrong or torch got replaced
+RUN python3 -c "import torch, nvidia_resiliency_ext as n; from packaging.version import Version as V; assert V(n.__version__) >= V('0.6.0'), n.__version__; import nvidia_resiliency_ext.checkpointing.async_ckpt.core; print('OK nvrx', n.__version__, 'torch', torch.__version__)"

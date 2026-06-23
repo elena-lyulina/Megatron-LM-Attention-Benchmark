@@ -12,14 +12,20 @@ from functools import partial
 
 import wandb
 
+from attn_bench.tests.util.args import add_kernel_args
+from attn_bench.tests.util.common import (
+    get_batch,
+    kernel_model_provider,
+    loss_func,
+    train_valid_test_datasets_provider,
+)
+from attn_bench.utils.git_info import check_git_working_tree, get_git_info
 from megatron.core import parallel_state
 from megatron.core.enums import ModelType
 from megatron.core.utils import get_attr_wrapped_model
 from megatron.training import get_args, pretrain
-
-from attn_bench.tests.util.args import add_kernel_args
-from attn_bench.tests.util.common import get_batch, kernel_model_provider, loss_func, train_valid_test_datasets_provider
-from attn_bench.utils.git_info import check_git_working_tree, get_git_info
+from megatron.training.argument_utils import gpt_config_from_args, pretrain_cfg_container_from_args
+from megatron.training.arguments import parse_and_validate_args
 
 # to add git info (hash, diff) to W&B after it gets initialized by Megatron
 _GIT_INFO_LOGGED = False
@@ -43,13 +49,18 @@ def forward_step(data_iterator, model, return_schedule_plan: bool = False):
 def main():
     check_git_working_tree()
 
+    args = parse_and_validate_args(
+        extra_args_provider=add_kernel_args,
+        args_defaults={"tokenizer_type": "NullTokenizer", "vocab_size": 32768},
+    )
+    model_cfg = gpt_config_from_args(args)
+    full_config = pretrain_cfg_container_from_args(args, model_cfg)
     pretrain(
+        full_config,
         train_valid_test_datasets_provider,
         kernel_model_provider,
         ModelType.encoder_or_decoder,
         forward_step,
-        extra_args_provider=add_kernel_args,
-        args_defaults={"tokenizer_type": "NullTokenizer", "vocab_size": 32768},
     )
 
 

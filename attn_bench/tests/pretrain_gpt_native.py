@@ -7,19 +7,21 @@ Usage:
     python3 attn_bench/tests/pretrain_gpt_native.py --tests xdoc [megatron args...]
 """
 import time
+
 _PROGRAM_START_TIME = time.time()
 
 from functools import partial
 
+from attn_bench.tests.util.args import add_test_args
+from attn_bench.tests.util.registry import make_test_forward_step
+from gpt_builders import gpt_builder
 from megatron.core.enums import ModelType
 from megatron.training import inprocess_restart, pretrain, set_startup_timestamps
-
-from gpt_builders import gpt_builder
+from megatron.training.argument_utils import gpt_config_from_args, pretrain_cfg_container_from_args
+from megatron.training.arguments import parse_and_validate_args
 from model_provider import model_provider
 from pretrain_gpt import forward_step as _base_forward_step
 from pretrain_gpt import get_embedding_ranks, train_valid_test_datasets_provider
-from attn_bench.tests.util.args import add_test_args
-from attn_bench.tests.util.registry import make_test_forward_step
 
 try:
     from megatron.post_training.arguments import add_modelopt_args
@@ -40,13 +42,18 @@ if __name__ == "__main__":
             parser = add_modelopt_args(parser)
         return parser
 
+    args = parse_and_validate_args(
+        extra_args_provider=extra_args_provider,
+        args_defaults={'tokenizer_type': 'GPT2BPETokenizer'},
+    )
+    model_cfg = gpt_config_from_args(args)
+    full_config = pretrain_cfg_container_from_args(args, model_cfg)
     pretrain(
+        full_config,
         train_valid_test_datasets_provider,
         partial(model_provider, gpt_builder),
         ModelType.encoder_or_decoder,
         make_test_forward_step(_base_forward_step),
-        args_defaults={'tokenizer_type': 'GPT2BPETokenizer'},
-        extra_args_provider=extra_args_provider,
         store=store,
         get_embedding_ranks=get_embedding_ranks,
     )

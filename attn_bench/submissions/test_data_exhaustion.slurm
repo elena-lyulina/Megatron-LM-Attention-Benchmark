@@ -22,7 +22,7 @@
 echo "START TIME: $(date)"
 
 ### ENV ###
-CONTAINER_ENV=nemo_26
+CONTAINER_ENV=nemo_26.04_te2.15
 MEGATRON_LM_DIR=/iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark
 cd $MEGATRON_LM_DIR
 export PYTHONPATH=$MEGATRON_LM_DIR:${PYTHONPATH:-}

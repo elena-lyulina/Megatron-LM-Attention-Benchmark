@@ -29,7 +29,7 @@
 
 echo "START TIME: $(date)"
 
-CONTAINER_ENV=nemo
+CONTAINER_ENV=nemo_26.04_te2.15
 
 MEGATRON_LM_DIR=/iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark
 cd $MEGATRON_LM_DIR

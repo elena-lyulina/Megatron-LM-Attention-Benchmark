@@ -1,0 +1,7 @@
+START TIME: Mon Jun 22 21:06:24 CEST 2026
+[Mon Jun 22 21:06:24 CEST 2026] WANDB API key detected. Enabling WANDB logging.
+[Mon Jun 22 21:06:24 CEST 2026] WandB entity: unknown  project: test  exp: xdoc_attn_leak_te-2596848
+xdoc attn LEAK test: seq_len=64
+[Mon Jun 22 21:06:26 CEST 2026] Launching...
+END TIME: Mon Jun 22 21:06:52 CEST 2026
+Done. Results in /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/results/test/xdoc_attn_leak_te
