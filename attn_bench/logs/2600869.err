@@ -1,0 +1,63 @@
+1: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+1:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+1: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+0: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+1: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+1:   sentry_sdk.init(
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+1: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+0:   _warnings.warn(
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils/common_utils.py:430: UserWarning: Overriding default arguments for tokenizer_type:GPT2BPETokenizer with tokenizer_type:HuggingFaceTokenizer
+0:   warnings.warn(message)
+1: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+1:   _warnings.warn(
+1: wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+1: wandb: Currently logged in as: elyulina (elyulina-thesis) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+1: wandb: setting up run ittvxicc
+1: wandb: Tracking run with wandb version 0.27.0
+1: wandb: Run data is saved locally in /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/results/test/attn_sink_flag_tp2_2nodes/logging/wandb/run-20260623_133133-ittvxicc
+1: wandb: Run `wandb offline` to turn off syncing.
+1: wandb: Syncing run attn_sink_flag_tp2_2nodes-2600869
+1: wandb: ⭐️ View project at https://wandb.ai/elyulina-thesis/test
+1: wandb: 🚀 View run at https://wandb.ai/elyulina-thesis/test/runs/ittvxicc
+1: wandb: Detected [openai] in use.
+1: wandb: Use W&B Weave for improved LLM call tracing. Install Weave with `pip install weave` then add `import weave` to the top of your script.
+1: wandb: For more information, check out the docs at: https://weave-docs.wandb.ai
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/models/mimo/config/base_configs.py:12: UserWarning: MimoModelConfig is experimental and still under active development. The API may change without notice in future releases.
+0:   class MimoModelConfig:
+0: /usr/local/lib/python3.12/dist-packages/torch/autograd/graph.py:865: UserWarning: The AccumulateGrad node's stream does not match the stream of the node that produced the incoming gradient. This may incur unnecessary synchronization and break CUDA graph capture if the AccumulateGrad node's stream is the default stream. This mismatch is caused by an AccumulateGrad node created prior to the current iteration being kept alive. This can happen if the autograd graph is still being kept alive by tensors such as the loss, or if you are using DDP, which will stash a reference to the node. To resolve the mismatch, delete all references to the autograd graph or ensure that DDP initialization is performed under the same stream as subsequent forwards. If the mismatch is intentional, you can use torch.autograd.graph.set_warn_on_accumulate_grad_stream_mismatch(False) to suppress this warning. (Triggered internally at /opt/pytorch/pytorch/torch/csrc/autograd/input_buffer.cpp:240.)
+0:   return Variable._execution_engine.run_bac
+0: kward(  # Calls into the C++ engine to run the backward pass
+1: wandb: updating run metadata; uploading console lines 1-20
+1: wandb: uploading output.log; uploading wandb-summary.json; uploading config.yaml
+0: [rank0]:[W623 13:31:50.245188438 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+1: wandb: uploading wandb-summary.json; uploading config.yaml
+1: wandb: 
+1: wandb: Run history:
+1: wandb:       batch-size ▁▁
+1: wandb:        grad-norm █▁
+1: wandb:   iteration-time ▁
+1: wandb:    learning-rate █▁
+1: wandb:          lm loss ▁█
+1: wandb:      params-norm █▁
+1: wandb: samples vs steps ▁█
+1: wandb:       throughput █▁
+1: wandb: 
+1: wandb: Run summary:
+1: wandb:       batch-size 4
+1: wandb:        grad-norm 22.49477
+1: wandb:   iteration-time 3.69355
+1: wandb:    learning-rate 4e-05
+1: wandb:          lm loss 12.2092
+1: wandb:      params-norm 656.95322
+1: wandb: samples vs steps 8
+1: wandb:       throughput 34.59538
+1: wandb: 
+1: wandb: 🚀 View run attn_sink_flag_tp2_2nodes-2600869 at: https://wandb.ai/elyulina-thesis/test/runs/ittvxicc
+1: wandb: ⭐️ View project at: https://wandb.ai/elyulina-thesis/test
+1: wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+1: wandb: Find logs at: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/results/test/attn_sink_flag_tp2_2nodes/logging/wandb/run-20260623_133133-ittvxicc/logs
+1: [rank1]:[W623 13:31:52.238514653 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
