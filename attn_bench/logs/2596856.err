@@ -1,0 +1,116 @@
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:64: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+1: Traceback (most recent call last):
+1:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 26, in <module>
+1:     from gpt_builders import gpt_builder
+1:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/gpt_builders.py", line 3, in <module>
+2: Traceback (most recent call last):
+2:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 26, in <module>
+2:     from gpt_builders import gpt_builder
+2:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/gpt_builders.py", line 3, in <module>
+1:     from megatron.core.models.gpt import GPTModel
+1:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/__init__.py", line 5, in <module>
+2:     from megatron.core.models.gpt import GPTModel
+2:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/__init__.py", line 5, in <module>
+0: Traceback (most recent call last):
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 26, in <module>
+1:     import megatron.core.tensor_parallel
+3: Traceback (most recent call last):
+3:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/pretrain_gpt.py", line 26, in <module>
+1:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/tensor_parallel/__init__.py", line 2, in <module>
+0:     from gpt_builders import gpt_builder
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/gpt_builders.py", line 3, in <module>
+2:     import megatron.core.tensor_parallel
+2:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/tensor_parallel/__init__.py", line 2, in <module>
+3:     from gpt_builders import gpt_builder
+3:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/gpt_builders.py", line 3, in <module>
+3:     from megatron.core.models.gpt import GPTModel
+3:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/__init__.py", line 5, in <module>
+0:     from megatron.core.models.gpt import GPTModel
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/__init__.py", line 5, in <module>
+1:     from .cross_entropy import vocab_parallel_cross_entropy
+1:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/tensor_parallel/cross_entropy.py", line 7, in <module>
+3:     import megatron.core.tensor_parallel
+3:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/tensor_parallel/__init__.py", line 2, in <module>
+2:     from .cross_entropy import vocab_parallel_cross_entropy
+2:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/tensor_parallel/cross_entropy.py", line 7, in <module>
+3:     from .cross_entropy import vocab_parallel_cross_entropy
+3:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/tensor_parallel/cross_entropy.py", line 7, in <module>
+3:     from megatron.core.parallel_state import get_tensor_model_parallel_group
+1:     from megatron.core.parallel_state import get_tensor_model_parallel_group
+1:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/parallel_state.py", line 17, in <module>
+3:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/parallel_state.py", line 17, in <module>
+0:     import megatron.core.tensor_parallel
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/tensor_parallel/__init__.py", line 2, in <module>
+2:     from megatron.core.parallel_state import get_tensor_model_parallel_group
+2:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/parallel_state.py", line 17, in <module>
+0:     from .cross_entropy import vocab_parallel_cross_entropy
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/tensor_parallel/cross_entropy.py", line 7, in <module>
+0:     from megatron.core.parallel_state import get_tensor_model_parallel_group
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/parallel_state.py", line 17, in <module>
+1:     from .utils import GlobalMemoryBuffer, is_torch_min_version
+3:     from .utils import GlobalMemoryBuffer, is_torch_min_version
+2:     from .utils import GlobalMemoryBuffer, is_torch_min_version
+3:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/utils.py", line 45, in <module>
+1:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/utils.py", line 45, in <module>
+2:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/utils.py", line 45, in <module>
+0:     from .utils import GlobalMemoryBuffer, is_torch_min_version
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/utils.py", line 45, in <module>
+1:     from megatron.core.dist_checkpointing.mapping import ShardedTensor
+2:     from megatron.core.dist_checkpointing.mapping import ShardedTensor
+0:     from megatron.core.dist_checkpointing.mapping import ShardedTensor
+1:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/__init__.py", line 5, in <module>
+2:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/__init__.py", line 5, in <module>
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/__init__.py", line 5, in <module>
+3:     from megatron.core.dist_checkpointing.mapping import ShardedTensor
+3:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/__init__.py", line 5, in <module>
+1:     from .serialization import (
+1:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/serialization.py", line 33, in <module>
+0:     from .serialization import (
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/serialization.py", line 33, in <module>
+2:     from .serialization import (
+2:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/serialization.py", line 33, in <module>
+3:     from .serialization import (
+3:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/serialization.py", line 33, in <module>
+1:     from .strategies.torch import TorchDistLoadShardedStrategy, TorchDistSaveShardedStrategy
+2:     from .strategies.torch import TorchDistLoadShardedStrategy, TorchDistSaveShardedStrategy
+3:     from .strategies.torch import TorchDistLoadShardedStrategy, TorchDistSaveShardedStrategy
+1:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py", line 64, in <module>
+2:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py", line 64, in <module>
+3:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py", line 64, in <module>
+0:     from .strategies.torch import TorchDistLoadShardedStrategy, TorchDistSaveShardedStrategy
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py", line 64, in <module>
+1:     HAVE_NVRX = has_nvrx_async_support()
+2:     HAVE_NVRX = has_nvrx_async_support()
+0:     HAVE_NVRX = has_nvrx_async_support()
+1:                 ^^^^^^^^^^^^^^^^^^^^^^^^
+1:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/nvrx.py", line 45, in has_nvrx_async_support
+2:                 ^^^^^^^^^^^^^^^^^^^^^^^^
+2:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/nvrx.py", line 45, in has_nvrx_async_support
+0:                 ^^^^^^^^^^^^^^^^^^^^^^^^
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/nvrx.py", line 45, in has_nvrx_async_support
+3:     HAVE_NVRX = has_nvrx_async_support()
+3:                 ^^^^^^^^^^^^^^^^^^^^^^^^
+3:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/nvrx.py", line 45, in has_nvrx_async_support
+1:     is_nvrx_min_version()
+1:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/nvrx.py", line 85, in is_nvrx_min_version
+2:     is_nvrx_min_version()
+0:     is_nvrx_min_version()
+2:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/nvrx.py", line 85, in is_nvrx_min_version
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/nvrx.py", line 85, in is_nvrx_min_version
+3:     is_nvrx_min_version()
+3:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/nvrx.py", line 85, in is_nvrx_min_version
+1:     nvrx_version = str(nvrx.__version__) if HAVE_NVRX else "0.0.0"
+1:                        ^^^^^^^^^^^^^^^^
+1: AttributeError: module 'nvidia_resiliency_ext' has no attribute '__version__'
+2:     nvrx_version = str(nvrx.__version__) if HAVE_NVRX else "0.0.0"
+2:                        ^^^^^^^^^^^^^^^^
+0:     nvrx_version = str(nvrx.__version__) if HAVE_NVRX else "0.0.0"
+2: AttributeError: module 'nvidia_resiliency_ext' has no attribute '__version__'
+0:                        ^^^^^^^^^^^^^^^^
+0: AttributeError: module 'nvidia_resiliency_ext' has no attribute '__version__'
+3:     nvrx_version = str(nvrx.__version__) if HAVE_NVRX else "0.0.0"
+3:                        ^^^^^^^^^^^^^^^^
+3: AttributeError: module 'nvidia_resiliency_ext' has no attribute '__version__'
+srun: error: nid007376: tasks 0-3: Exited with exit code 1
+srun: Terminating StepId=2596856.0

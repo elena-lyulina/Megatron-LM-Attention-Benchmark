@@ -1,0 +1,5 @@
+START TIME: Mon Jun 22 21:11:58 CEST 2026
+Tiny dataset prefixes: 2
+[Mon Jun 22 21:11:58 CEST 2026] Launching tiny training (train-iters=200, gbs=4, seq=512)...
+END TIME: Mon Jun 22 21:12:24 CEST 2026
+Checkpoints in /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/results/pretrain/tests/data_exhaustion/checkpoints/2596856

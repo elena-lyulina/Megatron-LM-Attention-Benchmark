@@ -1,0 +1,8 @@
+START TIME: Mon Jun 22 21:05:50 CEST 2026
+[Mon Jun 22 21:05:50 CEST 2026] WANDB API key detected. Enabling WANDB logging.
+[Mon Jun 22 21:05:50 CEST 2026] WandB entity: unknown  project: test  exp: attn_sink_flag-2596840
+=== IMPLEMENTATION: sink attention (--softmax-type learnable) ===
+=== EXPECTED: xdoc PASS  |  sink PASS  |  gated FAIL ===
+[Mon Jun 22 21:05:51 CEST 2026] Launching...
+END TIME: Mon Jun 22 21:06:16 CEST 2026
+Done. Results in /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/results/test/attn_sink_flag
