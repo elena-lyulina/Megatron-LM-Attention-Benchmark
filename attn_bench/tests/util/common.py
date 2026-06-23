@@ -4,16 +4,18 @@ from functools import partial
 
 import torch
 
+from attn_bench.kernels.attn_registry import parse_attn_kwargs, validate_attn_kwargs
+from attn_bench.training.model import build_model
 from megatron.core import parallel_state
 from megatron.core.datasets.blended_megatron_dataset_builder import BlendedMegatronDatasetBuilder
 from megatron.core.datasets.gpt_dataset import GPTDatasetConfig, MockGPTDataset
-from megatron.core.utils import get_attr_wrapped_model, get_batch_on_this_cp_rank
+from megatron.core.utils import (
+    get_batch_on_this_cp_rank,
+    get_batch_on_this_tp_rank,
+)
 from megatron.training import get_args, get_tokenizer, print_rank_0
 from megatron.training.arguments import core_transformer_config_from_args
-from megatron.training.utils import get_batch_on_this_tp_rank, is_first_or_last_pipeline_stage
-
-from attn_bench.kernels.attn_registry import parse_attn_kwargs, validate_attn_kwargs
-from attn_bench.training.model import build_model
+from megatron.training.utils import is_first_or_last_pipeline_stage
 
 
 def kernel_model_provider(pre_process=True, post_process=True, config=None, vp_stage=None, pg_collection=None):
@@ -32,8 +34,38 @@ def kernel_model_provider(pre_process=True, post_process=True, config=None, vp_s
 def get_batch(data_iterator, vp_stage=None):
     if not is_first_or_last_pipeline_stage(vp_stage):
         return None, None, None, None, None, None
-    batch = get_batch_on_this_tp_rank(data_iterator)
-    batch = get_batch_on_this_cp_rank(batch)
+
+    args = get_args()
+    tp_rank = parallel_state.get_tensor_model_parallel_rank()
+
+    # tp_rank 0 reads the batch and moves it to GPU; other ranks receive it via broadcast
+    batch = {}
+    if tp_rank == 0:
+        batch = next(data_iterator)
+        for key, val in batch.items():
+            batch[key] = val.cuda(non_blocking=True) if val is not None else None
+
+    batch = get_batch_on_this_tp_rank(
+        batch,
+        broadcast_src_rank=parallel_state.get_tensor_model_parallel_src_rank(),
+        broadcast_group=parallel_state.get_tensor_model_parallel_group(),
+        is_sft=False,
+        is_hybrid_cp=False,
+        create_attention_mask_in_dataloader=args.create_attention_mask_in_dataloader,
+        cp_size=args.context_parallel_size,
+        tp_rank=tp_rank,
+        micro_batch_size=args.micro_batch_size,
+        seq_length=args.seq_length,
+        mtp_on_this_rank=False,
+        pipeline_model_parallel_size=args.pipeline_model_parallel_size,
+        is_pipeline_first_stage=parallel_state.is_pipeline_first_stage(),
+        is_pipeline_last_stage=parallel_state.is_pipeline_last_stage(),
+    )
+    batch = get_batch_on_this_cp_rank(
+        batch,
+        is_hybrid_cp=False,
+        cp_group=parallel_state.get_context_parallel_group(),
+    )
     return (
         batch["tokens"],
         batch["labels"],
