@@ -143,7 +143,7 @@ DATA_ARGS=(
 )
 
 BENCHMARK_ARGS=(
-    --tests xdoc_mask xdoc_loss
+    --tests xdoc_mask=pass xdoc_loss=pass xdoc_position_ids=pass sink=fail gated=fail
 )
 
 TRAINING_CMD="python3 $MEGATRON_LM_DIR/attn_bench/tests/pretrain_gpt_native.py \

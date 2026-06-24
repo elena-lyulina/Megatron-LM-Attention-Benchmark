@@ -138,10 +138,9 @@ DATA_ARGS=(
 )
 
 # Sink attention via native Megatron flag — no module swap, DotProductAttention gains softmax_offset param.
-# Expected: xdoc PASS, sink PASS, gated FAIL.
 BENCHMARK_ARGS=(
     --softmax-type learnable
-    --tests xdoc_mask xdoc_loss sink gated
+    --tests xdoc_mask=pass xdoc_loss=pass xdoc_position_ids=pass sink=pass gated=fail
 )
 
 TRAINING_CMD="python3 $MEGATRON_LM_DIR/attn_bench/tests/pretrain_gpt_native.py \
@@ -178,9 +177,8 @@ srun -l bash -c 'echo $(hostname) $(nvidia-smi | grep -o "|\s*[0-9]*MiB")' > $DE
 cp $0 $DEBUG_DIR
 
 ### LAUNCH ###
-# grep -E "PASS|FAIL|### Test|### Summary|IMPLEMENTATION|EXPECTED" attn_bench/logs/<jobid>.out
+# grep -E "PASS|FAIL|### Test|### Summary|IMPLEMENTATION|### Verdict" attn_bench/logs/<jobid>.out
 echo "=== IMPLEMENTATION: sink attention (--softmax-type learnable) ==="
-echo "=== EXPECTED: xdoc PASS  |  sink PASS  |  gated FAIL ==="
 echo "[$(date)] Launching..."
 
 srun \

@@ -155,7 +155,7 @@ DATA_ARGS=(
 
 # Expected: gdn PASS, xdoc_loss PASS.
 BENCHMARK_ARGS=(
-    --tests gdn xdoc_loss
+    --tests gdn=pass xdoc_loss=pass
 )
 
 TRAINING_CMD="python3 $MEGATRON_LM_DIR/attn_bench/tests/pretrain_gpt_native.py \
@@ -193,9 +193,8 @@ srun -l bash -c 'echo $(hostname) $(nvidia-smi | grep -o "|\s*[0-9]*MiB")' > $DE
 cp $0 $DEBUG_DIR
 
 ### LAUNCH ###
-# grep -E "PASS|FAIL|### Test|### Summary|IMPLEMENTATION|EXPECTED" attn_bench/logs/<jobid>.out
+# grep -E "PASS|FAIL|### Test|### Summary|IMPLEMENTATION|### Verdict" attn_bench/logs/<jobid>.out
 echo "=== IMPLEMENTATION: gated delta net (--experimental-attention-variant gated_delta_net), pure GDN, packed ==="
-echo "=== EXPECTED: gdn PASS  |  xdoc_loss PASS ==="
 echo "[$(date)] Launching..."
 
 # TRITON_CACHE_DIR: per-rank node-local cache so ranks don't share the default ~/.triton cache on the

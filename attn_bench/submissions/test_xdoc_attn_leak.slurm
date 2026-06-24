@@ -19,10 +19,14 @@
 #   - attention runs causally over the whole packed sequence (leaks across documents)
 #   - position ids are continuous 0..seq_len-1 (packed docs have distinct positions)
 #
-# Expected (direction-aware suite):
-#   loss_isolation → [PASS] leakage confirmed (max_diff > 1e-3)
-#   position_ids   → [PASS] continuous, all unique
-# Compare against test_xdoc_attn_pretrain_gpt.slurm (masked), which should report the opposite.
+# This is plain full attention (no sink/gate). It runs the run-connected suites from test_attn_full,
+# but with packing/reset OFF its xdoc tests are expected to FAIL — that failure IS the leak:
+#   xdoc_loss=fail          cross-doc leakage: the prefix changes another doc's losses
+#   xdoc_position_ids=fail  positions run continuously 0..seq_len-1 (no per-doc reset)
+#   sink=fail gated=fail    no sink/gate params present → validates those mechanism tests fire
+# (xdoc_mask is omitted: it's a config-independent unit test of the masking helper and can't reflect
+# the leak; test_attn_full / test_xdoc_attn_pretrain_gpt keep it as a regression check.)
+# Compare against test_xdoc_attn_pretrain_gpt.slurm (masked), where the same xdoc tests pass.
 #
 # Usage:
 #   sbatch attn_bench/submissions/test_xdoc_attn_leak.slurm
@@ -151,7 +155,7 @@ DATA_ARGS=(
 )
 
 TRAINING_CMD="python3 $MEGATRON_LM_DIR/attn_bench/tests/pretrain_gpt_native.py \
-    --tests xdoc \
+    --tests xdoc_loss=fail xdoc_position_ids=fail sink=fail gated=fail \
     ${TRANSFORMER_ENGINE_ARGS[@]} \
     ${NETWORK_SIZE_ARGS[@]} \
     ${LOGGING_ARGS[@]} \

@@ -138,9 +138,8 @@ DATA_ARGS=(
 )
 
 # No sink or gate flags - standard full attention.
-# Expected: xdoc PASS, sink FAIL, gated FAIL.
 BENCHMARK_ARGS=(
-    --tests xdoc_mask xdoc_loss sink gated
+    --tests xdoc_mask=pass xdoc_loss=pass xdoc_position_ids=pass sink=fail gated=fail
 )
 
 TRAINING_CMD="python3 $MEGATRON_LM_DIR/attn_bench/tests/pretrain_gpt_native.py \
@@ -177,9 +176,8 @@ srun -l bash -c 'echo $(hostname) $(nvidia-smi | grep -o "|\s*[0-9]*MiB")' > $DE
 cp $0 $DEBUG_DIR
 
 ### LAUNCH ###
-# grep -E "PASS|FAIL|### Test|### Summary|IMPLEMENTATION|EXPECTED" attn_bench/logs/<jobid>.out
+# grep -E "PASS|FAIL|### Test|### Summary|IMPLEMENTATION|### Verdict" attn_bench/logs/<jobid>.out
 echo "=== IMPLEMENTATION: full attention (no sink, no gate) ==="
-echo "=== EXPECTED: xdoc PASS  |  sink FAIL  |  gated FAIL ==="
 echo "[$(date)] Launching..."
 
 srun \

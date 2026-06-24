@@ -4,7 +4,7 @@ Swaps core_attention with a kernel from attn_registry (--attn/--impl).
 --tests selects which test suites to inject into forward_step.
 
 Usage:
-    python3 attn_bench/tests/pretrain_gpt_kernels.py --attn sink --impl te --tests xdoc [megatron args...]
+    python3 attn_bench/tests/pretrain_gpt_kernels.py --attn sink --impl te --tests xdoc_loss=pass [megatron args...]
 """
 import time
 

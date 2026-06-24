@@ -138,10 +138,9 @@ DATA_ARGS=(
 )
 
 # Gated attention via native Megatron flag — no module swap, linear_qkv gains a gate projection (4x instead of 3x).
-# Expected: xdoc PASS, sink FAIL, gated PASS.
 BENCHMARK_ARGS=(
     --attention-output-gate
-    --tests xdoc_mask xdoc_loss sink gated
+    --tests xdoc_mask=pass xdoc_loss=pass xdoc_position_ids=pass sink=fail gated=pass
 )
 
 TRAINING_CMD="python3 $MEGATRON_LM_DIR/attn_bench/tests/pretrain_gpt_native.py \
@@ -178,9 +177,8 @@ srun -l bash -c 'echo $(hostname) $(nvidia-smi | grep -o "|\s*[0-9]*MiB")' > $DE
 cp $0 $DEBUG_DIR
 
 ### LAUNCH ###
-# grep -E "PASS|FAIL|### Test|### Summary|IMPLEMENTATION|EXPECTED" attn_bench/logs/<jobid>.out
+# grep -E "PASS|FAIL|### Test|### Summary|IMPLEMENTATION|### Verdict" attn_bench/logs/<jobid>.out
 echo "=== IMPLEMENTATION: gated attention (--attention-output-gate) ==="
-echo "=== EXPECTED: xdoc PASS  |  sink FAIL  |  gated PASS ==="
 echo "[$(date)] Launching..."
 
 srun \

@@ -18,6 +18,13 @@ from megatron.training.arguments import core_transformer_config_from_args
 from megatron.training.utils import is_first_or_last_pipeline_stage
 
 
+def diagnostic(fn):
+    # marks a test as a diagnostic: it still runs and prints, but its PASS/FAIL does not count
+    # toward the suite verdict (e.g. norm/init-value printouts that always return True)
+    fn._is_diagnostic = True
+    return fn
+
+
 def kernel_model_provider(pre_process=True, post_process=True, config=None, vp_stage=None, pg_collection=None):
     args = get_args()
     if config is None:
