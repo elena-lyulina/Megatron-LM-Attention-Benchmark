@@ -289,6 +289,11 @@ def _make_test_carry_mechanism(base_forward_step):
         if not layers:
             print_rank_0("[FAIL] carry_mechanism: no GatedDeltaNet module found")
             return False
+        if not _carry_enabled(layers):
+            # ratio 0: no carry slots exist (_snapshot_carry would AttributeError); nothing to verify
+            print_rank_0("  carry disabled (built at ratio 0); nothing to verify")
+            print_rank_0("[FAIL] carry_mechanism")
+            return False
         args = get_args()
         snap = _snapshot_carry(layers)
         tmp = tempfile.mkdtemp()
