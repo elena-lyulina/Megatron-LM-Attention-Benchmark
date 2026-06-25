@@ -10,6 +10,7 @@ from dataclasses import dataclass, replace
 from functools import lru_cache
 from typing import Optional, Union
 
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -214,6 +215,17 @@ class GatedDeltaNet(MegatronModule):
             self.gated_delta_rule = torch_chunk_gated_delta_rule
         else:
             self.gated_delta_rule = chunk_gated_delta_rule
+
+        # State carry between batches (--gdn-state-carry-ratio). The _last_* tensors hold the previous
+        # batch's state (None until the first carry forward); saved via the checkpoint helpers.
+        self.gdn_state_carry_ratio = config.gdn_state_carry_ratio
+        if self.gdn_state_carry_ratio > 0:
+            self._last_recurrent_state = None
+            self._last_conv_state = None
+            self._carry_step = 0
+            self._carry_rank = (
+                torch.distributed.get_rank() if torch.distributed.is_initialized() else 0
+            )
 
         # Output layernorm before projection
         self.out_norm = build_module(
@@ -427,6 +439,16 @@ class GatedDeltaNet(MegatronModule):
             if self.conv_bias
             else None
         )
+        to_carry_states = self.gdn_state_carry_ratio > 0 and self.training
+        carry_per_sequence, output_conv_state, output_recurrent_state = None, None, None
+        if to_carry_states:
+            if self._last_recurrent_state is not None:
+                assert self._last_recurrent_state.shape[0] == batch, (
+                    "GDN carry: number of sequences changed between forwards; MBS must be fixed."
+                )
+            # one decision per sequence, shared by both states below
+            carry_per_sequence = self._sample_state_carry(batch, qkv.device)
+
         if self.config.deterministic_mode:
             qkv = qkv.transpose(1, 2).contiguous()  # b, s, d -> b, d, s
             conv_out = F.conv1d(
@@ -442,13 +464,13 @@ class GatedDeltaNet(MegatronModule):
             qkv = qkv.transpose(1, 2)  # b, d, s -> b, s, d
         else:
             assert self.activation in ["silu", "swish"]
-            qkv, _ = causal_conv1d(
+            qkv, output_conv_state = causal_conv1d(
                 x=qkv,  # FLA conv1d accepts [b, s, d] format input
                 weight=conv1d_weight.squeeze(1),  # d, 1, w -> d, w
                 bias=conv1d_bias,
                 activation=self.activation,
-                initial_state=None,
-                output_final_state=False,
+                initial_state=self._next_initial_state(self._last_conv_state, carry_per_sequence) if to_carry_states else None,
+                output_final_state=to_carry_states,
                 cu_seqlens=cu_seqlens_q,
             )
         nvtx_range_pop(suffix="conv1d")
@@ -470,18 +492,23 @@ class GatedDeltaNet(MegatronModule):
         nvtx_range_pop(suffix="g_and_beta")
 
         nvtx_range_push(suffix="gated_delta_rule")
-        core_attn_out, last_recurrent_state = self.gated_delta_rule(
+        core_attn_out, output_recurrent_state = self.gated_delta_rule(
             query,
             key,
             value,
             g=g,
             beta=beta,
-            initial_state=None,
-            output_final_state=False,
+            initial_state=self._next_initial_state(self._last_recurrent_state, carry_per_sequence) if to_carry_states else None,
+            output_final_state=to_carry_states,
             use_qk_l2norm_in_kernel=False,
             cu_seqlens=cu_seqlens_q,
         )
         nvtx_range_pop(suffix="gated_delta_rule")
+
+        if to_carry_states:
+            self._last_conv_state = output_conv_state.detach()
+            self._last_recurrent_state = output_recurrent_state.detach()
+            self._carry_step += 1
 
         def _gated_norm_and_a2a(core_attn_out: torch.Tensor, gate: torch.Tensor):
             # RMSNorm
@@ -527,6 +554,28 @@ class GatedDeltaNet(MegatronModule):
             self.norm_out_checkpoint.discard_output_and_register_recompute(out)
 
         return out, out_bias
+
+    def _sample_state_carry(self, num_sequences, device):
+        # One decision per sequence (for each sequence in a micro-batch), shape [num_sequences]:
+        # True  -> carry this sequence's state from the previous batch,
+        # False -> zero it (the sequence restarts fresh).
+        # True with probability gdn_state_carry_ratio (p=1 -> all True, p=0.5 -> ~half).
+        # Deterministic / reproducible across resume via _carry_step.
+        base = getattr(self.config, "seed", 0) or 0
+        # Independent, reproducible RNG stream per (run seed, rank, layer, step).
+        ss = np.random.SeedSequence([base, self._carry_rank, self.layer_number or 0, self._carry_step])
+        g = torch.Generator(device=device)
+        g.manual_seed(int(ss.generate_state(1)[0]))
+        return torch.rand(num_sequences, generator=g, device=device) < self.gdn_state_carry_ratio
+
+    def _next_initial_state(self, last_state, carry_per_sequence):
+        # Build the kernel's initial_state from the previous batch's state: keep the sequences that
+        # carry, zero the sequences that reset. None on the first batch -> kernel starts from zero.
+        if last_state is None:
+            return None
+        initial_state = last_state.clone()
+        initial_state[~carry_per_sequence] = 0
+        return initial_state
 
     @jit_fuser
     def _apply_gated_norm(self, x, gate):

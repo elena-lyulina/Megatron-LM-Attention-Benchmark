@@ -327,6 +327,10 @@ class TransformerConfig(ModelParallelConfig):
     linear_num_value_heads: Optional[int] = 32
     """Number of value and gate heads for the gated delta net."""
 
+    gdn_state_carry_ratio: float = 0.0
+    """Probability that a row carries its GDN state (recurrent + conv) across batches instead of
+    zeroing it. 0.0 = always zero (default), 1.0 = always carry, 0.5 = per-row random reset."""
+
     ####################
     # initialization
     ####################
