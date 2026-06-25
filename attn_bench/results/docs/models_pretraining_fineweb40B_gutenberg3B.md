@@ -102,6 +102,31 @@ Logs: `attn_bench/logs/2567002.{out,err}`.
 
 ---
 
+## Gated Delta Net (GDN) mixer
+
+LLaMA 3.2 1B backbone with the attention layers replaced by a Gated Delta Net (GDN) linear-attention mixer on all 16 layers — a different sequence mixer rather than a softmax variant. Param-matched to the ~1.236B attention baselines (~1.239B): GDN mixer with 8 K/V heads, `key_head_dim 192` / `value_head_dim 384` (paper ratios 0.75 / 1.5), FFN shrunk from 8192 to `--ffn-hidden-size 5824` to absorb the wider mixer. Config: `attn_bench/data/param_count_configs/gdn_1B_args_8heads_ffn5824.txt`. Like the masked `full` baseline, document boundaries are isolated: `--use-packed-seq-params` resets the GDN recurrent state + conv at every document boundary via `cu_seqlens` (kept `--reset-position-ids` + `--eod-mask-loss`).
+
+This run completed cleanly via the data-exhaustion fix — it exited with `[exiting program after consuming all available data at iteration 15549]` and saved a valid checkpoint at step 15549 (no `StopIteration` crash, no resume needed).
+
+| variant | Slurm job | start (CEST) | end (CEST) | run time | status | final lm loss (step 15549) | throughput (TFLOP/s/GPU) |
+|---|---|---|---|---|---|---|---|
+| gated delta net (GDN) | `2613202` | 2026-06-24 23:58:05 | 2026-06-25 05:15:35 | 5h 17m 30s | COMPLETED (data exhausted) | 2.4125 | ~321.3 (avg) |
+
+W&B run: `llama3-1b-gdn-fineweb40B-gutenberg3B-2613202` (project `fineweb-40B_gutenberg-3B`).
+
+Final step lm loss 2.4125 is higher than the masked `full` baseline (2.3824). (No validation set: split `100,0,0`.)
+
+Container: `nemo_26.04_te2.15` (ships `flash-linear-attention` + `causal_conv1d`, required by the GDN layer).
+
+Checkpoint saved at step 15549. Moved to long-term storage under:
+`/users/elyulina/store/pretrain-results/llama3-1b-gdn-fineweb40B-gutenberg3B/`
+
+Slurm script: `attn_bench/submissions/pretrain_llama3_1b_gdn_fineweb40B_gutenberg3B.slurm`
+
+Logs: `attn_bench/logs/2613202.{out,err}`.
+
+---
+
 ## Attention variants / trained models 
 
 | variant | Megatron flag | description |
@@ -111,6 +136,7 @@ Logs: `attn_bench/logs/2567002.{out,err}`.
 | sink | `--softmax-type learnable` | learnable sink logit added to denominator — `exp(s) / (exp(s) + Σ exp(xⱼ))` |
 | off-by-one | `--softmax-type off-by-one` | sink with fixed logit 0 — `1 / (1 + Σ exp(xⱼ))` |
 | full (xdoc leak) | drop `--use-packed-seq-params` + `--reset-position-ids` (keep `--eod-mask-loss`) | standard softmax, but no intra-document masking — attention leaks across document boundaries within a packed sequence |
+| gated delta net (GDN) | `--experimental-attention-variant gated_delta_net --linear-attention-freq [1]*16` | GDN linear-attention mixer replaces softmax attention on all layers; FFN shrunk to 5824 to param-match (~1.239B) |
 
 ---
 
