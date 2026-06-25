@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --account=infra01
-#SBATCH --time=00:05:00
+#SBATCH --time=00:10:00
 #SBATCH --job-name=test-attn-gdn-carry
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
@@ -13,27 +13,30 @@
 #SBATCH --mail-user=clariden-jobs-elyulin-aaaauapxybdkdx42ppvef2c2eq@swissai-initiative.slack.com
 
 # Gated Delta Net, pure GDN (all layers), WITHOUT --use-packed-seq-params, built at a chosen carry
-# ratio RATIO (0.0 / 0.5 / 1.0). The gdn_carry_* suites are black-box: they observe the model's built
-# ratio and the slurm declares the expected verdict per ratio. Run all three:
+# ratio RATIO (any float in [0.0, 1.0]; defaults to 1.0). The gdn_carry_* suites are black-box: they
+# observe the model's built ratio and the slurm declares the expected verdict per ratio. Examples:
 #   RATIO=0.0 sbatch attn_bench/submissions/test_attn_gdn_carry_flag.slurm
 #   RATIO=0.5 sbatch attn_bench/submissions/test_attn_gdn_carry_flag.slurm
 #   RATIO=1.0 sbatch attn_bench/submissions/test_attn_gdn_carry_flag.slurm
 #
 # Per ratio:
-#   - gdn_carry_sample=pass     : carried fraction matches RATIO; per-(rank,layer,step) streams are
-#                                 independent at 0<RATIO<1, degenerate (seed-invariant) at 0/1.
-#   - gdn_carry_effect          : carried state moves the loss beyond kernel noise -> pass at RATIO>0,
-#                                 fail at RATIO=0 (no carry, no effect).
+#   - gdn_carry_sample          : carried fraction matches RATIO; per-(rank,layer,step) streams are
+#                                 independent at 0<RATIO<1, degenerate (seed-invariant) at 0/1 ->
+#                                 pass at RATIO>0, fail at RATIO=0 (no carry slots to verify).
+#   - gdn_carry_effect          : statistical -- over many trials the fraction of sequences whose loss
+#                                 the carried state leaves UNCHANGED matches (1-RATIO)^num_layers
+#                                 -> pass at RATIO>0, fail at RATIO=0 (no carry, no effect).
 #   - gdn_carry_mechanism       : stored state detached + checkpoint round-trip + layout lock -> pass
 #                                 at RATIO>0; fail at RATIO=0 (carry produces no state to verify).
 #   - xdoc_loss=fail            : no packing -> no cu_seqlens -> cross-doc leak. Runs in eval (carry
 #                                 off), so it is the pure no-packing leak at every ratio.
+# The registry prints a per-suite "### Summary ###" (expected vs actual, [OK]/[MISMATCH]) and a final
+# "### Verdict" line -- grep those to confirm every suite landed as declared below.
 # NOTE: GDN requires flash-linear-attention (fla) and causal_conv1d in the container.
 #
-# TODO: accept any float from 0.0 to 1.0, default to 1.0
-# Usage: RATIO=<0.0|0.5|1.0> sbatch attn_bench/submissions/test_attn_gdn_carry_flag.slurm
+# Usage: RATIO=<float in [0.0,1.0]> sbatch attn_bench/submissions/test_attn_gdn_carry_flag.slurm
 
-RATIO=${RATIO:1.0}
+RATIO=${RATIO:-1.0}
 
 echo "START TIME: $(date)  RATIO=$RATIO"
 
@@ -166,12 +169,14 @@ DATA_ARGS=(
     --mock-data
 )
 
-# Expected verdicts depend on RATIO: at 0 carry is off so effect/mechanism FAIL (nothing to carry);
-# at >0 they PASS. sample and xdoc are the same at every ratio.
-case "$RATIO" in
-    0|0.0|0.00) CARRY_TESTS="gdn_carry_sample=fail gdn_carry_effect=fail gdn_carry_mechanism=fail" ;;
-    *)          CARRY_TESTS="gdn_carry_sample=fail gdn_carry_effect=pass gdn_carry_mechanism=pass" ;;
-esac
+# Expected verdicts depend on RATIO: at 0 carry is off so sample/effect/mechanism FAIL (no carry
+# slots); at >0 they PASS. xdoc is the same at every ratio. Numeric (awk) zero-test so any float form
+# of zero (0, 0.0, .0, 0.00) is detected, not just the few spellings a case list would enumerate.
+if [ "$(awk "BEGIN{print ($RATIO > 0) ? 1 : 0}")" = "1" ]; then
+    CARRY_TESTS="gdn_carry_sample=pass gdn_carry_effect=pass gdn_carry_mechanism=pass"
+else
+    CARRY_TESTS="gdn_carry_sample=fail gdn_carry_effect=fail gdn_carry_mechanism=fail"
+fi
 BENCHMARK_ARGS=(
     --tests $CARRY_TESTS xdoc_loss=fail
 )

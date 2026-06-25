@@ -149,6 +149,15 @@ def _max_diff(a, b):
     return (a - b).abs().max().item()
 
 
+# Statistical carry_effect: number of independent populate+carry trials. Each trial draws a fresh
+# per-(layer, sequence) carry decision, so the assertion runs over CARRY_EFFECT_RUNS * mbs Bernoulli
+# trials. At 2000 runs the worst-case (over any ratio) std of the measured rate is <= 0.5/sqrt(4000)
+# ~ 0.008, so CARRY_EFFECT_TOL=0.03 is a ~4-sigma pass band (false-fail ~1e-4). ~4000 extra forwards
+# need the 10-min job wall. Tunable.
+CARRY_EFFECT_RUNS = 2000
+CARRY_EFFECT_TOL = 0.03
+
+
 def _make_test_carry_sample(base_forward_step):
     def test_carry_sample(model):
         # With the model's configured ratio: the per-sequence sampler produces the right carry
@@ -202,40 +211,64 @@ def _make_test_carry_sample(base_forward_step):
 
 def _make_test_carry_effect(base_forward_step):
     def test_carry_effect(model):
-        # Does the carried state move the loss beyond the kernel noise floor? Observe the model's
-        # natural behavior at its built ratio: expected True at ratio>0, False at ratio 0. The slurm declares
-        # the expected verdict (pass for carry runs, fail for the no-carry run).
+        # Statistical: don't force carry on -- measure how OFTEN the carried state actually moves the
+        # loss and check that rate against the probability implied by the built ratio (a single-shot
+        # check would be flaky at 0<ratio<1, failing whenever the draw happened to skip the carry).
+        # Each trial populates the state from batch_a then runs batch_b with a fresh per-sequence carry
+        # draw. A sequence's loss is unchanged from fresh only when EVERY GDN layer independently
+        # declined to carry it, so over many trials:
+        #   unchanged_rate  -> (1-ratio)**L           (L = #GDN layers)
+        #   both_unchanged  -> ((1-ratio)**L)**2       (the two sequences decide independently)
+        # At ratio 1.0 -> 0 unchanged (always carries); ratio 0 has no carry slots (expected fail).
         print_rank_0("\n### Test: carry_effect ###")
         layers = _gdn_layers(model)
         if not layers:
             print_rank_0("[FAIL] carry_effect: no GatedDeltaNet module found")
             return False
+        if not _carry_enabled(layers):
+            print_rank_0("  carry disabled (built at ratio 0); nothing to verify")
+            print_rank_0("[FAIL] carry_effect")
+            return False
         try:
             model.train()
+            ratio = layers[0][1].gdn_state_carry_ratio
+            n_layers = len(layers)
             batch_a, batch_b = _new_batch(1), _new_batch(2)
 
-            # Noise floor: batch_b from empty slots, run twice (clear before each so neither carries).
-            # The FLA kernel is non-deterministic, so identical inputs still differ by some jitter.
+            # Per-sequence noise floor: batch_b from empty slots, run twice (FLA kernel jitter).
             _clear_slots(layers)
-            out_fresh1 = _forward(base_forward_step, model, batch_b)
+            fresh1 = _forward(base_forward_step, model, batch_b)
             _clear_slots(layers)
-            out_fresh2 = _forward(base_forward_step, model, batch_b)
-            noise = _max_diff(out_fresh1, out_fresh2)
+            fresh2 = _forward(base_forward_step, model, batch_b)
+            n_seq = fresh1.shape[0]
+            thresh = [max(1e-4, 5 * _max_diff(fresh1[i], fresh2[i])) for i in range(n_seq)]
 
-            # Natural carry: batch_a (used to populate the state) then batch_b (the model carries per its configured ratio). Same
-            # weights (no_grad, no optimizer step) and same batch_b, so the only difference vs
-            # out_fresh1 is the carried state.
-            # TODO: could fail if state is not carried in this step due to ratio probability
-            _clear_slots(layers)
-            _forward(base_forward_step, model, batch_a)
-            out_carry = _forward(base_forward_step, model, batch_b)
-            effect = _max_diff(out_carry, out_fresh1)
+            # Each trial: populate from batch_a (starts from zeros, so its own draw is moot), then set
+            # a unique _carry_step so batch_b draws an independent decision -- _clear_slots resets the
+            # step to 0, which would otherwise freeze every trial to the same draw.
+            changed = 0          # (trial, sequence) pairs whose loss moved past the noise floor
+            both_unchanged = 0   # trials where neither sequence moved
+            for r in range(CARRY_EFFECT_RUNS):
+                _clear_slots(layers)
+                _forward(base_forward_step, model, batch_a)
+                for _, m in layers:
+                    m._carry_step = r + 1
+                out = _forward(base_forward_step, model, batch_b)
+                moved = [_max_diff(out[i], fresh1[i]) > thresh[i] for i in range(n_seq)]
+                changed += sum(moved)
+                both_unchanged += int(not any(moved))
 
-            has_effect = effect > 1e-4 and effect > 5 * noise
-            print_rank_0(f"  ratio={layers[0][1].gdn_state_carry_ratio} noise={noise:.6f} "
-                         f"effect={effect:.6f} has_effect={has_effect}")
-            print_rank_0(f"[{'PASS' if has_effect else 'FAIL'}] carry_effect")
-            return has_effect
+            n_trials = CARRY_EFFECT_RUNS * n_seq
+            unchanged_rate = 1 - changed / n_trials
+            exp_unchanged = (1 - ratio) ** n_layers
+            both_unchanged_rate = both_unchanged / CARRY_EFFECT_RUNS
+
+            ok = abs(unchanged_rate - exp_unchanged) < CARRY_EFFECT_TOL
+            print_rank_0(f"  ratio={ratio} layers={n_layers} trials={n_trials} "
+                         f"unchanged_rate={unchanged_rate:.3f} expected=(1-ratio)^{n_layers}={exp_unchanged:.3f} "
+                         f"both_unchanged_rate={both_unchanged_rate:.3f} expected={exp_unchanged**2:.3f}")
+            print_rank_0(f"[{'PASS' if ok else 'FAIL'}] carry_effect")
+            return ok
         finally:
             _clear_slots(layers)
     return test_carry_effect
@@ -257,6 +290,7 @@ def _make_test_carry_mechanism(base_forward_step):
             print_rank_0("[FAIL] carry_mechanism: no GatedDeltaNet module found")
             return False
         args = get_args()
+        snap = _snapshot_carry(layers)
         tmp = tempfile.mkdtemp()
         try:
             model.train()
