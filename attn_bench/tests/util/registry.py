@@ -3,6 +3,7 @@ from attn_bench.tests.test_gdn import register as _register_gdn
 from attn_bench.tests.test_gdn import register_carry_effect as _register_gdn_carry_effect
 from attn_bench.tests.test_gdn import register_carry_mechanism as _register_gdn_carry_mechanism
 from attn_bench.tests.test_gdn import register_carry_sample as _register_gdn_carry_sample
+from attn_bench.tests.test_gdn_inference import register as _register_gdn_inference
 from attn_bench.tests.test_sink_attention import register as _register_sink
 from attn_bench.tests.test_xdoc_attention import register_loss as _register_xdoc_loss
 from attn_bench.tests.test_xdoc_attention import register_mask as _register_xdoc_mask
@@ -19,6 +20,7 @@ TEST_REGISTRY = {
     "sink": _register_sink,
     "gated": _register_gated,
     "gdn": _register_gdn,
+    "gdn_inference": _register_gdn_inference,
     "gdn_carry_sample": _register_gdn_carry_sample,
     "gdn_carry_effect": _register_gdn_carry_effect,
     "gdn_carry_mechanism": _register_gdn_carry_mechanism,
