@@ -127,6 +127,32 @@ Logs: `attn_bench/logs/2613202.{out,err}`.
 
 ---
 
+## GDN state carry across batches (r = 0 / 0.5 / 1)
+
+GDN mixer (same param-matched config as above) but **without** `--use-packed-seq-params`, so the recurrent + conv state is not reset at document boundaries (it leaks across docs within a sequence). `--gdn-state-carry-ratio` then controls whether the state is also carried *across batch boundaries*: `0.0` = always reset per batch (vanilla Megatron GDN, xdoc-leak baseline), `1.0` = always carry, `0.5` = carry per sequence with p = 0.5. All three launched together on 2026-06-26.
+
+| variant | Slurm job | start (CEST) | end (CEST) | run time | status | final lm loss | throughput (TFLOP/s/GPU) |
+|---|---|---|---|---|---|---|---|
+| carry r=0 | `2622827` | 2026-06-26 03:04:10 | TBD | TBD | RUNNING | TBD | TBD |
+| carry r=0.5 | `2622828` | 2026-06-26 03:25:51 | TBD | TBD | RUNNING | TBD | TBD |
+| carry r=1 | `2622831` | 2026-06-26 03:55:57 | TBD | TBD | RUNNING | TBD | TBD |
+
+Nodes (14 each, disjoint across the three jobs — recorded for throughput-placement analysis):
+
+- r=0 (`2622827`): `nid[006272,006281,006315,006761,006904,006916,006954,006969,007041,007048,007095,007272,007278,007339]`
+- r=0.5 (`2622828`): `nid[006719,006728,006749,006751,006917,007013,007134,007184,007188,007211,007216,007236-007237,007239]`
+- r=1 (`2622831`): `nid[006041,006050,006107,007263,007305,007333,007340,007342,007464,007476,007499,007512,007525,007528]`
+
+Earlier GDN tests flagged `nid006742` as unreliable (excluded via `sbatch --exclude=nid006742` on the main GDN runs); it is not in any of the three allocations above.
+
+Note: r=0 shows noticeably lower and jitterier throughput than r=1 (median ~301 vs ~312 TFLOP/s, ~3.4% vs ~0.25% of iters stalling), while lm loss is unaffected (r=0 tracks slightly *below* r=0.5/r=1). The carry code path is not the cause (r=0 disables carry entirely — less work, no extra kernels/recompiles), so this is under investigation as a per-job node-placement artifact rather than a property of the training mode.
+
+Slurm scripts: `attn_bench/submissions/pretrain_llama3_1b_gdn_carry_r{0,0.5,1}_fineweb40B_gutenberg3B.slurm`
+
+Logs: `attn_bench/logs/2622827.{out,err}` (r=0), `2622828.{out,err}` (r=0.5), `2622831.{out,err}` (r=1).
+
+---
+
 ## Attention variants / trained models 
 
 | variant | Megatron flag | description |
