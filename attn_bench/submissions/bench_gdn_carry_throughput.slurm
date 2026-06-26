@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --account=infra01
-#SBATCH --time=01:30:00
+#SBATCH --time=01:00:00
 #SBATCH --job-name=bench-gdn-carry-throughput
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
@@ -179,7 +179,7 @@ LEARNING_RATE_ARGS=(
     --lr 0.0004
     --min-lr 0.00004
     --lr-decay-style cosine
-    --lr-warmup-iters 2000
+    --lr-warmup-iters 10   # BENCH: must be < TRAIN_ITERS (prod uses 2000); LR schedule irrelevant to throughput
 )
 
 MIXED_PRECISION_ARGS=(
