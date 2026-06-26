@@ -133,9 +133,9 @@ GDN mixer (same param-matched config as above) but **without** `--use-packed-seq
 
 | variant | Slurm job | start (CEST) | end (CEST) | run time | status | final lm loss | throughput (TFLOP/s/GPU) |
 |---|---|---|---|---|---|---|---|
-| carry r=0 | `2622827` | 2026-06-26 03:04:10 | TBD | TBD | RUNNING | TBD | TBD |
-| carry r=0.5 | `2622828` | 2026-06-26 03:25:51 | TBD | TBD | RUNNING | TBD | TBD |
-| carry r=1 | `2622831` | 2026-06-26 03:55:57 | TBD | TBD | RUNNING | TBD | TBD |
+| carry r=0 | `2622827` | 2026-06-26 03:04:10 | 2026-06-26 08:46:45 | 5h 42m 35s | COMPLETED (data exhausted) | 2.4136 | ~296.7 (avg) |
+| carry r=0.5 | `2622828` | 2026-06-26 03:25:51 | 2026-06-26 09:00:18 | 5h 34m 27s | COMPLETED (data exhausted) | 2.4133 | ~303.1 (avg) |
+| carry r=1 | `2622831` | 2026-06-26 03:55:57 | 2026-06-26 09:23:42 | 5h 27m 45s | COMPLETED (data exhausted) | 2.4218 | ~310.1 (avg) |
 
 Nodes (14 each, disjoint across the three jobs — recorded for throughput-placement analysis):
 
@@ -146,6 +146,18 @@ Nodes (14 each, disjoint across the three jobs — recorded for throughput-place
 Earlier GDN tests flagged `nid006742` as unreliable (excluded via `sbatch --exclude=nid006742` on the main GDN runs); it is not in any of the three allocations above.
 
 Note: r=0 shows noticeably lower and jitterier throughput than r=1 (median ~301 vs ~312 TFLOP/s, ~3.4% vs ~0.25% of iters stalling), while lm loss is unaffected (r=0 tracks slightly *below* r=0.5/r=1). The carry code path is not the cause (r=0 disables carry entirely — less work, no extra kernels/recompiles), so this is under investigation as a per-job node-placement artifact rather than a property of the training mode.
+
+W&B runs (project `fineweb-40B_gutenberg-3B`):
+
+- r=0: `llama3-1b-gdn-carry-r0-fineweb40B-gutenberg3B-2622827`
+- r=0.5: `llama3-1b-gdn-carry-r0.5-fineweb40B-gutenberg3B-2622828`
+- r=1: `llama3-1b-gdn-carry-r1-fineweb40B-gutenberg3B-2622831`
+
+Checkpoints saved at step 15549. Moved to long-term storage under:
+
+- r=0: `/users/elyulina/store/pretrain-results/llama3-1b-gdn-carry-r0-fineweb40B-gutenberg3B/`
+- r=0.5: `/users/elyulina/store/pretrain-results/llama3-1b-gdn-carry-r0.5-fineweb40B-gutenberg3B/`
+- r=1: `/users/elyulina/store/pretrain-results/llama3-1b-gdn-carry-r1-fineweb40B-gutenberg3B/`
 
 Slurm scripts: `attn_bench/submissions/pretrain_llama3_1b_gdn_carry_r{0,0.5,1}_fineweb40B_gutenberg3B.slurm`
 
