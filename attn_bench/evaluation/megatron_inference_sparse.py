@@ -27,6 +27,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import os
 import sys
 from functools import partial
 from pathlib import Path
@@ -473,6 +474,45 @@ def run_inference(model, args, rank, world_size):
         print(f"\nAll repetitions done. Results in: {output_path}")
 
 
+def results_already_complete(args, world_size: int) -> bool:
+    """True if every requested rep is already on disk (and, when capturing, every
+    rank's capture file too) — i.e. there is nothing left to compute.
+
+    Checked from env (WORLD_SIZE), not torch.distributed, so it can run *before*
+    the expensive checkpoint load. It inspects all ranks' files (not just this
+    rank's), so every process reaches the same verdict and the early exit is
+    collective — no initialized process group means no barrier to deadlock.
+    """
+    from attn_bench.evaluation.attn_capture import N_BUCKETS, bucket_label
+
+    output_path = (
+        Path(args.experiment_path)
+        / "inference"
+        / f"offset_{args.offset}_prefix_{args.prefix_length}_suffix_{args.suffix_length}"
+    )
+
+    paths = find_rep_paths(Path(args.data_folder), {int(r) for r in args.repetitions.split(",")})
+    if not paths:
+        return False  # no input data found — let the normal path no-op/report
+
+    # Per-rep done-marker mirrors run_inference: rank0.jsonl present and non-empty.
+    for path in paths:
+        rep = int(path.stem.split("_")[1])
+        rank0_file = output_path / f"rep_{rep}_greedy" / "rank0.jsonl"
+        if not (rank0_file.exists() and rank0_file.stat().st_size > 0):
+            return False
+
+    # Capture regenerates every rep, so it is "done" only once every rank's
+    # last-bucket marker exists.
+    if args.capture_attention:
+        last_bucket = bucket_label(N_BUCKETS - 1)
+        for r in range(world_size):
+            if not (output_path / f"attn_scores_rouge_l_{last_bucket}_rank{r}.npz").exists():
+                return False
+
+    return True
+
+
 def main():
     args = parse_args()
 
@@ -485,6 +525,19 @@ def main():
 
     if args.sink_scale is not None:
         args.experiment_path = args.experiment_path.rstrip('/') + f"_sscale{args.sink_scale:g}"
+
+    # Check results before loading the checkpoint: loading the model is the
+    # expensive part, so if everything is already on disk we skip it entirely.
+    # (run_inference still does a finer per-rep skip for the partially-done case.)
+    world_size = int(os.environ.get("WORLD_SIZE", "1"))
+    if results_already_complete(args, world_size):
+        if int(os.environ.get("RANK", "0")) == 0:
+            print(
+                f"All results already present for offset={args.offset} "
+                f"prefix={args.prefix_length} suffix={args.suffix_length} "
+                f"(capture={args.capture_attention}) — skipping checkpoint load."
+            )
+        return
 
     model = load_megatron_model(args.ckpt_dir, args.tokenizer_path, args.megatron_extra_args)
 
