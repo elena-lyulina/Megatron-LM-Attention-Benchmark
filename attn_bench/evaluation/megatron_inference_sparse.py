@@ -36,11 +36,8 @@ import torch
 import torch.distributed as dist
 import torch.nn.functional as F
 from torch.utils.data import DataLoader, DistributedSampler
-
 from verbatim_eval.LCS import find_longest_common_substrings
 from verbatim_eval.my_rouge import _compute_dp_matrix_2d, compute_rouge_l_2d
-
-
 
 ### MODEL ###
 
@@ -82,7 +79,11 @@ def load_megatron_model(ckpt_dir: str, tokenizer_path: str, extra_megatron_args:
         *(extra_megatron_args or []),
     ]
     try:
-        # reads arguments directly and exclusively through sys.argv -- so we're swapping them beforehand
+        from megatron.training.arguments import parse_and_validate_args
+
+        # reads arguments directly and exclusively through sys.argv -- so we're swapping them beforehand.
+        # PR #4225 moved arg parsing out of initialize_megatron; launch scripts must parse + set globals first.
+        parse_and_validate_args()
         initialize_megatron()
         model = get_model(partial(model_provider, gpt_builder), wrap_with_ddp=False)
         load_checkpoint(model, optimizer=None, opt_param_scheduler=None)
