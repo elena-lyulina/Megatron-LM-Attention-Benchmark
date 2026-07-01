@@ -20,15 +20,17 @@
 # At inference this is plain full (standard softmax) attention — the cross-document
 # leak is a training-time property (no intra-doc mask), and each Gutenberg excerpt is
 # fed standalone here, so inference is identical to the full baseline. The only
-# differences are EXP_NAME / checkpoint. Container is nemo_26 (the model was trained
-# with nemo_26, not TE 2.15) for comparability with the full baseline.
+# differences are EXP_NAME / checkpoint. Inference runs on the te2.15 container so all
+# models are measured under one inference stack (the nemo_26-trained checkpoint loads
+# fine on te2.15, as off_by_one already does); the nemo_26 image crashes on the merged
+# nvrx version check.
 #
 # Usage:
 #   sbatch attn_bench/submissions/measure_mem_llama3_1b_full_attn_xdoc_attn_leak_fineweb40B_gutenberg3B.slurm
 
 echo "START TIME: $(date)"
 
-CONTAINER_ENV=nemo_26
+CONTAINER_ENV=nemo_26.04_te2.15
 
 ### PATHS ###
 MEGATRON_LM_DIR=/iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark
@@ -66,6 +68,7 @@ srun \
     torchrun \
         --nproc_per_node=4 \
         $MEGATRON_LM_DIR/attn_bench/evaluation/megatron_inference_sparse.py \
+        --container-env $CONTAINER_ENV \
         --ckpt-dir $MODEL_DIR/checkpoints \
         --tokenizer-path $TOKENIZER_PATH \
         --experiment-path $MEM_DIR \

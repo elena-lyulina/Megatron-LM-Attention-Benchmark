@@ -29,6 +29,7 @@ import json
 import math
 import os
 import sys
+from datetime import datetime, timezone
 from functools import partial
 from pathlib import Path
 
@@ -349,6 +350,9 @@ def parse_args():
     parser.add_argument("--batch-size", type=int, default=20)
     parser.add_argument("--max-samples", type=int, default=None,
                         help="Cap sequences per repetition bucket (for testing)")
+    parser.add_argument("--container-env", default=None,
+                        help="Container/environment name this run executed in (e.g. nemo_26.04_te2.15). "
+                             "Recorded verbatim in run_metadata.json for provenance.")
     parser.add_argument("--megatron-extra-args", nargs=argparse.REMAINDER, default=None,
                         help="Extra Megatron args forwarded verbatim to initialize_megatron "
                              "(e.g. --megatron-extra-args --attention-output-gate)")
@@ -409,6 +413,19 @@ def _make_capture(model, args, needs_bos: bool):
     return capture
 
 
+def write_run_metadata(output_path: Path, args) -> None:
+    # Save which container and SLURM job produced this run so we can tell
+    # runs apart later. Re-running overwrites it, so it always points at the
+    # last run to finish this offset/prefix/suffix.
+    with open(output_path / "run_metadata.json", "w") as f:
+        json.dump({
+            "container_env": args.container_env,
+            "job_id": os.environ.get("SLURM_JOB_ID"),
+            "ckpt_dir": args.ckpt_dir,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        }, f, indent=2)
+
+
 def run_inference(model, args, rank, world_size):
     from attn_bench.evaluation.attn_capture import N_BUCKETS, bucket_label
 
@@ -418,6 +435,9 @@ def run_inference(model, args, rank, world_size):
         / f"offset_{args.offset}_prefix_{args.prefix_length}_suffix_{args.suffix_length}"
     )
     output_path.mkdir(parents=True, exist_ok=True)
+
+    if rank == 0:
+        write_run_metadata(output_path, args)
 
     paths = find_rep_paths(Path(args.data_folder), {int(r) for r in args.repetitions.split(",")})
     needs_bos = args.offset > 0  # offset==0: BOS already at token 0; offset>0: must prepend

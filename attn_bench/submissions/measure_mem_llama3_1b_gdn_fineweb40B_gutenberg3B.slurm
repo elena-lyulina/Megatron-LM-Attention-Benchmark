@@ -97,6 +97,7 @@ srun \
     torchrun --nproc_per_node=4 --no-python \
         bash -c 'export TRITON_CACHE_DIR=/tmp/triton_\${USER}_\${SLURM_JOB_ID}_\${RANK}; mkdir -p \"\$TRITON_CACHE_DIR\"; exec python \"\$@\"' _ \
         $MEGATRON_LM_DIR/attn_bench/evaluation/megatron_inference_sparse.py \
+        --container-env $CONTAINER_ENV \
         --ckpt-dir $MODEL_DIR/checkpoints \
         --tokenizer-path $TOKENIZER_PATH \
         --experiment-path $MEM_DIR \

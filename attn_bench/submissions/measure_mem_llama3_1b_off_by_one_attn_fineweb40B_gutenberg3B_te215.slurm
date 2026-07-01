@@ -73,6 +73,7 @@ srun \
     torchrun \
         --nproc_per_node=4 \
         $MEGATRON_LM_DIR/attn_bench/evaluation/megatron_inference_sparse.py \
+        --container-env $CONTAINER_ENV \
         --ckpt-dir $MODEL_DIR/checkpoints \
         --tokenizer-path $TOKENIZER_PATH \
         --experiment-path $MEM_DIR \
