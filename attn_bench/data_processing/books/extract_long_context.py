@@ -37,7 +37,7 @@ from functools import partial
 from pathlib import Path
 
 import numpy as np
-from datasets import Dataset, load_from_disk
+from datasets import load_from_disk
 
 from .columns import Col
 from .find_excerpt_start import find_excerpt_start, load_punkt
@@ -52,12 +52,13 @@ HF_CACHE = False
 
 CONTENT_TOKENS = SEQ_LEN - 2          # sample content tokens: c0..c8189 (BOS/EOS excluded)
 MAX_EXTRA = 3 * SEQ_LEN               # cap on extra tokens per side (24,576)
-# Char bounds for the two extra tokenizations. Sized generously so they always cover
-# the token caps even for dense text (~4.5 chars/tok here; these hold up to ~12): we
-# only keep the last/first MAX_EXTRA tokens, so a bound just avoids tokenizing the
-# whole book. Forward needs CONTENT_TOKENS + MAX_EXTRA tokens; backward needs MAX_EXTRA.
-FORWARD_CHARS = 400_000
-BACKWARD_CHARS = 400_000              # was unbounded (whole front of book) — the timeout culprit
+# Char bounds for the two extra tokenizations. We only keep the last/first MAX_EXTRA
+# tokens, so a bound just avoids tokenizing far more than can ever be used. Sized to
+# guarantee the token caps even for dense text: forward needs CONTENT_TOKENS + MAX_EXTRA
+# = 32,766 tokens (220k chars = 6.7 chars/tok headroom vs ~4.3 avg); backward needs
+# MAX_EXTRA = 24,576 tokens (170k chars = 6.9 headroom).
+FORWARD_CHARS = 220_000
+BACKWARD_CHARS = 170_000
 SNIPPET_TOKENS = 60                   # decoded preview length in the unmatched report
 
 
@@ -221,23 +222,26 @@ def run(jsonl_dir, raw_dir, tokenizer_path, output_dir, num_proc, stats_only):
     print(f"  matched {n_matched:,} / {total:,} probes ({100 * n_matched / total:.1f}%)")
 
     print("\n### BUILD LONG ###")
-    # one task per (book, bucket); each pulls the row once (drops text/epub from output later)
-    tasks = []
+    # one row per (book, bucket). Build on the memory-mapped dataset via select+map
+    # (the path that actually shards across num_proc — from_list runs ~serially here).
+    # ds.select accepts repeated indices, so a book matched by >1 probe is duplicated.
+    flat_idx, flat_rep, flat_probe = [], [], []
     for idx, refs in matched.items():
-        row = ds[idx]
-        base = {
-            "book_id": row[Col.BOOK_ID],
-            "text": row.get("text") or "",
-            "excerpt_start": row[Col.EXCERPT_START],
-            "content_start": row[Col.CONTENT_START],
-            "content_end": row[Col.CONTENT_END],
-        }
         for rep, probe_idx in refs:
-            tasks.append({**base, "bucket_rep": rep, "original_ids": probes[rep][probe_idx]})
+            flat_idx.append(idx)
+            flat_rep.append(rep)
+            flat_probe.append(probes[rep][probe_idx])
 
-    built = Dataset.from_list(tasks).map(
+    ds_m = ds.select(flat_idx).flatten_indices()
+    ds_m = ds_m.add_column("bucket_rep", flat_rep)
+    ds_m = ds_m.add_column("original_ids", flat_probe)
+    # keep only what the writer needs; drop text + intermediates so Arrow isn't hauling
+    # ~200k chars/row through the map output.
+    keep_cols = {"book_id", "bucket_rep", "original_ids"}
+    built = ds_m.map(
         partial(build_long_row, tokenizer=tokenizer, bos_id=bos_id, eos_id=eos_id),
         num_proc=num_proc, desc="build long",
+        remove_columns=[c for c in ds_m.column_names if c not in keep_cols],
     )
 
     # write per-bucket files (streaming), collect length stats, log build failures
