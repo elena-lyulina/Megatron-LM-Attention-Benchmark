@@ -37,7 +37,7 @@ from functools import partial
 from pathlib import Path
 
 import numpy as np
-from datasets import load_from_disk
+from datasets import Dataset, load_from_disk
 
 from .columns import Col
 from .find_excerpt_start import find_excerpt_start, load_punkt
@@ -51,10 +51,13 @@ from .tokenize_excerpts import SEQ_LEN, TOKENIZER_ID, load_tokenizer, tokenize_e
 HF_CACHE = False
 
 CONTENT_TOKENS = SEQ_LEN - 2          # sample content tokens: c0..c8189 (BOS/EOS excluded)
-MAX_EXTRA = 3 * SEQ_LEN               # cap on extra tokens per side
-# generous char bound for the forward pass: enough to cover CONTENT_TOKENS + MAX_EXTRA
-# tokens even for token-dense text, without tokenizing an entire long book.
+MAX_EXTRA = 3 * SEQ_LEN               # cap on extra tokens per side (24,576)
+# Char bounds for the two extra tokenizations. Sized generously so they always cover
+# the token caps even for dense text (~4.5 chars/tok here; these hold up to ~12): we
+# only keep the last/first MAX_EXTRA tokens, so a bound just avoids tokenizing the
+# whole book. Forward needs CONTENT_TOKENS + MAX_EXTRA tokens; backward needs MAX_EXTRA.
 FORWARD_CHARS = 400_000
+BACKWARD_CHARS = 400_000              # was unbounded (whole front of book) — the timeout culprit
 SNIPPET_TOKENS = 60                   # decoded preview length in the unmatched report
 
 
@@ -126,55 +129,56 @@ def regenerate_canonicals(raw_dir: Path, tokenizer, bos_id, eos_id, punkt, num_p
 
 ### LONG BUILD ###
 
-class SampleMismatch(Exception):
-    """Re-tokenized sample does not match the original probe (text/determinism drift)."""
+def build_long_row(task, tokenizer, bos_id, eos_id):
+    """Build the long sequence for one (book, bucket) task. Runs in parallel via `.map`.
 
+    `task` carries text + positions + `original_ids` (the matched probe). Sets `ok=False`
+    on a sample-reproduction miss (text/determinism drift) instead of raising, so the map
+    doesn't die on one book — the caller filters and logs those.
+    """
+    text = task["text"] or ""
+    start = task["excerpt_start"]
+    content = task["original_ids"][1:1 + CONTENT_TOKENS]   # c0..c8189, used verbatim from the probe
 
-def build_long(row, probe_ids, tokenizer, bos_id, eos_id):
-    """Return the long record, or raise SampleMismatch if the sample can't be reproduced."""
-    text = row.get("text") or ""
-    start = row[Col.EXCERPT_START]
-    content_start = row[Col.CONTENT_START]
-    content_end = row[Col.CONTENT_END]
-
-    content = probe_ids[1:1 + CONTENT_TOKENS]        # c0..c8189, used verbatim from the probe
-
-    # Tokenize the text forward from excerpt_start. This is ONLY to obtain the suffix
-    # tokens (which exist nowhere yet); its first CONTENT_TOKENS reproduce the sample
-    # region and are used purely as a check — we keep the probe's `content`, not these.
-    # The check proves the regenerated text is byte-identical to the original run, so the
-    # suffix it continues into is genuinely contiguous with the real sample.
+    # Tokenize forward from excerpt_start ONLY to obtain the suffix tokens (which exist
+    # nowhere yet). Its first CONTENT_TOKENS reproduce the sample region and are used purely
+    # as a check — we keep the probe's `content`, not these. The check proves the regenerated
+    # text is byte-identical to the original run, so the suffix it continues into is genuinely
+    # contiguous with the real sample.
     fwd = tokenizer.encode(text[start:min(len(text), start + FORWARD_CHARS)], add_special_tokens=False)
     if fwd.ids[:CONTENT_TOKENS] != content:
-        raise SampleMismatch("forward tokenization does not reproduce the original probe sample")
+        task["ok"] = False
+        task["input_ids"] = []
+        task["sample_offset"] = 0
+        task["extra_prefix_len"] = 0
+        task["extra_suffix_len"] = 0
+        return task
 
     # extra suffix: tokens past the sample, clamped to the content zone, capped at MAX_EXTRA
-    zone_len = content_end - start                   # chars from excerpt_start to content_end
+    zone_len = task["content_end"] - start           # chars from excerpt_start to content_end
     extra_suffix = []
     for i in range(CONTENT_TOKENS, min(len(fwd.ids), CONTENT_TOKENS + MAX_EXTRA)):
         if fwd.offsets[i][0] >= zone_len:
             break
         extra_suffix.append(fwd.ids[i])
 
-    # extra prefix: separate tokenization of the content zone before the sample, last MAX_EXTRA
-    bwd = tokenizer.encode(text[content_start:start], add_special_tokens=False)
+    # extra prefix: separate tokenization of the content zone before the sample, last MAX_EXTRA.
+    # bounded to BACKWARD_CHARS so we don't tokenize the whole front of a long book.
+    bwd_start = max(task["content_start"], start - BACKWARD_CHARS)
+    bwd = tokenizer.encode(text[bwd_start:start], add_special_tokens=False)
     extra_prefix = bwd.ids[-MAX_EXTRA:] if MAX_EXTRA else []
 
     input_ids = [bos_id] + extra_prefix + content + extra_suffix + [eos_id]
     sample_offset = 1 + len(extra_prefix)
     # guarantee the measured region in the assembled output is byte-identical to the probe
     assert input_ids[sample_offset:sample_offset + CONTENT_TOKENS] == content
-    record = {
-        "book_id": row[Col.BOOK_ID],
-        "bucket_rep": None,                          # set by caller
-        "input_ids": input_ids,
-        "original_ids": probe_ids,
-        "sample_offset": sample_offset,
-        "sample_len": CONTENT_TOKENS,
-        "extra_prefix_len": len(extra_prefix),
-        "extra_suffix_len": len(extra_suffix),
-    }
-    return record
+
+    task["ok"] = True
+    task["input_ids"] = input_ids
+    task["sample_offset"] = sample_offset
+    task["extra_prefix_len"] = len(extra_prefix)
+    task["extra_suffix_len"] = len(extra_suffix)
+    return task
 
 
 ### MAIN ###
@@ -217,34 +221,56 @@ def run(jsonl_dir, raw_dir, tokenizer_path, output_dir, num_proc, stats_only):
     print(f"  matched {n_matched:,} / {total:,} probes ({100 * n_matched / total:.1f}%)")
 
     print("\n### BUILD LONG ###")
-    # stream records straight to per-bucket files to avoid holding all long
-    # sequences in memory at once.
+    # one task per (book, bucket); each pulls the row once (drops text/epub from output later)
+    tasks = []
+    for idx, refs in matched.items():
+        row = ds[idx]
+        base = {
+            "book_id": row[Col.BOOK_ID],
+            "text": row.get("text") or "",
+            "excerpt_start": row[Col.EXCERPT_START],
+            "content_start": row[Col.CONTENT_START],
+            "content_end": row[Col.CONTENT_END],
+        }
+        for rep, probe_idx in refs:
+            tasks.append({**base, "bucket_rep": rep, "original_ids": probes[rep][probe_idx]})
+
+    built = Dataset.from_list(tasks).map(
+        partial(build_long_row, tokenizer=tokenizer, bos_id=bos_id, eos_id=eos_id),
+        num_proc=num_proc, desc="build long",
+    )
+
+    # write per-bucket files (streaming), collect length stats, log build failures
     writers = {} if not stats_only else None
     counts = defaultdict(int)
     lengths_rows = []
-    build_failures = 0
-    for idx, refs in matched.items():
-        row = ds[idx]
-        for rep, probe_idx in refs:
-            probe_ids = probes[rep][probe_idx]
-            try:
-                rec = build_long(row, probe_ids, tokenizer, bos_id, eos_id)
-            except SampleMismatch:
-                build_failures += 1
-                unmatched.append((rep, probe_idx))
-                continue
-            rec["bucket_rep"] = rep
-            lengths_rows.append({
+    build_failures = []                              # (rep, book_id)
+    for rec in built:
+        rep = rec["bucket_rep"]
+        if not rec["ok"]:
+            build_failures.append((rep, rec["book_id"]))
+            continue
+        lengths_rows.append({
+            "book_id": rec["book_id"],
+            "bucket_rep": rep,
+            "extra_prefix_len": rec["extra_prefix_len"],
+            "extra_suffix_len": rec["extra_suffix_len"],
+        })
+        counts[rep] += 1
+        if writers is not None:
+            if rep not in writers:
+                writers[rep] = open(output_dir / f"rep_{rep}_token.jsonl", "w")
+            out = {
                 "book_id": rec["book_id"],
                 "bucket_rep": rep,
+                "input_ids": rec["input_ids"],
+                "original_ids": rec["original_ids"],
+                "sample_offset": rec["sample_offset"],
+                "sample_len": CONTENT_TOKENS,
                 "extra_prefix_len": rec["extra_prefix_len"],
                 "extra_suffix_len": rec["extra_suffix_len"],
-            })
-            counts[rep] += 1
-            if writers is not None:
-                if rep not in writers:
-                    writers[rep] = open(output_dir / f"rep_{rep}_token.jsonl", "w")
-                writers[rep].write(json.dumps(rec) + "\n")
+            }
+            writers[rep].write(json.dumps(out) + "\n")
     if writers is not None:
         for rep in sorted(writers):
             writers[rep].close()
@@ -252,11 +278,11 @@ def run(jsonl_dir, raw_dir, tokenizer_path, output_dir, num_proc, stats_only):
     else:
         print("  stats-only: token files not written")
     if build_failures:
-        print(f"  WARNING: {build_failures} matched books failed the sample-reproduction assert")
+        print(f"  WARNING: {len(build_failures)} matched books failed sample reproduction")
 
     print("\n### WRITE ###")
     write_lengths(output_dir, lengths_rows)
-    write_unmatched(output_dir, unmatched, probes, tokenizer)
+    write_unmatched(output_dir, unmatched, build_failures, probes, tokenizer)
     print_length_summary(lengths_rows)
     print(f"\nDone in {(time.time() - t0) / 60:.1f}min  ->  {output_dir}")
 
@@ -269,25 +295,36 @@ def write_lengths(output_dir: Path, rows: list[dict]):
     print(f"  {path.name}: {len(rows):,} rows")
 
 
-def write_unmatched(output_dir: Path, unmatched, probes, tokenizer):
+def write_unmatched(output_dir: Path, join_misses, build_failures, probes, tokenizer):
+    """join_misses: (rep, probe_idx) probes with no matching book.
+    build_failures: (rep, book_id) matched books whose sample didn't reproduce."""
     path = output_dir / "unmatched_report.txt"
     per_bucket = defaultdict(int)
-    for rep, _ in unmatched:
+    for rep, _ in join_misses:
+        per_bucket[rep] += 1
+    for rep, _ in build_failures:
         per_bucket[rep] += 1
     with open(path, "w") as f:
         total = sum(len(v) for v in probes.values())
-        f.write(f"unmatched probes: {len(unmatched):,} / {total:,}\n\n")
+        dropped = len(join_misses) + len(build_failures)
+        f.write(f"dropped probes: {dropped:,} / {total:,}  "
+                f"(join misses: {len(join_misses):,}, build failures: {len(build_failures):,})\n\n")
         f.write("per-bucket match rate:\n")
         for rep in sorted(probes):
             n = len(probes[rep])
             miss = per_bucket.get(rep, 0)
             f.write(f"  rep_{rep:<4} {n - miss:>6,} / {n:>6,}  ({100 * (n - miss) / n:.1f}%)\n")
-        f.write("\n" + "=" * 80 + "\n")
-        for rep, idx in unmatched:
-            ids = probes[rep][idx]
-            snippet = tokenizer.decode(ids[:SNIPPET_TOKENS], skip_special_tokens=True).replace("\n", " ")
-            f.write(f"rep_{rep} idx={idx}  first20={ids[:20]}\n  {snippet!r}\n")
-    print(f"  {path.name}: {len(unmatched):,} unmatched")
+        if join_misses:
+            f.write("\n" + "=" * 80 + "\nJOIN MISSES\n" + "=" * 80 + "\n")
+            for rep, idx in join_misses:
+                ids = probes[rep][idx]
+                snippet = tokenizer.decode(ids[:SNIPPET_TOKENS], skip_special_tokens=True).replace("\n", " ")
+                f.write(f"rep_{rep} idx={idx}  first20={ids[:20]}\n  {snippet!r}\n")
+        if build_failures:
+            f.write("\n" + "=" * 80 + "\nBUILD FAILURES (sample not reproduced)\n" + "=" * 80 + "\n")
+            for rep, book_id in build_failures:
+                f.write(f"rep_{rep} book_id={book_id}\n")
+    print(f"  {path.name}: {len(join_misses):,} join misses, {len(build_failures):,} build failures")
 
 
 def print_length_summary(rows: list[dict]):
