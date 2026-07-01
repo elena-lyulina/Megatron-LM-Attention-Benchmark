@@ -31,6 +31,7 @@ PDM_DIR=/users/elyulina/scratch/PDM
 
 OFFSET=${OFFSET:-0}
 PREFIX_LENGTH=${PREFIX_LENGTH:-500}
+SUFFIX_LENGTH=${SUFFIX_LENGTH:-500}
 SINK_SCALE=${SINK_SCALE:-}
 
 EXP_NAME=llama3-1b-off-by-one-attn-fineweb40B-gutenberg3B-te215
@@ -44,7 +45,7 @@ TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b
 export PYTHONPATH=$MEGATRON_LM_DIR:$PDM_DIR:$PDM_DIR/src:${PYTHONPATH:-}
 export CUDA_DEVICE_MAX_CONNECTIONS=1
 
-echo "RUN: exp=$EXP_NAME  offset=$OFFSET  prefix=$PREFIX_LENGTH  suffix=500${SINK_SCALE:+  sink_scale=$SINK_SCALE}"
+echo "RUN: exp=$EXP_NAME  offset=$OFFSET  prefix=$PREFIX_LENGTH  suffix=$SUFFIX_LENGTH${SINK_SCALE:+  sink_scale=$SINK_SCALE}"
 
 ### STEP 1: sparse Gutenberg inference ###
 # Loads torch_dist checkpoint directly (DCP resharding merges TP=2 shards on the fly).
@@ -81,7 +82,7 @@ srun \
         --repetitions 0,1,2,4,8,16,32,64,128,256 \
         --offset $OFFSET \
         --prefix-length $PREFIX_LENGTH \
-        --suffix-length 500 \
+        --suffix-length $SUFFIX_LENGTH \
         --batch-size 20 \
         ${SINK_SCALE:+--sink-scale $SINK_SCALE} \
         --megatron-extra-args --softmax-type off-by-one --attention-backend unfused"
@@ -106,6 +107,6 @@ srun \
         --save-path $MEM_BASE/SparseGutenberg \
         --offsets $OFFSET \
         --prefix-lengths $PREFIX_LENGTH \
-        --suffix-lengths 500"
+        --suffix-lengths $SUFFIX_LENGTH"
 
 echo "END TIME: $(date)"

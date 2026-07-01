@@ -26,9 +26,8 @@ set -e
 SCRIPT_DIR=$(dirname "$0")
 
 # "Done" marker: the Stage-2 pkl. Its presence means both inference and metric
-# aggregation finished. suffix is hardcoded to 500 in every measure_mem_*.slurm.
+# aggregation finished.
 MEM_BASE=/users/elyulina/store/mem-results
-SUFFIX=500
 
 JOBS=(
     "measure_mem_llama3_1b_full_attn_fineweb40B_gutenberg3B.slurm|llama3-1b-full-attn-fineweb40B-gutenberg3B|"
@@ -44,6 +43,7 @@ JOBS=(
 
 OFFSETS=()
 PREFIXES=()
+SUFFIXES=()
 FORCE=0
 
 while [[ $# -gt 0 ]]; do
@@ -63,37 +63,50 @@ while [[ $# -gt 0 ]]; do
                 PREFIXES+=("$1"); shift
             done
             ;;
+        --suffixes)
+            shift
+            while [[ $# -gt 0 && "$1" != --* ]]; do
+                SUFFIXES+=("$1"); shift
+            done
+            ;;
         *)
             echo "Unknown argument: $1"
-            echo "Usage: $0 [--force] --offsets <o1> [o2 ...] --prefixes <p1> [p2 ...]"
+            echo "Usage: $0 [--force] --offsets <o1> [o2 ...] --prefixes <p1> [p2 ...] [--suffixes <s1> [s2 ...]]"
             exit 1
             ;;
     esac
 done
 
 if [[ ${#OFFSETS[@]} -eq 0 || ${#PREFIXES[@]} -eq 0 ]]; then
-    echo "Usage: $0 [--force] --offsets <o1> [o2 ...] --prefixes <p1> [p2 ...]"
+    echo "Usage: $0 [--force] --offsets <o1> [o2 ...] --prefixes <p1> [p2 ...] [--suffixes <s1> [s2 ...]]"
     exit 1
+fi
+
+# suffix defaults to 500 when --suffixes is omitted, matching the old behaviour.
+if [[ ${#SUFFIXES[@]} -eq 0 ]]; then
+    SUFFIXES=(500)
 fi
 
 for OFFSET in "${OFFSETS[@]}"; do
     for PREFIX in "${PREFIXES[@]}"; do
-        for JOB in "${JOBS[@]}"; do
-            IFS='|' read -r SCRIPT EXP_NAME EXTRA <<< "$JOB"
+        for SUFFIX in "${SUFFIXES[@]}"; do
+            for JOB in "${JOBS[@]}"; do
+                IFS='|' read -r SCRIPT EXP_NAME EXTRA <<< "$JOB"
 
-            PKL=$MEM_BASE/SparseGutenberg/$EXP_NAME/offset_${OFFSET}_prefix_${PREFIX}_suffix_${SUFFIX}_greedy.pkl
-            if [[ $FORCE -eq 0 && -f "$PKL" ]]; then
-                echo "Skipping $EXP_NAME offset=$OFFSET prefix_length=$PREFIX (exists: $PKL)"
-                continue
-            fi
+                PKL=$MEM_BASE/SparseGutenberg/$EXP_NAME/offset_${OFFSET}_prefix_${PREFIX}_suffix_${SUFFIX}_greedy.pkl
+                if [[ $FORCE -eq 0 && -f "$PKL" ]]; then
+                    echo "Skipping $EXP_NAME offset=$OFFSET prefix_length=$PREFIX suffix_length=$SUFFIX (exists: $PKL)"
+                    continue
+                fi
 
-            EXPORTS="OFFSET=$OFFSET,PREFIX_LENGTH=$PREFIX"
-            [[ -n "$EXTRA" ]] && EXPORTS="$EXPORTS,$EXTRA"
+                EXPORTS="OFFSET=$OFFSET,PREFIX_LENGTH=$PREFIX,SUFFIX_LENGTH=$SUFFIX"
+                [[ -n "$EXTRA" ]] && EXPORTS="$EXPORTS,$EXTRA"
 
-            echo "Submitting $SCRIPT ($EXP_NAME) offset=$OFFSET prefix_length=$PREFIX${EXTRA:+  [$EXTRA]}"
-            # ALL = propagate the full submission env (USER, PATH, …) so the scripts'
-            # $USER-based paths resolve, then layer our per-job vars on top.
-            sbatch --export=ALL,"$EXPORTS" "$SCRIPT_DIR/$SCRIPT"
+                echo "Submitting $SCRIPT ($EXP_NAME) offset=$OFFSET prefix_length=$PREFIX suffix_length=$SUFFIX${EXTRA:+  [$EXTRA]}"
+                # ALL = propagate the full submission env (USER, PATH, …) so the scripts'
+                # $USER-based paths resolve, then layer our per-job vars on top.
+                sbatch --export=ALL,"$EXPORTS" "$SCRIPT_DIR/$SCRIPT"
+            done
         done
     done
 done

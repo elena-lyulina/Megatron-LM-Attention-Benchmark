@@ -42,6 +42,7 @@ PDM_DIR=/users/elyulina/scratch/PDM
 
 OFFSET=${OFFSET:-0}
 PREFIX_LENGTH=${PREFIX_LENGTH:-500}
+SUFFIX_LENGTH=${SUFFIX_LENGTH:-500}
 
 ### VARIANT -> EXP_NAME ###
 GDN_VARIANT=${GDN_VARIANT:-base}
@@ -62,7 +63,7 @@ TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b
 export PYTHONPATH=$MEGATRON_LM_DIR:$PDM_DIR:$PDM_DIR/src:${PYTHONPATH:-}
 export CUDA_DEVICE_MAX_CONNECTIONS=1
 
-echo "RUN: variant=$GDN_VARIANT  exp=$EXP_NAME  offset=$OFFSET  prefix=$PREFIX_LENGTH  suffix=500"
+echo "RUN: variant=$GDN_VARIANT  exp=$EXP_NAME  offset=$OFFSET  prefix=$PREFIX_LENGTH  suffix=$SUFFIX_LENGTH"
 
 # GDN architecture flags. --use-checkpoint-args restores the standard network args (ffn-hidden-size,
 # position-embedding-type none, etc.), but the experimental GDN dims are re-passed here, same reason
@@ -105,7 +106,7 @@ srun \
         --repetitions 0,1,2,4,8,16,32,64,128,256 \
         --offset $OFFSET \
         --prefix-length $PREFIX_LENGTH \
-        --suffix-length 500 \
+        --suffix-length $SUFFIX_LENGTH \
         --batch-size 20 \
         --megatron-extra-args $GDN_EXTRA_ARGS"
 
@@ -128,6 +129,6 @@ srun \
         --save-path $MEM_BASE/SparseGutenberg \
         --offsets $OFFSET \
         --prefix-lengths $PREFIX_LENGTH \
-        --suffix-lengths 500"
+        --suffix-lengths $SUFFIX_LENGTH"
 
 echo "END TIME: $(date)"
