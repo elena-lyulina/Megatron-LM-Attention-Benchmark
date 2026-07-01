@@ -184,7 +184,7 @@ def build_long_row(task, tokenizer, bos_id, eos_id):
 
 ### MAIN ###
 
-def run(jsonl_dir, raw_dir, tokenizer_path, output_dir, num_proc, stats_only):
+def run(jsonl_dir, raw_dir, tokenizer_path, output_dir, regen_workers, build_workers, stats_only):
     t0 = time.time()
     output_dir.mkdir(parents=True, exist_ok=True)
     punkt = load_punkt()
@@ -194,7 +194,7 @@ def run(jsonl_dir, raw_dir, tokenizer_path, output_dir, num_proc, stats_only):
     probes, by_digest = load_probes(jsonl_dir)
 
     print("\n### REGENERATE CANONICALS ###")
-    ds = regenerate_canonicals(raw_dir, tokenizer, bos_id, eos_id, punkt, num_proc)
+    ds = regenerate_canonicals(raw_dir, tokenizer, bos_id, eos_id, punkt, regen_workers)
 
     print("\n### MATCH ###")
     # digest -> ds index (verify full equality on hit to exclude collisions)
@@ -240,7 +240,7 @@ def run(jsonl_dir, raw_dir, tokenizer_path, output_dir, num_proc, stats_only):
     keep_cols = {"book_id", "bucket_rep", "original_ids"}
     built = ds_m.map(
         partial(build_long_row, tokenizer=tokenizer, bos_id=bos_id, eos_id=eos_id),
-        num_proc=num_proc, desc="build long",
+        num_proc=build_workers, desc="build long",
         remove_columns=[c for c in ds_m.column_names if c not in keep_cols],
     )
 
@@ -349,7 +349,11 @@ def main():
     p.add_argument("--raw-dir", required=True, help="raw-hf-full HF dataset dir")
     p.add_argument("--tokenizer-path", default=TOKENIZER_ID)
     p.add_argument("--output-dir", required=True)
-    p.add_argument("--num-workers", type=int, default=None)
+    p.add_argument("--num-workers", type=int, default=None,
+                   help="map workers for the canonical-regen phase (default: all cpus)")
+    p.add_argument("--build-workers", type=int, default=32,
+                   help="map workers for the build-long phase; fewer is faster here since each "
+                        "worker only gets a handful of rows and spawn overhead dominates")
     p.add_argument("--stats-only", action="store_true",
                    help="compute length distribution + reports without writing token files")
     args = p.parse_args()
@@ -358,7 +362,8 @@ def main():
         raw_dir=Path(args.raw_dir),
         tokenizer_path=args.tokenizer_path,
         output_dir=Path(args.output_dir),
-        num_proc=args.num_workers or os.cpu_count(),
+        regen_workers=args.num_workers or os.cpu_count(),
+        build_workers=args.build_workers,
         stats_only=args.stats_only,
     )
 
