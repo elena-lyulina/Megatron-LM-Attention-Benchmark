@@ -183,6 +183,7 @@ def greedy_generate(model, prompt_ids: torch.Tensor, suffix_length: int,
     Returns:    [B, suffix_length] — generated tokens
     """
     from megatron.core.inference.contexts import StaticInferenceContext
+    from megatron.core.inference.utils import InferenceMode
 
     B, prompt_len = prompt_ids.shape
     device = prompt_ids.device
@@ -192,30 +193,35 @@ def greedy_generate(model, prompt_ids: torch.Tensor, suffix_length: int,
     ctx.reset()
     ctx.enable_prefill_mode()
 
-    # Prefill: process all prompt tokens, get logit for the first generated token
-    pos = torch.arange(prompt_len, dtype=torch.long, device=device).unsqueeze(0).expand(B, -1)
-    logits = model(prompt_ids, pos, attention_mask=None, inference_context=ctx,
-                   runtime_gather_output=True)
-    # logits: [B, 1, V]  (StaticInferenceContext sets materialize_only_last_token_logits=True)
-    ctx.sequence_len_offset = prompt_len
-    ctx.enable_decode_mode()
-
-    if prefill_callback is not None:
-        prefill_callback()
-
-    next_token = logits[:, 0, :].argmax(dim=-1, keepdim=True)  # [B, 1]
-    generated = [next_token]
-
-    # Decode: one new token per step, KV of previous tokens served from cache
-    for step_t in range(suffix_length - 1):
-        pos = torch.full((B, 1), ctx.sequence_len_offset, dtype=torch.long, device=device)
-        logits = model(next_token, pos, attention_mask=None, inference_context=ctx,
+    # The model only slices the logits down to the last prompt token when InferenceMode
+    # is active (upstream gates this on InferenceMode.is_active(), not on inference_context
+    # being set). Without it the prefill returns logits for every prompt position and we
+    # would pick position 0 below, generating from the wrong token and losing all recall.
+    with InferenceMode.active():
+        # Prefill: process all prompt tokens, get logit for the first generated token
+        pos = torch.arange(prompt_len, dtype=torch.long, device=device).unsqueeze(0).expand(B, -1)
+        logits = model(prompt_ids, pos, attention_mask=None, inference_context=ctx,
                        runtime_gather_output=True)
-        ctx.sequence_len_offset += 1
-        next_token = logits[:, 0, :].argmax(dim=-1, keepdim=True)
-        generated.append(next_token)
-        if step_callback is not None:
-            step_callback(step_t)
+        # logits: [B, 1, V]  (materialize_only_last_token_logits gives the last-token slice)
+        ctx.sequence_len_offset = prompt_len
+        ctx.enable_decode_mode()
+
+        if prefill_callback is not None:
+            prefill_callback()
+
+        next_token = logits[:, 0, :].argmax(dim=-1, keepdim=True)  # [B, 1]
+        generated = [next_token]
+
+        # Decode: one new token per step, KV of previous tokens served from cache
+        for step_t in range(suffix_length - 1):
+            pos = torch.full((B, 1), ctx.sequence_len_offset, dtype=torch.long, device=device)
+            logits = model(next_token, pos, attention_mask=None, inference_context=ctx,
+                           runtime_gather_output=True)
+            ctx.sequence_len_offset += 1
+            next_token = logits[:, 0, :].argmax(dim=-1, keepdim=True)
+            generated.append(next_token)
+            if step_callback is not None:
+                step_callback(step_t)
 
     return torch.cat(generated, dim=1)  # [B, suffix_length]
 
