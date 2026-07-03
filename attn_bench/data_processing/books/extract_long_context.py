@@ -3,9 +3,9 @@ Build long-context versions of the Gutenberg memorization probes.
 
 Each existing probe in `gutenberg_rep_jsonl/rep_{R}_token.jsonl` is one 8,192-token
 excerpt (`[BOS, c0..c8189, EOS]`). This script re-derives the source text + excerpt
-position for each probe and re-tokenizes a longer span around it — up to 3x seq len
-of extra context on each side, clamped to the book's content zone — while keeping the
-measured 8,192-token region byte-identical to what the model trained on.
+position for each probe and re-tokenizes a longer span around it — up to 1x seq len of
+extra context before and 3x seq len after, clamped to the book's content zone — while
+keeping the measured 8,192-token region byte-identical to what the model trained on.
 
 The old `book_id <-> token_ids` map is gone, so we recover it from the tokens: the
 per-book pipeline steps are deterministic, so we regenerate the canonical 8,192 for
@@ -31,6 +31,7 @@ import json
 import multiprocessing as mp
 import os
 import re
+import shutil
 import time
 from collections import defaultdict
 from functools import partial
@@ -38,6 +39,7 @@ from pathlib import Path
 
 import numpy as np
 from datasets import load_from_disk
+from tqdm import tqdm
 
 from .columns import Col
 from .find_excerpt_start import find_excerpt_start, load_punkt
@@ -51,14 +53,15 @@ from .tokenize_excerpts import SEQ_LEN, TOKENIZER_ID, load_tokenizer, tokenize_e
 HF_CACHE = False
 
 CONTENT_TOKENS = SEQ_LEN - 2          # sample content tokens: c0..c8189 (BOS/EOS excluded)
-MAX_EXTRA = 3 * SEQ_LEN               # cap on extra tokens per side (24,576)
-# Char bounds for the two extra tokenizations. We only keep the last/first MAX_EXTRA
+MAX_EXTRA_PREFIX = 1 * SEQ_LEN        # cap on extra prefix tokens before the sample (8,192)
+MAX_EXTRA_SUFFIX = 3 * SEQ_LEN        # cap on extra suffix tokens after the sample (24,576)
+# Char bounds for the two extra tokenizations. We only keep the last/first MAX_EXTRA_*
 # tokens, so a bound just avoids tokenizing far more than can ever be used. Sized to
-# guarantee the token caps even for dense text: forward needs CONTENT_TOKENS + MAX_EXTRA
+# guarantee the token caps even for dense text: forward needs CONTENT_TOKENS + MAX_EXTRA_SUFFIX
 # = 32,766 tokens (220k chars = 6.7 chars/tok headroom vs ~4.3 avg); backward needs
-# MAX_EXTRA = 24,576 tokens (170k chars = 6.9 headroom).
+# MAX_EXTRA_PREFIX = 8,192 tokens (60k chars = 7.3 headroom).
 FORWARD_CHARS = 220_000
-BACKWARD_CHARS = 170_000
+BACKWARD_CHARS = 60_000
 SNIPPET_TOKENS = 60                   # decoded preview length in the unmatched report
 
 
@@ -131,11 +134,11 @@ def regenerate_canonicals(raw_dir: Path, tokenizer, bos_id, eos_id, punkt, num_p
 ### LONG BUILD ###
 
 def build_long_row(task, tokenizer, bos_id, eos_id):
-    """Build the long sequence for one (book, bucket) task. Runs in parallel via `.map`.
+    """Build the long sequence for one (book, bucket) task. Runs in parallel in a process pool.
 
     `task` carries text + positions + `original_ids` (the matched probe). Sets `ok=False`
-    on a sample-reproduction miss (text/determinism drift) instead of raising, so the map
-    doesn't die on one book — the caller filters and logs those.
+    on a sample-reproduction miss (text/determinism drift) instead of raising, so one bad
+    book doesn't kill the pool — the caller filters and logs those.
     """
     text = task["text"] or ""
     start = task["excerpt_start"]
@@ -155,19 +158,19 @@ def build_long_row(task, tokenizer, bos_id, eos_id):
         task["extra_suffix_len"] = 0
         return task
 
-    # extra suffix: tokens past the sample, clamped to the content zone, capped at MAX_EXTRA
+    # extra suffix: tokens past the sample, clamped to the content zone, capped at MAX_EXTRA_SUFFIX
     zone_len = task["content_end"] - start           # chars from excerpt_start to content_end
     extra_suffix = []
-    for i in range(CONTENT_TOKENS, min(len(fwd.ids), CONTENT_TOKENS + MAX_EXTRA)):
+    for i in range(CONTENT_TOKENS, min(len(fwd.ids), CONTENT_TOKENS + MAX_EXTRA_SUFFIX)):
         if fwd.offsets[i][0] >= zone_len:
             break
         extra_suffix.append(fwd.ids[i])
 
-    # extra prefix: separate tokenization of the content zone before the sample, last MAX_EXTRA.
+    # extra prefix: separate tokenization of the content zone before the sample, last MAX_EXTRA_PREFIX.
     # bounded to BACKWARD_CHARS so we don't tokenize the whole front of a long book.
     bwd_start = max(task["content_start"], start - BACKWARD_CHARS)
     bwd = tokenizer.encode(text[bwd_start:start], add_special_tokens=False)
-    extra_prefix = bwd.ids[-MAX_EXTRA:] if MAX_EXTRA else []
+    extra_prefix = bwd.ids[-MAX_EXTRA_PREFIX:] if MAX_EXTRA_PREFIX else []
 
     input_ids = [bos_id] + extra_prefix + content + extra_suffix + [eos_id]
     sample_offset = 1 + len(extra_prefix)
@@ -182,19 +185,176 @@ def build_long_row(task, tokenizer, bos_id, eos_id):
     return task
 
 
+### RESUMABLE BUILD PLUMBING ###
+# The build-long phase is the slow, timeout-prone part. Instead of one all-or-nothing
+# `.map`, we stream tasks through a process pool and append each finished record to its
+# per-bucket file, fsync'ing every FLUSH_EVERY records. A re-run reads the committed
+# (bucket_rep, book_id) pairs, skips them, and continues — so a SLURM timeout only loses
+# up to FLUSH_EVERY records of work.
+
+FLUSH_EVERY = 500   # records between fsync checkpoints; build-long resumes at this granularity
+
+_WORKER: dict = {}   # per-process tokenizer, populated by the pool initializer
+
+
+def _pool_init(tokenizer_path):
+    tok, bos_id, eos_id = load_tokenizer(tokenizer_path)
+    _WORKER["tok"], _WORKER["bos"], _WORKER["eos"] = tok, bos_id, eos_id
+
+
+def _build_worker(task):
+    """Pool worker: build one row, return only the slim fields the parent writes (drops text)."""
+    rec = build_long_row(task, _WORKER["tok"], _WORKER["bos"], _WORKER["eos"])
+    return {
+        "book_id": rec["book_id"],
+        "bucket_rep": rec["bucket_rep"],
+        "ok": rec["ok"],
+        "input_ids": rec["input_ids"],
+        "original_ids": rec["original_ids"],
+        "sample_offset": rec["sample_offset"],
+        "extra_prefix_len": rec["extra_prefix_len"],
+        "extra_suffix_len": rec["extra_suffix_len"],
+    }
+
+
+def _manifest_params():
+    return {"seq_len": SEQ_LEN, "prefix_cap": MAX_EXTRA_PREFIX, "suffix_cap": MAX_EXTRA_SUFFIX,
+            "forward_chars": FORWARD_CHARS, "backward_chars": BACKWARD_CHARS}
+
+
+def _check_manifest(output_dir):
+    """Guard append-mode resumption: never mix records built under different params."""
+    path = output_dir / "build_manifest.json"
+    params = _manifest_params()
+    if path.exists():
+        old = json.loads(path.read_text())
+        if old != params:
+            raise SystemExit(
+                f"{path} was built with different params:\n  existing: {old}\n  current:  {params}\n"
+                f"Clear {output_dir} for a fresh build, or restore matching params to resume.")
+        return
+    stray = list(output_dir.glob("rep_*_token.jsonl")) + [output_dir / "lengths.jsonl"]
+    if any(p.exists() for p in stray):
+        raise SystemExit(f"{output_dir} has outputs but no build_manifest.json; clear it before building.")
+    path.write_text(json.dumps(params, indent=2))
+
+
+def _clean_jsonl(path):
+    """Read committed (bucket_rep, book_id) keys; rewrite the file to drop a torn trailing line."""
+    keys, good = set(), []
+    with open(path) as f:
+        for line in f:
+            line = line.rstrip("\n")
+            if not line:
+                continue
+            try:
+                rec = json.loads(line)
+            except json.JSONDecodeError:
+                continue   # only ever the last line, from a kill mid-write
+            keys.add((rec["bucket_rep"], rec["book_id"]))
+            good.append(line)
+    tmp = path.with_name(path.name + ".tmp")
+    with open(tmp, "w") as f:
+        if good:
+            f.write("\n".join(good) + "\n")
+    os.replace(tmp, path)
+    return keys
+
+
+def _load_done(output_dir, stats_only):
+    """(bucket_rep, book_id) already committed, from the primary outputs + the failures log."""
+    files = [output_dir / "lengths.jsonl"] if stats_only else sorted(output_dir.glob("rep_*_token.jsonl"))
+    files.append(output_dir / "build_failures.jsonl")
+    done = set()
+    for f in files:
+        if f.exists():
+            done |= _clean_jsonl(f)
+    return done
+
+
+def _iter_tasks(ds, book_ids, matched, probes, done):
+    """Yield build tasks for (book, bucket) pairs not already committed. Loads text lazily."""
+    for idx, refs in matched.items():
+        bid = book_ids[idx]
+        pending = [(rep, pi) for rep, pi in refs if (rep, bid) not in done]
+        if not pending:
+            continue
+        row = ds[idx]
+        for rep, pi in pending:
+            yield {
+                "book_id": bid,
+                "bucket_rep": rep,
+                "text": row["text"],
+                "excerpt_start": row[Col.EXCERPT_START],
+                "content_start": row[Col.CONTENT_START],
+                "content_end": row[Col.CONTENT_END],
+                "original_ids": probes[rep][pi],
+            }
+
+
+def collect_outputs(output_dir, stats_only):
+    """Rebuild counts, length rows, and failures from the committed files (works after a resume)."""
+    build_failures = []
+    fp = output_dir / "build_failures.jsonl"
+    if fp.exists():
+        with open(fp) as f:
+            for line in f:
+                if line.strip():
+                    r = json.loads(line)
+                    build_failures.append((r["bucket_rep"], r["book_id"]))
+
+    counts = defaultdict(int)
+    lengths_rows = []
+    sources = [output_dir / "lengths.jsonl"] if stats_only else sorted(output_dir.glob("rep_*_token.jsonl"))
+    for path in sources:
+        if not path.exists():
+            continue
+        with open(path) as f:
+            for line in f:
+                if not line.strip():
+                    continue
+                r = json.loads(line)
+                counts[r["bucket_rep"]] += 1
+                lengths_rows.append({
+                    "book_id": r["book_id"],
+                    "bucket_rep": r["bucket_rep"],
+                    "extra_prefix_len": r["extra_prefix_len"],
+                    "extra_suffix_len": r["extra_suffix_len"],
+                })
+    return counts, lengths_rows, build_failures
+
+
 ### MAIN ###
 
-def run(jsonl_dir, raw_dir, tokenizer_path, output_dir, regen_workers, build_workers, stats_only):
+def run(jsonl_dir, raw_dir, tokenizer_path, output_dir, canon_cache, regen_workers, build_workers, stats_only):
     t0 = time.time()
     output_dir.mkdir(parents=True, exist_ok=True)
     punkt = load_punkt()
     tokenizer, bos_id, eos_id = load_tokenizer(tokenizer_path)
 
+    print(f"config: prefix_cap={MAX_EXTRA_PREFIX:,} ({MAX_EXTRA_PREFIX // SEQ_LEN}L)  "
+          f"suffix_cap={MAX_EXTRA_SUFFIX:,} ({MAX_EXTRA_SUFFIX // SEQ_LEN}L)  "
+          f"forward_chars={FORWARD_CHARS:,}  backward_chars={BACKWARD_CHARS:,}")
+
     print("\n### PROBES ###")
     probes, by_digest = load_probes(jsonl_dir)
 
     print("\n### REGENERATE CANONICALS ###")
-    ds = regenerate_canonicals(raw_dir, tokenizer, bos_id, eos_id, punkt, regen_workers)
+    # The canonicals depend only on (raw_dir, tokenizer, seq_len), not on the build-long
+    # caps, so cache them to disk and reuse across resumed runs / build-param tweaks.
+    meta = {"raw_dir": str(raw_dir), "tokenizer": str(tokenizer_path), "seq_len": SEQ_LEN}
+    meta_path = canon_cache.with_name(canon_cache.name + ".meta.json")
+    if canon_cache.exists() and meta_path.exists() and json.loads(meta_path.read_text()) == meta:
+        ds = load_from_disk(str(canon_cache))
+        print(f"loaded {len(ds):,} cached canonicals from {canon_cache}")
+    else:
+        if canon_cache.exists():
+            print(f"  cache at {canon_cache} is stale (inputs changed); regenerating")
+            shutil.rmtree(canon_cache)
+        ds = regenerate_canonicals(raw_dir, tokenizer, bos_id, eos_id, punkt, regen_workers)
+        ds.save_to_disk(str(canon_cache))
+        meta_path.write_text(json.dumps(meta, indent=2))
+        print(f"cached canonicals -> {canon_cache}")
 
     print("\n### MATCH ###")
     # digest -> ds index (verify full equality on hit to exclude collisions)
@@ -205,14 +365,21 @@ def run(jsonl_dir, raw_dir, tokenizer_path, output_dir, regen_workers, build_wor
             collisions += 1
         else:
             digest_to_idx[d] = i
+    # Checked on the 44,847-book cache (2026-07-01): all 312 duplicate digests are the SAME
+    # book_id appearing twice in raw-hf-full (312 same-id, 0 different-book). regen skips the
+    # cross-book dedup that would have removed them, so they resurface here. Harmless: the
+    # matched excerpt is byte-identical either way, and first-wins indexing just keeps one.
     if collisions:
         print(f"  WARNING: {collisions} duplicate canonical digests among regenerated books")
 
+    # token-only view: indexing the full (memmapped) ds pulls each book's big `text` column,
+    # so verify equality against just token_ids (guards against rare blake2b hash collisions).
+    tok_view = ds.remove_columns([c for c in ds.column_names if c != Col.TOKEN_IDS])
     matched: dict[int, list[tuple[int, int]]] = {}   # ds_idx -> [(rep, probe_idx), ...]
     unmatched: list[tuple[int, int]] = []            # (rep, probe_idx)
     for digest, refs in by_digest.items():
         idx = digest_to_idx.get(digest)
-        if idx is not None and ds[idx][Col.TOKEN_IDS] == probes[refs[0][0]][refs[0][1]]:
+        if idx is not None and tok_view[idx][Col.TOKEN_IDS] == probes[refs[0][0]][refs[0][1]]:
             matched[idx] = refs
         else:
             unmatched.extend(refs)
@@ -222,69 +389,77 @@ def run(jsonl_dir, raw_dir, tokenizer_path, output_dir, regen_workers, build_wor
     print(f"  matched {n_matched:,} / {total:,} probes ({100 * n_matched / total:.1f}%)")
 
     print("\n### BUILD LONG ###")
-    # one row per (book, bucket). Build on the memory-mapped dataset via select+map
-    # (the path that actually shards across num_proc — from_list runs ~serially here).
-    # ds.select accepts repeated indices, so a book matched by >1 probe is duplicated.
-    flat_idx, flat_rep, flat_probe = [], [], []
-    for idx, refs in matched.items():
-        for rep, probe_idx in refs:
-            flat_idx.append(idx)
-            flat_rep.append(rep)
-            flat_probe.append(probes[rep][probe_idx])
+    # one row per (book, bucket). Streamed through a process pool and appended per bucket,
+    # so a timeout resumes from the last checkpoint instead of recomputing everything.
+    _check_manifest(output_dir)
+    book_ids = ds[Col.BOOK_ID]
+    done = _load_done(output_dir, stats_only)
+    n_tasks = sum(len(refs) for refs in matched.values())
+    if done:
+        print(f"  resuming: {len(done):,} / {n_tasks:,} (book, bucket) pairs already committed")
 
-    ds_m = ds.select(flat_idx).flatten_indices()
-    ds_m = ds_m.add_column("bucket_rep", flat_rep)
-    ds_m = ds_m.add_column("original_ids", flat_probe)
-    # keep only what the writer needs; drop text + intermediates so Arrow isn't hauling
-    # ~200k chars/row through the map output.
-    keep_cols = {"book_id", "bucket_rep", "original_ids"}
-    built = ds_m.map(
-        partial(build_long_row, tokenizer=tokenizer, bos_id=bos_id, eos_id=eos_id),
-        num_proc=build_workers, desc="build long",
-        remove_columns=[c for c in ds_m.column_names if c not in keep_cols],
-    )
+    writers = {}                                     # rep -> open append handle (full mode)
+    fail_f = open(output_dir / "build_failures.jsonl", "a")
+    lengths_f = open(output_dir / "lengths.jsonl", "a") if stats_only else None
 
-    # write per-bucket files (streaming), collect length stats, log build failures
-    writers = {} if not stats_only else None
-    counts = defaultdict(int)
-    lengths_rows = []
-    build_failures = []                              # (rep, book_id)
-    for rec in built:
-        rep = rec["bucket_rep"]
-        if not rec["ok"]:
-            build_failures.append((rep, rec["book_id"]))
-            continue
-        lengths_rows.append({
-            "book_id": rec["book_id"],
-            "bucket_rep": rep,
-            "extra_prefix_len": rec["extra_prefix_len"],
-            "extra_suffix_len": rec["extra_suffix_len"],
-        })
-        counts[rep] += 1
-        if writers is not None:
-            if rep not in writers:
-                writers[rep] = open(output_dir / f"rep_{rep}_token.jsonl", "w")
-            out = {
-                "book_id": rec["book_id"],
-                "bucket_rep": rep,
-                "input_ids": rec["input_ids"],
-                "original_ids": rec["original_ids"],
-                "sample_offset": rec["sample_offset"],
-                "sample_len": CONTENT_TOKENS,
-                "extra_prefix_len": rec["extra_prefix_len"],
-                "extra_suffix_len": rec["extra_suffix_len"],
-            }
-            writers[rep].write(json.dumps(out) + "\n")
-    if writers is not None:
-        for rep in sorted(writers):
-            writers[rep].close()
-            print(f"  rep_{rep}_token.jsonl: {counts[rep]:,} records")
-    else:
-        print("  stats-only: token files not written")
-    if build_failures:
-        print(f"  WARNING: {len(build_failures)} matched books failed sample reproduction")
+    def flush_all():
+        for w in list(writers.values()) + [fail_f, lengths_f]:
+            if w is not None:
+                w.flush()
+                os.fsync(w.fileno())
+
+    processed = 0
+    n_remaining = n_tasks - len(done)
+    ctx = mp.get_context("spawn")
+    with ctx.Pool(build_workers, initializer=_pool_init, initargs=(tokenizer_path,)) as pool:
+        tasks = _iter_tasks(ds, book_ids, matched, probes, done)
+        for rec in tqdm(pool.imap_unordered(_build_worker, tasks, chunksize=4),
+                        total=n_remaining, desc="build long"):
+            rep, bid = rec["bucket_rep"], rec["book_id"]
+            if not rec["ok"]:
+                fail_f.write(json.dumps({"bucket_rep": rep, "book_id": bid}) + "\n")
+            elif stats_only:
+                lengths_f.write(json.dumps({
+                    "book_id": bid, "bucket_rep": rep,
+                    "extra_prefix_len": rec["extra_prefix_len"],
+                    "extra_suffix_len": rec["extra_suffix_len"],
+                }) + "\n")
+            else:
+                if rep not in writers:
+                    writers[rep] = open(output_dir / f"rep_{rep}_token.jsonl", "a")
+                writers[rep].write(json.dumps({
+                    "book_id": bid,
+                    "bucket_rep": rep,
+                    "input_ids": rec["input_ids"],
+                    "original_ids": rec["original_ids"],
+                    "sample_offset": rec["sample_offset"],
+                    "sample_len": CONTENT_TOKENS,
+                    "extra_prefix_len": rec["extra_prefix_len"],
+                    "extra_suffix_len": rec["extra_suffix_len"],
+                }) + "\n")
+            processed += 1
+            if processed % FLUSH_EVERY == 0:
+                flush_all()
+                tqdm.write(f"  flushed {processed:,} new (of {n_remaining:,} remaining)")
+        flush_all()
+
+    for w in writers.values():
+        w.close()
+    fail_f.close()
+    if lengths_f is not None:
+        lengths_f.close()
+    print(f"  built {processed:,} new records this run")
 
     print("\n### WRITE ###")
+    # rebuild summaries from the committed files so counts are correct across resumed runs
+    counts, lengths_rows, build_failures = collect_outputs(output_dir, stats_only)
+    if stats_only:
+        print("  stats-only: token files not written")
+    else:
+        for rep in sorted(counts):
+            print(f"  rep_{rep}_token.jsonl: {counts[rep]:,} records")
+    if build_failures:
+        print(f"  WARNING: {len(build_failures)} matched books failed sample reproduction")
     write_lengths(output_dir, lengths_rows)
     write_unmatched(output_dir, unmatched, build_failures, probes, tokenizer)
     print_length_summary(lengths_rows)
@@ -337,10 +512,10 @@ def print_length_summary(rows: list[dict]):
     pre = np.array([r["extra_prefix_len"] for r in rows])
     suf = np.array([r["extra_suffix_len"] for r in rows])
     print(f"\nExtra-length summary ({len(rows):,} books):")
-    for name, arr in (("prefix", pre), ("suffix", suf)):
-        pct = 100 * (arr >= MAX_EXTRA).mean()
+    for name, arr, cap in (("prefix", pre, MAX_EXTRA_PREFIX), ("suffix", suf, MAX_EXTRA_SUFFIX)):
+        pct = 100 * (arr >= cap).mean()
         print(f"  {name}: mean={arr.mean():,.0f}  median={np.median(arr):,.0f}  "
-              f"max={arr.max():,}  at-cap({MAX_EXTRA:,})={pct:.1f}%")
+              f"max={arr.max():,}  at-cap({cap:,})={pct:.1f}%")
 
 
 def main():
@@ -349,21 +524,25 @@ def main():
     p.add_argument("--raw-dir", required=True, help="raw-hf-full HF dataset dir")
     p.add_argument("--tokenizer-path", default=TOKENIZER_ID)
     p.add_argument("--output-dir", required=True)
+    p.add_argument("--canon-cache", default=None,
+                   help="dir for the cached regenerated canonicals (default: <output-dir>/canon_cache); "
+                        "reused across resumed runs so regen isn't repeated")
     p.add_argument("--num-workers", type=int, default=None,
                    help="map workers for the canonical-regen phase (default: all cpus)")
-    p.add_argument("--build-workers", type=int, default=32,
-                   help="map workers for the build-long phase; fewer is faster here since each "
-                        "worker only gets a handful of rows and spawn overhead dominates")
+    p.add_argument("--build-workers", type=int, default=None,
+                   help="map workers for the build-long phase (default: all cpus)")
     p.add_argument("--stats-only", action="store_true",
                    help="compute length distribution + reports without writing token files")
     args = p.parse_args()
+    output_dir = Path(args.output_dir)
     run(
         jsonl_dir=Path(args.jsonl_dir),
         raw_dir=Path(args.raw_dir),
         tokenizer_path=args.tokenizer_path,
-        output_dir=Path(args.output_dir),
+        output_dir=output_dir,
+        canon_cache=Path(args.canon_cache) if args.canon_cache else output_dir / "canon_cache",
         regen_workers=args.num_workers or os.cpu_count(),
-        build_workers=args.build_workers,
+        build_workers=args.build_workers or os.cpu_count(),
         stats_only=args.stats_only,
     )
 

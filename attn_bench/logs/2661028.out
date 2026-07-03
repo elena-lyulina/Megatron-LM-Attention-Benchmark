@@ -1,0 +1,20 @@
+START TIME: Wed Jul  1 13:37:24 CEST 2026
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+
+### PROBES ###
+  rep_0_token.jsonl: 660 probes
+  rep_128_token.jsonl: 660 probes
+  rep_16_token.jsonl: 660 probes
+  rep_1_token.jsonl: 660 probes
+  rep_256_token.jsonl: 660 probes
+  rep_2_token.jsonl: 660 probes
+  rep_32_token.jsonl: 660 probes
+  rep_4_token.jsonl: 660 probes
+  rep_64_token.jsonl: 660 probes
+  rep_8_token.jsonl: 660 probes
+Loaded 6,600 probes across 10 buckets
+
+### REGENERATE CANONICALS ###
+Loaded raw corpus: 56,982 books
+END TIME: Wed Jul  1 13:38:23 CEST 2026
+Done. Output in /users/elyulina/store/datasets/tokenized/gutenberg_rep_jsonl_long

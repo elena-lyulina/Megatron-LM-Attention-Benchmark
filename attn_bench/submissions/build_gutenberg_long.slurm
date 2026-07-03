@@ -6,7 +6,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=96
-#SBATCH --time=2:00:00
+#SBATCH --time=3:00:00
 #SBATCH --environment=nemo
 #SBATCH --no-requeue
 #SBATCH --mail-type=BEGIN,END,FAIL
@@ -20,8 +20,8 @@
 # Usage (from attn_bench/):
 #   sbatch submissions/build_gutenberg_long.slurm              # full run
 #   STATS_ONLY=1 sbatch submissions/build_gutenberg_long.slurm # length stats only, no token files
-# Worker counts are split per phase (regen is light + fast, build-long is tokenization-heavy):
-#   NUM_WORKERS=96 BUILD_WORKERS=32 sbatch submissions/build_gutenberg_long.slurm  # defaults
+# Worker counts are split per phase (both default to all cpus; override either):
+#   NUM_WORKERS=96 BUILD_WORKERS=32 sbatch submissions/build_gutenberg_long.slurm
 
 echo "START TIME: $(date)"
 
@@ -50,7 +50,7 @@ python3 -u -m attn_bench.data_processing.books.extract_long_context \
     --tokenizer-path $TOKENIZER_PATH \
     --output-dir     $OUTPUT_DIR \
     --num-workers    ${NUM_WORKERS:-$SLURM_CPUS_PER_TASK} \
-    --build-workers  ${BUILD_WORKERS:-32} \
+    --build-workers  ${BUILD_WORKERS:-$SLURM_CPUS_PER_TASK} \
     ${STATS_ONLY:+--stats-only}
 
 
