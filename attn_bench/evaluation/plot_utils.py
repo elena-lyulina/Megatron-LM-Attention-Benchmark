@@ -543,7 +543,7 @@ def show_examples(tok, rep, exp_map, col_bg, sample_indices,
         f'<summary style="cursor:pointer;font-size:16px;font-weight:bold;padding:4px 0">'
         f'repetition = {rep}</summary>'
         f'<div style="width:100%;overflow-x:auto">'
-        f'<table style="border-collapse:collapse;border:1px solid #ccc">'
+        f'<table style="border-collapse:collapse;border:1px solid #ccc;width:max-content;max-width:none">'
         + ''.join(rows) +
         '</table></div>'
         f'</details>'
