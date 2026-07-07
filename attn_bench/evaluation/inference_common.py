@@ -13,13 +13,16 @@ from pathlib import Path
 BOS_TOKEN_ID = 128000  # Llama-3 beginning-of-sequence token
 
 
-def load_megatron_model(ckpt_dir: str, tokenizer_path: str, extra_megatron_args: list | None = None):
+def load_megatron_model(ckpt_dir: str, tokenizer_path: str, extra_megatron_args: list | None = None,
+                        tensor_parallel: int = 1):
     """Load model from a torch_dist checkpoint using --use-checkpoint-args.
 
-    TP=2 shards are merged transparently by DCP resharding (no pre-conversion needed).
-    Architecture flags are read from the checkpoint; extra_megatron_args allows passing
-    boolean store_true flags (e.g. --attention-output-gate) that --use-checkpoint-args
-    may not restore correctly.
+    Checkpoint TP shards are resharded transparently by DCP to tensor_parallel (no
+    pre-conversion needed), so tensor_parallel can differ from the training TP. Sharding the
+    heads across ranks cuts per-rank attention memory, which lets the unfused-attention
+    models run at longer sequence lengths. Architecture flags are read from the checkpoint;
+    extra_megatron_args allows passing boolean store_true flags (e.g. --attention-output-gate)
+    that --use-checkpoint-args may not restore correctly.
     """
     from gpt_builders import gpt_builder
     from megatron.training import get_model
@@ -31,7 +34,7 @@ def load_megatron_model(ckpt_dir: str, tokenizer_path: str, extra_megatron_args:
     sys.argv = [
         'megatron_inference_sparse',
         '--use-checkpoint-args',
-        '--tensor-model-parallel-size', '1',
+        '--tensor-model-parallel-size', str(tensor_parallel),
         '--pipeline-model-parallel-size', '1',
         '--context-parallel-size', '1',
         '--micro-batch-size', '1',

@@ -31,7 +31,9 @@ import torch.distributed as dist
 import torch.nn.functional as F
 from tqdm import tqdm
 
+from attn_bench.evaluation.gdn_state_norm import install_state_norm_hooks
 from attn_bench.evaluation.inference_common import BOS_TOKEN_ID, find_rep_paths, load_megatron_model
+from megatron.core import parallel_state as mpu
 
 SEQ_LEN = 8192  # training sequence length; suffix (position >= sample_len) is the extrapolation region
 
@@ -68,7 +70,7 @@ def load_long_sequence(path: Path, max_length: int | None, max_samples: int | No
 ### FORWARD ###
 
 @torch.no_grad()
-def per_position_nll(model, seq_ids: torch.Tensor, seq_chunk: int) -> torch.Tensor:
+def per_position_nll(model, seq_ids: torch.Tensor, softmax_chunk: int) -> torch.Tensor:
     """One forward over the whole sequence; return per-position NLL [S-1] (float32).
 
     nll[k] is the loss for predicting token at index k+1, i.e. position k measured from
@@ -82,11 +84,12 @@ def per_position_nll(model, seq_ids: torch.Tensor, seq_chunk: int) -> torch.Tens
     device = seq_ids.device
     pos = torch.arange(S1, dtype=torch.long, device=device).unsqueeze(0)
 
-    logits = model(inputs, pos, attention_mask=None)  # [1, S1, V] (bf16)
+    # runtime_gather_output gathers the vocab-parallel logits under TP (no-op at TP=1).
+    logits = model(inputs, pos, attention_mask=None, runtime_gather_output=True)  # [1, S1, V] (bf16)
 
     nll = torch.empty(S1, dtype=torch.float32, device=device)
-    for c0 in range(0, S1, seq_chunk):
-        c1 = min(c0 + seq_chunk, S1)
+    for c0 in range(0, S1, softmax_chunk):
+        c1 = min(c0 + softmax_chunk, S1)
         logp = -F.log_softmax(logits[:, c0:c1, :].float(), dim=-1)
         nll[c0:c1] = logp.gather(2, labels[:, c0:c1].unsqueeze(-1)).squeeze(-1).squeeze(0)
     del logits
@@ -95,21 +98,34 @@ def per_position_nll(model, seq_ids: torch.Tensor, seq_chunk: int) -> torch.Tens
 
 ### RUN ###
 
-def run_rep(model, dataset, maxpos, rank, world_size, seq_chunk, device, desc=""):
+def run_rep(model, dataset, maxpos, rank, softmax_chunk, device, desc="", accum=None):
     """Accumulate per-position NLL sum / sqsum / count over this rank's shard.
 
-    Sharding is a plain stride (rank, rank+world_size, ...): no padding, no duplicate
-    samples, so the all_reduce below is an exact pooled average.
+    Sharding and pooling are over the *data-parallel* group, not WORLD, so it is correct at
+    any tensor-parallel size. At TP=1 the DP group is WORLD (plain stride over all ranks); at
+    TP=world_size the DP group is a single rank (no stride, no cross-rank reduce -- each rank
+    already holds the full loss because TP gathers it). If accum is given, the GDN state norms
+    are pooled the same way.
     """
+    dp_rank = mpu.get_data_parallel_rank()
+    dp_size = mpu.get_data_parallel_world_size()
+    dp_group = mpu.get_data_parallel_group()
+
     pos_sum = torch.zeros(maxpos, dtype=torch.float64, device=device)
     pos_sqsum = torch.zeros(maxpos, dtype=torch.float64, device=device)
     pos_cnt = torch.zeros(maxpos, dtype=torch.float64, device=device)
+    if accum is not None:
+        accum.reset_bucket(maxpos)
 
-    # Every rank strides its own shard; only rank 0 prints the bar (they run in lockstep).
-    shard = range(rank, len(dataset), world_size)
+    # Each DP rank strides its own shard; only global rank 0 prints the bar.
+    shard = range(dp_rank, len(dataset), dp_size)
     for idx in tqdm(shard, desc=desc, disable=(rank != 0), mininterval=5.0):
         seq = torch.tensor(dataset[idx], dtype=torch.long, device=device).unsqueeze(0)
-        nll = per_position_nll(model, seq, seq_chunk).double()
+        if accum is not None:
+            accum.reset_sequence()
+        nll = per_position_nll(model, seq, softmax_chunk).double()
+        if accum is not None:
+            accum.accumulate()  # reads the norms the GDN wrappers recorded during the forward
         L = nll.shape[0]
         pos_sum[:L] += nll
         pos_sqsum[:L] += nll * nll
@@ -118,7 +134,9 @@ def run_rep(model, dataset, maxpos, rank, world_size, seq_chunk, device, desc=""
         torch.cuda.empty_cache()
 
     for t in (pos_sum, pos_sqsum, pos_cnt):
-        dist.all_reduce(t, op=dist.ReduceOp.SUM)
+        dist.all_reduce(t, op=dist.ReduceOp.SUM, group=dp_group)
+    if accum is not None:
+        accum.reduce(dp_group)
     return pos_sum, pos_sqsum, pos_cnt
 
 
@@ -148,7 +166,17 @@ def parse_args():
     p.add_argument("--max-length", type=int, default=None,
                    help="Cap each sequence to this many tokens (BOS+sample+suffix). Default: no cap (full suffix).")
     p.add_argument("--max-samples", type=int, default=None, help="Cap sequences per bucket (for testing/calibration)")
-    p.add_argument("--seq-chunk", type=int, default=4096, help="Sequence chunk for the chunked log_softmax (memory knob)")
+    p.add_argument("--tensor-parallel", type=int, default=1,
+                   help="Tensor-parallel size. >1 shards the attention heads across GPUs (less memory "
+                        "per GPU, no data-parallel throughput), letting unfused-attention models run longer.")
+    p.add_argument("--softmax-chunk", type=int, default=4096,
+                   help="How many positions to run log_softmax over at once. Smaller uses less memory, "
+                        "same result. Does not change the NLL values.")
+    p.add_argument("--log-state-norm", action="store_true",
+                   help="For GDN models, also write recurrent-state norms to rep_{R}_state.npz. "
+                        "No effect on attention models (they have no state to log).")
+    p.add_argument("--state-chunk", type=int, default=128,
+                   help="Read the GDN state every this many tokens (only used with --log-state-norm).")
     p.add_argument("--overwrite", action="store_true", help="Recompute buckets whose rep_{R}.npz already exists")
     p.add_argument("--container-env", default=None, help="Container/env name, recorded for provenance")
     p.add_argument("--megatron-extra-args", nargs=argparse.REMAINDER, default=None,
@@ -165,39 +193,57 @@ def write_run_metadata(output_dir: Path, args):
             "ckpt_dir": args.ckpt_dir,
             "max_length": args.max_length,
             "max_samples": args.max_samples,
+            "tensor_parallel": args.tensor_parallel,
             "repetitions": args.repetitions,
             "timestamp": datetime.now(timezone.utc).isoformat(),
         }, f, indent=2)
 
 
-def config_name(max_length: int | None, max_samples: int | None) -> str:
+def config_name(max_length: int | None, max_samples: int | None, tensor_parallel: int = 1) -> str:
     # Encodes the params that change the numbers, so different runs land in different
-    # folders and the "already done" check doubles as a validity check.
+    # folders and the "already done" check doubles as a validity check. tp>1 gets a suffix
+    # so a TP run does not clash with the data-parallel (TP=1) run at the same length.
     samples = max_samples if max_samples is not None else "all"
     length = max_length if max_length is not None else "full"
-    return f"{samples}_samples_{length}_tokens"
+    tp = f"_tp{tensor_parallel}" if tensor_parallel > 1 else ""
+    return f"{samples}_samples_{length}_tokens{tp}"
 
 
-def config_dir(experiment_path: str, max_length: int | None, max_samples: int | None) -> Path:
-    return Path(experiment_path) / config_name(max_length, max_samples)
+def config_dir(experiment_path: str, max_length: int | None, max_samples: int | None,
+               tensor_parallel: int = 1) -> Path:
+    return Path(experiment_path) / config_name(max_length, max_samples, tensor_parallel)
 
 
 def rep_npz_path(output_dir: Path, rep: int) -> Path:
     return output_dir / f"rep_{rep}.npz"
 
 
+def rep_state_npz_path(output_dir: Path, rep: int) -> Path:
+    return output_dir / f"rep_{rep}_state.npz"
+
+
+def rep_done(output_dir: Path, rep: int, log_state_norm: bool) -> bool:
+    # A bucket is done when its NLL file exists -- and, when logging state norms, its state
+    # file too (so turning --log-state-norm on for a finished model re-runs to fill it in).
+    if not rep_npz_path(output_dir, rep).exists():
+        return False
+    if log_state_norm and not rep_state_npz_path(output_dir, rep).exists():
+        return False
+    return True
+
+
 def all_reps_done(args) -> bool:
-    """True if every requested bucket's rep_{R}.npz is already on disk.
+    """True if every requested bucket is already on disk (NLL, plus state when logging).
 
     Checked before the (expensive) checkpoint load, from the filesystem only, so every
     rank reaches the same verdict independently -- no process group, no barrier to
     deadlock. Lets a redundantly-submitted job no-op cheaply.
     """
-    output_dir = config_dir(args.experiment_path, args.max_length, args.max_samples)
+    output_dir = config_dir(args.experiment_path, args.max_length, args.max_samples, args.tensor_parallel)
     paths = find_rep_paths(Path(args.data_folder), {int(r) for r in args.repetitions.split(",")})
     if not paths:
         return False
-    return all(rep_npz_path(output_dir, int(p.stem.split("_")[1])).exists() for p in paths)
+    return all(rep_done(output_dir, int(p.stem.split("_")[1]), args.log_state_norm) for p in paths)
 
 
 def main():
@@ -205,15 +251,21 @@ def main():
 
     if not args.overwrite and all_reps_done(args):
         if int(os.environ.get("RANK", "0")) == 0:
-            print(f"All requested buckets already present in {config_dir(args.experiment_path, args.max_length, args.max_samples)} -- skipping checkpoint load.")
+            print(f"All requested buckets already present in {config_dir(args.experiment_path, args.max_length, args.max_samples, args.tensor_parallel)} -- skipping checkpoint load.")
         return
 
-    model = load_megatron_model(args.ckpt_dir, args.tokenizer_path, args.megatron_extra_args)
+    model = load_megatron_model(args.ckpt_dir, args.tokenizer_path, args.megatron_extra_args,
+                                tensor_parallel=args.tensor_parallel)
     rank = dist.get_rank()
-    world_size = dist.get_world_size()
     device = next(model.parameters()).device
 
-    output_dir = config_dir(args.experiment_path, args.max_length, args.max_samples)
+    accum = None
+    if args.log_state_norm:
+        accum = install_state_norm_hooks(model, args.state_chunk, device)
+        if accum is None and rank == 0:
+            print("--log-state-norm set but model has no GatedDeltaNet layers; skipping state norms.")
+
+    output_dir = config_dir(args.experiment_path, args.max_length, args.max_samples, args.tensor_parallel)
     if rank == 0:
         write_run_metadata(output_dir, args)
 
@@ -224,7 +276,7 @@ def main():
         rep = int(path.stem.split("_")[1])
         rep_file = rep_npz_path(output_dir, rep)
 
-        if rep_file.exists() and not args.overwrite:
+        if rep_done(output_dir, rep, accum is not None) and not args.overwrite:
             if rank == 0:
                 print(f"Skipping rep={rep} (already done)")
             continue
@@ -235,13 +287,17 @@ def main():
             print(f"rep={rep}: {len(dataset)} sequences, maxpos={maxpos}")
 
         pos_sum, pos_sqsum, pos_cnt = run_rep(
-            model, dataset, maxpos, rank, world_size, args.seq_chunk, device,
-            desc=f"rep={rep}",
+            model, dataset, maxpos, rank, args.softmax_chunk, device,
+            desc=f"rep={rep}", accum=accum,
         )
 
         if rank == 0:
             save_rep(rep_file, pos_sum, pos_sqsum, pos_cnt)
             print(f"  done rep={rep} -> {rep_file}")
+            if accum is not None:
+                state_file = rep_state_npz_path(output_dir, rep)
+                accum.save(state_file, SEQ_LEN)
+                print(f"  done rep={rep} state -> {state_file}")
         dist.barrier()
 
     if rank == 0:
