@@ -1,0 +1,23 @@
+=== Parameter count: gdn_1B_args_megatron_defaults_32heads ===
+(embeddings tied with output head)
+
+TOTAL                                                        1,607,799,808
+
+By category:
+embeddings + output head                                       262,930,432
+mlp / ffn                                                      805,339,136
+mixer (rest)                                                   539,530,240
+
+By param (layer index collapsed):
+decoder.final_layernorm.weight                                       2,048
+decoder.layers.*.mlp.linear_fc1.layer_norm_weight                   32,768
+decoder.layers.*.mlp.linear_fc1.weight                         536,870,912
+decoder.layers.*.mlp.linear_fc2.weight                         268,435,456
+decoder.layers.*.self_attention.A_log                                  512
+decoder.layers.*.self_attention.conv1d.weight                      524,288
+decoder.layers.*.self_attention.dt_bias                                512
+decoder.layers.*.self_attention.in_proj.layer_norm_weight           32,768
+decoder.layers.*.self_attention.in_proj.weight                 404,750,336
+decoder.layers.*.self_attention.out_norm.weight                      2,048
+decoder.layers.*.self_attention.out_proj.weight                134,217,728
+embedding.word_embeddings.weight                               262,930,432

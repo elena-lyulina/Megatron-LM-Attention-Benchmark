@@ -1,0 +1,436 @@
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: W0701 09:01:33.235000 171987 torch/distributed/run.py:851] 
+0: W0701 09:01:33.235000 171987 torch/distributed/run.py:851] *****************************************
+0: W0701 09:01:33.235000 171987 torch/distributed/run.py:851] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+0: W0701 09:01:33.235000 171987 torch/distributed/run.py:851] *****************************************
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+0:   sentry_sdk.init(
+0: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+0:   sentry_sdk.init(
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+0:   _warnings.warn(
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+0:   _warnings.warn(
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+0:   _warnings.warn(
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+0:   _warnings.warn(
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py:90: UserWarning: The argument order of load has been changed. Please check the document to avoid future breakages.
+0:   result = func(*args, **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py:90: UserWarning: The argument order of load has been changed. Please check the document to avoid future breakages.
+0:   result = func(*args, **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py:90: UserWarning: The argument order of load has been changed. Please check the document to avoid future breakages.
+0:   result = func(*args, **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py:481: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to load in a single process.
+0:   return func(args[0], **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py:481: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to load in a single process.
+0:   return func(args[0], **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py:481: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to load in a single process.
+0:   return func(args[0], **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py:90: UserWarning: The argument order of load has been changed. Please check the document to avoid future breakages.
+0:   result = func(*args, **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py:481: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to load in a single process.
+0:   return func(args[0], **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/planner_helpers.py:489: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   device = getattr(value, "device", None)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/planner_helpers.py:489: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   device = getattr(value, "device", None)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/planner_helpers.py:489: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   device = getattr(value, "device", None)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/planner_helpers.py:489: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   device = getattr(value, "device", None)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/default_planner.py:483: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   and md.size != obj.size()
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/default_planner.py:483: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   and md.size != obj.size()
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/default_planner.py:483: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   and md.size != obj.size()
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/default_planner.py:483: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   and md.size != obj.size()
+0: /opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/utils.py:2099: UserWarning: window_size should be (-1, -1) or (>=0, >=0) for attn_mask_type=no_mask
+0:   warnings.warn(
+0: /opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/utils.py:2099: UserWarning: window_size should be (-1, -1) or (>=0, >=0) for attn_mask_type=no_mask
+0:   warnings.warn(
+0: /opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/utils.py:2099: UserWarning: window_size should be (-1, -1) or (>=0, >=0) for attn_mask_type=no_mask
+0:   warnings.warn(
+0: /opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/utils.py:2099: UserWarning: window_size should be (-1, -1) or (>=0, >=0) for attn_mask_type=no_mask
+0:   warnings.warn(
+0: /opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/utils.py:2099: UserWarning: window_size should be (-1, -1) or (>=0, >=0) for attn_mask_type=no_mask
+0:   warnings.warn(
+0: /opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/utils.py:2099: UserWarning: window_size should be (-1, -1) or (>=0, >=0) for attn_mask_type=no_mask
+0:   warnings.warn(
+0: /opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/utils.py:2099: UserWarning: window_size should be (-1, -1) or (>=0, >=0) for attn_mask_type=no_mask
+0:   warnings.warn(
+0: /opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/utils.py:2099: UserWarning: window_size should be (-1, -1) or (>=0, >=0) for attn_mask_type=no_mask
+0:   warnings.warn(
+0: [rank0]:[W701 09:24:42.858164443 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [rank1]:[W701 09:24:44.898539366 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [rank3]:[W701 09:24:45.702768590 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [rank2]:[W701 09:24:45.754636143 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: Processing repetitions:   0%|          | 0/10 [00:00<?, ?it/s]
+0: 
+0: Processing offsets:   0%|          | 0/1 [00:00<?, ?it/s][A
+0: 
+0: 
+0:   0%|          | 0/1 [00:00<?, ?it/s]
+0: [A[A
+0: 
+0: 
+0: 
+0:   0%|          | 0/1 [00:00<?, ?it/s][A[A[A
+0: 
+0: 
+0: 
+0: 
+0: Generating train split: 0 examples [00:00, ? examples/s][A[A[A[A
+0: Generating train split: 660 examples [00:00, 28490.98 examples/s]
+0: 
+0: 
+0: 
+0: 100%|██████████| 1/1 [00:01<00:00,  1.18s/it][A[A[A
+0: 
+0: 
+0: 
+0:                                              [A[A[A
+0: 
+0: 
+0: 100%|██████████| 1/1 [00:01<00:00,  1.18s/it][A[A
+0: 
+0: 
+0:                                              
+0: [A[A
+0: 
+0: Processing offsets: 100%|██████████| 1/1 [00:01<00:00,  1.18s/it][A
+0: 
+0:                                                                  [A
+0: Processing repetitions:  10%|█         | 1/10 [00:01<00:10,  1.18s/it]
+0: 
+0: Processing offsets:   0%|          | 0/1 [00:00<?, ?it/s][A
+0: 
+0: 
+0:   0%|          | 0/1 [00:00<?, ?it/s]
+0: [A[A
+0: 
+0: 
+0: 
+0:   0%|          | 0/1 [00:00<?, ?it/s][A[A[A
+0: 
+0: 
+0: 
+0: 
+0: Generating train split: 0 examples [00:00, ? examples/s]
+0: [A[A[A[A
+0: Generating train split: 660 examples [00:00, 30421.23 examples/s]
+0: 
+0: 
+0: 
+0: 100%|██████████| 1/1 [00:00<00:00,  2.07it/s][A[A[A
+0: 
+0: 
+0: 
+0:                                              [A[A[A
+0: 
+0: 
+0: 100%|██████████| 1/1 [00:00<00:00,  2.07it/s][A[A
+0: 
+0: 
+0:                                              
+0: [A[A
+0: 
+0: Processing offsets: 100%|██████████| 1/1 [00:00<00:00,  2.07it/s][A
+0: 
+0:                                                                  [A
+0: Processing repetitions:  20%|██        | 2/10 [00:01<00:06,  1.30it/s]
+0: 
+0: Processing offsets:   0%|          | 0/1 [00:00<?, ?it/s][A
+0: 
+0: 
+0:   0%|          | 0/1 [00:00<?, ?it/s]
+0: [A[A
+0: 
+0: 
+0: 
+0:   0%|          | 0/1 [00:00<?, ?it/s][A[A[A
+0: 
+0: 
+0: 
+0: 
+0: Generating train split: 0 examples [00:00, ? examples/s][A[A[A[A
+0: Generating train split: 660 examples [00:00, 31065.08 examples/s]
+0: 
+0: 
+0: 
+0: 100%|██████████| 1/1 [00:00<00:00,  2.10it/s][A[A[A
+0: 
+0: 
+0: 
+0:                                              [A[A[A
+0: 
+0: 
+0: 100%|██████████| 1/1 [00:00<00:00,  2.09it/s][A[A
+0: 
+0: 
+0:                                              [A[A
+0: 
+0: Processing offsets: 100%|██████████| 1/1 [00:00<00:00,  2.09it/s][A
+0: 
+0:                                                                  
+0: [A
+0: Processing repetitions:  30%|███       | 3/10 [00:02<00:04,  1.57it/s]
+0: 
+0: Processing offsets:   0%|          | 0/1 [00:00<?, ?it/s][A
+0: 
+0: 
+0:   0%|          | 0/1 [00:00<?, ?it/s][A[A
+0: 
+0: 
+0: 
+0:   0%|          | 0/1 [00:00<?, ?it/s][A[A[A
+0: 
+0: 
+0: 
+0: 
+0: Generating train split: 0 examples [00:00, ? examples/s][A[A[A[A
+0: Generating train split: 660 examples [00:00, 31418.72 examples/s]
+0: 
+0: 
+0: 
+0: 100%|██████████| 1/1 [00:00<00:00,  2.11it/s][A[A[A
+0: 
+0: 
+0: 
+0:                                              [A[A[A
+0: 
+0: 
+0: 100%|██████████| 1/1 [00:00<00:00,  2.11it/s][A[A
+0: 
+0: 
+0:                                              [A[A
+0: 
+0: Processing offsets: 100%|██████████| 1/1 [00:00<00:00,  2.11it/s][A
+0: 
+0:                                                                  [A
+0: Processing repetitions:  40%|████      | 4/10 [00:02<00:03,  1.75it/s]
+0: 
+0: Processing offsets:   0%|          | 0/1 [00:00<?, ?it/s][A
+0: 
+0: 
+0:   0%|          | 0/1 [00:00<?, ?it/s][A[A
+0: 
+0: 
+0: 
+0:   0%|          | 0/1 [00:00<?, ?it/s][A[A[A
+0: 
+0: 
+0: 
+0: 
+0: Generating train split: 0 examples [00:00, ? examples/s][A[A[A[A
+0: Generating train split: 660 examples [00:00, 31138.11 examples/s]
+0: 
+0: 
+0: 
+0: 100%|██████████| 1/1 [00:00<00:00,  2.13it/s][A[A[A
+0: 
+0: 
+0: 
+0:                                              [A[A[A
+0: 
+0: 
+0: 100%|██████████| 1/1 [00:00<00:00,  2.13it/s][A[A
+0: 
+0: 
+0:                                              
+0: [A[A
+0: 
+0: Processing offsets: 100%|██████████| 1/1 [00:00<00:00,  2.13it/s][A
+0: 
+0:                                                                  [A
+0: Processing repetitions:  50%|█████     | 5/10 [00:03<00:02,  1.87it/s]
+0: 
+0: Processing offsets:   0%|          | 0/1 [00:00<?, ?it/s][A
+0: 
+0: 
+0:   0%|          | 0/1 [00:00<?, ?it/s][A[A
+0: 
+0: 
+0: 
+0:   0%|          | 0/1 [00:00<?, ?it/s][A[A[A
+0: 
+0: 
+0: 
+0: 
+0: Generating train split: 0 examples [00:00, ? examples/s][A[A[A[A
+0: Generating train split: 660 examples [00:00, 31125.16 examples/s]
+0: 
+0: 
+0: 
+0: 100%|██████████| 1/1 [00:00<00:00,  2.10it/s][A[A[A
+0: 
+0: 
+0: 
+0:                                              [A[A[A
+0: 
+0: 
+0: 100%|██████████| 1/1 [00:00<00:00,  2.10it/s][A[A
+0: 
+0: 
+0:                                              [A[A
+0: 
+0: Processing offsets: 100%|██████████| 1/1 [00:00<00:00,  2.10it/s][A
+0: 
+0:                                                                  [A
+0: Processing repetitions:  60%|██████    | 6/10 [00:03<00:02,  1.94it/s]
+0: 
+0: Processing offsets:   0%|          | 0/1 [00:00<?, ?it/s][A
+0: 
+0: 
+0:   0%|          | 0/1 [00:00<?, ?it/s]
+0: [A[A
+0: 
+0: 
+0: 
+0:   0%|          | 0/1 [00:00<?, ?it/s][A[A[A
+0: 
+0: 
+0: 
+0: 
+0: Generating train split: 0 examples [00:00, ? examples/s][A[A[A[A
+0: Generating train split: 660 examples [00:00, 30728.53 examples/s]
+0: 
+0: 
+0: 
+0: 100%|██████████| 1/1 [00:00<00:00,  2.07it/s][A[A[A
+0: 
+0: 
+0: 
+0:                                              [A[A[A
+0: 
+0: 
+0: 100%|██████████| 1/1 [00:00<00:00,  2.07it/s][A[A
+0: 
+0: 
+0:                                              [A[A
+0: 
+0: Processing offsets: 100%|██████████| 1/1 [00:00<00:00,  2.07it/s][A
+0: 
+0:                                                                  [A
+0: Processing repetitions:  70%|███████   | 7/10 [00:04<00:01,  1.98it/s]
+0: 
+0: Processing offsets:   0%|          | 0/1 [00:00<?, ?it/s][A
+0: 
+0: 
+0:   0%|          | 0/1 [00:00<?, ?it/s][A[A
+0: 
+0: 
+0: 
+0:   0%|          | 0/1 [00:00<?, ?it/s][A[A[A
+0: 
+0: 
+0: 
+0: 
+0: Generating train split: 0 examples [00:00, ? examples/s][A[A[A[A
+0: Generating train split: 660 examples [00:00, 30956.70 examples/s]
+0: 
+0: 
+0: 
+0: 100%|██████████| 1/1 [00:00<00:00,  2.11it/s][A[A[A
+0: 
+0: 
+0: 
+0:                                              [A[A[A
+0: 
+0: 
+0: 100%|██████████| 1/1 [00:00<00:00,  2.11it/s][A[A
+0: 
+0: 
+0:                                              [A[A
+0: 
+0: Processing offsets: 100%|██████████| 1/1 [00:00<00:00,  2.11it/s][A
+0: 
+0:                                                                  [A
+0: Processing repetitions:  80%|████████  | 8/10 [00:04<00:00,  2.02it/s]
+0: 
+0: Processing offsets:   0%|          | 0/1 [00:00<?, ?it/s][A
+0: 
+0: 
+0:   0%|          | 0/1 [00:00<?, ?it/s][A[A
+0: 
+0: 
+0: 
+0:   0%|          | 0/1 [00:00<?, ?it/s][A[A[A
+0: 
+0: 
+0: 
+0: 
+0: Generating train split: 0 examples [00:00, ? examples/s]
+0: [A[A[A[A
+0: Generating train split: 660 examples [00:00, 30602.50 examples/s]
+0: 
+0: 
+0: 
+0: 100%|██████████| 1/1 [00:00<00:00,  2.10it/s][A[A[A
+0: 
+0: 
+0: 
+0:                                              [A[A[A
+0: 
+0: 
+0: 100%|██████████| 1/1 [00:00<00:00,  2.10it/s][A[A
+0: 
+0: 
+0:                                              [A[A
+0: 
+0: Processing offsets: 100%|██████████| 1/1 [00:00<00:00,  2.10it/s][A
+0: 
+0:                                                                  [A
+0: Processing repetitions:  90%|█████████ | 9/10 [00:04<00:00,  2.04it/s]
+0: 
+0: Processing offsets:   0%|          | 0/1 [00:00<?, ?it/s][A
+0: 
+0: 
+0:   0%|          | 0/1 [00:00<?, ?it/s]
+0: [A[A
+0: 
+0: 
+0: 
+0:   0%|          | 0/1 [00:00<?, ?it/s][A[A[A
+0: 
+0: 
+0: 
+0: 
+0: Generating train split: 0 examples [00:00, ? examples/s][A[A[A[A
+0: Generating train split: 660 examples [00:00, 31195.31 examples/s]
+0: 
+0: 
+0: 
+0: 100%|██████████| 1/1 [00:00<00:00,  2.13it/s][A[A[A
+0: 
+0: 
+0: 
+0:                                              [A[A[A
+0: 
+0: 
+0: 100%|██████████| 1/1 [00:00<00:00,  2.13it/s][A[A
+0: 
+0: 
+0:                                              
+0: [A[A
+0: 
+0: Processing offsets: 100%|██████████| 1/1 [00:00<00:00,  2.13it/s][A
+0: 
+0:                                                                  [A
+0: Processing repetitions: 100%|██████████| 10/10 [00:05<00:00,  2.07it/s]
+0: Processing repetitions: 100%|██████████| 10/10 [00:05<00:00,  1.83it/s]

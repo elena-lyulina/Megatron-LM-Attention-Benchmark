@@ -1,0 +1,20 @@
+START TIME: Fri Jul  3 16:14:27 CEST 2026
+RUN: variant=off-by-one  exp=llama3-1b-off-by-one-attn-fineweb40B-gutenberg3B-te215  reps=0  max_length=none  max_samples=all  triton=0  state_norm=on
+0: LANG_RL Log directory: NoneLANG_RL Log directory: None
+0: 
+0: 
+0: LANG_RL Log directory: None
+0: LANG_RL Log directory: None
+0: 
+0: INFO:datasets:PyTorch version 2.11.0a0+eb65b36914.nv26.2 available.
+0: INFO:datasets:PyTorch version 2.11.0a0+eb65b36914.nv26.2 available.
+0: INFO:datasets:PyTorch version 2.11.0a0+eb65b36914.nv26.2 available.
+0: INFO:datasets:PyTorch version 2.11.0a0+eb65b36914.nv26.2 available.
+0: No load directory specified, using provided arguments.
+0: 
+0: Checkpoint not found to provide arguments, using provided arguments.
+0: using world size: 4, data-parallel size: 4, context-parallel size: 1, hierarchical context-parallel sizes: None, tensor-model-parallel size: 1, pipeline-model-parallel size: 1
+0: Number of virtual stages per pipeline stage: None
+0: accumulate and all-reduce gradients in fp32 for bfloat16 data type.
+0: using torch.bfloat16 for parameters ...
+END TIME: Fri Jul  3 16:15:56 CEST 2026

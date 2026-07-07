@@ -18,9 +18,10 @@
 # Purpose: confirm the leak DATA_ARGS start and run cleanly under TP + sequence-parallel
 # before launching the full multi-node training run.
 #
-# Expected (direction-aware suite):
-#   loss_isolation → [PASS] leakage confirmed (max_diff > 1e-3)
-#   position_ids   → [PASS] continuous, all unique
+# With packing/reset OFF the xdoc tests are expected to FAIL — that failure IS the leak:
+#   xdoc_loss=fail          cross-doc leakage: the prefix changes another doc's losses
+#   xdoc_position_ids=fail  positions run continuously 0..seq_len-1 (no per-doc reset)
+#   sink=fail  gated=fail   (xdoc_mask omitted: config-independent helper unit test, can't leak)
 #
 # Usage:
 #   sbatch attn_bench/submissions/test_xdoc_attn_leak_tp2_2nodes.slurm
@@ -148,7 +149,7 @@ DATA_ARGS=(
 )
 
 BENCHMARK_ARGS=(
-    --tests xdoc
+    --tests xdoc_loss=fail xdoc_position_ids=fail sink=fail gated=fail
 )
 
 TRAINING_CMD="python3 $MEGATRON_LM_DIR/attn_bench/tests/pretrain_gpt_native.py \

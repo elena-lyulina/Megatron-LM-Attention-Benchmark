@@ -8,8 +8,7 @@ from megatron.core.datasets.gpt_dataset import _get_ltor_masks_and_position_ids
 from megatron.training import get_args, get_tokenizer, print_rank_0
 
 # end-to-end cross-doc influence = max per-token loss diff on the shared target doc
-_ISOLATION_TOL = 1e-4   # below this → prefix left target-doc losses unchanged → masking applied
-_LEAK_MIN = 1e-3        # above this → prefix changed target-doc losses → attention leaked across docs
+_ISOLATION_TOL = 1e-4   # below this → prefix left target-doc losses unchanged → docs are isolated
 
 
 # ── mask structure ────────────────────────────────────────────────────────────
@@ -220,33 +219,26 @@ def _make_test_loss_isolation(base_forward_step):
         print_rank_0(f"  prefix_A[:4]={prefix_A[:4].tolist()}  prefix_B[:4]={prefix_B[:4].tolist()}")
         print_rank_0(f"  max_diff={max_diff:.6f}  mean_diff={mean_diff:.6f}")
 
-        # direction depends on the run config: with packing we expect isolation, without it we expect leakage
-        expect_isolation = getattr(args, 'use_packed_seq_params', False)
-        if expect_isolation:
-            passed = max_diff < _ISOLATION_TOL
-            if passed:
-                print_rank_0(f"[PASS] loss_isolation: max_diff < {_ISOLATION_TOL:g} → cross-doc masking applied end-to-end")
-            else:
-                print_rank_0(f"[FAIL] loss_isolation: use_packed_seq_params=True but max_diff={max_diff:.6f} ≥ {_ISOLATION_TOL:g} → masking NOT applied")
+        # single fixed property: do the docs stay isolated (prefix leaves the other doc's losses
+        # unchanged)? the expected verdict — pass for masked/packed runs, fail for leaking runs —
+        # is declared per script in --tests, so this test never branches on the run config.
+        passed = max_diff < _ISOLATION_TOL
+        if passed:
+            print_rank_0(f"[PASS] loss_isolation: max_diff < {_ISOLATION_TOL:g} → docs isolated (no cross-doc influence)")
         else:
-            passed = max_diff > _LEAK_MIN
-            if passed:
-                print_rank_0(f"[PASS] loss_isolation: max_diff > {_LEAK_MIN:g} → cross-doc attention leaks (expected without --use-packed-seq-params)")
-            else:
-                print_rank_0(f"[FAIL] loss_isolation: expected leakage but max_diff={max_diff:.6f} ≤ {_LEAK_MIN:g} → prefix had no effect")
+            print_rank_0(f"[FAIL] loss_isolation: max_diff={max_diff:.6f} ≥ {_ISOLATION_TOL:g} → cross-doc leakage")
         return passed
 
     return test_loss_isolation
 
 
 # ── position ids ──────────────────────────────────────────────────────────────
-# Verifies position_ids match the run config, using the same dataset function the real run uses.
-# With --reset-position-ids each packed document restarts at 0 (positions repeat across docs);
-# without it, positions run continuously 0..seq_len-1 (all unique). Guards against accidentally
-# leaving --reset-position-ids on for a leaking "one continuous document" run.
+# Single fixed property: do position_ids reset to 0 at each document boundary? The ids are built
+# with the run's real --reset-position-ids flag via the same dataset function the run uses
+# The expected verdict is declared per script in --tests
 
-def test_position_ids(model):
-    print_rank_0("\n### Test: position_ids ###")
+def test_position_ids_reset(model):
+    print_rank_0("\n### Test: position_ids_reset ###")
     tokenizer = get_tokenizer()
     args = get_args()
     eos_id = tokenizer.eod
@@ -272,27 +264,29 @@ def test_position_ids(model):
     print_rank_0(f"  reset_position_ids={args.reset_position_ids}  unique={n_unique}/{seq_len}")
     print_rank_0(f"  position_ids[:24]={position_ids[:24].tolist()}")
 
-    if args.reset_position_ids:
-        # interior EOD boundaries must restart positions at 0 → positions repeat
-        eod_pos = (tokens == eos_id).nonzero(as_tuple=True)[0]
-        resets_ok = all(position_ids[p + 1].item() == 0 for p in eod_pos if p + 1 < seq_len)
-        passed = resets_ok and n_unique < seq_len
-        if passed:
-            print_rank_0("[PASS] position_ids: reset to 0 at each document boundary")
-        else:
-            print_rank_0("[FAIL] position_ids: expected per-document reset to 0 but none found")
+    # interior EOD boundaries must restart positions at 0 → positions repeat (continuous = no reset)
+    eod_pos = (tokens == eos_id).nonzero(as_tuple=True)[0]
+    resets_ok = all(position_ids[p + 1].item() == 0 for p in eod_pos if p + 1 < seq_len)
+    passed = resets_ok and n_unique < seq_len
+    if passed:
+        print_rank_0("[PASS] position_ids_reset: positions reset to 0 at each document boundary")
     else:
-        passed = torch.equal(position_ids, torch.arange(seq_len, dtype=position_ids.dtype))
-        if passed:
-            print_rank_0(f"[PASS] position_ids: continuous 0..{seq_len - 1}, all unique → packed docs have distinct positions")
-        else:
-            print_rank_0("[FAIL] position_ids: expected continuous unique ids but found repeats/gaps")
+        print_rank_0(f"[FAIL] position_ids_reset: continuous 0..{seq_len - 1}, no per-document reset")
     return passed
 
 
 # ── registration ──────────────────────────────────────────────────────────────
 
-def register(base_forward_step):
-    # called by registry.py to resolve and return the test functions for the 'xdoc' suite;
-    # each returned function has signature (model)->bool
-    return [test_mask_structure, test_position_ids, _make_test_loss_isolation(base_forward_step)]
+def register_mask(base_forward_step):
+    # 'xdoc_mask' suite: 2D block-diagonal attention mask check (pure function, no model forward).
+    # Relevant to mask-based variants (full/sink/gated); not to GDN, which isolates docs via cu_seqlens.
+    return [test_mask_structure]
+
+def register_position_ids(base_forward_step):
+    # 'xdoc_position_ids' suite: checks the run resets position ids per document
+    return [test_position_ids_reset]
+
+def register_loss(base_forward_step):
+    # 'xdoc_loss' suite: end-to-end cross-document loss isolation through the model forward.
+    # The relevant cross-doc check for GDN (proves cu_seqlens resets state at doc boundaries).
+    return [_make_test_loss_isolation(base_forward_step)]

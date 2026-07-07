@@ -1,0 +1,19 @@
+=== Parameter count: full_attn_llama_1B_args ===
+(embeddings tied with output head)
+
+TOTAL                                                           1,236,076,544
+
+By category:
+embeddings + output head                                          262,930,432
+mlp / ffn                                                         805,339,136
+mixer (rest)                                                      167,806,976
+
+By param (layer index collapsed):
+decoder.final_layernorm.weight                                          2,048
+decoder.layers.*.mlp.linear_fc1.layer_norm_weight                      32,768
+decoder.layers.*.mlp.linear_fc1.weight                            536,870,912
+decoder.layers.*.mlp.linear_fc2.weight                            268,435,456
+decoder.layers.*.self_attention.linear_proj.weight                 67,108,864
+decoder.layers.*.self_attention.linear_qkv.layer_norm_weight           32,768
+decoder.layers.*.self_attention.linear_qkv.weight                 100,663,296
+embedding.word_embeddings.weight                                  262,930,432

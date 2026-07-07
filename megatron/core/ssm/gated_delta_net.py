@@ -10,6 +10,7 @@ from dataclasses import dataclass, replace
 from functools import lru_cache
 from typing import Optional, Union
 
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -43,15 +44,17 @@ from megatron.core.transformer.utils import (
 from megatron.core.utils import deprecate_inference_params, nvtx_range_pop, nvtx_range_push
 
 try:
-    from fla.modules.convolution import causal_conv1d
+    from fla.modules.convolution import causal_conv1d, causal_conv1d_update
     from fla.modules.l2norm import l2norm
-    from fla.ops.gated_delta_rule import chunk_gated_delta_rule
+    from fla.ops.gated_delta_rule import chunk_gated_delta_rule, fused_recurrent_gated_delta_rule
 
     HAVE_FLA = True
 except ImportError:
     causal_conv1d = None
+    causal_conv1d_update = None
     l2norm = None
     chunk_gated_delta_rule = None
+    fused_recurrent_gated_delta_rule = None
 
     HAVE_FLA = False
 
@@ -215,6 +218,17 @@ class GatedDeltaNet(MegatronModule):
         else:
             self.gated_delta_rule = chunk_gated_delta_rule
 
+        # State carry between batches (--gdn-state-carry-ratio). The _last_* tensors hold the previous
+        # batch's state (None until the first carry forward); saved via the checkpoint helpers.
+        self.gdn_state_carry_ratio = config.gdn_state_carry_ratio
+        if self.gdn_state_carry_ratio > 0:
+            self._last_recurrent_state = None
+            self._last_conv_state = None
+            self._carry_step = 0
+            self._carry_rank = (
+                torch.distributed.get_rank() if torch.distributed.is_initialized() else 0
+            )
+
         # Output layernorm before projection
         self.out_norm = build_module(
             submodules.out_norm,
@@ -300,13 +314,25 @@ class GatedDeltaNet(MegatronModule):
         seq_len, batch, _ = hidden_states.shape
         seq_len = seq_len * self.sp_size * self.cp_size
 
+        prefill_inference = False
         if inference_context is not None:
             assert (
                 inference_context.is_static_batching()
             ), "GDN does not currently support dynamic inference batching."
             assert not self.config.sequence_parallel
-            # TODO: support inference
-            raise NotImplementedError("GDN does not support inference for now.")
+            assert self.cp_size == 1, "GDN inference does not currently support context parallel."
+            assert not self.config.deterministic_mode, (
+                "GDN inference requires the fast (non-deterministic) FLA kernels."
+            )
+            assert self.config.pipeline_model_parallel_size == 1, (
+                "GDN inference is only validated for pipeline_model_parallel_size == 1."
+            )
+            if inference_context.sequence_len_offset > 0:
+                # Decode: one token at a time, served from the cached conv + recurrent state.
+                return self._decode(hidden_states, inference_context)
+            # Prefill: fall through and run the normal forward, writing the final conv + recurrent
+            # state into the cache (output_final_state flags + cache write below).
+            prefill_inference = True
 
         if packed_seq_params is not None and packed_seq_params.qkv_format == 'thd':
             assert batch == 1, "Packed sequence expects batch dimension to be 1"
@@ -427,6 +453,16 @@ class GatedDeltaNet(MegatronModule):
             if self.conv_bias
             else None
         )
+        to_carry_states = self.gdn_state_carry_ratio > 0 and self.training
+        carry_per_sequence, output_conv_state, output_recurrent_state = None, None, None
+        if to_carry_states:
+            if self._last_recurrent_state is not None:
+                assert self._last_recurrent_state.shape[0] == batch, (
+                    "GDN carry: number of sequences changed between forwards; MBS must be fixed."
+                )
+            # one decision per sequence, shared by both states below
+            carry_per_sequence = self._sample_state_carry(batch, qkv.device)
+
         if self.config.deterministic_mode:
             qkv = qkv.transpose(1, 2).contiguous()  # b, s, d -> b, d, s
             conv_out = F.conv1d(
@@ -442,13 +478,13 @@ class GatedDeltaNet(MegatronModule):
             qkv = qkv.transpose(1, 2)  # b, d, s -> b, s, d
         else:
             assert self.activation in ["silu", "swish"]
-            qkv, _ = causal_conv1d(
+            qkv, output_conv_state = causal_conv1d(
                 x=qkv,  # FLA conv1d accepts [b, s, d] format input
                 weight=conv1d_weight.squeeze(1),  # d, 1, w -> d, w
                 bias=conv1d_bias,
                 activation=self.activation,
-                initial_state=None,
-                output_final_state=False,
+                initial_state=self._next_initial_state(self._last_conv_state, carry_per_sequence) if to_carry_states else None,
+                output_final_state=to_carry_states or prefill_inference,
                 cu_seqlens=cu_seqlens_q,
             )
         nvtx_range_pop(suffix="conv1d")
@@ -470,18 +506,34 @@ class GatedDeltaNet(MegatronModule):
         nvtx_range_pop(suffix="g_and_beta")
 
         nvtx_range_push(suffix="gated_delta_rule")
-        core_attn_out, last_recurrent_state = self.gated_delta_rule(
+        core_attn_out, output_recurrent_state = self.gated_delta_rule(
             query,
             key,
             value,
             g=g,
             beta=beta,
-            initial_state=None,
-            output_final_state=False,
+            initial_state=self._next_initial_state(self._last_recurrent_state, carry_per_sequence) if to_carry_states else None,
+            output_final_state=to_carry_states or prefill_inference,
             use_qk_l2norm_in_kernel=False,
             cu_seqlens=cu_seqlens_q,
         )
         nvtx_range_pop(suffix="gated_delta_rule")
+
+        if to_carry_states:
+            self._last_conv_state = output_conv_state.detach()
+            self._last_recurrent_state = output_recurrent_state.detach()
+            self._carry_step += 1
+
+        if prefill_inference:
+            # Stash the prefill's final states in the inference cache; _decode advances them one token
+            # at a time. Storing the kernel outputs directly avoids any pre-allocated shape assumptions.
+            # key_value_memory_dict is a generic per-layer state store (Mamba reuses it the same way).
+            # NB: greedy only. Beam search's swap_key_value_dict assumes attention K/V (batch on dim 1);
+            # our states have batch on dim 0, so it would index them wrong.
+            inference_context.key_value_memory_dict[self.layer_number] = (
+                output_conv_state.detach(),
+                output_recurrent_state.detach(),
+            )
 
         def _gated_norm_and_a2a(core_attn_out: torch.Tensor, gate: torch.Tensor):
             # RMSNorm
@@ -527,6 +579,108 @@ class GatedDeltaNet(MegatronModule):
             self.norm_out_checkpoint.discard_output_and_register_recompute(out)
 
         return out, out_bias
+
+    ####################
+    # Static inference (incremental decode)
+    ####################
+    def _decode(self, hidden_states, inference_context):
+        """Single-token incremental decode.
+
+        Advances the cached conv + recurrent state by one token using the FLA single-step kernels.
+        Mirrors the prefill forward but with one token and the cached state as input. Static batching,
+        CP=1, non-deterministic kernels (all asserted in forward before this is reached).
+
+        Args:
+            hidden_states (Tensor): [1, batch, hidden] — the single new token's hidden state.
+            inference_context (BaseInferenceContext): holds the per-layer (conv_state, recurrent_state).
+
+        Return:
+            (tuple[Tensor, Tensor]) GDN output [1, batch, hidden] and bias.
+        """
+        assert self.cp_size == 1, "GDN decode does not support context parallel."
+        assert self.layer_number in inference_context.key_value_memory_dict, (
+            "GDN _decode called before prefill populated the state cache."
+        )
+        seq_len, batch, _ = hidden_states.shape
+        assert seq_len == 1, "GDN decode processes one token at a time"
+        conv_state, recurrent_state = inference_context.key_value_memory_dict[self.layer_number]
+        assert recurrent_state.shape[0] == batch, "GDN decode batch must match prefill batch."
+
+        # Input projection, then s b x -> b s x (s == 1). CP=1, so no all-to-all / head permute.
+        qkvzba, _ = self.in_proj(hidden_states)
+        qkvzba = qkvzba.transpose(0, 1)
+
+        qkv, gate, beta, alpha = torch.split(
+            qkvzba,
+            [
+                self.qk_dim_local_tp * 2 + self.v_dim_local_tp,
+                self.v_dim_local_tp,
+                self.num_value_heads // self.tp_size,
+                self.num_value_heads // self.tp_size,
+            ],
+            dim=-1,
+        )
+        gate = gate.reshape(batch, 1, -1, self.value_head_dim)
+        beta = beta.reshape(batch, 1, -1)
+        alpha = alpha.reshape(batch, 1, -1)
+
+        # Causal conv single step. Updates conv_state in place; same [N, D, W] cache layout the prefill
+        # causal_conv1d(output_final_state=True) produced (both from fla.modules.conv.triton.ops).
+        conv_bias = self.conv1d.bias if self.conv_bias else None
+        qkv, conv_state = causal_conv1d_update(
+            x=qkv,
+            cache=conv_state,
+            weight=self.conv1d.weight.squeeze(1),  # d, 1, w -> d, w
+            bias=conv_bias,
+            activation=self.activation,
+        )
+
+        query, key, value, gate, beta, alpha = self._prepare_qkv_for_gated_delta_rule(
+            qkv, gate, beta, alpha, batch, 1
+        )
+        g, beta = self._compute_g_and_beta(self.A_log, self.dt_bias, alpha, beta)
+
+        # Recurrent single step. Same q/k/v/g/beta convention as chunk_gated_delta_rule (g in log
+        # space, beta post-sigmoid), so it is numerically consistent with the prefill; T == 1.
+        core_attn_out, recurrent_state = fused_recurrent_gated_delta_rule(
+            query,
+            key,
+            value,
+            g=g,
+            beta=beta,
+            initial_state=recurrent_state,
+            output_final_state=True,
+            use_qk_l2norm_in_kernel=False,
+        )
+        inference_context.key_value_memory_dict[self.layer_number] = (conv_state, recurrent_state)
+
+        # Gated RMSNorm + output projection. b s x -> s b x (CP=1, so no all-to-all).
+        norm_out = self._apply_gated_norm(core_attn_out, gate)
+        norm_out = norm_out.reshape(batch, 1, -1).transpose(0, 1).contiguous()
+        out, out_bias = self.out_proj(norm_out)
+        return out, out_bias
+
+    def _sample_state_carry(self, num_sequences, device):
+        # One decision per sequence (for each sequence in a micro-batch), shape [num_sequences]:
+        # True  -> carry this sequence's state from the previous batch,
+        # False -> zero it (the sequence restarts fresh).
+        # True with probability gdn_state_carry_ratio (p=1 -> all True, p=0.5 -> ~half).
+        # Deterministic / reproducible across resume via _carry_step.
+        base = getattr(self.config, "seed", 0) or 0
+        # Independent, reproducible RNG stream per (run seed, rank, layer, step).
+        ss = np.random.SeedSequence([base, self._carry_rank, self.layer_number or 0, self._carry_step])
+        g = torch.Generator(device=device)
+        g.manual_seed(int(ss.generate_state(1)[0]))
+        return torch.rand(num_sequences, generator=g, device=device) < self.gdn_state_carry_ratio
+
+    def _next_initial_state(self, last_state, carry_per_sequence):
+        # Build the kernel's initial_state from the previous batch's state: keep the sequences that
+        # carry, zero the sequences that reset. None on the first batch -> kernel starts from zero.
+        if last_state is None:
+            return None
+        initial_state = last_state.clone()
+        initial_state[~carry_per_sequence] = 0
+        return initial_state
 
     @jit_fuser
     def _apply_gated_norm(self, x, gate):

@@ -3,7 +3,7 @@
 import torch
 
 from megatron.training import print_rank_0
-from attn_bench.tests.util.common import make_simple_iter
+from attn_bench.tests.util.common import diagnostic, make_simple_iter
 
 
 # ── softmax offset param ──────────────────────────────────────────────────────
@@ -74,6 +74,7 @@ def _make_test_sink_output_sensitivity(base_forward_step):
 # ── init values ──────────────────────────────────────────────────────────────
 # diagnose what TE initialises softmax_offset to; explains why params norm starts at 4k
 
+@diagnostic
 def test_softmax_offset_init_values(model):
     print_rank_0("\n### Test: softmax_offset_init_values ###")
     params = _find_sink_params(model)
@@ -102,6 +103,7 @@ def test_softmax_offset_init_values(model):
 # ── norm decomposition ────────────────────────────────────────────────────────
 # verify that the 4k logged params norm comes from softmax_offset, not a logging artifact
 
+@diagnostic
 def test_norm_decomposition(model):
     print_rank_0("\n### Test: norm_decomposition ###")
     sink_params = _find_sink_params(model)

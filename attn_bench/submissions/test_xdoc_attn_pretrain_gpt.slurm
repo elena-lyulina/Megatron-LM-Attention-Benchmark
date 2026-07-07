@@ -151,7 +151,7 @@ DATA_ARGS=(
 )
 
 TRAINING_CMD="python3 $MEGATRON_LM_DIR/attn_bench/tests/pretrain_gpt_native.py \
-    --tests xdoc \
+    --tests xdoc_mask=pass xdoc_loss=pass xdoc_position_ids=pass sink=fail gated=fail \
     ${TRANSFORMER_ENGINE_ARGS[@]} \
     ${NETWORK_SIZE_ARGS[@]} \
     ${LOGGING_ARGS[@]} \

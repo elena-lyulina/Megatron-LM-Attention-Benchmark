@@ -1,0 +1,138 @@
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+0:   _warnings.warn(
+0: Traceback (most recent call last):
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/tests/run_gdn_inference_from_ckpt.py", line 63, in <module>
+0:     
+0: main()
+0: 
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/tests/run_gdn_inference_from_ckpt.py", line 41, in main
+0:     
+0: model = load_megatron_model(args.ckpt_dir, args.tokenizer_path, args.megatron_extra_args)
+0: 
+0:  
+0:   
+0:   
+0:     
+0:   
+0:  
+0: ^^^^
+0: ^
+0: ^^
+0: ^^
+0: ^^
+0: ^^
+0: ^^
+0: ^^
+0: ^^
+0: ^
+0: ^^^^
+0: ^^
+0: ^^
+0: ^^
+0: ^
+0: ^^
+0: ^^
+0: ^^
+0: ^^
+0: ^^^^^
+0: ^^
+0: ^^
+0: ^^
+0: ^^
+0: ^^
+0: ^^
+0: ^
+0: ^^
+0: ^^
+0: ^^
+0: ^^^
+0: ^^^^
+0: ^^
+0: ^^
+0: ^^^^^^^
+0: 
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/megatron_inference_sparse.py", line 86, in load_megatron_model
+0:     initialize_megatron()
+0: 
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/initialize.py", line 60, in initialize_megatron
+0:     args = get_args()
+0: 
+0:   
+0:  
+0:  
+0:  
+0:   
+0:   
+0:   
+0: ^
+0: ^^^^^
+0: ^^
+0: ^^
+0: 
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/global_vars.py", line 32, in get_args
+0:     _ensure_var_is_initialized(_GLOBAL_ARGS, 'args')
+0: 
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/global_vars.py", line 318, in _ensure_var_is_initialized
+0:     
+0: assert var is not None, '{} is not initialized.'.format(name)
+0: 
+0:  
+0:  
+0:  
+0:   
+0:   
+0:  
+0:   
+0:  ^
+0: ^
+0: ^^
+0: ^^
+0: ^
+0: ^^
+0: ^
+0: ^^
+0: ^^
+0: ^
+0: AssertionError
+0: : args is not initialized.
+0: 
+0: E0630 20:13:44.283000 10728 torch/distributed/elastic/multiprocessing/api.py:984] failed (exitcode: 1) local_rank: 0 (pid: 11253) of binary: /opt/venv/bin/python3
+0: Traceback (most recent call last):
+0:   File "/usr/local/bin/torchrun", line 6, in <module>
+0:     sys.exit(main())
+0:              ^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+0:     return f(*args, **kwargs)
+0:            ^^^^^^^^^^^^^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 990, in main
+0:     run(args)
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 981, in run
+0:     elastic_launch(
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 170, in __call__
+0:     return launch_agent(self._config, self._entrypoint, list(args))
+0:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 317, in launch_agent
+0:     raise ChildFailedError(
+0: torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+0: ============================================================
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/tests/run_gdn_inference_from_ckpt.py FAILED
+0: ------------------------------------------------------------
+0: Failures:
+0:   <NO_OTHER_FAILURES>
+0: ------------------------------------------------------------
+0: Root Cause (first observed failure):
+0: [0]:
+0:   time      : 2026-06-30_20:13:44
+0:   host      : nid007592
+0:   rank      : 0 (local_rank: 0)
+0:   exitcode  : 1 (pid: 11253)
+0:   error_file: <N/A>
+0:   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+0: ============================================================
+srun: error: nid007592: task 0: Exited with exit code 1
+srun: Terminating StepId=2654591.0

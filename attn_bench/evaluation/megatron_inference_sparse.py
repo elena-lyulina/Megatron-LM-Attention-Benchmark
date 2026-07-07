@@ -27,70 +27,20 @@ from __future__ import annotations
 import argparse
 import json
 import math
-import sys
-from functools import partial
+import os
+from datetime import datetime, timezone
 from pathlib import Path
 
 import torch
 import torch.distributed as dist
 import torch.nn.functional as F
 from torch.utils.data import DataLoader, DistributedSampler
-
 from verbatim_eval.LCS import find_longest_common_substrings
 from verbatim_eval.my_rouge import _compute_dp_matrix_2d, compute_rouge_l_2d
 
-
+from attn_bench.evaluation.inference_common import BOS_TOKEN_ID, find_rep_paths, load_megatron_model
 
 ### MODEL ###
-
-def load_megatron_model(ckpt_dir: str, tokenizer_path: str, extra_megatron_args: list | None = None):
-    """Load model from a torch_dist checkpoint using --use-checkpoint-args.
-
-    TP=2 shards are merged transparently by DCP resharding (no pre-conversion needed).
-    Architecture flags are read from the checkpoint; extra_megatron_args allows passing
-    boolean store_true flags (e.g. --attention-output-gate) that --use-checkpoint-args
-    may not restore correctly.
-    """
-    from gpt_builders import gpt_builder
-    from megatron.training import get_model
-    from megatron.training.checkpointing import load_checkpoint
-    from megatron.training.initialize import initialize_megatron
-    from model_provider import model_provider
-
-    saved_argv = sys.argv[:]
-    sys.argv = [
-        'megatron_inference_sparse',
-        '--use-checkpoint-args',
-        '--tensor-model-parallel-size', '1',
-        '--pipeline-model-parallel-size', '1',
-        '--context-parallel-size', '1',
-        '--micro-batch-size', '1',
-        '--global-batch-size', '4',
-        '--train-iters', '1',
-        '--tokenizer-type', 'HuggingFaceTokenizer',
-        '--tokenizer-model', tokenizer_path,
-        '--load', ckpt_dir,
-        '--no-load-optim',
-        '--no-load-rng',
-        '--ckpt-format', 'torch_dist',
-        '--dist-ckpt-strictness', 'assume_ok_unexpected',
-        '--finetune',
-        '--bf16',
-        '--transformer-impl', 'transformer_engine',
-        '--main-grads-dtype', 'fp32',
-        *(extra_megatron_args or []),
-    ]
-    try:
-        # reads arguments directly and exclusively through sys.argv -- so we're swapping them beforehand
-        initialize_megatron()
-        model = get_model(partial(model_provider, gpt_builder), wrap_with_ddp=False)
-        load_checkpoint(model, optimizer=None, opt_param_scheduler=None)
-        model = model[0]
-        model.eval()
-        return model
-    finally:
-        sys.argv = saved_argv
-
 
 def patch_sink_scale(model, sink_scale: float) -> list:
     """Scale the virtual sink weight at inference: offset_new = offset_trained + log(sink_scale).
@@ -180,6 +130,7 @@ def greedy_generate(model, prompt_ids: torch.Tensor, suffix_length: int,
     Returns:    [B, suffix_length] — generated tokens
     """
     from megatron.core.inference.contexts import StaticInferenceContext
+    from megatron.core.inference.utils import InferenceMode
 
     B, prompt_len = prompt_ids.shape
     device = prompt_ids.device
@@ -189,30 +140,35 @@ def greedy_generate(model, prompt_ids: torch.Tensor, suffix_length: int,
     ctx.reset()
     ctx.enable_prefill_mode()
 
-    # Prefill: process all prompt tokens, get logit for the first generated token
-    pos = torch.arange(prompt_len, dtype=torch.long, device=device).unsqueeze(0).expand(B, -1)
-    logits = model(prompt_ids, pos, attention_mask=None, inference_context=ctx,
-                   runtime_gather_output=True)
-    # logits: [B, 1, V]  (StaticInferenceContext sets materialize_only_last_token_logits=True)
-    ctx.sequence_len_offset = prompt_len
-    ctx.enable_decode_mode()
-
-    if prefill_callback is not None:
-        prefill_callback()
-
-    next_token = logits[:, 0, :].argmax(dim=-1, keepdim=True)  # [B, 1]
-    generated = [next_token]
-
-    # Decode: one new token per step, KV of previous tokens served from cache
-    for step_t in range(suffix_length - 1):
-        pos = torch.full((B, 1), ctx.sequence_len_offset, dtype=torch.long, device=device)
-        logits = model(next_token, pos, attention_mask=None, inference_context=ctx,
+    # The model only slices the logits down to the last prompt token when InferenceMode
+    # is active (upstream gates this on InferenceMode.is_active(), not on inference_context
+    # being set). Without it the prefill returns logits for every prompt position and we
+    # would pick position 0 below, generating from the wrong token and losing all recall.
+    with InferenceMode.active():
+        # Prefill: process all prompt tokens, get logit for the first generated token
+        pos = torch.arange(prompt_len, dtype=torch.long, device=device).unsqueeze(0).expand(B, -1)
+        logits = model(prompt_ids, pos, attention_mask=None, inference_context=ctx,
                        runtime_gather_output=True)
-        ctx.sequence_len_offset += 1
-        next_token = logits[:, 0, :].argmax(dim=-1, keepdim=True)
-        generated.append(next_token)
-        if step_callback is not None:
-            step_callback(step_t)
+        # logits: [B, 1, V]  (materialize_only_last_token_logits gives the last-token slice)
+        ctx.sequence_len_offset = prompt_len
+        ctx.enable_decode_mode()
+
+        if prefill_callback is not None:
+            prefill_callback()
+
+        next_token = logits[:, 0, :].argmax(dim=-1, keepdim=True)  # [B, 1]
+        generated = [next_token]
+
+        # Decode: one new token per step, KV of previous tokens served from cache
+        for step_t in range(suffix_length - 1):
+            pos = torch.full((B, 1), ctx.sequence_len_offset, dtype=torch.long, device=device)
+            logits = model(next_token, pos, attention_mask=None, inference_context=ctx,
+                           runtime_gather_output=True)
+            ctx.sequence_len_offset += 1
+            next_token = logits[:, 0, :].argmax(dim=-1, keepdim=True)
+            generated.append(next_token)
+            if step_callback is not None:
+                step_callback(step_t)
 
     return torch.cat(generated, dim=1)  # [B, suffix_length]
 
@@ -230,8 +186,6 @@ def text_metrics(true_seq: list, gen_seq: list) -> dict:
 
 
 ### MAIN LOOP ###
-
-BOS_TOKEN_ID = 128000  # Llama-3 BOS; present at token 0 when offset=0, must be prepended when offset>0
 
 def run_bucket(model, dataset, prefix_length, suffix_length, batch_size, inference_dir,
                rank, world_size, needs_bos: bool, capture=None):
@@ -347,6 +301,9 @@ def parse_args():
     parser.add_argument("--batch-size", type=int, default=20)
     parser.add_argument("--max-samples", type=int, default=None,
                         help="Cap sequences per repetition bucket (for testing)")
+    parser.add_argument("--container-env", default=None,
+                        help="Container/environment name this run executed in (e.g. nemo_26.04_te2.15). "
+                             "Recorded verbatim in run_metadata.json for provenance.")
     parser.add_argument("--megatron-extra-args", nargs=argparse.REMAINDER, default=None,
                         help="Extra Megatron args forwarded verbatim to initialize_megatron "
                              "(e.g. --megatron-extra-args --attention-output-gate)")
@@ -363,14 +320,6 @@ def parse_args():
                              "and (gated only) gating_scores_rank{N}.npz at the run-level inference dir. "
                              "Requires prefix+suffix <= 600 (maps are O((prefix+suffix)^2) per layer/head).")
     return parser.parse_args()
-
-
-def find_rep_paths(data_folder: Path, repetitions: set) -> list:
-    return sorted(
-        (p for p in data_folder.glob("rep_[0-9]*_token.jsonl")
-         if int(p.stem.split("_")[1]) in repetitions and "_swaps_" not in p.name),
-        key=lambda p: int(p.stem.split("_")[1]),
-    )
 
 
 def load_rep_bucket(path: Path, offset: int, prefix_length: int, suffix_length: int,
@@ -407,6 +356,19 @@ def _make_capture(model, args, needs_bos: bool):
     return capture
 
 
+def write_run_metadata(output_path: Path, args) -> None:
+    # Save which container and SLURM job produced this run so we can tell
+    # runs apart later. Re-running overwrites it, so it always points at the
+    # last run to finish this offset/prefix/suffix.
+    with open(output_path / "run_metadata.json", "w") as f:
+        json.dump({
+            "container_env": args.container_env,
+            "job_id": os.environ.get("SLURM_JOB_ID"),
+            "ckpt_dir": args.ckpt_dir,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        }, f, indent=2)
+
+
 def run_inference(model, args, rank, world_size):
     from attn_bench.evaluation.attn_capture import N_BUCKETS, bucket_label
 
@@ -416,6 +378,9 @@ def run_inference(model, args, rank, world_size):
         / f"offset_{args.offset}_prefix_{args.prefix_length}_suffix_{args.suffix_length}"
     )
     output_path.mkdir(parents=True, exist_ok=True)
+
+    if rank == 0:
+        write_run_metadata(output_path, args)
 
     paths = find_rep_paths(Path(args.data_folder), {int(r) for r in args.repetitions.split(",")})
     needs_bos = args.offset > 0  # offset==0: BOS already at token 0; offset>0: must prepend
@@ -473,6 +438,45 @@ def run_inference(model, args, rank, world_size):
         print(f"\nAll repetitions done. Results in: {output_path}")
 
 
+def results_already_complete(args, world_size: int) -> bool:
+    """True if every requested rep is already on disk (and, when capturing, every
+    rank's capture file too) — i.e. there is nothing left to compute.
+
+    Checked from env (WORLD_SIZE), not torch.distributed, so it can run *before*
+    the expensive checkpoint load. It inspects all ranks' files (not just this
+    rank's), so every process reaches the same verdict and the early exit is
+    collective — no initialized process group means no barrier to deadlock.
+    """
+    from attn_bench.evaluation.attn_capture import N_BUCKETS, bucket_label
+
+    output_path = (
+        Path(args.experiment_path)
+        / "inference"
+        / f"offset_{args.offset}_prefix_{args.prefix_length}_suffix_{args.suffix_length}"
+    )
+
+    paths = find_rep_paths(Path(args.data_folder), {int(r) for r in args.repetitions.split(",")})
+    if not paths:
+        return False  # no input data found — let the normal path no-op/report
+
+    # Per-rep done-marker mirrors run_inference: rank0.jsonl present and non-empty.
+    for path in paths:
+        rep = int(path.stem.split("_")[1])
+        rank0_file = output_path / f"rep_{rep}_greedy" / "rank0.jsonl"
+        if not (rank0_file.exists() and rank0_file.stat().st_size > 0):
+            return False
+
+    # Capture regenerates every rep, so it is "done" only once every rank's
+    # last-bucket marker exists.
+    if args.capture_attention:
+        last_bucket = bucket_label(N_BUCKETS - 1)
+        for r in range(world_size):
+            if not (output_path / f"attn_scores_rouge_l_{last_bucket}_rank{r}.npz").exists():
+                return False
+
+    return True
+
+
 def main():
     args = parse_args()
 
@@ -485,6 +489,19 @@ def main():
 
     if args.sink_scale is not None:
         args.experiment_path = args.experiment_path.rstrip('/') + f"_sscale{args.sink_scale:g}"
+
+    # Check results before loading the checkpoint: loading the model is the
+    # expensive part, so if everything is already on disk we skip it entirely.
+    # (run_inference still does a finer per-rep skip for the partially-done case.)
+    world_size = int(os.environ.get("WORLD_SIZE", "1"))
+    if results_already_complete(args, world_size):
+        if int(os.environ.get("RANK", "0")) == 0:
+            print(
+                f"All results already present for offset={args.offset} "
+                f"prefix={args.prefix_length} suffix={args.suffix_length} "
+                f"(capture={args.capture_attention}) — skipping checkpoint load."
+            )
+        return
 
     model = load_megatron_model(args.ckpt_dir, args.tokenizer_path, args.megatron_extra_args)
 

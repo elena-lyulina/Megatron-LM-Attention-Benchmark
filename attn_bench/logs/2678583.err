@@ -1,0 +1,610 @@
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: W0703 18:20:22.422000 151365 torch/distributed/run.py:851] 
+0: W0703 18:20:22.422000 151365 torch/distributed/run.py:851] *****************************************
+0: W0703 18:20:22.422000 151365 torch/distributed/run.py:851] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+0: W0703 18:20:22.422000 151365 torch/distributed/run.py:851] *****************************************
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+0:   sentry_sdk.init(
+0: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+0:   sentry_sdk.init(
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+0:   _warnings.warn(
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+0:   _warnings.warn(
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+0:   _warnings.warn(
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+0:   _warnings.warn(
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py:90: UserWarning: The argument order of load has been changed. Please check the document to avoid future breakages.
+0:   result = func(*args, **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py:90: UserWarning: The argument order of load has been changed. Please check the document to avoid future breakages.
+0:   result = func(*args, **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py:90: UserWarning: The argument order of load has been changed. Please check the document to avoid future breakages.
+0:   result = func(*args, **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py:90: UserWarning: The argument order of load has been changed. Please check the document to avoid future breakages.
+0:   result = func(*args, **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py:481: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to load in a single process.
+0:   return func(args[0], **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py:481: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to load in a single process.
+0:   return func(args[0], **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py:481: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to load in a single process.
+0:   return func(args[0], **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py:481: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to load in a single process.
+0:   return func(args[0], **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/planner_helpers.py:489: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   device = getattr(value, "device", None)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/planner_helpers.py:489: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   device = getattr(value, "device", None)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/planner_helpers.py:489: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   device = getattr(value, "device", None)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/planner_helpers.py:489: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   device = getattr(value, "device", None)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/default_planner.py:483: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   and md.size != obj.size()
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/default_planner.py:483: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   and md.size != obj.size()
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/default_planner.py:483: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   and md.size != obj.size()
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/default_planner.py:483: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   and md.size != obj.size()
+0: rep=0:   0%|          | 0/660 [00:00<?, ?it/s]
+0: rep=0:   0%|          | 2/660 [00:06<37:24,  3.41s/it]
+0: rep=0:   0%|          | 2/660 [00:09<50:39,  4.62s/it]
+0: [rank0]: Traceback (most recent call last):
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/long_gutenberg_inference.py", line 308, in <module>
+0: [rank0]:     main()
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/long_gutenberg_inference.py", line 289, in main
+0: [rank0]:     pos_sum, pos_sqsum, pos_cnt = run_rep(
+0: [rank0]:                                   ^^^^^^^^
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/long_gutenberg_inference.py", line 126, in run_rep
+0: [rank0]:     nll = per_position_nll(model, seq, softmax_chunk).double()
+0: [rank0]:           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+0: [rank0]:     return func(*args, **kwargs)
+0: [rank0]:            ^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-
+0: Attention-Benchmark/attn_bench/evaluation/long_gutenberg_inference.py", line 88, in per_position_nll
+0: [rank0]:     logits = model(inputs, pos, attention_mask=None, runtime_gather_output=True)  # [1, S1, V] (bf16)
+0: [rank0]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+0: [rank0]:     return self._call_impl(*args, **kwargs)
+0: [rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+0: [rank0]:     return forward_call(*args, **kwargs)
+0: [rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/module.py", line 489, in forward
+0: [rank0]:     outputs = self.module(*inputs, **kwargs)
+0: [rank0]:               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/usr/local/lib/python
+0: 3.12/dist-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+0: [rank0]:     return self._call_impl(*args, **kwargs)
+0: [rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+0: [rank0]:     return forward_call(*args, **kwargs)
+0: [rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/models/gpt/gpt_model.py", line 563, in forward
+0: [rank0]:     hidden_states = self.decoder(
+0: [rank0]:                     ^^^^^^^^^^^^^
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/transformer_block.py", line 481, in __call__
+0: [rank0]:     return super().__call__(*args, **kwargs)
+0: [rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/module.py", line 352, in __call
+0: __
+0: [rank0]:     return super().__call__(*args, **kwargs)
+0: [rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+0: [rank0]:     return self._call_impl(*args, **kwargs)
+0: [rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+0: [rank0]:     return forward_call(*args, **kwargs)
+0: [rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/transformer_block.py", line 661, in forward
+0: [rank0]:     hidden_states, context = layer(
+0: [rank0]:                              ^^^^^^
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/module.py", line 352, in __call__
+0: [rank0]:     return super().__call__(*args, **kwargs)
+0: [rank0]:            ^^^^^^^^^^^^^^^^^^^^^
+0: ^^^^^^^^^^^^
+0: [rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+0: [rank0]:     return self._call_impl(*args, **kwargs)
+0: [rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+0: [rank0]:     return forward_call(*args, **kwargs)
+0: [rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/transformer_layer.py", line 740, in forward
+0: [rank0]:     hidden_states, context = self._forward_attention(*args, **kwargs)
+0: [rank0]:                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/transformer_layer.py", line 652, in _forward_attention
+0: [rank0]:     attention_output_with_bias = self.self_attention(
+0: [rank0]:                                 
+0:  ^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+0: [rank0]:     return self._call_impl(*args, **kwargs)
+0: [rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+0: [rank0]:     return forward_call(*args, **kwargs)
+0: [rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/attention.py", line 1284, in forward
+0: [rank0]:     core_attn_out = apply_module(self.core_attention)(
+0: [rank0]:                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+0: [rank0]:     return self._call_impl(*args, **kwargs)
+0: [rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/mod
+0: ules/module.py", line 1789, in _call_impl
+0: [rank0]:     return forward_call(*args, **kwargs)
+0: [rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/extensions/transformer_engine.py", line 1858, in forward
+0: [rank0]:     core_attn_out = super().forward(query, key, value, attention_mask, **_fa_kwargs)
+0: [rank0]:                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/jit.py", line 67, in wrapper
+0: [rank0]:     return disabled_f(*args, **kwargs)
+0: [rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/_dynamo/external_utils.py", line 203, in nonrecursive_disable_wrapper
+0: [rank0]:     return fn(*args, **kwargs)
+0: [rank0]:            ^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/dot_pr
+0: oduct_attention.py", line 1587, in forward
+0: [rank0]:     return self.unfused_attention(
+0: [rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+0: [rank0]:     return self._call_impl(*args, **kwargs)
+0: [rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+0: [rank0]:     return forward_call(*args, **kwargs)
+0: [rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/backends.py", line 556, in forward
+0: [rank0]:     attention_probs = self.scale_mask_softmax(
+0: [rank0]:                       ^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+0: [rank0]:     return self._call_impl(*args, **kwargs)
+0: [rank0]:            ^^^
+0: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+0: [rank0]:     return forward_call(*args, **kwargs)
+0: [rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/softmax.py", line 188, in forward
+0: [rank0]:     return self.forward_torch_softmax(inp, mask, scale)
+0: [rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/softmax.py", line 275, in forward_torch_softmax
+0: [rank0]:     probs = probs.bfloat16()
+0: [rank0]:             ^^^^^^^^^^^^^^^^
+0: [rank0]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 16.00 GiB. GPU 0 has a total capacity of 95.00 GiB of which 5.48 GiB is free. Including non-PyTorch memory, this process has 89.51 GiB memory in use. Of the allocated memory 81.97 GiB is allocat
+0: ed by PyTorch, and 1.00 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+0: [rank3]: Traceback (most recent call last):
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/long_gutenberg_inference.py", line 308, in <module>
+0: [rank3]:     main()
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/long_gutenberg_inference.py", line 289, in main
+0: [rank3]:     pos_sum, pos_sqsum, pos_cnt = run_rep(
+0: [rank3]:                                   ^^^^^^^^
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/long_gutenberg_inference.py", line 126, in run_rep
+0: [rank3]:     nll = per_position_nll(model, seq, softmax_chunk).double()
+0: [rank3]:           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/usr/local/lib/python3.12/dist-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+0: [rank3]:     return func(*args, **kwargs)
+0: [rank3]:            ^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-
+0: Attention-Benchmark/attn_bench/evaluation/long_gutenberg_inference.py", line 88, in per_position_nll
+0: [rank3]:     logits = model(inputs, pos, attention_mask=None, runtime_gather_output=True)  # [1, S1, V] (bf16)
+0: [rank3]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+0: [rank3]:     return self._call_impl(*args, **kwargs)
+0: [rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+0: [rank3]:     return forward_call(*args, **kwargs)
+0: [rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/module.py", line 489, in forward
+0: [rank3]:     outputs = self.module(*inputs, **kwargs)
+0: [rank3]:               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/usr/local/lib/python
+0: 3.12/dist-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+0: [rank3]:     return self._call_impl(*args, **kwargs)
+0: [rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+0: [rank3]:     return forward_call(*args, **kwargs)
+0: [rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/models/gpt/gpt_model.py", line 563, in forward
+0: [rank3]:     hidden_states = self.decoder(
+0: [rank3]:                     ^^^^^^^^^^^^^
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/transformer_block.py", line 481, in __call__
+0: [rank3]:     return super().__call__(*args, **kwargs)
+0: [rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/module.py", line 352, in __call
+0: __
+0: [rank3]:     return super().__call__(*args, **kwargs)
+0: [rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+0: [rank3]:     return self._call_impl(*args, **kwargs)
+0: [rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+0: [rank3]:     return forward_call(*args, **kwargs)
+0: [rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/transformer_block.py", line 661, in forward
+0: [rank3]:     hidden_states, context = layer(
+0: [rank3]:                              ^^^^^^
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/module.py", line 352, in __call__
+0: [rank3]:     return super().__call__(*args, **kwargs)
+0: [rank3]:            ^^^^^^^^^^^^^^^^^^^^^
+0: ^^^^^^^^^^^^
+0: [rank3]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+0: [rank3]:     return self._call_impl(*args, **kwargs)
+0: [rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+0: [rank3]:     return forward_call(*args, **kwargs)
+0: [rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/transformer_layer.py", line 740, in forward
+0: [rank3]:     hidden_states, context = self._forward_attention(*args, **kwargs)
+0: [rank3]:                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/transformer_layer.py", line 652, in _forward_attention
+0: [rank3]:     attention_output_with_bias = self.self_attention(
+0: [rank3]:                                 
+0:  ^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+0: [rank3]:     return self._call_impl(*args, **kwargs)
+0: [rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+0: [rank3]:     return forward_call(*args, **kwargs)
+0: [rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/attention.py", line 1284, in forward
+0: [rank3]:     core_attn_out = apply_module(self.core_attention)(
+0: [rank3]:                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+0: [rank3]:     return self._call_impl(*args, **kwargs)
+0: [rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/mod
+0: ules/module.py", line 1789, in _call_impl
+0: [rank3]:     return forward_call(*args, **kwargs)
+0: [rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/extensions/transformer_engine.py", line 1858, in forward
+0: [rank3]:     core_attn_out = super().forward(query, key, value, attention_mask, **_fa_kwargs)
+0: [rank3]:                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/jit.py", line 67, in wrapper
+0: [rank3]:     return disabled_f(*args, **kwargs)
+0: [rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/usr/local/lib/python3.12/dist-packages/torch/_dynamo/external_utils.py", line 203, in nonrecursive_disable_wrapper
+0: [rank3]:     return fn(*args, **kwargs)
+0: [rank3]:            ^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/dot_pr
+0: oduct_attention.py", line 1587, in forward
+0: [rank3]:     return self.unfused_attention(
+0: [rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+0: [rank3]:     return self._call_impl(*args, **kwargs)
+0: [rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+0: [rank3]:     return forward_call(*args, **kwargs)
+0: [rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/backends.py", line 556, in forward
+0: [rank3]:     attention_probs = self.scale_mask_softmax(
+0: [rank3]:                       ^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+0: [rank3]:     return self._call_impl(*args, **kwargs)
+0: [rank3]:            ^^^
+0: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+0: [rank3]:     return forward_call(*args, **kwargs)
+0: [rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/softmax.py", line 188, in forward
+0: [rank3]:     return self.forward_torch_softmax(inp, mask, scale)
+0: [rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank3]:   File "/opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/softmax.py", line 275, in forward_torch_softmax
+0: [rank3]:     probs = probs.bfloat16()
+0: [rank3]:             ^^^^^^^^^^^^^^^^
+0: [rank3]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 16.00 GiB. GPU 3 has a total capacity of 95.00 GiB of which 5.48 GiB is free. Including non-PyTorch memory, this process has 89.51 GiB memory in use. Of the allocated memory 81.97 GiB is allocat
+0: ed by PyTorch, and 1.00 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+0: [rank2]: Traceback (most recent call last):
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/long_gutenberg_inference.py", line 308, in <module>
+0: [rank2]:     main()
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/long_gutenberg_inference.py", line 289, in main
+0: [rank2]:     pos_sum, pos_sqsum, pos_cnt = run_rep(
+0: [rank2]:                                   ^^^^^^^^
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/long_gutenberg_inference.py", line 126, in run_rep
+0: [rank2]:     nll = per_position_nll(model, seq, softmax_chunk).double()
+0: [rank2]:          
+0:  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/usr/local/lib/python3.12/dist-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+0: [rank2]:     return func(*args, **kwargs)
+0: [rank2]:            ^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/long_gutenberg_inference.py", line 88, in per_position_nll
+0: [rank2]:     logits = model(inputs, pos, attention_mask=None, runtime_gather_output=True)  # [1, S1, V] (bf16)
+0: [rank2]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+0: [rank2]:     return self._call_impl(*args, **kwargs)
+0: [rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+0: [rank2]:     return forward_call(*args, **kwargs)
+0: [rank2]:            ^^^^^^^^^^
+0: ^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/module.py", line 489, in forward
+0: [rank2]:     outputs = self.module(*inputs, **kwargs)
+0: [rank2]:               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+0: [rank2]:     return self._call_impl(*args, **kwargs)
+0: [rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+0: [rank2]:     return forward_call(*args, **kwargs)
+0: [rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/models/gpt/gpt_model.py", line 563, in forward
+0: [rank2]:     hidden_states = self.decoder(
+0: [rank2]:                     ^^^^^^^^^^^^^
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/co
+0: re/transformer/transformer_block.py", line 481, in __call__
+0: [rank2]:     return super().__call__(*args, **kwargs)
+0: [rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/module.py", line 352, in __call__
+0: [rank2]:     return super().__call__(*args, **kwargs)
+0: [rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+0: [rank2]:     return self._call_impl(*args, **kwargs)
+0: [rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+0: [rank2]:     return forward_call(*args, **kwargs)
+0: [rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/transformer_block.py", line 661, in forward
+0: [rank2]:     hidden_
+0: states, context = layer(
+0: [rank2]:                              ^^^^^^
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/module.py", line 352, in __call__
+0: [rank2]:     return super().__call__(*args, **kwargs)
+0: [rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+0: [rank2]:     return self._call_impl(*args, **kwargs)
+0: [rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+0: [rank2]:     return forward_call(*args, **kwargs)
+0: [rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/transformer_layer.py", line 740, in forward
+0: [rank2]:     hidden_states, context = self._forward_attention(*args, **kwargs)
+0: [rank2]:                              ^
+0: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/transformer_layer.py", line 652, in _forward_attention
+0: [rank2]:     attention_output_with_bias = self.self_attention(
+0: [rank2]:                                  ^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+0: [rank2]:     return self._call_impl(*args, **kwargs)
+0: [rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+0: [rank2]:     return forward_call(*args, **kwargs)
+0: [rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/attention.py", line 1284, in forward
+0: [rank2]:     core_attn_out = apply_module(self.core_attention)(
+0: [rank2]:                     ^^^^^^^^^^^^^^^^^^^^^^^
+0: ^^^^^^^^^^^
+0: [rank2]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+0: [rank2]:     return self._call_impl(*args, **kwargs)
+0: [rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+0: [rank2]:     return forward_call(*args, **kwargs)
+0: [rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/extensions/transformer_engine.py", line 1858, in forward
+0: [rank2]:     core_attn_out = super().forward(query, key, value, attention_mask, **_fa_kwargs)
+0: [rank2]:                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/jit.py", line 67, in wrapper
+0: [rank2]:     return disabled_f(*args, **kwargs)
+0: [rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/usr/local/
+0: lib/python3.12/dist-packages/torch/_dynamo/external_utils.py", line 203, in nonrecursive_disable_wrapper
+0: [rank2]:     return fn(*args, **kwargs)
+0: [rank2]:            ^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/dot_product_attention.py", line 1587, in forward
+0: [rank2]:     return self.unfused_attention(
+0: [rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+0: [rank2]:     return self._call_impl(*args, **kwargs)
+0: [rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+0: [rank2]:     return forward_call(*args, **kwargs)
+0: [rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/backends.py", line 556, in forward
+0: [
+0: rank2]:     attention_probs = self.scale_mask_softmax(
+0: [rank2]:                       ^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+0: [rank2]:     return self._call_impl(*args, **kwargs)
+0: [rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+0: [rank2]:     return forward_call(*args, **kwargs)
+0: [rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/softmax.py", line 188, in forward
+0: [rank2]:     return self.forward_torch_softmax(inp, mask, scale)
+0: [rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank2]:   File "/opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/softmax.py", line 275, in forward_torch_softmax
+0: [rank2]:     probs = probs.bfloat16
+0: ()
+0: [rank2]:             ^^^^^^^^^^^^^^^^
+0: [rank2]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 16.00 GiB. GPU 2 has a total capacity of 95.00 GiB of which 5.48 GiB is free. Including non-PyTorch memory, this process has 89.51 GiB memory in use. Of the allocated memory 81.97 GiB is allocated by PyTorch, and 1.00 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+0: [rank1]: Traceback (most recent call last):
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/long_gutenberg_inference.py", line 308, in <module>
+0: [rank1]:     main()
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/long_gutenberg_inference.py", line 289, in main
+0: [rank1]:     pos_sum, pos_sqsum, pos_cnt =
+0:  run_rep(
+0: [rank1]:                                   ^^^^^^^^
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/long_gutenberg_inference.py", line 126, in run_rep
+0: [rank1]:     nll = per_position_nll(model, seq, softmax_chunk).double()
+0: [rank1]:           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/usr/local/lib/python3.12/dist-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+0: [rank1]:     return func(*args, **kwargs)
+0: [rank1]:            ^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/long_gutenberg_inference.py", line 88, in per_position_nll
+0: [rank1]:     logits = model(inputs, pos, attention_mask=None, runtime_gather_output=True)  # [1, S1, V] (bf16)
+0: [rank1]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1778, in _wrapped_c
+0: all_impl
+0: [rank1]:     return self._call_impl(*args, **kwargs)
+0: [rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+0: [rank1]:     return forward_call(*args, **kwargs)
+0: [rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/module.py", line 489, in forward
+0: [rank1]:     outputs = self.module(*inputs, **kwargs)
+0: [rank1]:               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+0: [rank1]:     return self._call_impl(*args, **kwargs)
+0: [rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+0: [rank1]:     return forward_call(*args, **kwargs)
+0: [rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   Fil
+0: e "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/models/gpt/gpt_model.py", line 563, in forward
+0: [rank1]:     hidden_states = self.decoder(
+0: [rank1]:                     ^^^^^^^^^^^^^
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/transformer_block.py", line 481, in __call__
+0: [rank1]:     return super().__call__(*args, **kwargs)
+0: [rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/module.py", line 352, in __call__
+0: [rank1]:     return super().__call__(*args, **kwargs)
+0: [rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+0: [rank1]:     return self._call_impl(*args, **kwargs)
+0: [rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/mo
+0: dule.py", line 1789, in _call_impl
+0: [rank1]:     return forward_call(*args, **kwargs)
+0: [rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/transformer_block.py", line 661, in forward
+0: [rank1]:     hidden_states, context = layer(
+0: [rank1]:                              ^^^^^^
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/module.py", line 352, in __call__
+0: [rank1]:     return super().__call__(*args, **kwargs)
+0: [rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+0: [rank1]:     return self._call_impl(*args, **kwargs)
+0: [rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+0: [rank1]:     return forward_call(*args, **kwargs)
+0: [rank1]:     
+0:        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/transformer_layer.py", line 740, in forward
+0: [rank1]:     hidden_states, context = self._forward_attention(*args, **kwargs)
+0: [rank1]:                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/transformer_layer.py", line 652, in _forward_attention
+0: [rank1]:     attention_output_with_bias = self.self_attention(
+0: [rank1]:                                  ^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+0: [rank1]:     return self._call_impl(*args, **kwargs)
+0: [rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+0: [rank1]:     return forward_call(*args, **kwargs)
+0: [ran
+0: k1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/attention.py", line 1284, in forward
+0: [rank1]:     core_attn_out = apply_module(self.core_attention)(
+0: [rank1]:                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+0: [rank1]:     return self._call_impl(*args, **kwargs)
+0: [rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+0: [rank1]:     return forward_call(*args, **kwargs)
+0: [rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/extensions/transformer_engine.py", line 1858, in forward
+0: [rank1]:     core_attn_out = super().forward(query, key, value, attention_mask, **_fa_kwargs)
+0: [rank1]:                
+0:      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/jit.py", line 67, in wrapper
+0: [rank1]:     return disabled_f(*args, **kwargs)
+0: [rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/usr/local/lib/python3.12/dist-packages/torch/_dynamo/external_utils.py", line 203, in nonrecursive_disable_wrapper
+0: [rank1]:     return fn(*args, **kwargs)
+0: [rank1]:            ^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/dot_product_attention.py", line 1587, in forward
+0: [rank1]:     return self.unfused_attention(
+0: [rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+0: [rank1]:     return self._call_impl(*args, **kwargs)
+0: [rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/usr/local/lib/python3.12/dist-packages
+0: /torch/nn/modules/module.py", line 1789, in _call_impl
+0: [rank1]:     return forward_call(*args, **kwargs)
+0: [rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/backends.py", line 556, in forward
+0: [rank1]:     attention_probs = self.scale_mask_softmax(
+0: [rank1]:                       ^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+0: [rank1]:     return self._call_impl(*args, **kwargs)
+0: [rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+0: [rank1]:     return forward_call(*args, **kwargs)
+0: [rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/softmax.py", line 188, in forward
+0: [rank1]:     return se
+0: lf.forward_torch_softmax(inp, mask, scale)
+0: [rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank1]:   File "/opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/softmax.py", line 275, in forward_torch_softmax
+0: [rank1]:     probs = probs.bfloat16()
+0: [rank1]:             ^^^^^^^^^^^^^^^^
+0: [rank1]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 16.00 GiB. GPU 1 has a total capacity of 95.00 GiB of which 5.48 GiB is free. Including non-PyTorch memory, this process has 89.51 GiB memory in use. Of the allocated memory 81.97 GiB is allocated by PyTorch, and 1.00 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+0: [rank0]:[W703 18:21:50.081224193 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [rank3]:[W703 18:21:53.803068428 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [rank2]:[W703 18:21:53.858011585 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [rank1]:[W703 18:21:54.890727580 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: W0703 18:22:10.716000 151365 torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 151876 closing signal SIGTERM
+0: E0703 18:22:10.831000 151365 torch/distributed/elastic/multiprocessing/api.py:984] failed (exitcode: 1) local_rank: 1 (pid: 151877) of binary: /opt/venv/bin/python3
+0: Traceback (most recent call last):
+0:   File "/usr/local/bin/torchrun", line 6, in <module>
+0:     sys.exit(main())
+0:              ^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+0:     return f(*args, **kwargs)
+0:            ^^^^^^^^^^^^^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 990, in main
+0:     run(args)
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 981, in run
+0:     elastic_launch(
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 170, in __call__
+0:     return launch_agent(self._config, self._entrypoint, list(args))
+0:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 317, in launch_agent
+0:     raise ChildFailedError(
+0: torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+0: ============================================================
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/long_gutenberg_inference.py FAILED
+0: ------------------------------------------------------------
+0: Failures:
+0: [1]:
+0:   time      : 2026-07-03_18:22:10
+0:   host      : nid006632
+0:   rank      : 2 (local_rank: 2)
+0:   exitcode  : 1 (pid: 151878)
+0:   error_file: <N/A>
+0:   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+0: [2]:
+0:   time      : 2026-07-03_18:22:10
+0:   host      : nid006632
+0:   rank      : 3 (local_rank: 3)
+0:   exitcode  : 1 (pid: 151879)
+0:   error_file: <N/A>
+0:   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+0: [3]:
+0:   time      : 2026-07-03_18:22:10
+0:   host      : nid006632
+0:   rank      : 0 (local_rank: 0)
+0:   exitcode  : 1 (pid: 151876)
+0:   error_file: <N/A>
+0:   traceback : To enable traceback see: https://pytorch.org
+0: /docs/stable/elastic/errors.html
+0: ------------------------------------------------------------
+0: Root Cause (first observed failure):
+0: [0]:
+0:   time      : 2026-07-03_18:22:10
+0:   host      : nid006632
+0:   rank      : 1 (local_rank: 1)
+0:   exitcode  : 1 (pid: 151877)
+0:   error_file: <N/A>
+0:   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+0: ============================================================
+srun: error: nid006632: task 0: Exited with exit code 1
+srun: Terminating StepId=2678583.0

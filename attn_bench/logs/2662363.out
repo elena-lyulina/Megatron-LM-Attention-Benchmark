@@ -1,0 +1,155 @@
+START TIME: Wed Jul  1 16:47:10 CEST 2026
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+config: prefix_cap=8,192 (1L)  suffix_cap=24,576 (3L)  forward_chars=220,000  backward_chars=60,000
+
+### PROBES ###
+  rep_0_token.jsonl: 660 probes
+  rep_128_token.jsonl: 660 probes
+  rep_16_token.jsonl: 660 probes
+  rep_1_token.jsonl: 660 probes
+  rep_256_token.jsonl: 660 probes
+  rep_2_token.jsonl: 660 probes
+  rep_32_token.jsonl: 660 probes
+  rep_4_token.jsonl: 660 probes
+  rep_64_token.jsonl: 660 probes
+  rep_8_token.jsonl: 660 probes
+Loaded 6,600 probes across 10 buckets
+
+### REGENERATE CANONICALS ###
+loaded 44,847 cached canonicals from /users/elyulina/store/datasets/tokenized/gutenberg_rep_jsonl_long/canon_cache
+
+### MATCH ###
+  WARNING: 312 duplicate canonical digests among regenerated books
+  matched 6,600 / 6,600 probes (100.0%)
+
+### BUILD LONG ###
+  resuming: 1,440 / 6,600 (book, bucket) pairs already committed
+  flushed 500 new (of 5,160 remaining)
+  flushed 1,000 new (of 5,160 remaining)
+  flushed 1,500 new (of 5,160 remaining)
+  flushed 2,000 new (of 5,160 remaining)
+  flushed 2,500 new (of 5,160 remaining)
+  flushed 3,000 new (of 5,160 remaining)
+  flushed 3,500 new (of 5,160 remaining)
+  flushed 4,000 new (of 5,160 remaining)
+  flushed 4,500 new (of 5,160 remaining)
+  flushed 5,000 new (of 5,160 remaining)
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+Loaded tokenizer: /iopsstor/scratch/cscs/elyulina/tokenizers/llama-3.2-1b  vocab=128256  bos=128000  eos=128001
+  built 5,160 new records this run
+
+### WRITE ###
+  rep_0_token.jsonl: 660 records
+  rep_1_token.jsonl: 660 records
+  rep_2_token.jsonl: 660 records
+  rep_4_token.jsonl: 660 records
+  rep_8_token.jsonl: 660 records
+  rep_16_token.jsonl: 660 records
+  rep_32_token.jsonl: 660 records
+  rep_64_token.jsonl: 660 records
+  rep_128_token.jsonl: 660 records
+  rep_256_token.jsonl: 660 records
+  lengths.jsonl: 6,600 rows
+  unmatched_report.txt: 0 join misses, 0 build failures
+
+Extra-length summary (6,600 books):
+  prefix: mean=6,980  median=8,192  max=8,192  at-cap(8,192)=73.0%
+  suffix: mean=17,250  median=21,023  max=24,576  at-cap(24,576)=43.7%
+
+Done in 81.6min  ->  /users/elyulina/store/datasets/tokenized/gutenberg_rep_jsonl_long
+END TIME: Wed Jul  1 18:09:35 CEST 2026
+Done. Output in /users/elyulina/store/datasets/tokenized/gutenberg_rep_jsonl_long

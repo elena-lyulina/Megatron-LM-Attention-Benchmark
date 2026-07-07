@@ -4,7 +4,7 @@ Uses the standard model_provider (no kernel swap). Megatron args are passed
 via slurm; --tests selects which test suites to inject into forward_step.
 
 Usage:
-    python3 attn_bench/tests/pretrain_gpt_native.py --tests xdoc [megatron args...]
+    python3 attn_bench/tests/pretrain_gpt_native.py --tests xdoc_loss=pass [megatron args...]
 """
 import time
 

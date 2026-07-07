@@ -1,7 +1,10 @@
 def add_test_args(parser):
     group = parser.add_argument_group("Attention Benchmark")
-    group.add_argument("--tests", nargs='+', default=[], metavar="TEST",
-        help="Test suites to inject into forward_step (e.g. xdoc). See util/registry.py.")
+    group.add_argument("--tests", nargs='+', default=[], metavar="SUITE=pass|fail",
+        help="Test suites to inject into forward_step, each with its required expected verdict, "
+             "e.g. --tests xdoc_loss=pass sink=fail. A bare suite name (no =pass|fail) is a parse "
+             "error."
+             "See util/registry.py for available suites.")
     return parser
 
 

@@ -1,0 +1,115 @@
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+pyloudnorm 0.1.1 requires future>=0.16.0, which is not installed.
+tensorrt-llm 1.1.0 requires patchelf==0.18.0, which is not installed.
+tritonclient 2.51.0 requires numpy<2,>=1.19.1, but you have numpy 2.5.0 which is incompatible.
+nemo-toolkit 2.6.0rc0 requires fsspec==2024.12.0, but you have fsspec 2024.9.0 which is incompatible.
+nemo-toolkit 2.6.0rc0 requires protobuf~=5.29.5, but you have protobuf 4.25.8 which is incompatible.
+numba 0.61.2 requires numpy<2.3,>=1.24, but you have numpy 2.5.0 which is incompatible.
+nvidia-pytriton 0.7.0 requires numpy<2.0.0,>=1.21, but you have numpy 2.5.0 which is incompatible.
+megatron-core 0.16.0rc0 requires numpy<2.0.0, but you have numpy 2.5.0 which is incompatible.
+megatron-bridge 0.2.0 requires megatron-core[dev,mlm]<0.16.0,>=0.15.0a0, but you have megatron-core 0.16.0rc0 which is incompatible.
+megatron-bridge 0.2.0 requires transformers==4.57.1, but you have transformers 4.57.3 which is incompatible.
+vllm 0.10.1.1+381074ae.nv25.9.cu130 requires transformers==4.55.2, but you have transformers 4.57.3 which is incompatible.
+vllm 0.10.1.1+381074ae.nv25.9.cu130 requires xgrammar==0.1.22; platform_machine == "x86_64" or platform_machine == "aarch64" or platform_machine == "arm64", but you have xgrammar 0.1.25 which is incompatible.
+tensorrt-llm 1.1.0 requires fastapi<=0.117.1,>=0.115.4, but you have fastapi 0.124.2 which is incompatible.
+tensorrt-llm 1.1.0 requires h5py==3.12.1, but you have h5py 3.15.1 which is incompatible.
+tensorrt-llm 1.1.0 requires numpy<2, but you have numpy 2.5.0 which is incompatible.
+tensorrt-llm 1.1.0 requires nvidia-cutlass-dsl==4.2.1; python_version >= "3.10", but you have nvidia-cutlass-dsl 4.3.3 which is incompatible.
+tensorrt-llm 1.1.0 requires transformers==4.56.0, but you have transformers 4.57.3 which is incompatible.
+init columns (num_proc=32):   0%|          | 0/56982 [00:00<?, ? examples/s]init columns (num_proc=32):   6%|▌         | 3277/56982 [00:00<00:02, 23456.26 examples/s]init columns (num_proc=32):  37%|███▋      | 20856/56982 [00:00<00:00, 94005.17 examples/s]init columns (num_proc=32):  54%|█████▍    | 31024/56982 [00:01<00:01, 14249.74 examples/s]init columns (num_proc=32):  65%|██████▍   | 36841/56982 [00:02<00:01, 15200.54 examples/s]init columns (num_proc=32):  72%|███████▏  | 41228/56982 [00:02<00:01, 15735.85 examples/s]init columns (num_proc=32):  79%|███████▊  | 44844/56982 [00:02<00:00, 14577.11 examples/s]init columns (num_proc=32):  84%|████████▎ | 47641/56982 [00:03<00:00, 12578.72 examples/s]init columns (num_proc=32):  88%|████████▊ | 49937/56982 [00:03<00:00, 11464.50 examples/s]init columns (num_proc=32):  91%|█████████ | 51706/56982 [00:03<00:00, 11347.94 examples/s]init columns (num_proc=32):  93%|█████████▎| 53197/56982 [00:04<00:00, 5237.85 examples/s] init columns (num_proc=32):  95%|█████████▌| 54368/56982 [00:04<00:00, 5054.01 examples/s]init columns (num_proc=32):  97%|█████████▋| 55542/56982 [00:05<00:00, 3463.16 examples/s]init columns (num_proc=32):  99%|█████████▊| 56218/56982 [00:08<00:00, 1129.01 examples/s]init columns (num_proc=32): 100%|█████████▉| 56778/56982 [00:10<00:00, 968.15 examples/s] init columns (num_proc=32): 100%|██████████| 56982/56982 [00:11<00:00, 5041.14 examples/s]
+multiprocess.pool.RemoteTraceback: 
+"""
+Traceback (most recent call last):
+  File "/opt/venv/lib/python3.12/site-packages/datasets/arrow_dataset.py", line 3488, in _map_single
+    writer.finalize()  # close_stream=bool(buf_writer is None))  # We only close if we are writing in a file
+    ^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/datasets/arrow_writer.py", line 636, in finalize
+    self.write_examples_on_file()
+  File "/opt/venv/lib/python3.12/site-packages/datasets/arrow_writer.py", line 495, in write_examples_on_file
+    self.write_batch(batch_examples=batch_examples)
+  File "/opt/venv/lib/python3.12/site-packages/datasets/arrow_writer.py", line 605, in write_batch
+    arrays.append(pa.array(typed_sequence))
+                  ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "pyarrow/array.pxi", line 255, in pyarrow.lib.array
+  File "pyarrow/array.pxi", line 117, in pyarrow.lib._handle_arrow_array_protocol
+  File "/opt/venv/lib/python3.12/site-packages/datasets/arrow_writer.py", line 243, in __arrow_array__
+    out = cast_array_to_feature(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/datasets/table.py", line 1797, in wrapper
+    return func(array, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/datasets/table.py", line 2102, in cast_array_to_feature
+    return array_cast(
+           ^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/datasets/table.py", line 1797, in wrapper
+    return func(array, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/datasets/table.py", line 1948, in array_cast
+    raise TypeError(f"Couldn't cast array of type {_short_str(array.type)} to {_short_str(pa_type)}")
+TypeError: Couldn't cast array of type string to null
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/venv/lib/python3.12/site-packages/multiprocess/pool.py", line 125, in worker
+    result = (True, func(*args, **kwds))
+                    ^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/datasets/utils/py_utils.py", line 678, in _write_generator_to_queue
+    for i, result in enumerate(func(**kwargs)):
+  File "/opt/venv/lib/python3.12/site-packages/datasets/arrow_dataset.py", line 3493, in _map_single
+    writer.finalize()
+  File "/opt/venv/lib/python3.12/site-packages/datasets/arrow_writer.py", line 636, in finalize
+    self.write_examples_on_file()
+  File "/opt/venv/lib/python3.12/site-packages/datasets/arrow_writer.py", line 495, in write_examples_on_file
+    self.write_batch(batch_examples=batch_examples)
+  File "/opt/venv/lib/python3.12/site-packages/datasets/arrow_writer.py", line 605, in write_batch
+    arrays.append(pa.array(typed_sequence))
+                  ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "pyarrow/array.pxi", line 255, in pyarrow.lib.array
+  File "pyarrow/array.pxi", line 117, in pyarrow.lib._handle_arrow_array_protocol
+  File "/opt/venv/lib/python3.12/site-packages/datasets/arrow_writer.py", line 243, in __arrow_array__
+    out = cast_array_to_feature(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/datasets/table.py", line 1797, in wrapper
+    return func(array, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/datasets/table.py", line 2102, in cast_array_to_feature
+    return array_cast(
+           ^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/datasets/table.py", line 1797, in wrapper
+    return func(array, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/datasets/table.py", line 1948, in array_cast
+    raise TypeError(f"Couldn't cast array of type {_short_str(array.type)} to {_short_str(pa_type)}")
+TypeError: Couldn't cast array of type string to null
+"""
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/data_processing/books/extract_long_context.py", line 368, in <module>
+    main()
+  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/data_processing/books/extract_long_context.py", line 356, in main
+    run(
+  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/data_processing/books/extract_long_context.py", line 197, in run
+    ds = regenerate_canonicals(raw_dir, tokenizer, bos_id, eos_id, punkt, num_proc)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/data_processing/books/extract_long_context.py", line 113, in regenerate_canonicals
+    ds = m(init_columns_laion, "init columns")
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/data_processing/books/extract_long_context.py", line 111, in m
+    return ds.map(fn, num_proc=num_proc, load_from_cache_file=HF_CACHE, desc=desc)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/datasets/arrow_dataset.py", line 560, in wrapper
+    out: Union["Dataset", "DatasetDict"] = func(self, *args, **kwargs)
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/datasets/arrow_dataset.py", line 3147, in map
+    for rank, done, content in iflatmap_unordered(
+  File "/opt/venv/lib/python3.12/site-packages/datasets/utils/py_utils.py", line 718, in iflatmap_unordered
+    [async_result.get(timeout=0.05) for async_result in async_results]
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/multiprocess/pool.py", line 774, in get
+    raise self._value
+TypeError: Couldn't cast array of type string to null

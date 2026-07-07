@@ -102,6 +102,69 @@ Logs: `attn_bench/logs/2567002.{out,err}`.
 
 ---
 
+## Gated Delta Net (GDN) mixer
+
+LLaMA 3.2 1B backbone with the attention layers replaced by a Gated Delta Net (GDN) linear-attention mixer on all 16 layers — a different sequence mixer rather than a softmax variant. Param-matched to the ~1.236B attention baselines (~1.239B): GDN mixer with 8 K/V heads, `key_head_dim 192` / `value_head_dim 384` (paper ratios 0.75 / 1.5), FFN shrunk from 8192 to `--ffn-hidden-size 5824` to absorb the wider mixer. Config: `attn_bench/data/param_count_configs/gdn_1B_args_8heads_ffn5824.txt`. Like the masked `full` baseline, document boundaries are isolated: `--use-packed-seq-params` resets the GDN recurrent state + conv at every document boundary via `cu_seqlens` (kept `--reset-position-ids` + `--eod-mask-loss`).
+
+This run completed cleanly via the data-exhaustion fix — it exited with `[exiting program after consuming all available data at iteration 15549]` and saved a valid checkpoint at step 15549 (no `StopIteration` crash, no resume needed).
+
+| variant | Slurm job | start (CEST) | end (CEST) | run time | status | final lm loss (step 15549) | throughput (TFLOP/s/GPU) |
+|---|---|---|---|---|---|---|---|
+| gated delta net (GDN) | `2613202` | 2026-06-24 23:58:05 | 2026-06-25 05:15:35 | 5h 17m 30s | COMPLETED (data exhausted) | 2.4125 | ~321.3 (avg) |
+
+W&B run: `llama3-1b-gdn-fineweb40B-gutenberg3B-2613202` (project `fineweb-40B_gutenberg-3B`).
+
+Final step lm loss 2.4125 is higher than the masked `full` baseline (2.3824). (No validation set: split `100,0,0`.)
+
+Container: `nemo_26.04_te2.15` (ships `flash-linear-attention` + `causal_conv1d`, required by the GDN layer).
+
+Checkpoint saved at step 15549. Moved to long-term storage under:
+`/users/elyulina/store/pretrain-results/llama3-1b-gdn-fineweb40B-gutenberg3B/`
+
+Slurm script: `attn_bench/submissions/pretrain_llama3_1b_gdn_fineweb40B_gutenberg3B.slurm`
+
+Logs: `attn_bench/logs/2613202.{out,err}`.
+
+---
+
+## GDN state carry across batches (r = 0 / 0.5 / 1)
+
+GDN mixer (same param-matched config as above) but **without** `--use-packed-seq-params`, so the recurrent + conv state is not reset at document boundaries (it leaks across docs within a sequence). `--gdn-state-carry-ratio` then controls whether the state is also carried *across batch boundaries*: `0.0` = always reset per batch (vanilla Megatron GDN, xdoc-leak baseline), `1.0` = always carry, `0.5` = carry per sequence with p = 0.5. All three launched together on 2026-06-26.
+
+| variant | Slurm job | start (CEST) | end (CEST) | run time | status | final lm loss | throughput (TFLOP/s/GPU) |
+|---|---|---|---|---|---|---|---|
+| carry r=0 | `2622827` | 2026-06-26 03:04:10 | 2026-06-26 08:46:45 | 5h 42m 35s | COMPLETED (data exhausted) | 2.4136 | ~296.7 (avg) |
+| carry r=0.5 | `2622828` | 2026-06-26 03:25:51 | 2026-06-26 09:00:18 | 5h 34m 27s | COMPLETED (data exhausted) | 2.4133 | ~303.1 (avg) |
+| carry r=1 | `2622831` | 2026-06-26 03:55:57 | 2026-06-26 09:23:42 | 5h 27m 45s | COMPLETED (data exhausted) | 2.4218 | ~310.1 (avg) |
+
+Nodes (14 each, disjoint across the three jobs — recorded for throughput-placement analysis):
+
+- r=0 (`2622827`): `nid[006272,006281,006315,006761,006904,006916,006954,006969,007041,007048,007095,007272,007278,007339]`
+- r=0.5 (`2622828`): `nid[006719,006728,006749,006751,006917,007013,007134,007184,007188,007211,007216,007236-007237,007239]`
+- r=1 (`2622831`): `nid[006041,006050,006107,007263,007305,007333,007340,007342,007464,007476,007499,007512,007525,007528]`
+
+Earlier GDN tests flagged `nid006742` as unreliable (excluded via `sbatch --exclude=nid006742` on the main GDN runs); it is not in any of the three allocations above.
+
+Note: r=0 shows noticeably lower and jitterier throughput than r=1 (median ~301 vs ~312 TFLOP/s, ~3.4% vs ~0.25% of iters stalling), while lm loss is unaffected (r=0 tracks slightly *below* r=0.5/r=1). The carry code path is not the cause (r=0 disables carry entirely — less work, no extra kernels/recompiles), so this is under investigation as a per-job node-placement artifact rather than a property of the training mode.
+
+W&B runs (project `fineweb-40B_gutenberg-3B`):
+
+- r=0: `llama3-1b-gdn-carry-r0-fineweb40B-gutenberg3B-2622827`
+- r=0.5: `llama3-1b-gdn-carry-r0.5-fineweb40B-gutenberg3B-2622828`
+- r=1: `llama3-1b-gdn-carry-r1-fineweb40B-gutenberg3B-2622831`
+
+Checkpoints saved at step 15549. Moved to long-term storage under:
+
+- r=0: `/users/elyulina/store/pretrain-results/llama3-1b-gdn-carry-r0-fineweb40B-gutenberg3B/`
+- r=0.5: `/users/elyulina/store/pretrain-results/llama3-1b-gdn-carry-r0.5-fineweb40B-gutenberg3B/`
+- r=1: `/users/elyulina/store/pretrain-results/llama3-1b-gdn-carry-r1-fineweb40B-gutenberg3B/`
+
+Slurm scripts: `attn_bench/submissions/pretrain_llama3_1b_gdn_carry_r{0,0.5,1}_fineweb40B_gutenberg3B.slurm`
+
+Logs: `attn_bench/logs/2622827.{out,err}` (r=0), `2622828.{out,err}` (r=0.5), `2622831.{out,err}` (r=1).
+
+---
+
 ## Attention variants / trained models 
 
 | variant | Megatron flag | description |
@@ -111,6 +174,7 @@ Logs: `attn_bench/logs/2567002.{out,err}`.
 | sink | `--softmax-type learnable` | learnable sink logit added to denominator — `exp(s) / (exp(s) + Σ exp(xⱼ))` |
 | off-by-one | `--softmax-type off-by-one` | sink with fixed logit 0 — `1 / (1 + Σ exp(xⱼ))` |
 | full (xdoc leak) | drop `--use-packed-seq-params` + `--reset-position-ids` (keep `--eod-mask-loss`) | standard softmax, but no intra-document masking — attention leaks across document boundaries within a packed sequence |
+| gated delta net (GDN) | `--experimental-attention-variant gated_delta_net --linear-attention-freq [1]*16` | GDN linear-attention mixer replaces softmax attention on all layers; FFN shrunk to 5824 to param-match (~1.239B) |
 
 ---
 

@@ -492,6 +492,80 @@ def save_grads(save_dir, state_dict, iteration, grad_label):
                  f"from iteration {iteration:7d}")
 
 
+def _iter_gdn_modules(model):
+    # Yield (name, module) for every GatedDeltaNet that carries state across batches.
+    from megatron.core.ssm.gated_delta_net import GatedDeltaNet
+    for chunk in (model if isinstance(model, list) else [model]):
+        for name, m in chunk.named_modules():
+            if isinstance(m, GatedDeltaNet) and getattr(m, "gdn_state_carry_ratio", 0.0) > 0:
+                yield name, m
+
+
+def gdn_states_checkpoint_path(ckpt_dir, iteration):
+    rank = torch.distributed.get_rank() if torch.distributed.is_initialized() else 0
+    base = get_checkpoint_name(ckpt_dir, iteration, return_base_dir=True)
+    return os.path.join(base, f"gdn_states_rank{rank:05d}.pt")
+
+
+def _gdn_states_layout(args):
+    # Fields that must match on resume for a rank's saved GDN states to be valid.
+    return {
+        "micro_batch_size": args.micro_batch_size,
+        "data_parallel_size": mpu.get_data_parallel_world_size(),
+        "seed": args.seed,
+        "gdn_state_carry_ratio": args.gdn_state_carry_ratio,
+    }
+
+
+def save_gdn_states(model, ckpt_dir, iteration):
+    """Save every GDN layer's carried states (recurrent + conv + step) to a per-rank file."""
+    args = get_args()
+    if getattr(args, "gdn_state_carry_ratio", 0.0) <= 0:
+        return
+    states = {
+        name: {
+            "recurrent": None if m._last_recurrent_state is None else m._last_recurrent_state.cpu(),
+            "conv": None if m._last_conv_state is None else m._last_conv_state.cpu(),
+            "step": m._carry_step,
+        }
+        for name, m in _iter_gdn_modules(model)
+    }
+    if not states:
+        return
+    path = gdn_states_checkpoint_path(ckpt_dir, iteration)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    torch.save({"states": states, "layout": _gdn_states_layout(args)}, path)
+
+
+def load_gdn_states(model, load_dir, iteration):
+    """Restore every GDN layer's carried states from its per-rank file (resume must match layout)."""
+    args = get_args()
+    if getattr(args, "gdn_state_carry_ratio", 0.0) <= 0:
+        return
+    modules = dict(_iter_gdn_modules(model))
+    if not modules:
+        return
+    path = gdn_states_checkpoint_path(load_dir, iteration)
+    if not os.path.exists(path):
+        print_rank_0(f"GDN states: no checkpoint at {path}; starting from zero state.")
+        return
+    gdn_states_checkpoint = torch.load(path, map_location="cpu", weights_only=False)
+    saved_layout = gdn_states_checkpoint["layout"]
+    current_layout = _gdn_states_layout(args)
+    assert saved_layout == current_layout, (
+        f"GDN states: checkpoint layout {saved_layout} != current run {current_layout}; resume "
+        "requires identical micro_batch_size / data_parallel_size / seed / gdn_state_carry_ratio."
+    )
+    device = torch.cuda.current_device()
+    for name, m in modules.items():
+        states = gdn_states_checkpoint["states"].get(name)
+        if states is None:
+            continue
+        m._last_recurrent_state = None if states["recurrent"] is None else states["recurrent"].to(device)
+        m._last_conv_state = None if states["conv"] is None else states["conv"].to(device)
+        m._carry_step = states["step"]
+
+
 def save_checkpoint(iteration, model, optimizer, opt_param_scheduler, num_floating_point_operations_so_far,
                     checkpointing_context=None, pipeline_rank=None, expert_rank=None, tensor_rank=None, pipeline_parallel=None, expert_parallel=None, non_persistent_ckpt=False,
                     train_data_iterator=None, preprocess_common_state_dict_fn = None, release=False, tp_group: Optional[torch.distributed.ProcessGroup] = None, pp_group: Optional[torch.distributed.ProcessGroup] = None, dp_cp_group: Optional[torch.distributed.ProcessGroup] = None):
@@ -892,6 +966,9 @@ def save_checkpoint(iteration, model, optimizer, opt_param_scheduler, num_floati
             schedule_async_save(async_logits_request)
         print_rank_0(f"  [{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')}] scheduled "
                      f"an async checkpoint save at iteration {iteration:7d} to {save_dir}")
+
+    # GDN carried states (one file per rank, alongside the dist-checkpoint).
+    save_gdn_states(model, save_dir, iteration)
 
     # Wait so everyone is done (not necessary)
     if torch.distributed.is_initialized():
@@ -2119,6 +2196,8 @@ def load_checkpoint(ddp_model, optimizer, opt_param_scheduler, load_arg='load', 
                 load_modelopt_checkpoint([teacher], load_arg='export_kd_teacher_load')
                 args.finetune, args.ckpt_format = original_args_finetune, original_ckpt_format
                 print_rank_0("... teacher loaded successfully.")
+
+    load_gdn_states(model, load_dir, iteration)
 
     return iteration, num_floating_point_operations_so_far
 

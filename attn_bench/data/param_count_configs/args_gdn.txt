@@ -1,0 +1,93 @@
+############ GDN 1B CONFIG #################
+# GDN-attention baseline: LLaMA-3.2-1B architecture with GDN mixer, scaled to match Llama 1B parameters count
+# args values taken from:
+# args names taken from: megatron/core/transformer/transformer_config.py
+
+### Embeddings / input-output:
+--make-vocab-size-divisible-by 128      # sizes the mode's input / output embedding matrix (vocab x hidden / hidden x vocab))
+# Llama-3.2-1B config: "vocab_size": 128256 -- derived from the tokenizer
+# Llama-3.2-1B config: "tie_word_embeddings": true -- embeddings tied by default; need to pass --untie-embeddings-and-output-weights to disable
+
+### Global / model-wide
+# not changed, same as Llama 1B config
+--hidden-size 2048                      # representing 1 token
+--num-layers 16                         # how many blocks
+--normalization RMSNorm                 # used before the blocks (both attn and mlp) throughout the model
+--norm-epsilon 1e-5                     # "rms_norm_eps"
+--disable-bias-linear                   # "mlp_bias": false, "attention_bias": false  -- following Llama-3.2-1B config
+--transformer-impl transformer_engine
+--seq-length 8192                       # runtime, doesnt affect the model's size but required to build a model
+
+### MLP
+--ffn-hidden-size 8192
+--swiglu                                # "hidden_act": "silu"  -- following Llama-3.2-1B config + gating
+
+### Token mixer
+--experimental-attention-variant gated_delta_net
+--linear-attention-freq [1]*16
+--linear-num-key-heads 16           # GDN's K/Q heads
+--linear-num-value-heads 32         # GDN's V heads, must be a multiply of linear_num_key_heads
+--linear-key-head-dim 128
+--linear-value-head-dim 128
+--linear-conv-kernel-dim 4
+--num-attention-heads 32            # required to build the model but is not used for GDN
+# --group-query-attention -- not used in pure GDN
+# --num-query-groups -- not used in pure GDN
+--position-embedding-type none      # GDN ignores positions; 'none' = no positional params at all
+--max-position-embeddings 8192      # required by validation (must be >= seq-length), no effect
+# norms inside GDN are controlled by a global flag --normalization RMSNorm, GDN's paper also uses RMSNorm, all good
+# other GDN params (Q/K L2-norm, biases (dt_bias, in_proj / out_proj bias, conv1d bias), gating) are hardcoded (and set to the paper's values)
+
+
+
+
+############ GENERATED CONFIG #################
+# --- GDN mixer (Megatron defaults) ---
+--experimental-attention-variant gated_delta_net
+--linear-attention-freq 999
+--linear-num-key-heads 16
+--linear-num-value-heads 32
+--linear-key-head-dim 128
+--linear-value-head-dim 128
+--linear-conv-kernel-dim 4
+# Network arguments
+--num-layers 16
+--hidden-size 2048
+--num-attention-heads 32
+--normalization RMSNorm
+--transformer-impl transformer_engine
+--seq-length 2048
+--max-position-embeddings 2048
+
+# arguments that are not in the test config
+--ffn-hidden-size 8192 ??
+--group-query-attention ??
+--swiglu ??
+--num-query-groups 8 ??
+--disable-bias-linear ??
+--position-embedding-type rope ??
+
+
+############ TEST CONFIG (SOME NAMES ARE NOT CORRECT FOR PARAMS) #################
+# GDN Mixer
+--experimental_attention_variant gated_delta_net
+# every layer is GDN
+--linear_attention_freq [1]
+--linear_conv_kernel_dim 2
+--linear_key_head_dim 64
+--linear_value_head_dim 64
+--linear_num_key_heads 4
+--linear_num_value_heads 8
+
+# Network Arguments
+--num_layers 1
+--hidden_size 256
+--num_attention_heads 8
+--normalization RMSNorm
+--transformer_impl transformer_engine
+
+# arguments that are not in the generated config
+--use_cpu_initialization true ??
+--layernorm_zero_centered_gamma true ?? => --apply-layernorm-1p
+--activation_func silu ?? == FFN activation function (LLama used Swiglu)
+--bf16 true ??

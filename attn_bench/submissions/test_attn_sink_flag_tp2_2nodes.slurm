@@ -148,7 +148,7 @@ DATA_ARGS=(
 
 BENCHMARK_ARGS=(
     --softmax-type learnable
-    --tests xdoc sink
+    --tests xdoc_mask=pass xdoc_loss=pass xdoc_position_ids=pass sink=pass gated=fail
 )
 
 TRAINING_CMD="python3 $MEGATRON_LM_DIR/attn_bench/tests/pretrain_gpt_native.py \
@@ -202,9 +202,8 @@ SEP=$(printf '=%.0s' {1..100})
 } > "$DEBUG_DIR/compute_environment.txt"
 
 ### LAUNCH ###
-# grep -E "PASS|FAIL|### Test|### Summary|IMPLEMENTATION|EXPECTED|norm|grad" attn_bench/logs/<jobid>.out
+# grep -E "PASS|FAIL|### Test|### Summary|IMPLEMENTATION|### Verdict|norm|grad" attn_bench/logs/<jobid>.out
 echo "=== IMPLEMENTATION: sink attention (--softmax-type learnable), Llama 3.2 1B, TP=2, 2 nodes ==="
-echo "=== EXPECTED: xdoc PASS  |  sink PASS (gradient FAIL would confirm TE kernel ignores softmax_offset in backward) ==="
 echo "[$(date)] Launching..."
 
 srun \

@@ -1,0 +1,17 @@
+START TIME: Fri Jul  3 15:13:21 CEST 2026
+0: 
+0: ### Test: state_norm_segmentation ###
+0: 
+0:   seq_len=256: max|dout|=0.00e+00  max|dstate|=0.00e+00  boundaries logged=4 (expected 4)  -> ok
+0: 
+0:   seq_len=200: max|dout|=0.00e+00  max|dstate|=0.00e+00  boundaries logged=3 (expected 3)  -> ok
+0: 
+0: [PASS] state_norm_segmentation: segment-and-carry == single call
+0: 
+0: ### GDN state-norm — Summary ###
+0: 
+0:   PASS   state_norm_segmentation
+0: 
+0: ### Verdict: ALL PASS ###
+0: 
+END TIME: Fri Jul  3 15:15:17 CEST 2026

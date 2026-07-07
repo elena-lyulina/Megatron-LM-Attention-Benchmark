@@ -1,0 +1,4 @@
+START TIME: Wed Jul  1 01:08:19 CEST 2026
+RUN: exp=llama3-1b-full-attn-xdoc-attn-leak-fineweb40B-gutenberg3B  offset=500  prefix=50  suffix=500
+0: Error: Inference path does not exist: /users/elyulina/store/mem-results/SparseGutenberg/llama3-1b-full-attn-xdoc-attn-leak-fineweb40B-gutenberg3B/inference/offset_500_prefix_50_suffix_500
+END TIME: Wed Jul  1 01:09:11 CEST 2026

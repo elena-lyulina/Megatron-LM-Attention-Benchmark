@@ -1776,6 +1776,23 @@ def validate_args(args, defaults={}):
         assert args.moe_latent_size > 0, "MoE latent projection dimension has to be greater than zero."
         assert args.num_experts is not None, "MoE latent projections are applicable only for MoE models."
 
+    # GDN state carry between batches
+    assert 0.0 <= args.gdn_state_carry_ratio <= 1.0, \
+        "--gdn-state-carry-ratio must be in [0, 1]."
+    if args.gdn_state_carry_ratio > 0:
+        assert args.experimental_attention_variant == "gated_delta_net", \
+            "--gdn-state-carry-ratio requires --experimental-attention-variant gated_delta_net."
+        assert args.tensor_model_parallel_size == 1 and args.pipeline_model_parallel_size == 1 \
+            and args.context_parallel_size == 1, \
+            "--gdn-state-carry-ratio requires TP=PP=CP=1."
+        assert not args.use_packed_seq_params, \
+            "--gdn-state-carry-ratio is incompatible with --use-packed-seq-params."
+        assert not args.deterministic_mode, \
+            "--gdn-state-carry-ratio requires the FLA (non-deterministic) path."
+        assert args.recompute_granularity != "full", \
+            "--gdn-state-carry-ratio is incompatible with --recompute-granularity full " \
+            "(recompute re-runs the GDN forward and would corrupt the carried state)."
+
     # Print arguments.
     _print_args("arguments", args)
 

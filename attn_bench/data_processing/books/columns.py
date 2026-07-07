@@ -40,7 +40,7 @@ DEFAULTS = {
     Col.BOOK_ID: "unknown",
     Col.BOOK_TITLE: None,
     Col.KEEP: True,
-    Col.SKIP_REASON: None,
+    Col.SKIP_REASON: "",   # non-null so pyarrow always infers string, never null-typed shards
     Col.CONTENT_SIZE: 0,
     Col.CONTENT_START: 0,
     Col.CONTENT_END: 0,

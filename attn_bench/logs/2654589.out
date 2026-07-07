@@ -1,0 +1,6 @@
+START TIME: Tue Jun 30 20:12:05 CEST 2026
+RUN: variant=carry-r0  exp=llama3-1b-gdn-carry-r0-fineweb40B-gutenberg3B  ckpt=/users/elyulina/store/pretrain-results/llama3-1b-gdn-carry-r0-fineweb40B-gutenberg3B/checkpoints
+0: LANG_RL Log directory: None
+0: 
+0: INFO:datasets:PyTorch version 2.11.0a0+eb65b36914.nv26.2 available.
+END TIME: Tue Jun 30 20:13:23 CEST 2026

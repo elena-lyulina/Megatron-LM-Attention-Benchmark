@@ -1,0 +1,175 @@
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: W0703 16:14:58.947000 15501 torch/distributed/run.py:851] 
+0: W0703 16:14:58.947000 15501 torch/distributed/run.py:851] *****************************************
+0: W0703 16:14:58.947000 15501 torch/distributed/run.py:851] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+0: W0703 16:14:58.947000 15501 torch/distributed/run.py:851] *****************************************
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+0:   sentry_sdk.init(
+0: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+0:   sentry_sdk.init(
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+0:   _warnings.warn(
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+0:   _warnings.warn(
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+0:   _warnings.warn(
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+0:   _warnings.warn(
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py:90: UserWarning: The argument order of load has been changed. Please check the document to avoid future breakages.
+0:   result = func(*args, **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py:90: UserWarning: The argument order of load has been changed. Please check the document to avoid future breakages.
+0:   result = func(*args, **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py:90: UserWarning: The argument order of load has been changed. Please check the document to avoid future breakages.
+0:   result = func(*args, **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py:481: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to load in a single process.
+0:   return func(args[0], **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py:481: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to load in a single process.
+0:   return func(args[0], **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py:481: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to load in a single process.
+0:   return func(args[0], **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py:90: UserWarning: The argument order of load has been changed. Please check the document to avoid future breakages.
+0:   result = func(*args, **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py:481: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to load in a single process.
+0:   return func(args[0], **kwargs)
+0: rep=0:   0%|          | 0/165 [00:00<?, ?it/s]
+0: /usr/local/lib/python3.12/dist-packages/torch/_dynamo/variables/functions.py:2152: UserWarning: Dynamo detected a call to a `functools.lru_cache`-wrapped function at '_common.py:45'. Dynamo ignores the cache wrapper and directly traces the wrapped function. Silent incorrectness is only a *potential* risk, not something we have observed. Enable TORCH_LOGS=+dynamo for a DEBUG stack trace.
+0: 
+0: This call originates from:
+0:   File "/opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/ops/_common.py", line 45, in maybe_autocast_dtype
+0:     if torch_version() >= (2, 4, 3):
+0: 
+0:   torch._dynamo.utils.warn_once(msg)
+0: /usr/local/lib/python3.12/dist-packages/torch/_dynamo/variables/functions.py:2033: UserWarning: Dynamo does not know how to trace the builtin `transformer_engine_torch.pybind11_detail_function_record_v1_system_libstdcpp_gxx_abi_1xxx_use_cxx11_abi_1.rmsnorm_fwd.` This function is either a Python builtin (e.g. _warnings.warn) or a third-party C/C++ Python extension (perhaps created with pybind).
+0: If it is a Python builtin, please file an issue on GitHub so the PyTorch team can add support for it and see the next case for a workaround.
+0: If it is a third-party C/C++ Python extension, please either wrap it into a PyTorch-understood custom operator (see https://pytorch.org/tutorials/advanced/custom_ops_landing_page.html for more details) or, if it is traceable, use `torch.compiler.allow_in_graph`.
+0:   torch._dynamo.utils.warn_once(explanation + "\n" + "\n".join(hints))
+0: /usr/local/lib/python3.12/dist-packages/torch/_dynamo/variables/functions.py:2152: UserWarning: Dynamo detected a call to a `functools.lru_cache`-wrapped function at '_common.py:45'. Dynamo ignores the cache wrapper and directly traces the wrapped function. Silent incorrectness is only a *potential* risk, not something we have observed. Enable TORCH_LOGS=+dynamo for a DEBUG stack trace.
+0: 
+0: This call originates from:
+0:   File "/opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/ops/_common.py", line 45, in maybe_autocast_dtype
+0:     if torch_version() >= (2, 4, 3):
+0: 
+0:   torch._dynamo.utils.warn_once(msg)
+0: /usr/local/lib/python3.12/dist-packages/torch/_dynamo/variables/functions.py:2033: UserWarning: Dynamo does not know how to trace the builtin `transformer_engine_torch.pybind11_detail_function_record_v1_system_libstdcpp_gxx_abi_1xxx_use_cxx11_abi_1.rmsnorm_fwd.` This function is either a Python builtin (e.g. _warnings.warn) or a third-party C/C++ Python extension (perhaps created with pybind).
+0: If it is a Python builtin, please file an issue on GitHub so the PyTorch team can add support for it and see the next case for a workaround.
+0: If it is a third-party C/C++ Python extension, please either wrap it into a PyTorch-understood custom operator (see https://pytorch.org/tutorials/advanced/custom_ops_landing_page.html for more details) or, if it is traceable, use `torch.compiler.allow_in_graph`.
+0:   torch._dynamo.utils.warn_once(explanation + "\n" + "\n".join(hints))
+0: rep=0:   1%|          | 1/165 [01:00<2:44:23, 60.15s/it]
+0: /usr/local/lib/python3.12/dist-packages/torch/_dynamo/variables/functions.py:2152: UserWarning: Dynamo detected a call to a `functools.lru_cache`-wrapped function at '_common.py:45'. Dynamo ignores the cache wrapper and directly traces the wrapped function. Silent incorrectness is only a *potential* risk, not something we have observed. Enable TORCH_LOGS=+dynamo for a DEBUG stack trace.
+0: 
+0: This call originates from:
+0:   File "/opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/ops/_common.py", line 45, in maybe_autocast_dtype
+0:     if torch_version() >= (2, 4, 3):
+0: 
+0:   torch._dynamo.utils.warn_once(msg)
+0: /usr/local/lib/python3.12/dist-packages/torch/_dynamo/variables/functions.py:2033: UserWarning: Dynamo does not know how to trace the builtin `transformer_engine_torch.pybind11_detail_function_record_v1_system_libstdcpp_gxx_abi_1xxx_use_cxx11_abi_1.rmsnorm_fwd.` This function is either a Python builtin (e.g. _warnings.warn) or a third-party C/C++ Python extension (perhaps created with pybind).
+0: If it is a Python builtin, please file an issue on GitHub so the PyTorch team can add support for it and see the next case for a workaround.
+0: If it is a third-party C/C++ Python extension, please either wrap it into a PyTorch-understood custom operator (see https://pytorch.org/tutorials/advanced/custom_ops_landing_page.html for more details) or, if it is traceable, use `torch.compiler.allow_in_graph`.
+0:   torch._dynamo.utils.warn_once(explanation + "\n" + "\n".join(hints))
+0: /usr/local/lib/python3.12/dist-packages/torch/_dynamo/variables/functions.py:2152: UserWarning: Dynamo detected a call to a `functools.lru_cache`-wrapped function at '_common.py:45'. Dynamo ignores the cache wrapper and directly traces the wrapped function. Silent incorrectness is only a *potential* risk, not something we have observed. Enable TORCH_LOGS=+dynamo for a DEBUG stack trace.
+0: 
+0: This call originates from:
+0:   File "/opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/ops/_common.py", line 45, in maybe_autocast_dtype
+0:     if torch_version() >= (2, 4, 3):
+0: 
+0:   torch._dynamo.utils.warn_once(msg)
+0: /usr/local/lib/python3.12/dist-packages/torch/_dynamo/variables/functions.py:2033: UserWarning: Dynamo does not know how to trace the builtin `transformer_engine_torch.pybind11_detail_function_record_v1_system_libstdcpp_gxx_abi_1xxx_use_cxx11_abi_1.rmsnorm_fwd.` This function is either a Python builtin (e.g. _warnings.warn) or a third-party C/C++ Python extension (perhaps created with pybind).
+0: If it is a Python builtin, please file an issue on GitHub so the PyTorch team can add support for it and see the next case for a workaround.
+0: If it is a third-party C/C++ Python extension, please either wrap it into a PyTorch-understood custom operator (see https://pytorch.org/tutorials/advanced/custom_ops_landing_page.html for more details) or, if it is traceable, use `torch.compiler.allow_in_graph`.
+0:   torch._dynamo.utils.warn_once(explanation + "\n" + "\n".join(hints))
+0: rep=0:   1%|          | 2/165 [01:10<1:23:49, 30.85s/it]
+0: rep=0:   2%|▏         | 4/165 [01:17<37:02, 13.80s/it]  
+0: rep=0:   4%|▎         | 6/165 [01:28<25:45,  9.72s/it]
+0: rep=0:   5%|▍         | 8/165 [01:35<19:06,  7.30s/it]
+0: rep=0:   5%|▍         | 8/165 [01:50<19:06,  7.30s/it]
+0: rep=0:   6%|▌         | 10/165 [01:55<21:23,  8.28s/it]
+0: rep=0:   7%|▋         | 12/165 [02:03<17:22,  6.81s/it]
+0: rep=0:   7%|▋         | 12/165 [02:20<17:22,  6.81s/it]
+0: rep=0:   8%|▊         | 14/165 [02:23<19:55,  7.92s/it]
+0: rep=0:  10%|▉         | 16/165 [02:31<16:32,  6.66s/it]
+0: rep=0:  10%|▉         | 16/165 [02:50<16:32,  6.66s/it]
+0: rep=0:  11%|█         | 18/165 [02:50<18:30,  7.55s/it]
+0: rep=0:  12%|█▏        | 19/165 [02:57<18:02,  7.41s/it]
+0: rep=0:  12%|█▏        | 19/165 [03:10<18:02,  7.41s/it]
+0: rep=0:  13%|█▎        | 21/165 [03:19<20:28,  8.53s/it]
+0: rep=0:  14%|█▍        | 23/165 [03:30<18:04,  7.64s/it]
+0: rep=0:  15%|█▌        | 25/165 [03:37<14:50,  6.36s/it]
+0: rep=0:  16%|█▋        | 27/165 [03:43<11:52,  5.16s/it]
+0: rep=0:  18%|█▊        | 30/165 [03:51<09:28,  4.21s/it]
+0: rep=0:  20%|██        | 33/165 [04:02<08:58,  4.08s/it]
+0: rep=0:  21%|██        | 35/165 [04:09<08:29,  3.92s/it]
+0: rep=0:  21%|██        | 35/165 [04:20<08:29,  3.92s/it]
+0: rep=0:  22%|██▏       | 37/165 [04:20<09:12,  4.31s/it]
+0: rep=0:  24%|██▎       | 39/165 [04:31<09:34,  4.56s/it]
+0: rep=0:  25%|██▍       | 41/165 [04:36<08:23,  4.06s/it]
+0: rep=0:  27%|██▋       | 44/165 [04:44<07:11,  3.57s/it]
+0: rep=0:  28%|██▊       | 46/165 [04:55<07:56,  4.01s/it]
+0: rep=0:  29%|██▉       | 48/165 [05:02<07:36,  3.90s/it]
+0: rep=0:  30%|███       | 50/165 [05:09<07:10,  3.74s/it]
+0: rep=0:  32%|███▏      | 52/165 [05:14<06:25,  3.41s/it]
+0: rep=0:  33%|███▎      | 55/165 [05:22<05:50,  3.18s/it]
+0: rep=0:  35%|███▍      | 57/165 [05:32<06:29,  3.61s/it]
+0: rep=0:  36%|███▌      | 59/165 [05:42<06:58,  3.94s/it]
+0: rep=0:  38%|███▊      | 63/165 [05:48<04:55,  2.90s/it]
+0: rep=0:  39%|███▉      | 65/165 [05:53<04:41,  2.82s/it]
+0: rep=0:  41%|████      | 68/165 [06:00<04:22,  2.70s/it]
+0: rep=0:  42%|████▏     | 70/165 [06:12<05:29,  3.47s/it]
+0: rep=0:  44%|████▎     | 72/165 [06:17<04:59,  3.22s/it]
+0: rep=0:  45%|████▌     | 75/165 [06:24<04:16,  2.85s/it]
+0: rep=0:  47%|████▋     | 78/165 [06:38<05:06,  3.53s/it]
+0: rep=0:  48%|████▊     | 80/165 [06:45<05:00,  3.54s/it]
+0: rep=0:  50%|█████     | 83/165 [06:53<04:25,  3.23s/it]
+0: rep=0:  52%|█████▏    | 85/165 [06:58<04:05,  3.07s/it]
+0: rep=0:  53%|█████▎    | 87/165 [07:05<04:03,  3.13s/it]
+0: rep=0:  54%|█████▍    | 89/165 [07:12<04:05,  3.23s/it]
+0: rep=0:  55%|█████▌    | 91/165 [07:19<04:05,  3.32s/it]
+0: rep=0:  56%|█████▋    | 93/165 [07:26<04:04,  3.39s/it]
+0: rep=0:  58%|█████▊    | 96/165 [07:35<03:37,  3.15s/it]
+0: rep=0:  59%|█████▉    | 98/165 [07:40<03:21,  3.00s/it]
+0: rep=0:  61%|██████    | 100/165 [07:51<04:01,  3.71s/it]
+0: rep=0:  62%|██████▏   | 102/165 [07:58<03:50,  3.66s/it]
+0: rep=0:  63%|██████▎   | 104/165 [08:07<03:55,  3.86s/it]
+0: rep=0:  65%|██████▍   | 107/165 [08:15<03:21,  3.48s/it]
+0: rep=0:  67%|██████▋   | 110/165 [08:24<02:57,  3.24s/it]
+0: rep=0:  68%|██████▊   | 112/165 [08:31<02:54,  3.29s/it]
+0: rep=0:  69%|██████▉   | 114/165 [08:42<03:20,  3.93s/it]
+0: rep=0:  70%|███████   | 116/165 [08:47<02:55,  3.58s/it]
+0: rep=0:  72%|███████▏  | 118/165 [08:53<02:35,  3.31s/it]
+0: rep=0:  73%|███████▎  | 120/165 [09:00<02:32,  3.40s/it]
+0: rep=0:  74%|███████▍  | 122/165 [09:07<02:28,  3.46s/it]
+0: rep=0:  75%|███████▌  | 124/165 [09:14<02:20,  3.43s/it]
+0: rep=0:  76%|███████▋  | 126/165 [09:21<02:15,  3.47s/it]
+0: rep=0:  78%|███████▊  | 129/165 [09:30<01:57,  3.26s/it]
+0: rep=0:  79%|███████▉  | 131/165 [09:37<01:53,  3.35s/it]
+0: rep=0:  81%|████████  | 133/165 [09:44<01:49,  3.42s/it]
+0: rep=0:  82%|████████▏ | 135/165 [09:50<01:38,  3.29s/it]
+0: rep=0:  83%|████████▎ | 137/165 [09:57<01:34,  3.37s/it]
+0: rep=0:  84%|████████▍ | 139/165 [10:03<01:23,  3.19s/it]
+0: rep=0:  86%|████████▌ | 142/165 [10:08<01:02,  2.70s/it]
+0: rep=0:  87%|████████▋ | 144/165 [10:14<00:57,  2.75s/it]
+0: rep=0:  88%|████████▊ | 146/165 [10:20<00:52,  2.78s/it]
+0: rep=0:  90%|████████▉ | 148/165 [10:26<00:49,  2.89s/it]
+0: rep=0:  91%|█████████ | 150/165 [10:32<00:42,  2.84s/it]
+0: rep=0:  92%|█████████▏| 152/165 [10:38<00:38,  2.96s/it]
+0: rep=0:  93%|█████████▎| 154/165 [10:43<00:31,  2.87s/it]
+0: rep=0:  95%|█████████▍| 156/165 [10:51<00:27,  3.08s/it]
+0: rep=0:  97%|█████████▋| 160/165 [10:57<00:11,  2.38s/it]
+0: rep=0:  99%|█████████▉| 163/165 [11:04<00:04,  2.38s/it]
+0: rep=0: 100%|██████████| 165/165 [11:11<00:00,  4.07s/it]
+0: [rank0]:[W703 16:27:44.335189042 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [rank3]:[W703 16:27:46.949781289 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [rank2]:[W703 16:27:46.507623245 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [rank1]:[W703 16:27:47.366931803 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())

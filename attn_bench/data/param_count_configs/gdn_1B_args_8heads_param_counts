@@ -1,0 +1,23 @@
+=== Parameter count: gdn_1B_args_8heads ===
+(embeddings tied with output head)
+
+TOTAL                                                        1,471,881,472
+
+By category:
+embeddings + output head                                       262,930,432
+mlp / ffn                                                      805,339,136
+mixer (rest)                                                   403,611,904
+
+By param (layer index collapsed):
+decoder.final_layernorm.weight                                       2,048
+decoder.layers.*.mlp.linear_fc1.layer_norm_weight                   32,768
+decoder.layers.*.mlp.linear_fc1.weight                         536,870,912
+decoder.layers.*.mlp.linear_fc2.weight                         268,435,456
+decoder.layers.*.self_attention.A_log                                  128
+decoder.layers.*.self_attention.conv1d.weight                      393,216
+decoder.layers.*.self_attention.dt_bias                                128
+decoder.layers.*.self_attention.in_proj.layer_norm_weight           32,768
+decoder.layers.*.self_attention.in_proj.weight                 302,514,176
+decoder.layers.*.self_attention.out_norm.weight                      6,144
+decoder.layers.*.self_attention.out_proj.weight                100,663,296
+embedding.word_embeddings.weight                               262,930,432

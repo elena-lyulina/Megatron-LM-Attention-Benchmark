@@ -23,12 +23,14 @@
 # Usage:
 #   sbatch attn_bench/submissions/download_gutenberg_laion.slurm
 
+set -euo pipefail
+
 echo "START TIME: $(date)"
 
 ### PATHS ###
 
 MEGATRON_DIR=/iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark
-BASE_DIR=/iopsstor/scratch/cscs/$USER/datasets/raw/gutenberg-laion
+BASE_DIR=/users/$USER/store/datasets/raw/gutenberg-laion
 
 mkdir -p /iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark/attn_bench/logs
 mkdir -p $BASE_DIR
