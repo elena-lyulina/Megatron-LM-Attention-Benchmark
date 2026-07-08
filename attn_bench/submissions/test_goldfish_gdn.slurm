@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --account=infra01
 #SBATCH --time=00:05:00
-#SBATCH --job-name=test-attn-full
+#SBATCH --job-name=test-goldfish-gdn
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
 #SBATCH --nodes=1
@@ -12,11 +12,15 @@
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=clariden-jobs-elyulin-aaaauapxybdkdx42ppvef2c2eq@swissai-initiative.slack.com
 
-# Standard full attention (no sink, no gate) with --use-packed-seq-params.
-# Runs the test suites: xdoc should PASS; sink, gated, and goldfish should FAIL (none enabled).
+# Goldfish loss on a GDN model (--experimental-attention-variant gated_delta_net). Goldfish is
+# architecture-agnostic (dataset-side loss_mask), so this mostly checks that goldfish + GDN
+# COEXIST and launch cleanly -- a cheap smoke before the full GDN+goldfish pretraining run.
+# Runs goldfish (masking + loss) plus gdn + xdoc_loss as regression checks; expect all pass.
+# NOTE: GDN requires flash-linear-attention (fla) and causal_conv1d in the container; if either is
+# missing the GDN layer raises ImportError on init.
 #
 # Usage:
-#   sbatch attn_bench/submissions/test_attn_full.slurm
+#   sbatch attn_bench/submissions/test_goldfish_gdn.slurm
 
 echo "START TIME: $(date)"
 
@@ -29,7 +33,7 @@ export PYTHONPATH=$MEGATRON_LM_DIR:${PYTHONPATH:-}
 ### PATHS ###
 PROJECT_NAME="test"
 PROJECT_DIR=$MEGATRON_LM_DIR/attn_bench/results/$PROJECT_NAME
-EXP_NAME=attn_full
+EXP_NAME=goldfish_gdn
 EXP_DIR=$PROJECT_DIR/$EXP_NAME
 DEBUG_DIR=$EXP_DIR/debug/$SLURM_JOB_ID
 LOGGING_DIR=$EXP_DIR/logging
@@ -55,8 +59,9 @@ TRANSFORMER_ENGINE_ARGS=(
     --main-grads-dtype fp32
 )
 
-# Tiny model — seq_len=64 makes the printed attention mask readable
-SEQ_LEN=64
+# Tiny GDN model. seq_len must be >> goldfish_h so the first h-1 (never-dropped) positions
+# don't skew the ~1/k drop-rate check; 2048 >> 13 makes it hold.
+SEQ_LEN=2048
 
 NETWORK_SIZE_ARGS=(
     --num-layers 2
@@ -70,6 +75,18 @@ NETWORK_SIZE_ARGS=(
     --norm-epsilon 1e-5
     --swiglu
     --disable-bias-linear
+)
+
+# Gated Delta Net args. Pure GDN: --linear-attention-freq 999 > num_layers => no SDPA layers.
+# linear_num_value_heads is a multiple of linear_num_key_heads (GQA ratio 2) and of TP.
+GDN_ARGS=(
+    --experimental-attention-variant gated_delta_net
+    --linear-attention-freq 999
+    --linear-num-key-heads 2
+    --linear-num-value-heads 4
+    --linear-key-head-dim 16
+    --linear-value-head-dim 16
+    --linear-conv-kernel-dim 4
 )
 
 LOGGING_ARGS=(
@@ -130,22 +147,25 @@ DATA_ARGS=(
     --tokenizer-type HuggingFaceTokenizer
     --tokenizer-model /users/elyulina/scratch/tokenizers/llama-3.2-1b
     --make-vocab-size-divisible-by 128
-    --reset-position-ids
     --eod-mask-loss
+    --goldfish-loss
+    --goldfish-k 50
+    --goldfish-h 13
     --no-create-attention-mask-in-dataloader
     --use-packed-seq-params
     --mock-data
 )
 
-# No sink or gate flags - standard full attention. No --goldfish-loss, so goldfish must FAIL
-# (negative control: confirms goldfish is off by default and our edits didn't break this path).
+# goldfish (enabled above) must PASS. gdn + xdoc_loss must PASS too (GDN model +
+# --use-packed-seq-params) -- confirms goldfish+GDN coexist and don't disturb the GDN suites.
 BENCHMARK_ARGS=(
-    --tests xdoc_mask=pass xdoc_loss=pass xdoc_position_ids=pass sink=fail gated=fail goldfish=fail
+    --tests goldfish=pass xdoc_loss=pass gdn=pass
 )
 
 TRAINING_CMD="python3 $MEGATRON_LM_DIR/attn_bench/tests/pretrain_gpt_native.py \
     ${TRANSFORMER_ENGINE_ARGS[@]} \
     ${NETWORK_SIZE_ARGS[@]} \
+    ${GDN_ARGS[@]} \
     ${LOGGING_ARGS[@]} \
     ${REGULARIZATION_ARGS[@]} \
     ${TRAINING_ARGS[@]} \
@@ -178,14 +198,16 @@ cp $0 $DEBUG_DIR
 
 ### LAUNCH ###
 # grep -E "PASS|FAIL|### Test|### Summary|IMPLEMENTATION|### Verdict" attn_bench/logs/<jobid>.out
-echo "=== IMPLEMENTATION: full attention (no sink, no gate) ==="
+echo "=== IMPLEMENTATION: goldfish loss (--goldfish-k 50 --goldfish-h 13) on a GDN model ==="
 echo "[$(date)] Launching..."
 
+# TRITON_CACHE_DIR: per-rank node-local cache so ranks don't share the default ~/.triton cache on the
+# shared FS -> avoids a stale-file-handle race when GDN's fla kernels autotune/compile on first backward.
 srun \
     --cpus-per-task $SLURM_CPUS_PER_TASK \
     --environment=$CONTAINER_ENV \
     -lu \
-    bash -c "export PYTHONPATH='${PYTHONPATH}'; ${TRAINING_CMD}"
+    bash -c "export PYTHONPATH='${PYTHONPATH}'; export TRITON_CACHE_DIR=/tmp/triton_${USER}_${SLURM_JOB_ID}_\$SLURM_PROCID; ${TRAINING_CMD}"
 
 echo "END TIME: $(date)"
 echo "Done. Results in ${EXP_DIR}"

@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --account=infra01
 #SBATCH --time=7:00:00
-#SBATCH --job-name=pretrain-llama1B-gdn-fineweb40B-gutenberg3B
+#SBATCH --job-name=pretrain-llama1B-full-attn-goldfish-fineweb40B-gutenberg3B
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
 #SBATCH --nodes=14
@@ -11,23 +11,20 @@
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=clariden-jobs-elyulin-aaaauapxybdkdx42ppvef2c2eq@swissai-initiative.slack.com
 
-# Train a LLaMA 3.2 1B backbone with a Gated Delta Net (GDN) mixer on the FineWeb-Edu 40B + Gutenberg 3B
-# blend (~42.8B tokens), param-matched to the Llama-3.2-1B softmax-attention baseline.
-#   - Mixer:  GDN, 8 K/V heads, key_head_dim 192 / value_head_dim 384 (paper ratios 0.75/1.5)
-#   - FFN:    --ffn-hidden-size 5824 (shrunk from 8192 to absorb the wider GDN mixer; ~1.239B params)
-#   - Config: attn_bench/data/param_count_configs/gdn_1B_args_8heads_ffn5824.txt
-#   - Data:   FineWeb-Edu-Dedup 40B + Gutenberg 3B blend (same as the attention baselines)
-#   - Parallelism: TP=1 / MBS=2 / no sequence-parallel (~18% faster than TP=2/MBS=4 for GDN; GBS unchanged)
-# Full run is ~15550 steps (~5.2 h at ~1.2 s/iter); the 07:00:00 limit leaves comfortable margin.
-# NOTE: GDN requires flash-linear-attention (fla) and causal_conv1d in the container; if either is
-# missing the GDN layer raises ImportError on init -> use the te2.15 container.
+# Train a standard LLaMA 3.2 1B model (full attention, no gate, no sink) on a blended dataset:
+#   - FineWeb-Edu-Dedup 40B (0.25 partition of 160B)  — 40,038,865,413 tokens
+#   - Gutenberg (all rep levels, rep_1_256)           — 2,762,833,920  tokens
+#   - Total                                           — 42,801,699,333 tokens (~42.8B)
+# Full-attention + goldfish loss (--goldfish-k 50 --goldfish-h 50). Compare against the
+# full-attention baseline (pretrain_llama3_1b_full_attn_fineweb40B_gutenberg3B.slurm) to
+# isolate the goldfish memorization effect.
 #
 # Usage:
-#   sbatch attn_bench/submissions/pretrain_llama3_1b_gdn_fineweb40B_gutenberg3B.slurm
+#   sbatch attn_bench/submissions/pretrain_llama3_1b_full_attn_goldfish_fineweb40B_gutenberg3B.slurm
 
 echo "START TIME: $(date)"
 
-# Container environment (used by srun --environment) -- te2.15 ships fla + causal_conv1d for GDN
+# Container environment (used by srun --environment)
 CONTAINER_ENV=nemo_26.04_te2.15
 
 # Megatron source (WARNING: must be on iopsstor)
@@ -65,9 +62,8 @@ TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b  # Assumes t
 
 SEQ_LEN=8192
 
-MBS=2
-# seq_length * MBS * DP * GAS = 8192 * 2 * 56 * 3 = 2.75 M tokens/step  (TP=1 → DP=56)
-# GAS = GBS / (MBS * DP)
+MBS=4
+# seq_length * MBS * DP * GAS = 8192 * 4 * 28 * 3 = 2.75 M tokens/step
 GBS=336
 # 40,038,865,413 (fineweb 40B) + 2,762,833,920 (gutenberg 3B) = 42,801,699,333 tokens
 TARGET_TOKENS=42801699333
@@ -91,7 +87,7 @@ PYTHON_CACHE_DIR=/tmp/.python_cache
 # Logging directories & artifacts
 PROJECT_NAME="fineweb-40B_gutenberg-3B"
 PROJECT_DIR=$MEGATRON_LM_DIR/attn_bench/results/pretrain/$PROJECT_NAME
-EXP_NAME="llama3-1b-gdn-fineweb40B-gutenberg3B"
+EXP_NAME="llama3-1b-full-attn-goldfish-fineweb40B-gutenberg3B"
 EXP_DIR=$PROJECT_DIR/$EXP_NAME
 CKPT_DIR=$EXP_DIR/checkpoints
 TRIGGER_DIR=$EXP_DIR/triggers
@@ -136,35 +132,34 @@ TRANSFORMER_ENGINE_ARGS=(
     --transformer-impl transformer_engine
 )
 
-# ~1.239B (GDN mixer + FFN shrunk to match Llama-3.2-1B = 1.236B)
-# backbone follows Llama-3.2-1B; mixer + ffn from gdn_1B_args_8heads_ffn5824.txt
+# 1.23B
+# taken from https://huggingface.co/meta-llama/Llama-3.2-1B/blob/main/config.json, the original values are provided in the comments
 NETWORK_SIZE_ARGS=(
     --num-layers 16 # "num_hidden_layers": 16 -- following Llama-3.2-1B config
     --hidden-size 2048 # "hidden_size": 2048  -- following Llama-3.2-1B config
-    --ffn-hidden-size 5824  # shrunk from 8192 to absorb the wider GDN mixer (matches Llama-1B param count)
+    --ffn-hidden-size 8192  # "intermediate_size": 8192  -- following Llama-3.2-1B config
     --normalization RMSNorm
     --norm-epsilon 1e-5 # "rms_norm_eps": 1e-05  -- following Llama-3.2-1B config
-    --swiglu # "hidden_act": "silu"  -- following Llama-3.2-1B config
+    --swiglu # "hidden_act": "silu"  -- following Llama-3.2-1B config + gating
     --disable-bias-linear # "mlp_bias": false, "attention_bias": false  -- following Llama-3.2-1B config
     # Llama-3.2-1B config: "tie_word_embeddings": true -- embeddings tied by default; need to pass --untie-embeddings-and-output-weights to disable
     # Llama-3.2-1B config: "vocab_size": 128256 -- derived from the tokenizer
 )
 
-### ATTENTION ARGS ###
-# GDN dims are part of the model size, so they live next to NETWORK_SIZE_ARGS. Pure GDN (all 16 layers),
-# paper head ratios. --use-packed-seq-params (DATA_ARGS) resets the recurrent state + conv at every
-# document boundary via cu_seqlens.
 ATTENTION_ARGS=(
-    --num-attention-heads 32 # required to build the model but is not used for GDN
-    --max-position-embeddings 8192  # required by validation (must be >= seq-length), no effect for GDN
-    --position-embedding-type none  # GDN ignores positions; 'none' = no positional params at all
-    --experimental-attention-variant gated_delta_net
-    --linear-attention-freq [1]*16
-    --linear-num-key-heads 8       # GDN's K/Q heads
-    --linear-num-value-heads 8     # GDN's V heads, must be a multiple of linear_num_key_heads
-    --linear-key-head-dim 192      # key_dim = 8*192 = 1536 = 0.75*hidden
-    --linear-value-head-dim 384    # value_dim = 8*384 = 3072 = 1.5*hidden = 2*key_dim
-    --linear-conv-kernel-dim 4
+    --num-attention-heads 32 # "num_attention_heads": 32  -- following Llama-3.2-1B config
+    --group-query-attention
+    --num-query-groups 8 # "num_key_value_heads": 8  -- following Llama-3.2-1B config
+    --max-position-embeddings 131072  # "max_position_embeddings": 131072  -- following Llama-3.2-1B config
+    --position-embedding-type rope
+    --use-rope-scaling
+    --rotary-base 500000 # "rope_theta": 500000.0  -- following Llama-3.2-1B config
+    --rope-scaling-factor 32 # "rope_scaling": "factor": 32.0  -- following Llama-3.2-1B config
+    # hardcoded in Megatron (megatron/core/models/common/embeddings/rotary_pos_embedding.py:92-98), correspond to Llama-3.2-1B config:
+    # high_freq_factor=4
+    # low_freq_factor=1
+    # original_max_position_embeddings=8192
+    # rope_type: llama3
 )
 
 LOGGING_ARGS=(
@@ -242,9 +237,10 @@ VOCAB_ARGS=(
 
 
 DISTRIBUTED_ARGS=(
-    --tensor-model-parallel-size 1
+    --tensor-model-parallel-size 2
     --pipeline-model-parallel-size 1
     --context-parallel-size 1
+    --sequence-parallel
     --use-distributed-optimizer
     --overlap-grad-reduce
     --overlap-param-gather
@@ -266,6 +262,9 @@ DATA_ARGS=(
     --reset-position-ids
     #    --reset-attention-mask
     --eod-mask-loss
+    --goldfish-loss
+    --goldfish-k 50
+    --goldfish-h 50
     --use-packed-seq-params
     --no-create-attention-mask-in-dataloader
     --data-path $DATA_PATH_STR
@@ -384,13 +383,9 @@ SEP=$(printf '=%.0s' {1..100})
 
 ### LAUNCH ###
 
-echo "Training: llama3-1b gdn fineweb40B+gutenberg3B  nodes=${SLURM_NNODES}  gbs=${GBS}  steps=${TRAINING_STEPS}  datasets=${#DATA_PATH_LIST[@]}"
+echo "Training: llama3-1b full-attn fineweb40B+gutenberg3B  nodes=${SLURM_NNODES}  gbs=${GBS}  steps=${TRAINING_STEPS}  datasets=${#DATA_PATH_LIST[@]}"
 echo "[$(date)] Launching training..."
 
-# TRITON_CACHE_DIR: per-rank node-local cache. A shared-FS Triton cache crashes GDN runs with
-# "OSError: [Errno 116] Stale file handle" when fla's kernels autotune/compile on first backward and
-# ranks collide on the same cache files (observed in job 2570257, attn_gdn_flag_tp2_2nodes). Keying on
-# SLURM_JOB_ID + SLURM_PROCID gives each rank a clean, private cache per job (cheap: recompiles in ~1-2 min).
 srun \
     --cpus-per-task $SLURM_CPUS_PER_TASK \
     --mpi=pmix \
@@ -399,10 +394,9 @@ srun \
     -lu \
     bash -c "
     mkdir -p $TORCH_INDUCTOR_CACHE_DIR
-    mkdir -p $TRITON_HOME_DIR   # TRITON_HOME is set at the top to a node-local /tmp path; create it explicitly
+    mkdir -p $TRITON_HOME_DIR
+    mkdir -p $TRITON_CACHE_DIR
     mkdir -p $PYTHON_CACHE_DIR
-    export TRITON_CACHE_DIR=/tmp/triton_${USER}_\${SLURM_JOB_ID}_\$SLURM_PROCID
-    mkdir -p \$TRITON_CACHE_DIR
     export PYTHONPATH='${PYTHONPATH}'; RANK=\$SLURM_PROCID LOCAL_RANK=\$SLURM_LOCALID ${CMD_PREFIX} ${TRAINING_CMD}"
 
 echo "END TIME: $(date)"
