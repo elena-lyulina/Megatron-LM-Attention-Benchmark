@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --account=infra01
 #SBATCH --time=7:00:00
-#SBATCH --job-name=pretrain-llama1B-gdn-fineweb40B-gutenberg3B
+#SBATCH --job-name=pretrain-llama1B-gdn-goldfish-fineweb40B-gutenberg3B
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
 #SBATCH --nodes=14
@@ -22,8 +22,11 @@
 # NOTE: GDN requires flash-linear-attention (fla) and causal_conv1d in the container; if either is
 # missing the GDN layer raises ImportError on init -> use the te2.15 container.
 #
+# Adds goldfish loss (--goldfish-k 50 --goldfish-h 50). Compare against the GDN baseline
+# (pretrain_llama3_1b_gdn_fineweb40B_gutenberg3B.slurm) to isolate the goldfish memorization effect.
+#
 # Usage:
-#   sbatch attn_bench/submissions/pretrain_llama3_1b_gdn_fineweb40B_gutenberg3B.slurm
+#   sbatch attn_bench/submissions/pretrain_llama3_1b_gdn_goldfish_fineweb40B_gutenberg3B.slurm
 
 echo "START TIME: $(date)"
 
@@ -91,7 +94,7 @@ PYTHON_CACHE_DIR=/tmp/.python_cache
 # Logging directories & artifacts
 PROJECT_NAME="fineweb-40B_gutenberg-3B"
 PROJECT_DIR=$MEGATRON_LM_DIR/attn_bench/results/pretrain/$PROJECT_NAME
-EXP_NAME="llama3-1b-gdn-fineweb40B-gutenberg3B"
+EXP_NAME="llama3-1b-gdn-goldfish-fineweb40B-gutenberg3B"
 EXP_DIR=$PROJECT_DIR/$EXP_NAME
 CKPT_DIR=$EXP_DIR/checkpoints
 TRIGGER_DIR=$EXP_DIR/triggers
@@ -266,6 +269,9 @@ DATA_ARGS=(
     --reset-position-ids
     #    --reset-attention-mask
     --eod-mask-loss
+    --goldfish-loss
+    --goldfish-k 50
+    --goldfish-h 50
     --use-packed-seq-params
     --no-create-attention-mask-in-dataloader
     --data-path $DATA_PATH_STR

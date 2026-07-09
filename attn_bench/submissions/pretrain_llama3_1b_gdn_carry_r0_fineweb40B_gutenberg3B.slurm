@@ -142,9 +142,6 @@ NETWORK_SIZE_ARGS=(
     --num-layers 16 # "num_hidden_layers": 16 -- following Llama-3.2-1B config
     --hidden-size 2048 # "hidden_size": 2048  -- following Llama-3.2-1B config
     --ffn-hidden-size 5824  # shrunk from 8192 to absorb the wider GDN mixer (matches Llama-1B param count)
-    --num-attention-heads 32 # required to build the model but is not used for GDN
-    --max-position-embeddings 8192  # required by validation (must be >= seq-length), no effect for GDN
-    --position-embedding-type none  # GDN ignores positions; 'none' = no positional params at all
     --normalization RMSNorm
     --norm-epsilon 1e-5 # "rms_norm_eps": 1e-05  -- following Llama-3.2-1B config
     --swiglu # "hidden_act": "silu"  -- following Llama-3.2-1B config
@@ -158,6 +155,9 @@ NETWORK_SIZE_ARGS=(
 # paper head ratios. No --use-packed-seq-params: the recurrent + conv state is not reset at document
 # boundaries (it leaks across docs within a sequence); --gdn-state-carry-ratio controls carry across batches.
 ATTENTION_ARGS=(
+    --num-attention-heads 32 # required to build the model but is not used for GDN
+    --max-position-embeddings 8192  # required by validation (must be >= seq-length), no effect for GDN
+    --position-embedding-type none  # GDN ignores positions; 'none' = no positional params at all
     --experimental-attention-variant gated_delta_net
     --linear-attention-freq [1]*16
     --linear-num-key-heads 8       # GDN's K/Q heads

@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --account=infra01
 #SBATCH --time=00:05:00
-#SBATCH --job-name=test-attn-full
+#SBATCH --job-name=test-goldfish
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
 #SBATCH --nodes=1
@@ -12,11 +12,14 @@
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=clariden-jobs-elyulin-aaaauapxybdkdx42ppvef2c2eq@swissai-initiative.slack.com
 
-# Standard full attention (no sink, no gate) with --use-packed-seq-params.
-# Runs the test suites: xdoc should PASS; sink, gated, and goldfish should FAIL (none enabled).
+# Goldfish loss wiring test: runs the 'goldfish' suite, which builds MockGPTDatasets from the
+# real config (so the --goldfish-* flags flow args -> config -> __getitem__) and checks that
+# loss_mask is zeroed exactly at the goldfish drops. Goldfish is dataset-side (architecture-
+# agnostic), so this uses plain full attention + a tiny model + mock data. Also runs xdoc_loss
+# as a regression check. Expect goldfish=pass and xdoc_loss=pass.
 #
 # Usage:
-#   sbatch attn_bench/submissions/test_attn_full.slurm
+#   sbatch attn_bench/submissions/test_goldfish.slurm
 
 echo "START TIME: $(date)"
 
@@ -29,7 +32,7 @@ export PYTHONPATH=$MEGATRON_LM_DIR:${PYTHONPATH:-}
 ### PATHS ###
 PROJECT_NAME="test"
 PROJECT_DIR=$MEGATRON_LM_DIR/attn_bench/results/$PROJECT_NAME
-EXP_NAME=attn_full
+EXP_NAME=goldfish
 EXP_DIR=$PROJECT_DIR/$EXP_NAME
 DEBUG_DIR=$EXP_DIR/debug/$SLURM_JOB_ID
 LOGGING_DIR=$EXP_DIR/logging
@@ -55,8 +58,9 @@ TRANSFORMER_ENGINE_ARGS=(
     --main-grads-dtype fp32
 )
 
-# Tiny model — seq_len=64 makes the printed attention mask readable
-SEQ_LEN=64
+# Tiny model. seq_len must be >> goldfish_h so the first h-1 (never-dropped) positions don't
+# dominate and skew the ~1/k drop-rate check; 2048 >> 13 makes it hold.
+SEQ_LEN=2048
 
 NETWORK_SIZE_ARGS=(
     --num-layers 2
@@ -132,15 +136,18 @@ DATA_ARGS=(
     --make-vocab-size-divisible-by 128
     --reset-position-ids
     --eod-mask-loss
+    --goldfish-loss
+    --goldfish-k 50
+    --goldfish-h 13
     --no-create-attention-mask-in-dataloader
     --use-packed-seq-params
     --mock-data
 )
 
-# No sink or gate flags - standard full attention. No --goldfish-loss, so goldfish must FAIL
-# (negative control: confirms goldfish is off by default and our edits didn't break this path).
+# goldfish (enabled above) must PASS. xdoc_loss must PASS too (--use-packed-seq-params isolates
+# docs via cu_seqlens) -- a regression check that our goldfish edits didn't disturb it.
 BENCHMARK_ARGS=(
-    --tests xdoc_mask=pass xdoc_loss=pass xdoc_position_ids=pass sink=fail gated=fail goldfish=fail
+    --tests goldfish=pass xdoc_loss=pass
 )
 
 TRAINING_CMD="python3 $MEGATRON_LM_DIR/attn_bench/tests/pretrain_gpt_native.py \
@@ -178,7 +185,7 @@ cp $0 $DEBUG_DIR
 
 ### LAUNCH ###
 # grep -E "PASS|FAIL|### Test|### Summary|IMPLEMENTATION|### Verdict" attn_bench/logs/<jobid>.out
-echo "=== IMPLEMENTATION: full attention (no sink, no gate) ==="
+echo "=== IMPLEMENTATION: goldfish loss (--goldfish-k 50 --goldfish-h 13) ==="
 echo "[$(date)] Launching..."
 
 srun \
