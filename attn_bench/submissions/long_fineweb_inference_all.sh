@@ -54,10 +54,6 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# sink / off-by-one use unfused attention (O(S^2) memory) and OOM at full length, so cap them.
-# A global MAX_LENGTH (if set) overrides this for every model.
-UNFUSED_MAXLEN=12288
-
 for DATA_FOLDER in "${DATA_FOLDERS[@]}"; do
     IFS='|' read -r TAG DATA_FOLDER_NAME <<< "$DATA_FOLDER"
     DATA_FILE=$STORE_TOKENIZED/${DATA_FOLDER_NAME}_long/long_${MIN_LENGTH}_${MAX_LENGTH_RANGE}.jsonl
@@ -70,15 +66,22 @@ for DATA_FOLDER in "${DATA_FOLDERS[@]}"; do
     for JOB in "${JOBS[@]}"; do
         IFS='|' read -r VARIANT EXP_NAME <<< "$JOB"
 
-        # Per-variant length cap: the unfused-attention models can't run at full length.
+        # sink/off-by-one auto-select TP=4 + a 20480 length cap inside long_fineweb_inference.slurm
+        # itself (unfused attention OOMs otherwise); mirror that here only for the skip-check and
+        # to request enough walltime -- MAX_LENGTH (if set) still overrides for every model.
         VAR_MAXLEN=${MAX_LENGTH:-}
-        if [[ -z "$VAR_MAXLEN" && ( "$VARIANT" == sink || "$VARIANT" == off-by-one ) ]]; then
-            VAR_MAXLEN=$UNFUSED_MAXLEN
+        JOB_TP=1
+        JOB_TIME=""
+        if [[ "$VARIANT" == sink || "$VARIANT" == off-by-one ]]; then
+            JOB_TP=4
+            [[ -z "$VAR_MAXLEN" ]] && VAR_MAXLEN=20480
+            JOB_TIME="2:00:00"
         fi
         # Config folder (must match config_name() in long_inference.py): unset MAX_SAMPLES falls
         # back to long_fineweb_inference.py's own DEFAULT_MAX_SAMPLES (660), not "all" -- the
         # python script itself defaults --max-samples to 660, unlike the Gutenberg script.
         CONFIG="${MAX_SAMPLES:-660}_samples_${VAR_MAXLEN:-full}_tokens"
+        [[ $JOB_TP -gt 1 ]] && CONFIG="${CONFIG}_tp${JOB_TP}"
 
         # State norms are only logged for GDN variants (their exp name contains "gdn").
         WANT_STATE=0
@@ -101,8 +104,11 @@ for DATA_FOLDER in "${DATA_FOLDERS[@]}"; do
         # --force also recomputes: without this the resubmitted job would just skip and no-op.
         [[ $FORCE -eq 1 ]] && EXPORTS="$EXPORTS,OVERWRITE=1"
 
-        echo "Submitting VARIANT=$VARIANT ($EXP_NAME) partition=$TAG state_norm=$WANT_STATE"
+        SBATCH_TIME_ARG=()
+        [[ -n "$JOB_TIME" ]] && SBATCH_TIME_ARG=(--time="$JOB_TIME")
+
+        echo "Submitting VARIANT=$VARIANT ($EXP_NAME) partition=$TAG state_norm=$WANT_STATE tp=$JOB_TP time=${JOB_TIME:-default}"
         # ALL propagates the submission env (USER, PATH, ...) so $USER-based paths resolve.
-        sbatch --export=ALL,"$EXPORTS" "$SCRIPT_DIR/long_fineweb_inference.slurm"
+        sbatch "${SBATCH_TIME_ARG[@]}" --export=ALL,"$EXPORTS" "$SCRIPT_DIR/long_fineweb_inference.slurm"
     done
 done

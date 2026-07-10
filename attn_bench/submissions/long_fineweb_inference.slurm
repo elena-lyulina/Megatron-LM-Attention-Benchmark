@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --account=infra01
-#SBATCH --time=1:30:00
+#SBATCH --time=00:30:00
 #SBATCH --job-name=long-fineweb-inf
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
@@ -21,8 +21,16 @@
 # long_{lo}_{hi}.jsonl basename. Writes go to Iopsstor scratch during the job and get copied
 # to Capstor store at the end (CSCS guidance: never write to capstor from a compute node).
 #
+# sink/off-by-one use unfused attention (O(S^2) memory) and OOM at full length under the
+# default TP=1 -- they auto-select --tensor-parallel 4 (all 4 GPUs form one TP group, DP=1)
+# and default to --max-length 20480 (override via MAX_LENGTH; even TP=4 needed this cap on
+# Gutenberg, see attn_bench/notebooks/long_gutenberg.ipynb CONFIG_TP4). TP=4 is much slower
+# per sequence than the DP=4 default (no data-parallel striding) -- override --time when
+# submitting these two variants, the file's default is sized for the fused/DP variants.
+#
 # Usage:
 #   sbatch --export=VARIANT=full,DATA_FILE=/path/to/long_24576_32768.jsonl long_fineweb_inference.slurm
+#   sbatch --time=2:00:00 --export=VARIANT=sink,DATA_FILE=/path/to/long_24576_32768.jsonl long_fineweb_inference.slurm
 #   REPETITIONS is not used here (no repetition axis); MAX_SAMPLES=20 for calibration.
 # (normally submitted via long_fineweb_inference_all.sh)
 
@@ -46,6 +54,7 @@ STATE_CHUNK=${STATE_CHUNK:-}         # override the state readout stride (defaul
 ### VARIANT -> EXP_NAME + non-restored flags (same model list as long_gutenberg_inference.slurm) ###
 VARIANT=${VARIANT:-full}
 NEEDS_TRITON=0
+TP=1
 GDN_DIMS="--experimental-attention-variant gated_delta_net \
     --linear-attention-freq '[1]*16' \
     --linear-num-key-heads 8 \
@@ -57,10 +66,13 @@ case "$VARIANT" in
     full)       EXP_NAME=llama3-1b-full-attn-fineweb40B-gutenberg3B;             MEGATRON_EXTRA="" ;;
     gated)      EXP_NAME=llama3-1b-gated-attn-fineweb40B-gutenberg3B;            MEGATRON_EXTRA="--attention-output-gate" ;;
     full-xdoc-leak)  EXP_NAME=llama3-1b-full-attn-xdoc-attn-leak-fineweb40B-gutenberg3B; MEGATRON_EXTRA="" ;;
-    sink)       EXP_NAME=llama3-1b-sink-attn-fineweb40B-gutenberg3B-te215;       MEGATRON_EXTRA="--softmax-type learnable --attention-backend unfused" ;;
+    sink)       EXP_NAME=llama3-1b-sink-attn-fineweb40B-gutenberg3B-te215;       MEGATRON_EXTRA="--softmax-type learnable --attention-backend unfused";
+                # unfused attn OOMs at TP=1 for these lengths; TP=4 needs a length cap too (Gutenberg: 20480)
+                TP=4; [ -z "$MAX_LENGTH" ] && MAX_LENGTH=20480 ;;
     off-by-one) EXP_NAME=llama3-1b-off-by-one-attn-fineweb40B-gutenberg3B-te215; MEGATRON_EXTRA="--softmax-type off-by-one --attention-backend unfused";
                 # checkpoint lives at the non-te215 path; EXP_NAME (results dir) stays -te215 to match the mem run
-                CKPT_NAME=llama3-1b-off-by-one-attn-fineweb40B-gutenberg3B ;;
+                CKPT_NAME=llama3-1b-off-by-one-attn-fineweb40B-gutenberg3B;
+                TP=4; [ -z "$MAX_LENGTH" ] && MAX_LENGTH=20480 ;;
     gdn)        EXP_NAME=llama3-1b-gdn-fineweb40B-gutenberg3B;                   MEGATRON_EXTRA="$GDN_DIMS"; NEEDS_TRITON=1 ;;
     carry-r0)   EXP_NAME=llama3-1b-gdn-carry-r0-fineweb40B-gutenberg3B;          MEGATRON_EXTRA="$GDN_DIMS"; NEEDS_TRITON=1 ;;
     carry-r0.5) EXP_NAME=llama3-1b-gdn-carry-r0.5-fineweb40B-gutenberg3B;        MEGATRON_EXTRA="$GDN_DIMS"; NEEDS_TRITON=1 ;;
@@ -80,8 +92,9 @@ export CUDA_DEVICE_MAX_CONNECTIONS=1
 
 ### CHECK STORE (before doing anything expensive) ###
 # CONFIG must match config_name() in long_inference.py: unset MAX_SAMPLES falls back to
-# long_fineweb_inference.py's own DEFAULT_MAX_SAMPLES (660), not "all".
+# long_fineweb_inference.py's own DEFAULT_MAX_SAMPLES (660), not "all"; tp>1 appends "_tp{TP}".
 CONFIG="${MAX_SAMPLES:-660}_samples_${MAX_LENGTH:-full}_tokens"
+[ "$TP" -gt 1 ] && CONFIG="${CONFIG}_tp${TP}"
 KEY=$(basename "$DATA_FILE" .jsonl)
 STORE_NPZ=$RESULTS_DIR/$CONFIG/$KEY.npz
 if [ -z "$OVERWRITE" ] && [ -f "$STORE_NPZ" ] \
@@ -98,6 +111,7 @@ COMMON_ARGS="--container-env $CONTAINER_ENV \
     --tokenizer-path $TOKENIZER_PATH \
     --experiment-path $SCRATCH_RESULTS_DIR \
     --data-file $DATA_FILE"
+[ "$TP" -gt 1 ] && COMMON_ARGS="$COMMON_ARGS --tensor-parallel $TP"
 [ -n "$MAX_LENGTH" ] && COMMON_ARGS="$COMMON_ARGS --max-length $MAX_LENGTH"
 [ -n "$MAX_SAMPLES" ] && COMMON_ARGS="$COMMON_ARGS --max-samples $MAX_SAMPLES"
 [ -n "$OVERWRITE" ] && COMMON_ARGS="$COMMON_ARGS --overwrite"
@@ -106,7 +120,7 @@ COMMON_ARGS="--container-env $CONTAINER_ENV \
 EXTRA_MEGATRON=""
 [ -n "$MEGATRON_EXTRA" ] && EXTRA_MEGATRON="--megatron-extra-args $MEGATRON_EXTRA"
 
-echo "RUN: variant=$VARIANT  exp=$EXP_NAME  data_file=$DATA_FILE  max_length=${MAX_LENGTH:-none}  max_samples=${MAX_SAMPLES:-660 (default)}  triton=$NEEDS_TRITON  state_norm=${LOG_STATE_NORM:+on}"
+echo "RUN: variant=$VARIANT  exp=$EXP_NAME  data_file=$DATA_FILE  tp=$TP  max_length=${MAX_LENGTH:-none}  max_samples=${MAX_SAMPLES:-660 (default)}  triton=$NEEDS_TRITON  state_norm=${LOG_STATE_NORM:+on}"
 
 ### Position-wise loss inference ###
 # GDN needs a per-rank node-local TRITON_CACHE_DIR: fla kernels autotune on first use and
