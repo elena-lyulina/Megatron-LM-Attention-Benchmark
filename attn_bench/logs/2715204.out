@@ -1,0 +1,7 @@
+START TIME: Fri Jul 10 01:33:36 CEST 2026
+Splitting: /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove
+Output:    /iopsstor/scratch/cscs/elyulina/datasets/tokenized_re
+Ratios:    0.25 (40B) + 0.75 (120B)
+END TIME: Fri Jul 10 01:34:03 CEST 2026
+Regenerated 0.25 (verify only): /iopsstor/scratch/cscs/elyulina/datasets/tokenized_re/fineweb-edu-dedup-160B-datatrove_0.25
+Regenerated 0.75 (next input):  /iopsstor/scratch/cscs/elyulina/datasets/tokenized_re/fineweb-edu-dedup-160B-datatrove_0.75

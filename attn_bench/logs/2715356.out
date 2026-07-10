@@ -1,0 +1,20 @@
+START TIME: Fri Jul 10 01:56:02 CEST 2026
+Comparing:
+  live: /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_0.25
+  re:   /iopsstor/scratch/cscs/elyulina/datasets/tokenized_re/fineweb-edu-dedup-160B-datatrove_0.25
+OK: regenerated 0.25 is byte-identical to live 0.25 across 80 files.
+[TIMING] Step 1 (verify): 638s
+Splitting: /iopsstor/scratch/cscs/elyulina/datasets/tokenized_re/fineweb-edu-dedup-160B-datatrove_0.75
+Output:    /iopsstor/scratch/cscs/elyulina/datasets/tokenized
+Ratios:    0.3333333 (new 40B) + 0.6666667 (remainder)
+[TIMING] Step 2 (split): 217s
+[TIMING] Step 3 (rename/move): 0s
+[TIMING] Step 4 (cleanup tokenized_re): 0s
+Copying to store: /users/elyulina/store/datasets/tokenized
+Files to copy: 240
+[TIMING] Step 5 (copy to store): 75s
+END TIME: Fri Jul 10 02:11:32 CEST 2026
+TOTAL TIME: 930s
+New quarter (use with live 0.25 for half the corpus): /users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_0.25_2
+Remaining half, still unseen:                         /users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_0.5_unseen
+Everything beyond the live 0.25, as one block:        /users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_0.75_unseen

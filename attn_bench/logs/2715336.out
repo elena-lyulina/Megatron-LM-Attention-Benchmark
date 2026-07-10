@@ -1,0 +1,88 @@
+START TIME: Fri Jul 10 01:38:45 CEST 2026
+Comparing:
+  live: /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_0.25
+  re:   /iopsstor/scratch/cscs/elyulina/datasets/tokenized_re/fineweb-edu-dedup-160B-datatrove_0.25
+FAIL: file lists differ between live and regenerated 0.25
+1,80c1
+< ./dump_0/00000_tokens.bin
+< ./dump_0/00000_tokens.idx
+< ./dump_0/00001_tokens.bin
+< ./dump_0/00001_tokens.idx
+< ./dump_0/00002_tokens.bin
+< ./dump_0/00002_tokens.idx
+< ./dump_0/00003_tokens.bin
+< ./dump_0/00003_tokens.idx
+< ./dump_0/00004_tokens.bin
+< ./dump_0/00004_tokens.idx
+< ./dump_0/00005_tokens.bin
+< ./dump_0/00005_tokens.idx
+< ./dump_0/00006_tokens.bin
+< ./dump_0/00006_tokens.idx
+< ./dump_0/00007_tokens.bin
+< ./dump_0/00007_tokens.idx
+< ./dump_0/00008_tokens.bin
+< ./dump_0/00008_tokens.idx
+< ./dump_0/00009_tokens.bin
+< ./dump_0/00009_tokens.idx
+< ./dump_0/00010_tokens.bin
+< ./dump_0/00010_tokens.idx
+< ./dump_0/00011_tokens.bin
+< ./dump_0/00011_tokens.idx
+< ./dump_0/00012_tokens.bin
+< ./dump_0/00012_tokens.idx
+< ./dump_0/00013_tokens.bin
+< ./dump_0/00013_tokens.idx
+< ./dump_0/00014_tokens.bin
+< ./dump_0/00014_tokens.idx
+< ./dump_0/00015_tokens.bin
+< ./dump_0/00015_tokens.idx
+< ./dump_0/00016_tokens.bin
+< ./dump_0/00016_tokens.idx
+< ./dump_0/00017_tokens.bin
+< ./dump_0/00017_tokens.idx
+< ./dump_0/00018_tokens.bin
+< ./dump_0/00018_tokens.idx
+< ./dump_0/00019_tokens.bin
+< ./dump_0/00019_tokens.idx
+< ./dump_1/00000_tokens.bin
+< ./dump_1/00000_tokens.idx
+< ./dump_1/00001_tokens.bin
+< ./dump_1/00001_tokens.idx
+< ./dump_1/00002_tokens.bin
+< ./dump_1/00002_tokens.idx
+< ./dump_1/00003_tokens.bin
+< ./dump_1/00003_tokens.idx
+< ./dump_1/00004_tokens.bin
+< ./dump_1/00004_tokens.idx
+< ./dump_1/00005_tokens.bin
+< ./dump_1/00005_tokens.idx
+< ./dump_1/00006_tokens.bin
+< ./dump_1/00006_tokens.idx
+< ./dump_1/00007_tokens.bin
+< ./dump_1/00007_tokens.idx
+< ./dump_1/00008_tokens.bin
+< ./dump_1/00008_tokens.idx
+< ./dump_1/00009_tokens.bin
+< ./dump_1/00009_tokens.idx
+< ./dump_1/00010_tokens.bin
+< ./dump_1/00010_tokens.idx
+< ./dump_1/00011_tokens.bin
+< ./dump_1/00011_tokens.idx
+< ./dump_1/00012_tokens.bin
+< ./dump_1/00012_tokens.idx
+< ./dump_1/00013_tokens.bin
+< ./dump_1/00013_tokens.idx
+< ./dump_1/00014_tokens.bin
+< ./dump_1/00014_tokens.idx
+< ./dump_1/00015_tokens.bin
+< ./dump_1/00015_tokens.idx
+< ./dump_1/00016_tokens.bin
+< ./dump_1/00016_tokens.idx
+< ./dump_1/00017_tokens.bin
+< ./dump_1/00017_tokens.idx
+< ./dump_1/00018_tokens.bin
+< ./dump_1/00018_tokens.idx
+< ./dump_1/00019_tokens.bin
+< ./dump_1/00019_tokens.idx
+---
+> 

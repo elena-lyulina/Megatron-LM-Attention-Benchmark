@@ -1,0 +1,28 @@
+Traceback (most recent call last):
+  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/utils/tools/separate_binary.py", line 49, in <module>
+    from megatron.core.datasets import helpers
+  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/__init__.py", line 5, in <module>
+    import megatron.core.tensor_parallel
+  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/tensor_parallel/__init__.py", line 2, in <module>
+    from .cross_entropy import vocab_parallel_cross_entropy
+  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/tensor_parallel/cross_entropy.py", line 7, in <module>
+    from megatron.core.parallel_state import get_tensor_model_parallel_group
+  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/parallel_state.py", line 17, in <module>
+    from .utils import GlobalMemoryBuffer, is_torch_min_version
+  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/utils.py", line 45, in <module>
+    from megatron.core.dist_checkpointing.mapping import ShardedTensor
+  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/__init__.py", line 5, in <module>
+    from .serialization import (
+  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/serialization.py", line 33, in <module>
+    from .strategies.torch import TorchDistLoadShardedStrategy, TorchDistSaveShardedStrategy
+  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/torch.py", line 64, in <module>
+    HAVE_NVRX = has_nvrx_async_support()
+                ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/nvrx.py", line 45, in has_nvrx_async_support
+    is_nvrx_min_version()
+  File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/dist_checkpointing/strategies/nvrx.py", line 85, in is_nvrx_min_version
+    nvrx_version = str(nvrx.__version__) if HAVE_NVRX else "0.0.0"
+                       ^^^^^^^^^^^^^^^^
+AttributeError: module 'nvidia_resiliency_ext' has no attribute '__version__'
+srun: error: nid006236: task 0: Exited with exit code 1
+srun: Terminating StepId=2715204.0

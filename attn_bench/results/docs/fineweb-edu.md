@@ -31,13 +31,13 @@ With 20 workers, it is at most 200M, or just ~0.125% of the 160B target.
 - Verification passed (logs/1934285.out)
 
 **Scripts:**
-- [`prepare_dumps.py`](prepare_dumps.py) — splits parquet files into balanced dumps
-- [`preprocess_megatron_budgeted.py`](preprocess_megatron_budgeted.py) — main tokenization script
-- [`megatron_tokenizer_budgeted.py`](megatron_tokenizer_budgeted.py) — per-worker budget logic
+- [`prepare_dumps.py`](../../data_processing/tokenization/prepare_dumps.py) — splits parquet files into balanced dumps
+- [`preprocess_megatron_budgeted.py`](../../data_processing/tokenization/preprocess_megatron_budgeted.py) — main tokenization script
+- [`megatron_tokenizer_budgeted.py`](../../data_processing/tokenization/megatron_tokenizer_budgeted.py) — per-worker budget logic
 - [`../../submissions/submit_tokenization_fineweb_edu_datatrove.sh`](../../submissions/submit_tokenization_fineweb_edu_datatrove.sh) — submits one slurm job per dump
 - [`../../submissions/tokenize_fineweb_edu_datatrove.slurm`](../../submissions/tokenize_fineweb_edu_datatrove.slurm) — slurm job script
 
-**Results CSV:** [`../../results/tokenization.csv`](../../results/tokenization.csv)
+**Results CSV:** [`../../results/tokenization.csv`](../tokenization.csv)
 
 ## Step 2: Split FineWeb-Edu into a 40B partition
 
@@ -53,3 +53,20 @@ Documents are randomly assigned per shard using Megatron's greedy blending sampl
 **Scripts:**
 - [`../../../attn_bench/utils/tools/separate_binary.py`](../../utils/tools/separate_binary.py) — splitting script
 - [`../../submissions/separate_fineweb_edu_40B.slurm`](../../submissions/separate_fineweb_edu_40B.slurm) — slurm job script
+
+## Step 3: Carve a second 40B partition from the unseen 0.75
+
+Splits the 0.75 remainder again into a second, disjoint 40B partition (`_0.25_2`), so `_0.25` +
+`_0.25_2` together give half the corpus for training. (The original `_0.75` had been cleaned up
+unused, so it was briefly regenerated and verified byte-identical to the live `_0.25` first —
+`separate_binary.py` is deterministic given the same input, ratios, and seed.)
+
+**Stats (job 2715356, 2026-07-10):**
+- ratio 0.3333333 → 40,045,014,234 tokens (40.045B) — `fineweb-edu-dedup-160B-datatrove_0.25_2/`
+- ratio 0.6666667 → 80,076,064,255 tokens (80.076B) — `fineweb-edu-dedup-160B-datatrove_0.5_unseen/`
+- total (= 0.75 remainder) → 120,121,078,489 tokens (120.121B) — `fineweb-edu-dedup-160B-datatrove_0.75_unseen/` (kept as one block too)
+- Workers: 32, time: 930s total
+- Outputs copied to `/users/$USER/store/datasets/tokenized/` for long-term retention
+
+**Scripts:**
+- [`../../submissions/verify_and_split_fineweb_edu_new_25.slurm`](../../submissions/verify_and_split_fineweb_edu_new_25.slurm) — verifies + splits + renames + copies to store

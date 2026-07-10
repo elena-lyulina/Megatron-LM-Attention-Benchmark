@@ -1,0 +1,293 @@
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+2026-07-10 01:49:54 INFO Input:      /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove
+2026-07-10 01:49:54 INFO Output:     /iopsstor/scratch/cscs/elyulina/datasets/tokenized_re
+2026-07-10 01:49:54 INFO Ratios:     [0.25, 0.75]
+2026-07-10 01:49:54 INFO Seed:       42
+2026-07-10 01:49:54 INFO Min tokens: 8193 (per output split)
+2026-07-10 01:49:54 INFO Found 40 shards to process with 16 workers
+2026-07-10 01:49:54 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_0/00001_tokens.idx
+2026-07-10 01:49:54 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_0/00004_tokens.idx
+2026-07-10 01:49:54 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_0/00000_tokens.idx
+2026-07-10 01:49:54 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_0/00002_tokens.idx
+2026-07-10 01:49:54 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_0/00008_tokens.idx
+2026-07-10 01:49:54 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_0/00003_tokens.idx
+2026-07-10 01:49:54 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_0/00006_tokens.idx
+2026-07-10 01:49:54 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_0/00005_tokens.idx
+2026-07-10 01:49:54 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_0/00007_tokens.idx
+2026-07-10 01:49:54 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_0/00013_tokens.idx
+2026-07-10 01:49:54 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_0/00012_tokens.idx
+2026-07-10 01:49:54 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_0/00015_tokens.idx
+2026-07-10 01:49:54 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_0/00010_tokens.idx
+2026-07-10 01:49:54 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_0/00014_tokens.idx
+2026-07-10 01:49:54 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_0/00011_tokens.idx
+2026-07-10 01:49:54 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_0/00009_tokens.idx
+2026-07-10 01:49:54 INFO 	Extract the sequence lengths
+2026-07-10 01:49:54 INFO 	Extract the sequence lengths
+2026-07-10 01:49:54 INFO 	Extract the sequence pointers
+2026-07-10 01:49:54 INFO 	Extract the document indices
+2026-07-10 01:49:54 INFO 	Extract the sequence pointers
+2026-07-10 01:49:54 INFO > total number of sequences: 4010000
+2026-07-10 01:49:54 INFO > total number of documents: 4010000
+2026-07-10 01:49:54 INFO 	Extract the document indices
+2026-07-10 01:49:54 INFO > total number of sequences: 3990000
+2026-07-10 01:49:54 INFO > total number of documents: 3990000
+2026-07-10 01:49:54 INFO 	Extract the sequence lengths
+2026-07-10 01:49:54 INFO 	Extract the sequence pointers
+2026-07-10 01:49:54 INFO 	Extract the document indices
+2026-07-10 01:49:54 INFO > total number of sequences: 4000000
+2026-07-10 01:49:54 INFO > total number of documents: 4000000
+2026-07-10 01:49:54 INFO 	Extract the sequence lengths
+2026-07-10 01:49:54 INFO 	Extract the sequence pointers
+2026-07-10 01:49:54 INFO 	Extract the document indices
+2026-07-10 01:49:54 INFO 	Extract the sequence lengths
+2026-07-10 01:49:54 INFO > total number of sequences: 4010000
+2026-07-10 01:49:54 INFO > total number of documents: 4010000
+2026-07-10 01:49:54 INFO 	Extract the sequence pointers
+2026-07-10 01:49:54 INFO 	Extract the document indices
+2026-07-10 01:49:54 INFO > total number of sequences: 4040000
+2026-07-10 01:49:54 INFO > total number of documents: 4040000
+2026-07-10 01:49:54 INFO 	Extract the sequence lengths
+2026-07-10 01:49:54 INFO 	Extract the sequence lengths
+2026-07-10 01:49:54 INFO 	Extract the sequence pointers
+2026-07-10 01:49:54 INFO 	Extract the document indices
+2026-07-10 01:49:54 INFO > total number of sequences: 4030000
+2026-07-10 01:49:54 INFO > total number of documents: 4030000
+2026-07-10 01:49:55 INFO 	Extract the sequence lengths
+2026-07-10 01:49:55 INFO 	Extract the sequence lengths
+2026-07-10 01:49:55 INFO 	Extract the sequence lengths
+2026-07-10 01:49:55 INFO 	Extract the sequence pointers
+2026-07-10 01:49:55 INFO 	Extract the sequence pointers
+2026-07-10 01:49:55 INFO 	Extract the document indices
+2026-07-10 01:49:55 INFO 	Extract the document indices
+2026-07-10 01:49:55 INFO > total number of sequences: 4010000
+2026-07-10 01:49:55 INFO > total number of sequences: 4040000
+2026-07-10 01:49:55 INFO > total number of documents: 4010000
+2026-07-10 01:49:55 INFO > total number of documents: 4040000
+2026-07-10 01:49:55 INFO 	Extract the sequence lengths
+2026-07-10 01:49:55 INFO 	Extract the sequence lengths
+2026-07-10 01:49:55 INFO 	Extract the sequence pointers
+2026-07-10 01:49:55 INFO 	Extract the sequence pointers
+2026-07-10 01:49:55 INFO 	Extract the document indices
+2026-07-10 01:49:55 INFO 	Extract the document indices
+2026-07-10 01:49:55 INFO > total number of sequences: 4020000
+2026-07-10 01:49:55 INFO > total number of sequences: 4040000
+2026-07-10 01:49:55 INFO > total number of documents: 4020000
+2026-07-10 01:49:55 INFO > total number of documents: 4040000
+2026-07-10 01:49:55 INFO 	Extract the sequence lengths
+2026-07-10 01:49:55 INFO 	Extract the sequence pointers
+2026-07-10 01:49:55 INFO 	Extract the document indices
+2026-07-10 01:49:55 INFO > total number of sequences: 4040000
+2026-07-10 01:49:55 INFO > total number of documents: 4040000
+2026-07-10 01:49:55 INFO 	Extract the sequence pointers
+2026-07-10 01:49:55 INFO 	Extract the document indices
+2026-07-10 01:49:55 INFO 	Extract the sequence lengths
+2026-07-10 01:49:55 INFO > total number of sequences: 4040000
+2026-07-10 01:49:55 INFO > total number of documents: 4040000
+2026-07-10 01:49:55 INFO 	Extract the sequence pointers
+2026-07-10 01:49:55 INFO 	Extract the document indices
+2026-07-10 01:49:55 INFO > total number of sequences: 4050000
+2026-07-10 01:49:55 INFO > total number of documents: 4050000
+2026-07-10 01:49:55 INFO 	Extract the sequence lengths
+2026-07-10 01:49:55 INFO 	Extract the sequence pointers
+2026-07-10 01:49:55 INFO 	Extract the document indices
+2026-07-10 01:49:55 INFO > total number of sequences: 4010000
+2026-07-10 01:49:55 INFO > total number of documents: 4010000
+2026-07-10 01:49:55 INFO 	Extract the sequence pointers
+2026-07-10 01:49:55 INFO 	Extract the document indices
+2026-07-10 01:49:55 INFO > total number of sequences: 4050000
+2026-07-10 01:49:55 INFO 	Extract the sequence lengths
+2026-07-10 01:49:55 INFO > total number of documents: 4050000
+2026-07-10 01:49:55 INFO 	Extract the sequence pointers
+2026-07-10 01:49:55 INFO 	Extract the document indices
+2026-07-10 01:49:55 INFO > total number of sequences: 4040000
+2026-07-10 01:49:55 INFO > total number of documents: 4040000
+2026-07-10 01:51:24 INFO 00006_tokens: 4020000 docs (4020000 rows, 4001571487 tokens) -> 1005000 docs (1005000 rows, 999399786 tokens) + 3015000 docs (3015000 rows, 3002171701 tokens)
+2026-07-10 01:51:24 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_0/00016_tokens.idx
+2026-07-10 01:51:24 INFO 	Extract the sequence lengths
+2026-07-10 01:51:24 INFO 	Extract the sequence pointers
+2026-07-10 01:51:24 INFO 	Extract the document indices
+2026-07-10 01:51:24 INFO > total number of sequences: 4050000
+2026-07-10 01:51:24 INFO > total number of documents: 4050000
+2026-07-10 01:51:29 INFO 00008_tokens: 4030000 docs (4030000 rows, 4007371334 tokens) -> 1007500 docs (1007500 rows, 1005000476 tokens) + 3022500 docs (3022500 rows, 3002370858 tokens)
+2026-07-10 01:51:29 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_0/00017_tokens.idx
+2026-07-10 01:51:29 INFO 	Extract the sequence lengths
+2026-07-10 01:51:29 INFO 	Extract the sequence pointers
+2026-07-10 01:51:29 INFO 	Extract the document indices
+2026-07-10 01:51:29 INFO > total number of sequences: 4060000
+2026-07-10 01:51:29 INFO > total number of documents: 4060000
+2026-07-10 01:51:32 INFO 00004_tokens: 4010000 docs (4010000 rows, 4005922598 tokens) -> 1002500 docs (1002500 rows, 1001829892 tokens) + 3007500 docs (3007500 rows, 3004092706 tokens)
+2026-07-10 01:51:32 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_0/00018_tokens.idx
+2026-07-10 01:51:32 INFO 	Extract the sequence lengths
+2026-07-10 01:51:32 INFO 	Extract the sequence pointers
+2026-07-10 01:51:32 INFO 	Extract the document indices
+2026-07-10 01:51:32 INFO > total number of sequences: 4063419
+2026-07-10 01:51:32 INFO > total number of documents: 4063419
+2026-07-10 01:51:33 INFO 00013_tokens: 4040000 docs (4040000 rows, 4002954710 tokens) -> 1010000 docs (1010000 rows, 998139066 tokens) + 3030000 docs (3030000 rows, 3004815644 tokens)
+2026-07-10 01:51:33 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_0/00019_tokens.idx
+2026-07-10 01:51:33 INFO 	Extract the sequence lengths
+2026-07-10 01:51:33 INFO 	Extract the sequence pointers
+2026-07-10 01:51:33 INFO 	Extract the document indices
+2026-07-10 01:51:33 INFO > total number of sequences: 4063419
+2026-07-10 01:51:33 INFO > total number of documents: 4063419
+2026-07-10 01:51:33 INFO 00002_tokens: 4010000 docs (4010000 rows, 4000153663 tokens) -> 1002500 docs (1002500 rows, 997280068 tokens) + 3007500 docs (3007500 rows, 3002873595 tokens)
+2026-07-10 01:51:33 INFO 00009_tokens: 4040000 docs (4040000 rows, 4007538711 tokens) -> 1010000 docs (1010000 rows, 1001558208 tokens) + 3030000 docs (3030000 rows, 3005980503 tokens)
+2026-07-10 01:51:33 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_1/00000_tokens.idx
+2026-07-10 01:51:33 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_1/00001_tokens.idx
+2026-07-10 01:51:33 INFO 	Extract the sequence lengths
+2026-07-10 01:51:33 INFO 	Extract the sequence pointers
+2026-07-10 01:51:33 INFO 	Extract the document indices
+2026-07-10 01:51:33 INFO > total number of sequences: 3990000
+2026-07-10 01:51:33 INFO > total number of documents: 3990000
+2026-07-10 01:51:33 INFO 	Extract the sequence lengths
+2026-07-10 01:51:33 INFO 	Extract the sequence pointers
+2026-07-10 01:51:33 INFO 	Extract the document indices
+2026-07-10 01:51:33 INFO > total number of sequences: 4000000
+2026-07-10 01:51:33 INFO > total number of documents: 4000000
+2026-07-10 01:51:33 INFO 00003_tokens: 4010000 docs (4010000 rows, 4002991107 tokens) -> 1002500 docs (1002500 rows, 1001194943 tokens) + 3007500 docs (3007500 rows, 3001796164 tokens)
+2026-07-10 01:51:33 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_1/00002_tokens.idx
+2026-07-10 01:51:33 INFO 	Extract the sequence lengths
+2026-07-10 01:51:33 INFO 	Extract the sequence pointers
+2026-07-10 01:51:33 INFO 	Extract the document indices
+2026-07-10 01:51:33 INFO > total number of sequences: 4020000
+2026-07-10 01:51:33 INFO > total number of documents: 4020000
+2026-07-10 01:51:33 INFO 00001_tokens: 4000000 docs (4000000 rows, 4005698699 tokens) -> 1000000 docs (1000000 rows, 1000841184 tokens) + 3000000 docs (3000000 rows, 3004857515 tokens)
+2026-07-10 01:51:33 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_1/00003_tokens.idx
+2026-07-10 01:51:33 INFO 	Extract the sequence lengths
+2026-07-10 01:51:33 INFO 	Extract the sequence pointers
+2026-07-10 01:51:33 INFO 	Extract the document indices
+2026-07-10 01:51:33 INFO > total number of sequences: 4010000
+2026-07-10 01:51:33 INFO > total number of documents: 4010000
+2026-07-10 01:51:34 INFO 00014_tokens: 4040000 docs (4040000 rows, 4003184789 tokens) -> 1010000 docs (1010000 rows, 999533126 tokens) + 3030000 docs (3030000 rows, 3003651663 tokens)
+2026-07-10 01:51:34 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_1/00004_tokens.idx
+2026-07-10 01:51:34 INFO 	Extract the sequence lengths
+2026-07-10 01:51:34 INFO 	Extract the sequence pointers
+2026-07-10 01:51:34 INFO 	Extract the document indices
+2026-07-10 01:51:34 INFO > total number of sequences: 4020000
+2026-07-10 01:51:34 INFO > total number of documents: 4020000
+2026-07-10 01:51:36 INFO 00010_tokens: 4040000 docs (4040000 rows, 4007990135 tokens) -> 1010000 docs (1010000 rows, 1002407832 tokens) + 3030000 docs (3030000 rows, 3005582303 tokens)
+2026-07-10 01:51:36 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_1/00005_tokens.idx
+2026-07-10 01:51:36 INFO 	Extract the sequence lengths
+2026-07-10 01:51:36 INFO 	Extract the sequence pointers
+2026-07-10 01:51:36 INFO 	Extract the document indices
+2026-07-10 01:51:36 INFO > total number of sequences: 4020000
+2026-07-10 01:51:36 INFO > total number of documents: 4020000
+2026-07-10 01:51:36 INFO 00007_tokens: 4040000 docs (4040000 rows, 4008057589 tokens) -> 1010000 docs (1010000 rows, 1000606171 tokens) + 3030000 docs (3030000 rows, 3007451418 tokens)
+2026-07-10 01:51:36 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_1/00006_tokens.idx
+2026-07-10 01:51:36 INFO 	Extract the sequence lengths
+2026-07-10 01:51:36 INFO 	Extract the sequence pointers
+2026-07-10 01:51:36 INFO 	Extract the document indices
+2026-07-10 01:51:36 INFO > total number of sequences: 4020000
+2026-07-10 01:51:36 INFO > total number of documents: 4020000
+2026-07-10 01:51:36 INFO 00012_tokens: 4050000 docs (4050000 rows, 4007010647 tokens) -> 1012500 docs (1012500 rows, 1004172005 tokens) + 3037500 docs (3037500 rows, 3002838642 tokens)
+2026-07-10 01:51:36 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_1/00007_tokens.idx
+2026-07-10 01:51:36 INFO 	Extract the sequence lengths
+2026-07-10 01:51:36 INFO 	Extract the sequence pointers
+2026-07-10 01:51:36 INFO 	Extract the document indices
+2026-07-10 01:51:36 INFO > total number of sequences: 4030000
+2026-07-10 01:51:36 INFO > total number of documents: 4030000
+2026-07-10 01:51:36 INFO 00000_tokens: 3990000 docs (3990000 rows, 4004504141 tokens) -> 997500 docs (997500 rows, 1000487878 tokens) + 2992500 docs (2992500 rows, 3004016263 tokens)
+2026-07-10 01:51:36 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_1/00008_tokens.idx
+2026-07-10 01:51:36 INFO 	Extract the sequence lengths
+2026-07-10 01:51:36 INFO 	Extract the sequence pointers
+2026-07-10 01:51:36 INFO 	Extract the document indices
+2026-07-10 01:51:36 INFO > total number of sequences: 4030000
+2026-07-10 01:51:36 INFO > total number of documents: 4030000
+2026-07-10 01:51:37 INFO 00015_tokens: 4050000 docs (4050000 rows, 4004890544 tokens) -> 1012500 docs (1012500 rows, 1000299998 tokens) + 3037500 docs (3037500 rows, 3004590546 tokens)
+2026-07-10 01:51:37 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_1/00009_tokens.idx
+2026-07-10 01:51:37 INFO 	Extract the sequence lengths
+2026-07-10 01:51:37 INFO 	Extract the sequence pointers
+2026-07-10 01:51:37 INFO 	Extract the document indices
+2026-07-10 01:51:37 INFO > total number of sequences: 4040000
+2026-07-10 01:51:37 INFO > total number of documents: 4040000
+2026-07-10 01:51:39 INFO 00011_tokens: 4040000 docs (4040000 rows, 4004484027 tokens) -> 1010000 docs (1010000 rows, 999932805 tokens) + 3030000 docs (3030000 rows, 3004551222 tokens)
+2026-07-10 01:51:39 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_1/00010_tokens.idx
+2026-07-10 01:51:39 INFO 	Extract the sequence lengths
+2026-07-10 01:51:39 INFO 	Extract the sequence pointers
+2026-07-10 01:51:39 INFO 	Extract the document indices
+2026-07-10 01:51:39 INFO > total number of sequences: 4040000
+2026-07-10 01:51:39 INFO > total number of documents: 4040000
+2026-07-10 01:51:39 INFO 00005_tokens: 4010000 docs (4010000 rows, 4004479666 tokens) -> 1002500 docs (1002500 rows, 1000285603 tokens) + 3007500 docs (3007500 rows, 3004194063 tokens)
+2026-07-10 01:51:39 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_1/00011_tokens.idx
+2026-07-10 01:51:39 INFO 	Extract the sequence lengths
+2026-07-10 01:51:39 INFO 	Extract the sequence pointers
+2026-07-10 01:51:39 INFO 	Extract the document indices
+2026-07-10 01:51:39 INFO > total number of sequences: 4040000
+2026-07-10 01:51:39 INFO > total number of documents: 4040000
+2026-07-10 01:52:54 INFO 00000_tokens: 3990000 docs (3990000 rows, 4003168972 tokens) -> 997500 docs (997500 rows, 1001302443 tokens) + 2992500 docs (2992500 rows, 3001866529 tokens)
+2026-07-10 01:52:54 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_1/00012_tokens.idx
+2026-07-10 01:52:54 INFO 	Extract the sequence lengths
+2026-07-10 01:52:54 INFO 	Extract the sequence pointers
+2026-07-10 01:52:54 INFO 	Extract the document indices
+2026-07-10 01:52:54 INFO > total number of sequences: 4050000
+2026-07-10 01:52:54 INFO > total number of documents: 4050000
+2026-07-10 01:53:02 INFO 00003_tokens: 4010000 docs (4010000 rows, 4002367261 tokens) -> 1002500 docs (1002500 rows, 999660313 tokens) + 3007500 docs (3007500 rows, 3002706948 tokens)
+2026-07-10 01:53:02 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_1/00013_tokens.idx
+2026-07-10 01:53:02 INFO 	Extract the sequence lengths
+2026-07-10 01:53:02 INFO 	Extract the sequence pointers
+2026-07-10 01:53:02 INFO 	Extract the document indices
+2026-07-10 01:53:02 INFO > total number of sequences: 4050000
+2026-07-10 01:53:02 INFO > total number of documents: 4050000
+2026-07-10 01:53:04 INFO 00016_tokens: 4050000 docs (4050000 rows, 4001374439 tokens) -> 1012500 docs (1012500 rows, 1000393654 tokens) + 3037500 docs (3037500 rows, 3000980785 tokens)
+2026-07-10 01:53:04 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_1/00014_tokens.idx
+2026-07-10 01:53:04 INFO 	Extract the sequence lengths
+2026-07-10 01:53:04 INFO 	Extract the sequence pointers
+2026-07-10 01:53:04 INFO 	Extract the document indices
+2026-07-10 01:53:04 INFO > total number of sequences: 4050000
+2026-07-10 01:53:04 INFO > total number of documents: 4050000
+2026-07-10 01:53:06 INFO 00018_tokens: 4063419 docs (4063419 rows, 3996874562 tokens) -> 1015855 docs (1015855 rows, 999177333 tokens) + 3047564 docs (3047564 rows, 2997697229 tokens)
+2026-07-10 01:53:06 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_1/00015_tokens.idx
+2026-07-10 01:53:06 INFO 	Extract the sequence lengths
+2026-07-10 01:53:06 INFO 	Extract the sequence pointers
+2026-07-10 01:53:06 INFO 	Extract the document indices
+2026-07-10 01:53:06 INFO > total number of sequences: 4060000
+2026-07-10 01:53:06 INFO > total number of documents: 4060000
+2026-07-10 01:53:07 INFO 00008_tokens: 4030000 docs (4030000 rows, 4006308262 tokens) -> 1007500 docs (1007500 rows, 1000905260 tokens) + 3022500 docs (3022500 rows, 3005403002 tokens)
+2026-07-10 01:53:07 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_1/00016_tokens.idx
+2026-07-10 01:53:07 INFO 	Extract the sequence lengths
+2026-07-10 01:53:07 INFO 	Extract the sequence pointers
+2026-07-10 01:53:07 INFO 	Extract the document indices
+2026-07-10 01:53:07 INFO > total number of sequences: 4060000
+2026-07-10 01:53:07 INFO > total number of documents: 4060000
+2026-07-10 01:53:09 INFO 00017_tokens: 4060000 docs (4060000 rows, 4003180636 tokens) -> 1015000 docs (1015000 rows, 1000959955 tokens) + 3045000 docs (3045000 rows, 3002220681 tokens)
+2026-07-10 01:53:09 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_1/00017_tokens.idx
+2026-07-10 01:53:09 INFO 	Extract the sequence lengths
+2026-07-10 01:53:09 INFO 	Extract the sequence pointers
+2026-07-10 01:53:09 INFO 	Extract the document indices
+2026-07-10 01:53:09 INFO > total number of sequences: 4060000
+2026-07-10 01:53:09 INFO > total number of documents: 4060000
+2026-07-10 01:53:10 INFO 00004_tokens: 4020000 docs (4020000 rows, 4006234859 tokens) -> 1005000 docs (1005000 rows, 1004559184 tokens) + 3015000 docs (3015000 rows, 3001675675 tokens)
+2026-07-10 01:53:10 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_1/00018_tokens.idx
+2026-07-10 01:53:10 INFO 	Extract the sequence lengths
+2026-07-10 01:53:10 INFO 	Extract the sequence pointers
+2026-07-10 01:53:10 INFO 	Extract the document indices
+2026-07-10 01:53:10 INFO > total number of sequences: 4060000
+2026-07-10 01:53:10 INFO > total number of documents: 4060000
+2026-07-10 01:53:12 INFO 00002_tokens: 4020000 docs (4020000 rows, 4008197181 tokens) -> 1005000 docs (1005000 rows, 1003987763 tokens) + 3015000 docs (3015000 rows, 3004209418 tokens)
+2026-07-10 01:53:12 INFO Load the _IndexReader from /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove/dump_1/00019_tokens.idx
+2026-07-10 01:53:12 INFO 	Extract the sequence lengths
+2026-07-10 01:53:12 INFO 	Extract the sequence pointers
+2026-07-10 01:53:12 INFO 	Extract the document indices
+2026-07-10 01:53:12 INFO > total number of sequences: 4063419
+2026-07-10 01:53:12 INFO > total number of documents: 4063419
+2026-07-10 01:53:13 INFO 00019_tokens: 4063419 docs (4063419 rows, 3999864144 tokens) -> 1015855 docs (1015855 rows, 997664329 tokens) + 3047564 docs (3047564 rows, 3002199815 tokens)
+2026-07-10 01:53:13 INFO 00007_tokens: 4030000 docs (4030000 rows, 4008917153 tokens) -> 1007500 docs (1007500 rows, 999508727 tokens) + 3022500 docs (3022500 rows, 3009408426 tokens)
+2026-07-10 01:53:15 INFO 00006_tokens: 4020000 docs (4020000 rows, 4005152536 tokens) -> 1005000 docs (1005000 rows, 1005088124 tokens) + 3015000 docs (3015000 rows, 3000064412 tokens)
+2026-07-10 01:53:15 INFO 00009_tokens: 4040000 docs (4040000 rows, 4000089967 tokens) -> 1010000 docs (1010000 rows, 1002976787 tokens) + 3030000 docs (3030000 rows, 2997113180 tokens)
+2026-07-10 01:53:15 INFO 00005_tokens: 4020000 docs (4020000 rows, 4000558810 tokens) -> 1005000 docs (1005000 rows, 999734122 tokens) + 3015000 docs (3015000 rows, 3000824688 tokens)
+2026-07-10 01:53:19 INFO 00001_tokens: 4000000 docs (4000000 rows, 4001421633 tokens) -> 1000000 docs (1000000 rows, 999716242 tokens) + 3000000 docs (3000000 rows, 3001705391 tokens)
+2026-07-10 01:53:19 INFO 00011_tokens: 4040000 docs (4040000 rows, 4002975615 tokens) -> 1010000 docs (1010000 rows, 1000403648 tokens) + 3030000 docs (3030000 rows, 3002571967 tokens)
+2026-07-10 01:53:21 INFO 00010_tokens: 4040000 docs (4040000 rows, 4000394926 tokens) -> 1010000 docs (1010000 rows, 1001629350 tokens) + 3030000 docs (3030000 rows, 2998765576 tokens)
+2026-07-10 01:54:22 INFO 00015_tokens: 4060000 docs (4060000 rows, 4007593029 tokens) -> 1015000 docs (1015000 rows, 998756544 tokens) + 3045000 docs (3045000 rows, 3008836485 tokens)
+2026-07-10 01:54:27 INFO 00012_tokens: 4050000 docs (4050000 rows, 4003504255 tokens) -> 1012500 docs (1012500 rows, 1001761028 tokens) + 3037500 docs (3037500 rows, 3001743227 tokens)
+2026-07-10 01:54:33 INFO 00017_tokens: 4060000 docs (4060000 rows, 4003023422 tokens) -> 1015000 docs (1015000 rows, 1001610716 tokens) + 3045000 docs (3045000 rows, 3001412706 tokens)
+2026-07-10 01:54:34 INFO 00013_tokens: 4050000 docs (4050000 rows, 4007117762 tokens) -> 1012500 docs (1012500 rows, 1001093677 tokens) + 3037500 docs (3037500 rows, 3006024085 tokens)
+2026-07-10 01:54:39 INFO 00014_tokens: 4050000 docs (4050000 rows, 4004134801 tokens) -> 1012500 docs (1012500 rows, 1001787120 tokens) + 3037500 docs (3037500 rows, 3002347681 tokens)
+2026-07-10 01:54:42 INFO 00016_tokens: 4060000 docs (4060000 rows, 4003197453 tokens) -> 1015000 docs (1015000 rows, 1001515995 tokens) + 3045000 docs (3045000 rows, 3001681458 tokens)
+2026-07-10 01:54:43 INFO 00018_tokens: 4060000 docs (4060000 rows, 4006292010 tokens) -> 1015000 docs (1015000 rows, 1002933463 tokens) + 3045000 docs (3045000 rows, 3003358547 tokens)
+2026-07-10 01:54:46 INFO 00019_tokens: 4063419 docs (4063419 rows, 3999196367 tokens) -> 1015855 docs (1015855 rows, 998770595 tokens) + 3047564 docs (3047564 rows, 3000425772 tokens)
+2026-07-10 01:54:46 INFO ### Total tokens per split ###
+2026-07-10 01:54:46 INFO   ratio 0.25 -> 40038865413 tokens (40.039 B)
+2026-07-10 01:54:46 INFO   ratio 0.75 -> 120121078489 tokens (120.121 B)
+2026-07-10 01:54:46 INFO   total      -> 160159943902 tokens (160.160 B)
+2026-07-10 01:54:46 INFO Done!
