@@ -12,26 +12,20 @@
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=clariden-jobs-elyulin-aaaauapxybdkdx42ppvef2c2eq@swissai-initiative.slack.com
 
-# Per-position loss on long FineWeb-Edu documents (verbatim, no prefix/suffix framing),
-# one job per (model, data file) pair. VARIANT picks the checkpoint, same as
-# long_gutenberg_inference.slurm; DATA_FILE is the full path to one jsonl produced by
-# extract_long_docs.py (e.g. the seen or unseen partition at a given length range).
-# Results land under RESULTS_BASE/$EXP_NAME/<data file's parent dir name>/$CONFIG/, so
-# seen and unseen (different parent dirs) never collide even though they share the same
-# long_{lo}_{hi}.jsonl basename. Writes go to Iopsstor scratch during the job and get copied
-# to Capstor store at the end (CSCS guidance: never write to capstor from a compute node).
+# Per-position loss on long FineWeb-Edu documents (verbatim, no prefix/suffix), one job per
+# (model, data file) pair. Results land under RESULTS_BASE/$EXP_NAME/<data file's parent dir>/
+# $CONFIG/, keyed by parent dir so different data partitions don't collide on the same basename.
 #
-# sink/off-by-one use unfused attention (O(S^2) memory) and OOM at full length under the
-# default TP=1 -- they auto-select --tensor-parallel 4 (all 4 GPUs form one TP group, DP=1)
-# and default to --max-length 20480 (override via MAX_LENGTH; even TP=4 needed this cap on
-# Gutenberg, see attn_bench/notebooks/long_gutenberg.ipynb CONFIG_TP4). TP=4 is much slower
-# per sequence than the DP=4 default (no data-parallel striding) -- override --time when
-# submitting these two variants, the file's default is sized for the fused/DP variants.
+# Env vars:
+#   MODEL          checkpoint to use, see llama_checkpoints.sh (default: full)
+#   DATA_FILE      required; jsonl produced by extract_long_docs.py
+#   TP             tensor-parallel degree (default: 1)
+#   MAX_LENGTH     cap sequence length (default: uncapped)
+#   MAX_SAMPLES    cap docs processed (default: 660)
+#   OVERWRITE      recompute even if store already has this bucket
+#   LOG_STATE_NORM / STATE_CHUNK   GDN state-norm logging (no-op for attention models)
 #
-# Usage:
-#   sbatch --export=VARIANT=full,DATA_FILE=/path/to/long_24576_32768.jsonl long_fineweb_inference.slurm
-#   sbatch --time=2:00:00 --export=VARIANT=sink,DATA_FILE=/path/to/long_24576_32768.jsonl long_fineweb_inference.slurm
-#   REPETITIONS is not used here (no repetition axis); MAX_SAMPLES=20 for calibration.
+# Usage: sbatch --export=MODEL=full,DATA_FILE=/path/to/long_24576_32768.jsonl long_fineweb_inference.slurm
 # (normally submitted via long_fineweb_inference_all.sh)
 
 echo "START TIME: $(date)"
@@ -45,43 +39,20 @@ SCRATCH_RESULTS_BASE=/iopsstor/scratch/cscs/$USER/long-fineweb-results
 TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b
 
 DATA_FILE=${DATA_FILE:?ERROR: DATA_FILE must be set to a jsonl produced by extract_long_docs.py}
-MAX_LENGTH=${MAX_LENGTH:-}     # empty = no cap (docs are already capped by extract_long_docs.py)
-MAX_SAMPLES=${MAX_SAMPLES:-}   # empty = long_fineweb_inference.py's own default (660), not all docs
-OVERWRITE=${OVERWRITE:-}       # set to anything to recompute if the bucket already exists
-LOG_STATE_NORM=${LOG_STATE_NORM:-}   # set to anything to log GDN state norms (no-op on attention models)
-STATE_CHUNK=${STATE_CHUNK:-}         # override the state readout stride (default 128 in the script)
+MAX_LENGTH=${MAX_LENGTH:-}
+MAX_SAMPLES=${MAX_SAMPLES:-}
+OVERWRITE=${OVERWRITE:-}
+LOG_STATE_NORM=${LOG_STATE_NORM:-}
+STATE_CHUNK=${STATE_CHUNK:-}
 
-### VARIANT -> EXP_NAME + non-restored flags (same model list as long_gutenberg_inference.slurm) ###
-VARIANT=${VARIANT:-full}
-NEEDS_TRITON=0
-TP=1
-GDN_DIMS="--experimental-attention-variant gated_delta_net \
-    --linear-attention-freq '[1]*16' \
-    --linear-num-key-heads 8 \
-    --linear-num-value-heads 8 \
-    --linear-key-head-dim 192 \
-    --linear-value-head-dim 384 \
-    --linear-conv-kernel-dim 4"
-case "$VARIANT" in
-    full)       EXP_NAME=llama3-1b-full-attn-fineweb40B-gutenberg3B;             MEGATRON_EXTRA="" ;;
-    gated)      EXP_NAME=llama3-1b-gated-attn-fineweb40B-gutenberg3B;            MEGATRON_EXTRA="--attention-output-gate" ;;
-    full-xdoc-leak)  EXP_NAME=llama3-1b-full-attn-xdoc-attn-leak-fineweb40B-gutenberg3B; MEGATRON_EXTRA="" ;;
-    sink)       EXP_NAME=llama3-1b-sink-attn-fineweb40B-gutenberg3B-te215;       MEGATRON_EXTRA="--softmax-type learnable --attention-backend unfused";
-                # unfused attn OOMs at TP=1 for these lengths; TP=4 needs a length cap too (Gutenberg: 20480)
-                TP=4; [ -z "$MAX_LENGTH" ] && MAX_LENGTH=20480 ;;
-    off-by-one) EXP_NAME=llama3-1b-off-by-one-attn-fineweb40B-gutenberg3B-te215; MEGATRON_EXTRA="--softmax-type off-by-one --attention-backend unfused";
-                # checkpoint lives at the non-te215 path; EXP_NAME (results dir) stays -te215 to match the mem run
-                CKPT_NAME=llama3-1b-off-by-one-attn-fineweb40B-gutenberg3B;
-                TP=4; [ -z "$MAX_LENGTH" ] && MAX_LENGTH=20480 ;;
-    gdn)        EXP_NAME=llama3-1b-gdn-fineweb40B-gutenberg3B;                   MEGATRON_EXTRA="$GDN_DIMS"; NEEDS_TRITON=1 ;;
-    carry-r0)   EXP_NAME=llama3-1b-gdn-carry-r0-fineweb40B-gutenberg3B;          MEGATRON_EXTRA="$GDN_DIMS"; NEEDS_TRITON=1 ;;
-    carry-r0.5) EXP_NAME=llama3-1b-gdn-carry-r0.5-fineweb40B-gutenberg3B;        MEGATRON_EXTRA="$GDN_DIMS"; NEEDS_TRITON=1 ;;
-    carry-r1)   EXP_NAME=llama3-1b-gdn-carry-r1-fineweb40B-gutenberg3B;          MEGATRON_EXTRA="$GDN_DIMS"; NEEDS_TRITON=1 ;;
-    *) echo "Unknown VARIANT=$VARIANT (expected full|gated|full-xdoc-leak|sink|off-by-one|gdn|carry-r0|carry-r0.5|carry-r1)"; exit 1 ;;
-esac
+### MODEL -> EXP_NAME + non-restored flags (registry shared with every other eval script) ###
+source $MEGATRON_LM_DIR/attn_bench/scripts/llama_checkpoints.sh
+source $MEGATRON_LM_DIR/attn_bench/scripts/scratch_to_store.sh
+MODEL=${MODEL:-full}
+TP=${TP:-1}
+model_config "$MODEL"
 
-# CKPT_NAME defaults to EXP_NAME; only off-by-one overrides it (checkpoint path != results name).
-MODEL_DIR=/users/$USER/store/pretrain-results/${CKPT_NAME:-$EXP_NAME}
+MODEL_DIR=/users/$USER/store/pretrain-results/$CKPT_NAME
 PARTITION_DIR=$(basename "$(dirname "$DATA_FILE")")
 RESULTS_DIR=$RESULTS_BASE/$EXP_NAME/$PARTITION_DIR
 SCRATCH_RESULTS_DIR=$SCRATCH_RESULTS_BASE/$EXP_NAME/$PARTITION_DIR
@@ -103,9 +74,7 @@ if [ -z "$OVERWRITE" ] && [ -f "$STORE_NPZ" ] \
     exit 0
 fi
 
-# Optional caps, and the megatron passthrough only when non-empty. --experiment-path is the
-# scratch working dir the python script actually reads/writes; store is only touched by the
-# copy step at the end (never write to capstor from a compute node).
+# --experiment-path is the scratch working dir; copy_scratch_to_store handles the store side.
 COMMON_ARGS="--container-env $CONTAINER_ENV \
     --ckpt-dir $MODEL_DIR/checkpoints \
     --tokenizer-path $TOKENIZER_PATH \
@@ -120,7 +89,7 @@ COMMON_ARGS="--container-env $CONTAINER_ENV \
 EXTRA_MEGATRON=""
 [ -n "$MEGATRON_EXTRA" ] && EXTRA_MEGATRON="--megatron-extra-args $MEGATRON_EXTRA"
 
-echo "RUN: variant=$VARIANT  exp=$EXP_NAME  data_file=$DATA_FILE  tp=$TP  max_length=${MAX_LENGTH:-none}  max_samples=${MAX_SAMPLES:-660 (default)}  triton=$NEEDS_TRITON  state_norm=${LOG_STATE_NORM:+on}"
+echo "RUN: model=$MODEL  exp=$EXP_NAME  data_file=$DATA_FILE  tp=$TP  max_length=${MAX_LENGTH:-none}  max_samples=${MAX_SAMPLES:-660 (default)}  triton=$NEEDS_TRITON  state_norm=${LOG_STATE_NORM:+on}"
 
 ### Position-wise loss inference ###
 # GDN needs a per-rank node-local TRITON_CACHE_DIR: fla kernels autotune on first use and
@@ -155,12 +124,6 @@ fi
 SRUN_STATUS=$?
 
 ### Copy scratch results to store ###
-if [ $SRUN_STATUS -eq 0 ]; then
-    echo "Copying results to store: $RESULTS_DIR"
-    mkdir -p "$RESULTS_DIR"
-    cp -a "$SCRATCH_RESULTS_DIR/." "$RESULTS_DIR/"
-else
-    echo "srun exited $SRUN_STATUS -- not copying scratch results to store"
-fi
+copy_scratch_to_store $SRUN_STATUS "$SCRATCH_RESULTS_DIR" "$RESULTS_DIR"
 
 echo "END TIME: $(date)"

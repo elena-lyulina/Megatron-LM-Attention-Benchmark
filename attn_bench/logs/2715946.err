@@ -1,0 +1,233 @@
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: W0710 03:55:34.151000 91312 torch/distributed/run.py:851] 
+0: W0710 03:55:34.151000 91312 torch/distributed/run.py:851] *****************************************
+0: W0710 03:55:34.151000 91312 torch/distributed/run.py:851] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+0: W0710 03:55:34.151000 91312 torch/distributed/run.py:851] *****************************************
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+0:   sentry_sdk.init(
+0: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+0:   sentry_sdk.init(
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+0:   _warnings.warn(
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+0:   _warnings.warn(
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+0:   _warnings.warn(
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+0:   _warnings.warn(
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py:90: UserWarning: The argument order of load has been changed. Please check the document to avoid future breakages.
+0:   result = func(*args, **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py:90: UserWarning: The argument order of load has been changed. Please check the document to avoid future breakages.
+0:   result = func(*args, **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py:90: UserWarning: The argument order of load has been changed. Please check the document to avoid future breakages.
+0:   result = func(*args, **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py:90: UserWarning: The argument order of load has been changed. Please check the document to avoid future breakages.
+0:   result = func(*args, **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py:481: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to load in a single process.
+0:   return func(args[0], **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py:481: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to load in a single process.
+0:   return func(args[0], **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py:481: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to load in a single process.
+0:   return func(args[0], **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py:481: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to load in a single process.
+0:   return func(args[0], **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/planner_helpers.py:489: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   device = getattr(value, "device", None)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/planner_helpers.py:489: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   device = getattr(value, "device", None)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/planner_helpers.py:489: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   device = getattr(value, "device", None)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/planner_helpers.py:489: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   device = getattr(value, "device", None)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/default_planner.py:483: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   and md.size != obj.size()
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/default_planner.py:483: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   and md.size != obj.size()
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/default_planner.py:483: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   and md.size != obj.size()
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/default_planner.py:483: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   and md.size != obj.size()
+0: long_24576_32768:   0%|          | 0/660 [00:00<?, ?it/s]
+0: long_24576_32768:   0%|          | 2/660 [00:05<28:56,  2.64s/it]
+0: long_24576_32768:   1%|          | 6/660 [00:11<19:51,  1.82s/it]
+0: long_24576_32768:   2%|▏         | 10/660 [00:17<18:08,  1.67s/it]
+0: long_24576_32768:   2%|▏         | 14/660 [00:23<17:23,  1.61s/it]
+0: long_24576_32768:   3%|▎         | 18/660 [00:29<16:57,  1.59s/it]
+0: long_24576_32768:   3%|▎         | 22/660 [00:36<16:43,  1.57s/it]
+0: long_24576_32768:   4%|▍         | 26/660 [00:42<16:27,  1.56s/it]
+0: long_24576_32768:   5%|▍         | 30/660 [00:48<16:19,  1.55s/it]
+0: long_24576_32768:   5%|▌         | 34/660 [00:54<16:06,  1.54s/it]
+0: long_24576_32768:   6%|▌         | 38/660 [01:00<16:00,  1.54s/it]
+0: long_24576_32768:   6%|▋         | 42/660 [01:06<15:54,  1.54s/it]
+0: long_24576_32768:   7%|▋         | 46/660 [01:12<15:46,  1.54s/it]
+0: long_24576_32768:   8%|▊         | 50/660 [01:19<15:40,  1.54s/it]
+0: long_24576_32768:   8%|▊         | 54/660 [01:25<15:33,  1.54s/it]
+0: long_24576_32768:   9%|▉         | 58/660 [01:31<15:28,  1.54s/it]
+0: long_24576_32768:   9%|▉         | 62/660 [01:37<15:20,  1.54s/it]
+0: long_24576_32768:  10%|█         | 66/660 [01:43<15:16,  1.54s/it]
+0: long_24576_32768:  11%|█         | 70/660 [01:49<15:09,  1.54s/it]
+0: long_24576_32768:  11%|█         | 74/660 [01:56<15:01,  1.54s/it]
+0: long_24576_32768:  12%|█▏        | 78/660 [02:02<14:57,  1.54s/it]
+0: long_24576_32768:  12%|█▏        | 82/660 [02:08<14:51,  1.54s/it]
+0: long_24576_32768:  13%|█▎        | 86/660 [02:14<14:45,  1.54s/it]
+0: long_24576_32768:  14%|█▎        | 90/660 [02:20<14:37,  1.54s/it]
+0: long_24576_32768:  14%|█▍        | 94/660 [02:26<14:32,  1.54s/it]
+0: long_24576_32768:  15%|█▍        | 98/660 [02:32<14:23,  1.54s/it]
+0: long_24576_32768:  15%|█▌        | 102/660 [02:39<14:18,  1.54s/it]
+0: long_24576_32768:  16%|█▌        | 106/660 [02:45<14:11,  1.54s/it]
+0: long_24576_32768:  17%|█▋        | 110/660 [02:51<14:06,  1.54s/it]
+0: long_24576_32768:  17%|█▋        | 114/660 [02:57<14:00,  1.54s/it]
+0: long_24576_32768:  18%|█▊        | 118/660 [03:03<13:54,  1.54s/it]
+0: long_24576_32768:  18%|█▊        | 122/660 [03:09<13:49,  1.54s/it]
+0: long_24576_32768:  19%|█▉        | 126/660 [03:16<13:41,  1.54s/it]
+0: long_24576_32768:  20%|█▉        | 130/660 [03:22<13:37,  1.54s/it]
+0: long_24576_32768:  20%|██        | 134/660 [03:28<13:30,  1.54s/it]
+0: long_24576_32768:  21%|██        | 138/660 [03:34<13:22,  1.54s/it]
+0: long_24576_32768:  22%|██▏       | 142/660 [03:40<13:15,  1.54s/it]
+0: long_24576_32768:  22%|██▏       | 146/660 [03:46<13:09,  1.54s/it]
+0: long_24576_32768:  23%|██▎       | 150/660 [03:53<13:06,  1.54s/it]
+0: long_24576_32768:  23%|██▎       | 154/660 [03:59<12:59,  1.54s/it]
+0: long_24576_32768:  24%|██▍       | 158/660 [04:05<12:53,  1.54s/it]
+0: long_24576_32768:  25%|██▍       | 162/660 [04:11<12:47,  1.54s/it]
+0: long_24576_32768:  25%|██▌       | 166/660 [04:17<12:38,  1.53s/it]
+0: long_24576_32768:  26%|██▌       | 170/660 [04:23<12:33,  1.54s/it]
+0: long_24576_32768:  26%|██▋       | 174/660 [04:30<12:28,  1.54s/it]
+0: long_24576_32768:  27%|██▋       | 178/660 [04:36<12:22,  1.54s/it]
+0: long_24576_32768:  28%|██▊       | 182/660 [04:42<12:15,  1.54s/it]
+0: long_24576_32768:  28%|██▊       | 186/660 [04:48<12:10,  1.54s/it]
+0: long_24576_32768:  29%|██▉       | 190/660 [04:54<12:02,  1.54s/it]
+0: long_24576_32768:  29%|██▉       | 194/660 [05:00<11:55,  1.54s/it]
+0: long_24576_32768:  30%|███       | 198/660 [05:06<11:51,  1.54s/it]
+0: long_24576_32768:  31%|███       | 202/660 [05:13<11:46,  1.54s/it]
+0: long_24576_32768:  31%|███       | 206/660 [05:19<11:38,  1.54s/it]
+0: long_24576_32768:  32%|███▏      | 210/660 [05:25<11:33,  1.54s/it]
+0: long_24576_32768:  32%|███▏      | 214/660 [05:31<11:25,  1.54s/it]
+0: long_24576_32768:  33%|███▎      | 218/660 [05:37<11:20,  1.54s/it]
+0: long_24576_32768:  34%|███▎      | 222/660 [05:43<11:14,  1.54s/it]
+0: long_24576_32768:  34%|███▍      | 226/660 [05:50<11:06,  1.54s/it]
+0: long_24576_32768:  35%|███▍      | 230/660 [05:56<11:00,  1.54s/it]
+0: long_24576_32768:  35%|███▌      | 234/660 [06:02<10:55,  1.54s/it]
+0: long_24576_32768:  36%|███▌      | 238/660 [06:08<10:48,  1.54s/it]
+0: long_24576_32768:  37%|███▋      | 242/660 [06:14<10:42,  1.54s/it]
+0: long_24576_32768:  37%|███▋      | 246/660 [06:20<10:36,  1.54s/it]
+0: long_24576_32768:  38%|███▊      | 250/660 [06:27<10:33,  1.54s/it]
+0: long_24576_32768:  38%|███▊      | 254/660 [06:33<10:24,  1.54s/it]
+0: long_24576_32768:  39%|███▉      | 258/660 [06:39<10:19,  1.54s/it]
+0: long_24576_32768:  40%|███▉      | 262/660 [06:45<10:12,  1.54s/it]
+0: long_24576_32768:  40%|████      | 266/660 [06:51<10:07,  1.54s/it]
+0: long_24576_32768:  41%|████      | 270/660 [06:57<10:01,  1.54s/it]
+0: long_24576_32768:  42%|████▏     | 274/660 [07:03<09:54,  1.54s/it]
+0: long_24576_32768:  42%|████▏     | 278/660 [07:10<09:47,  1.54s/it]
+0: long_24576_32768:  43%|████▎     | 282/660 [07:16<09:41,  1.54s/it]
+0: long_24576_32768:  43%|████▎     | 286/660 [07:22<09:36,  1.54s/it]
+0: long_24576_32768:  44%|████▍     | 290/660 [07:28<09:29,  1.54s/it]
+0: long_24576_32768:  45%|████▍     | 294/660 [07:34<09:22,  1.54s/it]
+0: long_24576_32768:  45%|████▌     | 298/660 [07:40<09:15,  1.53s/it]
+0: long_24576_32768:  46%|████▌     | 302/660 [07:47<09:11,  1.54s/it]
+0: long_24576_32768:  46%|████▋     | 306/660 [07:53<09:04,  1.54s/it]
+0: long_24576_32768:  47%|████▋     | 310/660 [07:59<08:58,  1.54s/it]
+0: long_24576_32768:  48%|████▊     | 314/660 [08:05<08:51,  1.54s/it]
+0: long_24576_32768:  48%|████▊     | 318/660 [08:11<08:46,  1.54s/it]
+0: long_24576_32768:  49%|████▉     | 322/660 [08:17<08:41,  1.54s/it]
+0: long_24576_32768:  49%|████▉     | 326/660 [08:23<08:34,  1.54s/it]
+0: long_24576_32768:  50%|█████     | 330/660 [08:30<08:28,  1.54s/it]
+0: long_24576_32768:  51%|█████     | 334/660 [08:36<08:21,  1.54s/it]
+0: long_24576_32768:  51%|█████     | 338/660 [08:42<08:16,  1.54s/it]
+0: long_24576_32768:  52%|█████▏    | 342/660 [08:48<08:09,  1.54s/it]
+0: long_24576_32768:  52%|█████▏    | 346/660 [08:54<08:03,  1.54s/it]
+0: long_24576_32768:  53%|█████▎    | 350/660 [09:00<07:56,  1.54s/it]
+0: long_24576_32768:  54%|█████▎    | 354/660 [09:07<07:50,  1.54s/it]
+0: long_24576_32768:  54%|█████▍    | 358/660 [09:13<07:42,  1.53s/it]
+0: long_24576_32768:  55%|█████▍    | 362/660 [09:19<07:38,  1.54s/it]
+0: long_24576_32768:  55%|█████▌    | 366/660 [09:25<07:32,  1.54s/it]
+0: long_24576_32768:  56%|█████▌    | 370/660 [09:31<07:26,  1.54s/it]
+0: long_24576_32768:  57%|█████▋    | 374/660 [09:37<07:19,  1.54s/it]
+0: long_24576_32768:  57%|█████▋    | 378/660 [09:43<07:13,  1.54s/it]
+0: long_24576_32768:  58%|█████▊    | 382/660 [09:50<07:08,  1.54s/it]
+0: long_24576_32768:  58%|█████▊    | 386/660 [09:56<07:01,  1.54s/it]
+0: long_24576_32768:  59%|█████▉    | 390/660 [10:02<06:56,  1.54s/it]
+0: long_24576_32768:  60%|█████▉    | 394/660 [10:08<06:49,  1.54s/it]
+0: long_24576_32768:  60%|██████    | 398/660 [10:14<06:42,  1.54s/it]
+0: long_24576_32768:  61%|██████    | 402/660 [10:20<06:36,  1.54s/it]
+0: long_24576_32768:  62%|██████▏   | 406/660 [10:27<06:31,  1.54s/it]
+0: long_24576_32768:  62%|██████▏   | 410/660 [10:33<06:25,  1.54s/it]
+0: long_24576_32768:  63%|██████▎   | 414/660 [10:39<06:18,  1.54s/it]
+0: long_24576_32768:  63%|██████▎   | 418/660 [10:45<06:11,  1.54s/it]
+0: long_24576_32768:  64%|██████▍   | 422/660 [10:51<06:06,  1.54s/it]
+0: long_24576_32768:  65%|██████▍   | 426/660 [10:57<06:00,  1.54s/it]
+0: long_24576_32768:  65%|██████▌   | 430/660 [11:04<05:54,  1.54s/it]
+0: long_24576_32768:  66%|██████▌   | 434/660 [11:10<05:48,  1.54s/it]
+0: long_24576_32768:  66%|██████▋   | 438/660 [11:16<05:41,  1.54s/it]
+0: long_24576_32768:  67%|██████▋   | 442/660 [11:22<05:35,  1.54s/it]
+0: long_24576_32768:  68%|██████▊   | 446/660 [11:28<05:29,  1.54s/it]
+0: long_24576_32768:  68%|██████▊   | 450/660 [11:34<05:23,  1.54s/it]
+0: long_24576_32768:  69%|██████▉   | 454/660 [11:40<05:17,  1.54s/it]
+0: long_24576_32768:  69%|██████▉   | 458/660 [11:47<05:11,  1.54s/it]
+0: long_24576_32768:  70%|███████   | 462/660 [11:53<05:04,  1.54s/it]
+0: long_24576_32768:  71%|███████   | 466/660 [11:59<04:58,  1.54s/it]
+0: long_24576_32768:  71%|███████   | 470/660 [12:05<04:52,  1.54s/it]
+0: long_24576_32768:  72%|███████▏  | 474/660 [12:11<04:46,  1.54s/it]
+0: long_24576_32768:  72%|███████▏  | 478/660 [12:17<04:40,  1.54s/it]
+0: long_24576_32768:  73%|███████▎  | 482/660 [12:24<04:34,  1.54s/it]
+0: long_24576_32768:  74%|███████▎  | 486/660 [12:30<04:28,  1.54s/it]
+0: long_24576_32768:  74%|███████▍  | 490/660 [12:36<04:21,  1.54s/it]
+0: long_24576_32768:  75%|███████▍  | 494/660 [12:42<04:16,  1.54s/it]
+0: long_24576_32768:  75%|███████▌  | 498/660 [12:48<04:09,  1.54s/it]
+0: long_24576_32768:  76%|███████▌  | 502/660 [12:54<04:03,  1.54s/it]
+0: long_24576_32768:  77%|███████▋  | 506/660 [13:01<03:57,  1.54s/it]
+0: long_24576_32768:  77%|███████▋  | 510/660 [13:07<03:50,  1.54s/it]
+0: long_24576_32768:  78%|███████▊  | 514/660 [13:13<03:45,  1.54s/it]
+0: long_24576_32768:  78%|███████▊  | 518/660 [13:19<03:38,  1.54s/it]
+0: long_24576_32768:  79%|███████▉  | 522/660 [13:25<03:32,  1.54s/it]
+0: long_24576_32768:  80%|███████▉  | 526/660 [13:31<03:26,  1.54s/it]
+0: long_24576_32768:  80%|████████  | 530/660 [13:38<03:20,  1.54s/it]
+0: long_24576_32768:  81%|████████  | 534/660 [13:44<03:13,  1.54s/it]
+0: long_24576_32768:  82%|████████▏ | 538/660 [13:50<03:08,  1.54s/it]
+0: long_24576_32768:  82%|████████▏ | 542/660 [13:56<03:01,  1.54s/it]
+0: long_24576_32768:  83%|████████▎ | 546/660 [14:02<02:55,  1.54s/it]
+0: long_24576_32768:  83%|████████▎ | 550/660 [14:08<02:49,  1.54s/it]
+0: long_24576_32768:  84%|████████▍ | 554/660 [14:15<02:43,  1.54s/it]
+0: long_24576_32768:  85%|████████▍ | 558/660 [14:21<02:37,  1.54s/it]
+0: long_24576_32768:  85%|████████▌ | 562/660 [14:27<02:31,  1.55s/it]
+0: long_24576_32768:  86%|████████▌ | 566/660 [14:33<02:24,  1.54s/it]
+0: long_24576_32768:  86%|████████▋ | 570/660 [14:39<02:18,  1.54s/it]
+0: long_24576_32768:  87%|████████▋ | 574/660 [14:45<02:12,  1.54s/it]
+0: long_24576_32768:  88%|████████▊ | 578/660 [14:52<02:06,  1.54s/it]
+0: long_24576_32768:  88%|████████▊ | 582/660 [14:58<02:00,  1.54s/it]
+0: long_24576_32768:  89%|████████▉ | 586/660 [15:04<01:54,  1.54s/it]
+0: long_24576_32768:  89%|████████▉ | 590/660 [15:10<01:47,  1.54s/it]
+0: long_24576_32768:  90%|█████████ | 594/660 [15:16<01:41,  1.54s/it]
+0: long_24576_32768:  91%|█████████ | 598/660 [15:22<01:35,  1.54s/it]
+0: long_24576_32768:  91%|█████████ | 602/660 [15:29<01:29,  1.55s/it]
+0: long_24576_32768:  92%|█████████▏| 606/660 [15:35<01:23,  1.54s/it]
+0: long_24576_32768:  92%|█████████▏| 610/660 [15:41<01:17,  1.54s/it]
+0: long_24576_32768:  93%|█████████▎| 614/660 [15:47<01:11,  1.54s/it]
+0: long_24576_32768:  94%|█████████▎| 618/660 [15:53<01:04,  1.54s/it]
+0: long_24576_32768:  94%|█████████▍| 622/660 [15:59<00:58,  1.54s/it]
+0: long_24576_32768:  95%|█████████▍| 626/660 [16:06<00:52,  1.54s/it]
+0: long_24576_32768:  95%|█████████▌| 630/660 [16:12<00:46,  1.54s/it]
+0: long_24576_32768:  96%|█████████▌| 634/660 [16:18<00:40,  1.54s/it]
+0: long_24576_32768:  97%|█████████▋| 638/660 [16:24<00:33,  1.54s/it]
+0: long_24576_32768:  97%|█████████▋| 642/660 [16:30<00:27,  1.54s/it]
+0: long_24576_32768:  98%|█████████▊| 646/660 [16:36<00:21,  1.54s/it]
+0: long_24576_32768:  98%|█████████▊| 650/660 [16:43<00:15,  1.54s/it]
+0: long_24576_32768:  99%|█████████▉| 654/660 [16:49<00:09,  1.54s/it]
+0: long_24576_32768: 100%|█████████▉| 658/660 [16:55<00:03,  1.54s/it]
+0: long_24576_32768: 100%|██████████| 660/660 [16:58<00:00,  1.54s/it]
+0: [rank0]:[W710 04:13:44.235152466 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [rank3]:[W710 04:13:46.844468216 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [rank1]:[W710 04:13:48.605668006 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: [rank2]:[W710 04:13:49.761081119 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())

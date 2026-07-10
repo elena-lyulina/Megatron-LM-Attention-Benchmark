@@ -52,12 +52,13 @@ For each sample: `excerpt = input_ids[offset : offset + prefix + suffix]`, the
 first `prefix` tokens are the prompt, the last `suffix` tokens are the gold
 continuation.
 
-## The measurement pipeline — `measure_mem_*.slurm`
+## The measurement pipeline — `measure_mem.slurm`
 
-One SLURM script per variant
-(`measure_mem_llama3_1b_{full,gated,off_by_one,sink}_attn_*.slurm`), each running
-two `srun` stages for a single `(offset, prefix, suffix)` point (offset/prefix
-come from `--export`, suffix is hardcoded to 500):
+One parametrized SLURM script for every model (`MODEL` picks it via
+`attn_bench/scripts/llama_checkpoints.sh`), running two `srun` stages for a single
+`(offset, prefix, suffix)` point (offset/prefix/suffix come from `--export`,
+suffix defaults to 500). Writes to scratch during the job and copies to store at
+the end (never write to capstor from a compute node).
 
 **Stage 1 — sparse inference** (`evaluation/megatron_inference_sparse.py`, 4 GPUs via torchrun)
 - Loads the `torch_dist` checkpoint **directly** with `--use-checkpoint-args` (no
@@ -95,12 +96,12 @@ from `verbatim_eval.my_rouge` (DP matrix + `compute_rouge_l_2d`).
 
 ## The grid sweep — `measure_mem_all.sh`
 
-Submits every variant listed in its `JOBS` array for every `offset × prefix`
-combination, one SLURM job per `(variant, offset, prefix)`. Each `JOBS` entry is
-`SCRIPT|EXP_NAME|EXTRA_EXPORTS`: the explicit `EXP_NAME` drives the skip-check, and
-`EXTRA_EXPORTS` carries per-job `--export` params — which is how the four GDN
-variants reuse one parametrized script via `GDN_VARIANT` (`base`, `carry-r0`,
-`carry-r0.5`, `carry-r1`).
+Submits every variant in `attn_bench/scripts/llama_checkpoints.sh` for every `offset × prefix`
+combination, one SLURM job per `(variant, offset, prefix)`, via
+`sbatch --export=MODEL=<v>,... measure_mem.slurm`. `model_config` (in
+`llama_checkpoints.sh`) resolves `MODEL` to `EXP_NAME` and everything `measure_mem.slurm`
+needs; the four GDN entries (`gdn`, `carry-r0`, `carry-r0.5`, `carry-r1`) are just
+separate `MODEL` tags pointing at the same GDN dims.
 
 ```bash
 # from attn_bench/
@@ -148,19 +149,22 @@ To measure memorization for a newly trained variant:
    the inference docstring warns some `store_true`/custom flags aren't restored
    correctly, which is why the gated/sink/obo scripts re-pass
    `--attention-output-gate` / `--softmax-type …`. Check this on a short run.
-3. **Create `measure_mem_<variant>_*.slurm`.** Copy the nearest existing variant
-   script and set: `EXP_NAME` (+ `MODEL_DIR`), `CONTAINER_ENV` (e.g. GDN needs
-   `nemo_26.04_te2.15` for `flash-linear-attention` + `causal_conv1d`), and the
-   `--megatron-extra-args` for the variant. Keep suffix hardcoded to 500. If the
-   variant uses a non-attention mixer with Triton kernels (GDN), give each rank a
-   per-rank node-local `TRITON_CACHE_DIR` (the `torchrun --no-python` wrapper in the
-   GDN script) — a shared cache races and crashes. A parametrized script (one file,
-   several checkpoints via an export like `GDN_VARIANT`) is fine.
-4. **Register in `measure_mem_all.sh`.** Add a `JOBS` entry
-   `SCRIPT|EXP_NAME|EXTRA_EXPORTS` — otherwise the grid sweep won't include the
-   variant. `EXP_NAME` must be explicit (it drives the skip-check); `EXTRA_EXPORTS`
-   holds any per-job `--export` params (e.g. `GDN_VARIANT=carry-r1`), or is empty.
-5. **Note: `--capture-attention` is softmax-only.** The capture hooks target
+3. **Register the variant in `attn_bench/scripts/llama_checkpoints.sh`.** Add its tag to
+   `MODELS` and a `model_config()` case setting `EXP_NAME` (+ `CKPT_NAME` if the
+   checkpoint dir differs), `MEGATRON_EXTRA` (flags not restored by
+   `--use-checkpoint-args`, e.g. `--attention-output-gate` / `--softmax-type …`),
+   `NEEDS_TRITON=1` for non-attention mixers with Triton kernels (GDN needs a
+   per-rank node-local `TRITON_CACHE_DIR` — a shared cache races and crashes, see the
+   `torchrun --no-python` wrapper in `measure_mem.slurm`), `IS_SINK_FAMILY=1` for sink-logit
+   variants (the puller's config-subset selection for historical partial results, and
+   `--sink-scale` support), and `NEEDS_UNFUSED_DECODE=1` if the model's decode-mode greedy
+   generation needs `--attention-backend unfused` (a TE 2.15 decode-mode limitation, not a
+   general property of the softmax type — see the comment in `llama_checkpoints.sh`). The
+   long-context scripts (`long_gutenberg_inference.slurm`/`long_fineweb_inference.slurm`) never
+   decode, so they run every model the same way (TP=1, full length) regardless of these flags.
+   This one entry is everything `measure_mem.slurm`, `measure_mem_all.sh`, the long-context
+   sweeps, and the pullers need — nothing else to touch.
+4. **Note: `--capture-attention` is softmax-only.** The capture hooks target
    `TEDotProductAttention`; a non-attention mixer (e.g. GDN) has none, so the hooks
    silently never fire. Memorization metrics still work; attention-map capture does
    not apply.
@@ -259,8 +263,8 @@ to `PYTHONPATH` alongside its `src/`.
 
 | script | purpose |
 |---|---|
-| `measure_mem_<variant>_*.slurm` | one `(offset, prefix)` point for one model: inference + LCS/Rouge-L |
-| `measure_mem_all.sh` | grid driver: submits all variants × offsets × prefixes (skips combos whose pkl exists; `--force` overrides) |
+| `measure_mem.slurm` | one `(offset, prefix)` point for one `MODEL`: inference + LCS/Rouge-L |
+| `measure_mem_all.sh` | grid driver: submits all variants (from `scripts/llama_checkpoints.sh`) × offsets × prefixes (skips combos whose pkl exists; `--force` overrides) |
 | `capture_attn_<variant>_*.slurm` | capture `[L,H,S,S]` attention maps bucketed by Rouge-L |
 | `generation_quality.slurm` | distinct-n + reference-model perplexity |
 | `mauve.slurm` | MAUVE score |
