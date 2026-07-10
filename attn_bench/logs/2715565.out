@@ -1,0 +1,56 @@
+START TIME: Fri Jul 10 02:32:00 CEST 2026
+Source:      /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_0.25
+Scratch out: /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_0.25_long
+Store out:   /users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_0.25_long
+Range:       [24576, 32768)
+40 shard(s) under /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_0.25
+range: [24,576, 32,768)
+  00000_tokens: 351 docs
+  00001_tokens: 331 docs
+  00002_tokens: 319 docs
+  00003_tokens: 327 docs
+  00004_tokens: 330 docs
+  00005_tokens: 311 docs
+  00006_tokens: 309 docs
+  00007_tokens: 366 docs
+  00008_tokens: 336 docs
+  00009_tokens: 346 docs
+  00010_tokens: 337 docs
+  00011_tokens: 304 docs
+  00012_tokens: 319 docs
+  00013_tokens: 323 docs
+  00014_tokens: 312 docs
+  00015_tokens: 315 docs
+  00016_tokens: 326 docs
+  00017_tokens: 286 docs
+  00018_tokens: 332 docs
+  00019_tokens: 339 docs
+  00000_tokens: 335 docs
+  00001_tokens: 329 docs
+  00002_tokens: 347 docs
+  00003_tokens: 354 docs
+  00004_tokens: 313 docs
+  00005_tokens: 317 docs
+  00006_tokens: 371 docs
+  00007_tokens: 318 docs
+  00008_tokens: 352 docs
+  00009_tokens: 351 docs
+  00010_tokens: 290 docs
+  00011_tokens: 303 docs
+  00012_tokens: 331 docs
+  00013_tokens: 339 docs
+  00014_tokens: 313 docs
+  00015_tokens: 333 docs
+  00016_tokens: 315 docs
+  00017_tokens: 339 docs
+  00018_tokens: 341 docs
+  00019_tokens: 315 docs
+
+Total: 13,125 documents -> /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_0.25_long/long_24576_32768.jsonl
+  documents:    13,125
+  total tokens: 367,445,259
+  mean:         27,995.8
+  min / max:    24,576 / 32,767
+  percentiles:  p1=24,619  p5=24,805  p25=25,923  p50=27,631  p75=29,921  p90=31,521  p95=32,114  p99=32,623
+stats -> /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_0.25_long/long_24576_32768_stats.json
+Copying to store: /users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_0.25_long

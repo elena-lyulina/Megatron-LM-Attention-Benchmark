@@ -1,0 +1,5 @@
+START TIME: Fri Jul 10 02:26:56 CEST 2026
+Source:      /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_0.25
+Scratch out: /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_0.25_long
+Store out:   /users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_0.25_long
+Range:       [24576, 32768)

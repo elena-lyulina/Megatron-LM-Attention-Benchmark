@@ -8,7 +8,7 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=64GB
 #SBATCH --time=00:30:00
-#SBATCH --environment=nemo
+#SBATCH --environment=nemo_26.04_te2.15
 #SBATCH --partition=normal
 #SBATCH --no-requeue
 #SBATCH --mail-type=BEGIN,END,FAIL
@@ -74,7 +74,7 @@ python3 -u attn_bench/data_processing/extract_long_docs.py \
 
 echo "Copying to store: $STORE_DIR"
 mkdir -p "$STORE_DIR"
-rsync -a "$OUT_DIR/" "$STORE_DIR/"
+cp -a "$OUT_DIR/." "$STORE_DIR/"
 
 echo "END TIME: $(date)"
 echo "Done. Long docs in $STORE_DIR"
