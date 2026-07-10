@@ -1,0 +1,349 @@
+cat: '': No such file or directory
+/var/spool/slurmd/job2710458/slurm_script: line 373: python: command not found
+ 0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+ 0:   import pynvml  # type: ignore[import]
+27: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+26: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+25: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+24: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+23: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+20: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+21: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+22: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+38: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+36: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+39: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+37: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 2: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 0: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 1: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 3: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+34: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+33: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+32: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+35: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+13: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+15: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+14: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+12: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+43: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+42: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+41: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+40: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+48: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+49: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+51: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+50: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 6: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 5: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 7: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 4: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+45: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+44: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+47: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+46: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 9: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 8: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+10: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+11: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+17: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+16: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+18: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+19: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+55: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+53: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+54: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+52: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 0: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+ 0:   sentry_sdk.init(
+17: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 5: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+53: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+54: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+35: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 9: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+40: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+55: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+25: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+37: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+48: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+39: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+15: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+12: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+32: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+43: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+44: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 1: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+46: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 8: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+49: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+34: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+38: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+52: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+18: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+13: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+33: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+26: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+36: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+24: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+50: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+27: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+11: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+45: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+47: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+19: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+16: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 3: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+14: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 2: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+10: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+42: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 4: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+51: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 7: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 6: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+23: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+41: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+20: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+21: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+22: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+ 0:   _warnings.warn(
+ 0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils/common_utils.py:430: UserWarning: Overriding default arguments for tokenizer_type:GPT2BPETokenizer with tokenizer_type:HuggingFaceTokenizer
+ 0:   warnings.warn(message)
+55: wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+44: [W709 23:40:15.405986214 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 2: [W709 23:40:15.466270366 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+24: [W709 23:40:15.045903819 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+20: [W709 23:40:15.531918617 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+23: [W709 23:40:15.532205392 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+21: [W709 23:40:15.532652738 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+37: [W709 23:40:15.631846555 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+38: [W709 23:40:15.631848635 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+39: [W709 23:40:15.631855611 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+16: [W709 23:40:15.238145097 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+19: [W709 23:40:15.238150089 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+48: [W709 23:40:15.927148236 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+50: [W709 23:40:15.927144492 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+51: [W709 23:40:15.927154892 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+25: [W709 23:40:15.069596156 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+26: [W709 23:40:15.076194100 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+18: [W709 23:40:15.265949483 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+55: wandb: Currently logged in as: elyulina (elyulina-thesis) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+32: [W709 23:40:15.450756828 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+13: [W709 23:40:15.680928735 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+11: [W709 23:40:15.605334401 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+12: [W709 23:40:15.727031349 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+14: [W709 23:40:15.727081108 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+15: [W709 23:40:15.727088915 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+10: [W709 23:40:16.644835168 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 5: [W709 23:40:16.015784706 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+22: [W709 23:40:16.826077750 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+49: [W709 23:40:16.219403977 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 8: [W709 23:40:16.689265890 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+35: [W709 23:40:16.701053813 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+33: [W709 23:40:16.742757311 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+34: [W709 23:40:16.754978155 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 7: [W709 23:40:16.171954837 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 6: [W709 23:40:16.176054804 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 9: [W709 23:40:16.818661701 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+43: [W709 23:40:16.379365177 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+47: [W709 23:40:16.933451666 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 4: [W709 23:40:16.269671380 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+42: [W709 23:40:16.431406696 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 1: [W709 23:40:16.998632940 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+53: [W709 23:40:16.426217502 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+54: [W709 23:40:16.471558696 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+46: [W709 23:40:16.994760195 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+45: [W709 23:40:16.004462869 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+27: [W709 23:40:16.640413674 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+52: [W709 23:40:16.546459864 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 3: [W709 23:40:16.128825018 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+36: [W709 23:40:16.287873444 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+40: [W709 23:40:16.567314601 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+41: [W709 23:40:16.621410846 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+17: [W709 23:40:16.945949968 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+55: wandb: setting up run 7p8xyl6l
+55: wandb: Tracking run with wandb version 0.27.0
+55: wandb: Run data is saved locally in /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/results/pretrain/fineweb-40B_gutenberg-3B/llama3-1b-full-attn-goldfish-fineweb40B-gutenberg3B/logging/wandb/run-20260709_234015-7p8xyl6l
+55: wandb: Run `wandb offline` to turn off syncing.
+55: wandb: Syncing run llama3-1b-full-attn-goldfish-fineweb40B-gutenberg3B-2710458
+55: wandb: ⭐️ View project at https://wandb.ai/elyulina-thesis/fineweb-40B_gutenberg-3B
+55: wandb: 🚀 View run at https://wandb.ai/elyulina-thesis/fineweb-40B_gutenberg-3B/runs/7p8xyl6l
+55: wandb: Detected [openai] in use.
+55: wandb: Use W&B Weave for improved LLM call tracing. Install Weave with `pip install weave` then add `import weave` to the top of your script.
+55: wandb: For more information, check out the docs at: https://weave-docs.wandb.ai
+55: [W709 23:40:17.865636856 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+29: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+28: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+30: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+31: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+28: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+31: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+29: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+30: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+31: [W709 23:42:39.366091024 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+28: [W709 23:42:39.398555187 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+29: [W709 23:42:39.427925316 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+30: [W709 23:42:39.427926980 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 0: [W709 23:42:39.155002702 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 6: [rank6]:W0709 23:43:03.561000 65494 torch/_inductor/triton_bundler.py:228] [1/0] Failed to reload cubin file statically launchable autotuner triton_poi_fused_add_native_dropout_0
+ 6: [rank6]:W0709 23:43:03.561000 65494 torch/_inductor/triton_bundler.py:228] [1/0] Traceback (most recent call last):
+ 6: [rank6]:W0709 23:43:03.561000 65494 torch/_inductor/triton_bundler.py:228] [1/0]   File "/usr/local/lib/python3.12/dist-packages/torch/_inductor/triton_bundler.py", line 226, in load_autotuners
+ 6: [rank6]:W0709 23:43:03.561000 65494 torch/_inductor/triton_bundler.py:228] [1/0]     compile_result.reload_cubin_path()
+ 6: [rank6]:W0709 23:43:03.561000 65494 torch/_inductor/triton_bundler.py:228] [1/0]   File "/usr/local/lib/python3.12/dist-packages/torch/_inductor/runtime/triton_heuristics.py", line 1759, in reload_cubin_path
+ 6: [rank6]:W0709 23:43:03.561000 65494 torch/_inductor/triton_bundler.py:228] [1/0]     raise RuntimeError(
+ 6: [rank6]:W0709 23:43:03.561000 65494 torch/_inductor/triton_bundler.py:228] [1/0] RuntimeError: ('Cubin
+ 6:  file saved by TritonBundler not found at %s', '/tmp/.triton/cache/5MYYTHVZFHSEHCJ5FT5GK7KOVFYTLKID3LYICUGPYZNCQOSLV62Q/triton_poi_fused_add_native_dropout_0.cubin')
+ 4: [rank4]:W0709 23:43:03.614000 65492 torch/_inductor/triton_bundler.py:228] [1/0] Failed to reload cubin file statically launchable autotuner triton_poi_fused_add_native_dropout_0
+ 4: [rank4]:W0709 23:43:03.614000 65492 torch/_inductor/triton_bundler.py:228] [1/0] Traceback (most recent call last):
+ 4: [rank4]:W0709 23:43:03.614000 65492 torch/_inductor/triton_bundler.py:228] [1/0]   File "/usr/local/lib/python3.12/dist-packages/torch/_inductor/triton_bundler.py", line 226, in load_autotuners
+ 4: [rank4]:W0709 23:43:03.614000 65492 torch/_inductor/triton_bundler.py:228] [1/0]     compile_result.reload_cubin_path()
+ 4: [rank4]:W0709 23:43:03.614000 65492 torch/_inductor/triton_bundler.py:228] [1/0]   File "/usr/local/lib/python3.12/dist-packages/torch/_inductor/runtime/triton_heuristics.py", line 1759, in reload_cubin_path
+ 4: [rank4]:W0709 23:43:03.614000 65492 torch/_inductor/triton_bundler.py:228] [1/0]     raise RuntimeError(
+ 4: [rank4]:W0709 23:43:03.614000 65492 torch/_inductor/triton_bundler.py:228] [1/0] RuntimeError: ('Cubin
+ 4:  file saved by TritonBundler not found at %s', '/tmp/.triton/cache/5MYYTHVZFHSEHCJ5FT5GK7KOVFYTLKID3LYICUGPYZNCQOSLV62Q/triton_poi_fused_add_native_dropout_0.cubin')
+ 0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/models/mimo/config/base_configs.py:12: UserWarning: MimoModelConfig is experimental and still under active development. The API may change without notice in future releases.
+ 0:   class MimoModelConfig:
+ 9: [rank9]:W0709 23:43:11.663000 234165 torch/_inductor/triton_bundler.py:396] [1/2_1] Directory /tmp/.triton/cache/tmp.b09acef2-0622-47da-95c4-740709dfe370 is not empty - skipping!
+29: [rank29]:W0709 23:43:11.685000 232833 torch/_inductor/triton_bundler.py:396] [1/2_1] Directory /tmp/.triton/cache/tmp.9006a666-17d9-424e-9d23-c8777a10084f is not empty - skipping!
+ 1: [rank1]:W0709 23:43:12.015000 238013 torch/_inductor/triton_bundler.py:228] [2/0] Failed to reload cubin file statically launchable autotuner triton_poi_fused_mul_silu_split_0
+ 1: [rank1]:W0709 23:43:12.015000 238013 torch/_inductor/triton_bundler.py:228] [2/0] Traceback (most recent call last):
+ 1: [rank1]:W0709 23:43:12.015000 238013 torch/_inductor/triton_bundler.py:228] [2/0]   File "/usr/local/lib/python3.12/dist-packages/torch/_inductor/triton_bundler.py", line 226, in load_autotuners
+ 1: [rank1]:W0709 23:43:12.015000 238013 torch/_inductor/triton_bundler.py:228] [2/0]     compile_result.reload_cubin_path()
+ 1: [rank1]:W0709 23:43:12.015000 238013 torch/_inductor/triton_bundler.py:228] [2/0]   File "/usr/local/lib/python3.12/dist-packages/torch/_inductor/runtime/triton_heuristics.py", line 1759, in reload_cubin_path
+ 1: [rank1]:W0709 23:43:12.015000 238013 torch/_inductor/triton_bundler.py:228] [2/0]     raise RuntimeError(
+ 1: [rank1]:W0709 23:43:12.015000 238013 torch/_inductor/triton_bundler.py:228] [2/0] RuntimeError: ('Cu
+ 1: bin file saved by TritonBundler not found at %s', '/tmp/.triton/cache/6Q646GSIYCCDL2GLEGZWCBCHWQ4IXCK642FHTDT5IGHIUIZLLABA/triton_poi_fused_mul_silu_split_0.cubin')
+44: [rank44]:W0709 23:43:12.485000 156316 torch/_inductor/codecache.py:1052] [3/0] fx graph cache unable to load compiled graph
+44: [rank44]:W0709 23:43:12.485000 156316 torch/_inductor/codecache.py:1052] [3/0] Traceback (most recent call last):
+44: [rank44]:W0709 23:43:12.485000 156316 torch/_inductor/codecache.py:1052] [3/0]   File "/usr/local/lib/python3.12/dist-packages/torch/_inductor/codecache.py", line 1048, in iterate_over_candidates
+44: [rank44]:W0709 23:43:12.485000 156316 torch/_inductor/codecache.py:1052] [3/0]     with open(os.path.join(subdir, path), "rb") as f:
+44: [rank44]:W0709 23:43:12.485000 156316 torch/_inductor/codecache.py:1052] [3/0]          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+44: [rank44]:W0709 23:43:12.485000 156316 torch/_inductor/codecache.py:1052] [3/0] FileNotFoundError: [Errno 2] No such file or directory: '/iopsstor/scratch/cscs/elyulina/tmp/torchinductor_elyulina/fxgraph/vc/fvcmdkwz5uyyx7lfduotevdttnnaoynp32nwbtj727lqwuzro5es/.113668.70369738115232.tmp'
+44: [rank44]:W0709 23:43:12.487000 156316 torch/_inductor/codecache.py:1052] [3/0] fx graph cache unable to load compiled graph
+44: [rank44]:W0709 23:43:12.487000 156316 torch/_inductor/codecache.py:1052] [3/0] Traceback (most recent call last):
+44: [rank44]:W0709 23:43:12.487000 156316 torch/_inductor/codecache.py:1052] [3/0]   File "/usr/local/lib/python3.12/dist-packages/torch/_inductor/codecache.py", line 1048, in iterate_over_candidates
+44: [rank44]:W0709 23:43:12.487000 156316 torch/_inductor/codecache.py:1052] [3/0]     with open(os.path.join(subdir, path), "rb") as f:
+44: [rank44]:W0709 23:43:12.487000 156316 torch/_inductor/codecache.py:1052] [3/0]          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+44: [rank44]:W0709 23:43:12.487000 156316 torch/_inductor/codecache.py:1052] [3/0] FileNotFoundError: [Errno 2] No such file or directory: '/iopsstor/scratch/cscs/elyulina/tmp/torchinductor_elyulina/fxgraph/vc/fvcmdkwz5uyyx7lfduotevdttnnaoynp32nwbtj727lqwuzro5es/.262850.70369565558944.tmp'
+ 0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/pipeline_parallel/schedules.py:211: UserWarning: The AccumulateGrad node's stream does not match the stream of the node that produced the incoming gradient. This may incur unnecessary synchronization and break CUDA graph capture if the AccumulateGrad node's stream is the default stream. This mismatch is caused by an AccumulateGrad node created prior to the current iteration being kept alive. This can happen if the autograd graph is still being kept alive by tensors such as the loss, or if you are using DDP, which will stash a reference to the node. To resolve the mismatch, delete all references to the autograd graph or ensure that DDP initialization is performed under the same stream as subsequent forwards. If the mismatch is intentional, you can use torch.autograd.graph.set_warn_on_accumulate_grad_stream_mismatch(False) to suppress this warning. (Triggered internally at /opt/pytorch/pytorch/torch/csrc/autograd/input_buffer.cpp:240.
+ 0: )
+ 0:   Variable._execution_engine.run_backward(
+ 0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+ 0:   import pynvml  # type: ignore[import]
+43: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+36: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+41: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+39: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+55: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+40: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 6: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+42: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+38: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+37: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 1: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 5: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+17: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+53: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+54: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 4: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 7: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+52: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 3: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+45: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+34: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+31: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 2: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 0: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+16: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+19: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+18: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+47: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+44: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+46: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+35: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+33: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+29: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+28: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+30: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 8: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+32: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+22: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+11: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+10: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 9: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+21: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+23: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+20: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+13: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+15: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+49: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+27: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+14: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+12: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+26: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+48: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+25: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+24: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+51: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+50: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+43: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+55: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+41: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+40: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 1: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+17: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 5: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 6: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 3: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+36: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 4: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 2: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+42: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+39: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+38: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+37: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+34: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+44: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+47: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+53: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+46: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+45: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+54: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+52: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 7: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+35: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 8: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+16: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+19: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+18: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+31: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+22: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+ 0:   _warnings.warn(
+29: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+28: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+30: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+32: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+33: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+11: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 9: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+10: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+23: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+21: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+49: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+20: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+51: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+50: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+13: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+14: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+12: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+48: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+24: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+25: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+15: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+27: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+26: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt

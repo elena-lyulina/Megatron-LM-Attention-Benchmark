@@ -165,6 +165,28 @@ Logs: `attn_bench/logs/2622827.{out,err}` (r=0), `2622828.{out,err}` (r=0.5), `2
 
 ---
 
+## Goldfish loss (full attention vs. GDN)
+
+Full-attention baseline and the GDN mixer, each re-trained with goldfish loss added on top (same param-matched configs as above): a pseudo-random, hash-based token dropout from the loss (never from the input) to reduce verbatim memorization. Mechanism: for each sample, hash every length-`h` token window; a token is excluded from the loss if `hash < 1/k`. `--goldfish-k 50 --goldfish-h 50` → ~2% of tokens dropped from the loss per sample. See `attn_bench/_plans/goldfish_loss_port_plan.md` for the port details. Document boundaries isolated in both runs (`--use-packed-seq-params` + `--reset-position-ids` + `--eod-mask-loss`), same as the masked `full` / `gated delta net (GDN)` baselines.
+
+| variant | Slurm job | start (CEST) | end (CEST) | run time | status | final lm loss | throughput (TFLOP/s/GPU) |
+|---|---|---|---|---|---|---|---|
+| full (goldfish) | `2710458` | 2026-07-09 23:38 | 2026-07-10 05:25 | 5h 47m | COMPLETED | 2.3835 | ~290.1 |
+| gdn (goldfish) | `2710460` | 2026-07-09 23:38 | 2026-07-10 04:55 | 5h 17m | COMPLETED | 2.4126 | ~320.9 |
+
+Note: the full Slurm `.out`/`.err` logs are not available in full for these two jobs — the logs directory was rsynced off scratch mid-run, and the scratch copy was deleted before that was caught. Only a partial (~50%-progress) local copy survives. All figures above come from the corresponding W&B runs instead.
+
+W&B runs (project `fineweb-40B_gutenberg-3B`):
+
+- full (goldfish): `llama3-1b-full-attn-goldfish-fineweb40B-gutenberg3B-2710458` (`7p8xyl6l`)
+- gdn (goldfish): `llama3-1b-gdn-goldfish-fineweb40B-gutenberg3B-2710460` (`omr2wira`)
+
+Container: `nemo_26.04_te2.15`.
+
+Slurm scripts: `attn_bench/submissions/pretrain_llama3_1b_full_attn_goldfish_fineweb40B_gutenberg3B.slurm`, `attn_bench/submissions/pretrain_llama3_1b_gdn_goldfish_fineweb40B_gutenberg3B.slurm`.
+
+---
+
 ## Attention variants / trained models 
 
 | variant | Megatron flag | description |
