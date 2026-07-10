@@ -19,7 +19,7 @@
 #                        pass, where TE's FusedAttention already supports softmax_type
 #                        natively, so they never need this.
 
-MODELS=(full gated full-xdoc-leak sink off-by-one gdn carry-r0 carry-r0.5 carry-r1)
+MODELS=(full gated full-xdoc-leak sink off-by-one gdn carry-r0 carry-r0.5 carry-r1 full-goldfish gdn-goldfish)
 
 # GDN linear-attention dims -- not restored by --use-checkpoint-args, must be re-passed.
 GDN_DIMS="--experimental-attention-variant gated_delta_net \
@@ -80,6 +80,15 @@ model_config() {
             ;;
         carry-r1)
             EXP_NAME=llama3-1b-gdn-carry-r1-fineweb40B-gutenberg3B
+            MEGATRON_EXTRA="$GDN_DIMS"
+            NEEDS_TRITON=1
+            ;;
+        full-goldfish)
+            EXP_NAME=llama3-1b-full-attn-goldfish-fineweb40B-gutenberg3B
+            MEGATRON_EXTRA=""
+            ;;
+        gdn-goldfish)
+            EXP_NAME=llama3-1b-gdn-goldfish-fineweb40B-gutenberg3B
             MEGATRON_EXTRA="$GDN_DIMS"
             NEEDS_TRITON=1
             ;;

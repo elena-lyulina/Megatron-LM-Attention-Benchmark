@@ -66,9 +66,19 @@ every sweep and puller below — nothing else needs to change.
 
 ## 8. Run the eval sweeps
 
+`measure_mem_all.sh` submits one job per `(offset, prefix, suffix, model)` combination —
+a full cross product of whatever lists you pass. To reproduce the grid plotted in
+`notebooks/mem_metrics_2.ipynb` (`OFFSETS = [0, 1, 5, 12, 25, 50, 100, 500, 1000, 2000, 3000]`,
+`PREFIXES = [50, 100, 250, 500, 750, 1000, 2000, 3000]`, `SUFFIXES = [50, 500]`), run it in
+2 passes — one across all offsets at the two fixed prefixes used by the offset-dimension
+plots, one at offset=0 across the wider prefix range used by the prefix-dimension plots.
+The sweep skips anything already done on store, so the 2nd call's overlap with the 1st is
+free:
+
 ```bash
 # from attn_bench/
-bash submissions/measure_mem_all.sh --offsets 0 --prefixes 50 100 250 500 1000 2000 5000
+bash submissions/measure_mem_all.sh --offsets 0 1 5 12 25 50 100 500 1000 2000 3000 --prefixes 50 500 --suffixes 50 500
+bash submissions/measure_mem_all.sh --offsets 0 --prefixes 50 100 250 500 750 1000 2000 3000 --suffixes 500
 bash submissions/long_gutenberg_inference_all.sh
 bash submissions/long_fineweb_inference_all.sh
 ```

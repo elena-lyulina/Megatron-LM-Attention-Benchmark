@@ -10,6 +10,7 @@
 # To add a newly trained model to this sweep: add it to attn_bench/scripts/llama_checkpoints.sh, not here.
 #
 # Usage: bash attn_bench/submissions/long_fineweb_inference_all.sh   # full sweep, all models x 2 partitions
+# Add --dry-run to print the sbatch commands that would run without submitting anything.
 
 set -e
 
@@ -34,10 +35,12 @@ DATA_FOLDERS=(
 )
 
 FORCE=0
+DRY_RUN=0
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --force) FORCE=1; shift ;;
-        *) echo "Unknown argument: $1"; echo "Usage: $0 [--force]  (set MAX_LENGTH/MAX_SAMPLES via env)"; exit 1 ;;
+        --dry-run) DRY_RUN=1; shift ;;
+        *) echo "Unknown argument: $1"; echo "Usage: $0 [--force] [--dry-run]  (set MAX_LENGTH/MAX_SAMPLES via env)"; exit 1 ;;
     esac
 done
 
@@ -80,6 +83,11 @@ for DATA_FOLDER in "${DATA_FOLDERS[@]}"; do
         [[ $WANT_STATE -eq 1 && -n "${STATE_CHUNK:-}" ]] && EXPORTS="$EXPORTS,STATE_CHUNK=$STATE_CHUNK"
         # --force also recomputes: without this the resubmitted job would just skip and no-op.
         [[ $FORCE -eq 1 ]] && EXPORTS="$EXPORTS,OVERWRITE=1"
+
+        if [[ $DRY_RUN -eq 1 ]]; then
+            echo "[dry-run] sbatch --export=ALL,\"$EXPORTS\" $SCRIPT_DIR/long_fineweb_inference.slurm"
+            continue
+        fi
 
         echo "Submitting MODEL=$MODEL ($EXP_NAME) partition=$TAG state_norm=$WANT_STATE"
         # ALL propagates the submission env (USER, PATH, ...) so $USER-based paths resolve.

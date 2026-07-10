@@ -9,6 +9,7 @@
 # To add a newly trained model to this sweep: add it to attn_bench/scripts/llama_checkpoints.sh, not here.
 #
 # Usage: bash attn_bench/submissions/long_gutenberg_inference_all.sh   # full sweep, all models
+# Add --dry-run to print the sbatch commands that would run without submitting anything.
 
 set -e
 
@@ -21,10 +22,12 @@ LOG_STATE_NORM=${LOG_STATE_NORM:-}   # set to log GDN state norms (applied only 
 STATE_CHUNK=${STATE_CHUNK:-}         # override the state readout stride (default 128)
 
 FORCE=0
+DRY_RUN=0
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --force) FORCE=1; shift ;;
-        *) echo "Unknown argument: $1"; echo "Usage: $0 [--force]  (set REPETITIONS/MAX_LENGTH/MAX_SAMPLES via env)"; exit 1 ;;
+        --dry-run) DRY_RUN=1; shift ;;
+        *) echo "Unknown argument: $1"; echo "Usage: $0 [--force] [--dry-run]  (set REPETITIONS/MAX_LENGTH/MAX_SAMPLES via env)"; exit 1 ;;
     esac
 done
 
@@ -68,6 +71,11 @@ for MODEL in "${MODELS[@]}"; do
     [[ $WANT_STATE -eq 1 && -n "${STATE_CHUNK:-}" ]] && EXPORTS="$EXPORTS,STATE_CHUNK=$STATE_CHUNK"
     # --force also recomputes: without this the resubmitted job would just skip and no-op.
     [[ $FORCE -eq 1 ]] && EXPORTS="$EXPORTS,OVERWRITE=1"
+
+    if [[ $DRY_RUN -eq 1 ]]; then
+        echo "[dry-run] sbatch --export=ALL,\"$EXPORTS\" $SCRIPT_DIR/long_gutenberg_inference.slurm"
+        continue
+    fi
 
     echo "Submitting MODEL=$MODEL ($EXP_NAME) reps=$REPETITIONS state_norm=$WANT_STATE"
     # ALL propagates the submission env (USER, PATH, ...) so $USER-based paths resolve.

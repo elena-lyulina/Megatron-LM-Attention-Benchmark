@@ -10,6 +10,7 @@
 # not here.
 #
 # Usage: bash attn_bench/submissions/measure_mem_all.sh --offsets 0 --prefixes 50 100 250 1000 1500 2000 3000 4000 5000
+# Add --dry-run to print the sbatch commands that would run without submitting anything.
 
 set -e
 
@@ -24,11 +25,15 @@ OFFSETS=()
 PREFIXES=()
 SUFFIXES=()
 FORCE=0
+DRY_RUN=0
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --force)
             FORCE=1; shift
+            ;;
+        --dry-run)
+            DRY_RUN=1; shift
             ;;
         --offsets)
             shift
@@ -50,7 +55,7 @@ while [[ $# -gt 0 ]]; do
             ;;
         *)
             echo "Unknown argument: $1"
-            echo "Usage: $0 [--force] --offsets <o1> [o2 ...] --prefixes <p1> [p2 ...] [--suffixes <s1> [s2 ...]]"
+            echo "Usage: $0 [--force] [--dry-run] --offsets <o1> [o2 ...] --prefixes <p1> [p2 ...] [--suffixes <s1> [s2 ...]]"
             exit 1
             ;;
     esac
@@ -78,10 +83,16 @@ for OFFSET in "${OFFSETS[@]}"; do
                     continue
                 fi
 
+                EXPORTS="MODEL=$MODEL,OFFSET=$OFFSET,PREFIX_LENGTH=$PREFIX,SUFFIX_LENGTH=$SUFFIX"
+                if [[ $DRY_RUN -eq 1 ]]; then
+                    echo "[dry-run] sbatch --export=ALL,\"$EXPORTS\" $SCRIPT_DIR/measure_mem.slurm"
+                    continue
+                fi
+
                 echo "Submitting measure_mem.slurm (model=$MODEL exp=$EXP_NAME) offset=$OFFSET prefix_length=$PREFIX suffix_length=$SUFFIX"
                 # ALL = propagate the full submission env (USER, PATH, …) so the scripts'
                 # $USER-based paths resolve, then layer our per-job vars on top.
-                sbatch --export=ALL,"MODEL=$MODEL,OFFSET=$OFFSET,PREFIX_LENGTH=$PREFIX,SUFFIX_LENGTH=$SUFFIX" "$SCRIPT_DIR/measure_mem.slurm"
+                sbatch --export=ALL,"$EXPORTS" "$SCRIPT_DIR/measure_mem.slurm"
             done
         done
     done
