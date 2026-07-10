@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --account=infra01
 #SBATCH --time=1:30:00
-#SBATCH --job-name=long-gutenberg-inf
+#SBATCH --job-name=long-fineweb-inf
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
 #SBATCH --nodes=1
@@ -12,20 +12,19 @@
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=clariden-jobs-elyulin-aaaauapxybdkdx42ppvef2c2eq@swissai-initiative.slack.com
 
-# Per-position loss on long Gutenberg sequences ([BOS, sample, suffix], no prefix),
-# one job per model. VARIANT picks the checkpoint; the network dims come from the
-# checkpoint itself (--use-checkpoint-args), so only the flags that --use-checkpoint-args
-# does NOT restore are re-passed here (attention toggles + GDN linear-attention dims).
-# Work is split across the 4 GPUs by index striding; results flushed per repetition
-# bucket (<config>/rep_{R}.npz), so a restart skips finished buckets. Writes go to
-# Iopsstor scratch during the job and get copied to Capstor store at the end (CSCS
-# guidance: never write to capstor from a compute node).
+# Per-position loss on long FineWeb-Edu documents (verbatim, no prefix/suffix framing),
+# one job per (model, data file) pair. VARIANT picks the checkpoint, same as
+# long_gutenberg_inference.slurm; DATA_FILE is the full path to one jsonl produced by
+# extract_long_docs.py (e.g. the seen or unseen partition at a given length range).
+# Results land under RESULTS_BASE/$EXP_NAME/<data file's parent dir name>/$CONFIG/, so
+# seen and unseen (different parent dirs) never collide even though they share the same
+# long_{lo}_{hi}.jsonl basename. Writes go to Iopsstor scratch during the job and get copied
+# to Capstor store at the end (CSCS guidance: never write to capstor from a compute node).
 #
 # Usage:
-#   sbatch --export=VARIANT=full long_gutenberg_inference.slurm
-#   sbatch --export=VARIANT=carry-r1 long_gutenberg_inference.slurm
-#   REPETITIONS=0 MAX_SAMPLES=20 sbatch --export=ALL,VARIANT=gdn long_gutenberg_inference.slurm   # calibration
-# (normally submitted via long_gutenberg_inference_all.sh)
+#   sbatch --export=VARIANT=full,DATA_FILE=/path/to/long_24576_32768.jsonl long_fineweb_inference.slurm
+#   REPETITIONS is not used here (no repetition axis); MAX_SAMPLES=20 for calibration.
+# (normally submitted via long_fineweb_inference_all.sh)
 
 echo "START TIME: $(date)"
 
@@ -33,19 +32,18 @@ CONTAINER_ENV=nemo_26.04_te2.15
 
 ### PATHS ###
 MEGATRON_LM_DIR=/iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark
-RESULTS_BASE=/users/elyulina/store/long-gutenberg-results
-SCRATCH_RESULTS_BASE=/iopsstor/scratch/cscs/$USER/long-gutenberg-results
-GUTENBERG_LONG_JSONL_DIR=/users/elyulina/store/datasets/tokenized/gutenberg_rep_jsonl_long
+RESULTS_BASE=/users/$USER/store/long-fineweb-results
+SCRATCH_RESULTS_BASE=/iopsstor/scratch/cscs/$USER/long-fineweb-results
 TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b
 
-REPETITIONS=${REPETITIONS:-0,1,2,4,8,16,32,64,128,256}
-MAX_LENGTH=${MAX_LENGTH:-}     # empty = no cap (full suffix, up to 4L)
-MAX_SAMPLES=${MAX_SAMPLES:-}   # empty = all samples per bucket
-OVERWRITE=${OVERWRITE:-}       # set to anything to recompute buckets that already exist
+DATA_FILE=${DATA_FILE:?ERROR: DATA_FILE must be set to a jsonl produced by extract_long_docs.py}
+MAX_LENGTH=${MAX_LENGTH:-}     # empty = no cap (docs are already capped by extract_long_docs.py)
+MAX_SAMPLES=${MAX_SAMPLES:-}   # empty = long_fineweb_inference.py's own default (660), not all docs
+OVERWRITE=${OVERWRITE:-}       # set to anything to recompute if the bucket already exists
 LOG_STATE_NORM=${LOG_STATE_NORM:-}   # set to anything to log GDN state norms (no-op on attention models)
 STATE_CHUNK=${STATE_CHUNK:-}         # override the state readout stride (default 128 in the script)
 
-### VARIANT -> EXP_NAME + non-restored flags ###
+### VARIANT -> EXP_NAME + non-restored flags (same model list as long_gutenberg_inference.slurm) ###
 VARIANT=${VARIANT:-full}
 NEEDS_TRITON=0
 GDN_DIMS="--experimental-attention-variant gated_delta_net \
@@ -71,28 +69,24 @@ case "$VARIANT" in
 esac
 
 # CKPT_NAME defaults to EXP_NAME; only off-by-one overrides it (checkpoint path != results name).
-MODEL_DIR=/users/elyulina/store/pretrain-results/${CKPT_NAME:-$EXP_NAME}
-RESULTS_DIR=$RESULTS_BASE/$EXP_NAME
-SCRATCH_RESULTS_DIR=$SCRATCH_RESULTS_BASE/$EXP_NAME
-PY=$MEGATRON_LM_DIR/attn_bench/evaluation/long_gutenberg_inference.py
+MODEL_DIR=/users/$USER/store/pretrain-results/${CKPT_NAME:-$EXP_NAME}
+PARTITION_DIR=$(basename "$(dirname "$DATA_FILE")")
+RESULTS_DIR=$RESULTS_BASE/$EXP_NAME/$PARTITION_DIR
+SCRATCH_RESULTS_DIR=$SCRATCH_RESULTS_BASE/$EXP_NAME/$PARTITION_DIR
+PY=$MEGATRON_LM_DIR/attn_bench/evaluation/long_fineweb_inference.py
 
 export PYTHONPATH=$MEGATRON_LM_DIR:${PYTHONPATH:-}
 export CUDA_DEVICE_MAX_CONNECTIONS=1
 
 ### CHECK STORE (before doing anything expensive) ###
-# CONFIG must match config_name() in long_inference.py.
-CONFIG="${MAX_SAMPLES:-all}_samples_${MAX_LENGTH:-full}_tokens"
-ALL_DONE=1
-IFS=',' read -ra REPS <<< "$REPETITIONS"
-for R in "${REPS[@]}"; do
-    [ ! -f "$RESULTS_DIR/$CONFIG/rep_${R}.npz" ] && ALL_DONE=0 && break
-    if [ -n "$LOG_STATE_NORM" ] && [ ! -f "$RESULTS_DIR/$CONFIG/rep_${R}_state.npz" ]; then
-        ALL_DONE=0
-        break
-    fi
-done
-if [ -z "$OVERWRITE" ] && [ $ALL_DONE -eq 1 ]; then
-    echo "All requested buckets already present in $RESULTS_DIR/$CONFIG -- skipping."
+# CONFIG must match config_name() in long_inference.py: unset MAX_SAMPLES falls back to
+# long_fineweb_inference.py's own DEFAULT_MAX_SAMPLES (660), not "all".
+CONFIG="${MAX_SAMPLES:-660}_samples_${MAX_LENGTH:-full}_tokens"
+KEY=$(basename "$DATA_FILE" .jsonl)
+STORE_NPZ=$RESULTS_DIR/$CONFIG/$KEY.npz
+if [ -z "$OVERWRITE" ] && [ -f "$STORE_NPZ" ] \
+   && { [ -z "$LOG_STATE_NORM" ] || [ -f "$RESULTS_DIR/$CONFIG/${KEY}_state.npz" ]; }; then
+    echo "$STORE_NPZ already present in store -- skipping."
     exit 0
 fi
 
@@ -103,8 +97,7 @@ COMMON_ARGS="--container-env $CONTAINER_ENV \
     --ckpt-dir $MODEL_DIR/checkpoints \
     --tokenizer-path $TOKENIZER_PATH \
     --experiment-path $SCRATCH_RESULTS_DIR \
-    --data-folder $GUTENBERG_LONG_JSONL_DIR \
-    --repetitions $REPETITIONS"
+    --data-file $DATA_FILE"
 [ -n "$MAX_LENGTH" ] && COMMON_ARGS="$COMMON_ARGS --max-length $MAX_LENGTH"
 [ -n "$MAX_SAMPLES" ] && COMMON_ARGS="$COMMON_ARGS --max-samples $MAX_SAMPLES"
 [ -n "$OVERWRITE" ] && COMMON_ARGS="$COMMON_ARGS --overwrite"
@@ -113,7 +106,7 @@ COMMON_ARGS="--container-env $CONTAINER_ENV \
 EXTRA_MEGATRON=""
 [ -n "$MEGATRON_EXTRA" ] && EXTRA_MEGATRON="--megatron-extra-args $MEGATRON_EXTRA"
 
-echo "RUN: variant=$VARIANT  exp=$EXP_NAME  reps=$REPETITIONS  max_length=${MAX_LENGTH:-none}  max_samples=${MAX_SAMPLES:-all}  triton=$NEEDS_TRITON  state_norm=${LOG_STATE_NORM:+on}"
+echo "RUN: variant=$VARIANT  exp=$EXP_NAME  data_file=$DATA_FILE  max_length=${MAX_LENGTH:-none}  max_samples=${MAX_SAMPLES:-660 (default)}  triton=$NEEDS_TRITON  state_norm=${LOG_STATE_NORM:+on}"
 
 ### Position-wise loss inference ###
 # GDN needs a per-rank node-local TRITON_CACHE_DIR: fla kernels autotune on first use and
