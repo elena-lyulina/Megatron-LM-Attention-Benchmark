@@ -69,16 +69,28 @@ every sweep and puller below — nothing else needs to change.
 `measure_mem_all.sh` submits one job per `(offset, prefix, suffix, model)` combination —
 a full cross product of whatever lists you pass. To reproduce the grid plotted in
 `notebooks/mem_metrics_2.ipynb` (`OFFSETS = [0, 1, 5, 12, 25, 50, 100, 500, 1000, 2000, 3000]`,
-`PREFIXES = [50, 100, 250, 500, 750, 1000, 2000, 3000]`, `SUFFIXES = [50, 500]`), run it in
-2 passes — one across all offsets at the two fixed prefixes used by the offset-dimension
-plots, one at offset=0 across the wider prefix range used by the prefix-dimension plots.
-The sweep skips anything already done on store, so the 2nd call's overlap with the 1st is
-free:
+`PREFIXES = [50, 100, 250, 500, 750, 1000, 2000, 3000]`, `SUFFIXES = [50, 500]`) without
+flooding the queue, run it in 3 passes rather than the full cross product — deliberately
+skipping the `prefix=500 / suffix=50` combo (never plotted, and pulling it in would nearly
+double the job count for nothing): all offsets at `prefix=500, suffix=500`, all offsets at
+`prefix=50, suffix=50`, and `offset=0` alone across the wider prefix range. The sweep skips
+anything already done on store, so the 3rd call's overlap with the 1st (`offset=0,
+prefix∈{50,500}, suffix=500`) is free -- **but only if the 1st call's jobs have already
+finished and landed on store; run the calls sequentially, don't fire all 3 at once, or the
+overlapping jobs won't get deduped.**
+
+That's `11×2 + 11×1 + 8 = 41` `(offset, prefix, suffix)` combos requested across the 3
+calls, 2 of which duplicate the 1st call — **39 unique combinations**. At the 11 models
+currently in `MODELS` (`llama_checkpoints.sh`), that's up to `39 × 11 = 429`
+`measure_mem.slurm` jobs total (fewer once combos already on store get skipped).
 
 ```bash
 # from attn_bench/
-bash submissions/measure_mem_all.sh --offsets 0 1 5 12 25 50 100 500 1000 2000 3000 --prefixes 50 500 --suffixes 50 500
-bash submissions/measure_mem_all.sh --offsets 0 --prefixes 50 100 250 500 750 1000 2000 3000 --suffixes 500
+bash submissions/measure_mem_all.sh --offsets 0 1 5 12 25 50 100 500 1000 2000 3000 --prefixes 50 500 --suffixes 500
+bash submissions/measure_mem_all.sh --offsets 0 1 5 12 25 50 100 500 1000 2000 3000 --prefixes 50 --suffixes 50
+#bash submissions/measure_mem_all.sh --offsets 0 --prefixes 50 100 250 500 750 1000 2000 3000 --suffixes 500
+# to avoid overlapping 
+bash submissions/measure_mem_all.sh --offsets 0 --prefixes 100 250 750 1000 2000 3000 --suffixes 500
 bash submissions/long_gutenberg_inference_all.sh
 bash submissions/long_fineweb_inference_all.sh
 ```
