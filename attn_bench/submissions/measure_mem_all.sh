@@ -71,6 +71,9 @@ if [[ ${#SUFFIXES[@]} -eq 0 ]]; then
     SUFFIXES=(500)
 fi
 
+SKIPPED_COUNT=0
+SUBMITTED_COUNT=0
+
 for OFFSET in "${OFFSETS[@]}"; do
     for PREFIX in "${PREFIXES[@]}"; do
         for SUFFIX in "${SUFFIXES[@]}"; do
@@ -79,13 +82,14 @@ for OFFSET in "${OFFSETS[@]}"; do
 
                 PKL=$MEM_BASE/SparseGutenberg/$EXP_NAME/offset_${OFFSET}_prefix_${PREFIX}_suffix_${SUFFIX}_greedy.pkl
                 if [[ $FORCE -eq 0 && -f "$PKL" ]]; then
-                    echo "Skipping $EXP_NAME offset=$OFFSET prefix_length=$PREFIX suffix_length=$SUFFIX (exists: $PKL)"
+                    SKIPPED_COUNT=$((SKIPPED_COUNT + 1))
                     continue
                 fi
 
                 EXPORTS="MODEL=$MODEL,OFFSET=$OFFSET,PREFIX_LENGTH=$PREFIX,SUFFIX_LENGTH=$SUFFIX"
                 if [[ $DRY_RUN -eq 1 ]]; then
                     echo "[dry-run] sbatch --export=ALL,\"$EXPORTS\" $SCRIPT_DIR/measure_mem.slurm"
+                    SUBMITTED_COUNT=$((SUBMITTED_COUNT + 1))
                     continue
                 fi
 
@@ -93,7 +97,11 @@ for OFFSET in "${OFFSETS[@]}"; do
                 # ALL = propagate the full submission env (USER, PATH, …) so the scripts'
                 # $USER-based paths resolve, then layer our per-job vars on top.
                 sbatch --export=ALL,"$EXPORTS" "$SCRIPT_DIR/measure_mem.slurm"
+                SUBMITTED_COUNT=$((SUBMITTED_COUNT + 1))
             done
         done
     done
 done
+
+echo "Skipped: $SKIPPED_COUNT"
+echo "Submitted: $SUBMITTED_COUNT"

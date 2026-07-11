@@ -44,6 +44,9 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
+SKIPPED_COUNT=0
+SUBMITTED_COUNT=0
+
 for DATA_FOLDER in "${DATA_FOLDERS[@]}"; do
     IFS='|' read -r TAG DATA_FOLDER_NAME <<< "$DATA_FOLDER"
     DATA_FILE=$STORE_TOKENIZED/${DATA_FOLDER_NAME}_long/long_${MIN_LENGTH}_${MAX_LENGTH_RANGE}.jsonl
@@ -72,7 +75,7 @@ for DATA_FOLDER in "${DATA_FOLDERS[@]}"; do
         [[ ! -f "$RESULTS_DIR/$KEY.npz" ]] && DONE=0
         [[ $WANT_STATE -eq 1 && ! -f "$RESULTS_DIR/${KEY}_state.npz" ]] && DONE=0
         if [[ $FORCE -eq 0 && $DONE -eq 1 ]]; then
-            echo "Skipping $EXP_NAME / $TAG (bucket present)"
+            SKIPPED_COUNT=$((SKIPPED_COUNT + 1))
             continue
         fi
 
@@ -86,11 +89,16 @@ for DATA_FOLDER in "${DATA_FOLDERS[@]}"; do
 
         if [[ $DRY_RUN -eq 1 ]]; then
             echo "[dry-run] sbatch --export=ALL,\"$EXPORTS\" $SCRIPT_DIR/long_fineweb_inference.slurm"
+            SUBMITTED_COUNT=$((SUBMITTED_COUNT + 1))
             continue
         fi
 
         echo "Submitting MODEL=$MODEL ($EXP_NAME) partition=$TAG state_norm=$WANT_STATE"
         # ALL propagates the submission env (USER, PATH, ...) so $USER-based paths resolve.
         sbatch --export=ALL,"$EXPORTS" "$SCRIPT_DIR/long_fineweb_inference.slurm"
+        SUBMITTED_COUNT=$((SUBMITTED_COUNT + 1))
     done
 done
+
+echo "Skipped: $SKIPPED_COUNT"
+echo "Submitted: $SUBMITTED_COUNT"

@@ -33,6 +33,9 @@ done
 
 IFS=',' read -ra REPS <<< "$REPETITIONS"
 
+SKIPPED_COUNT=0
+SUBMITTED_COUNT=0
+
 for MODEL in "${MODELS[@]}"; do
     model_config "$MODEL"
 
@@ -57,7 +60,7 @@ for MODEL in "${MODELS[@]}"; do
         fi
     done
     if [[ $FORCE -eq 0 && $DONE -eq 1 ]]; then
-        echo "Skipping $EXP_NAME (all buckets present)"
+        SKIPPED_COUNT=$((SKIPPED_COUNT + 1))
         continue
     fi
 
@@ -74,10 +77,15 @@ for MODEL in "${MODELS[@]}"; do
 
     if [[ $DRY_RUN -eq 1 ]]; then
         echo "[dry-run] sbatch --export=ALL,\"$EXPORTS\" $SCRIPT_DIR/long_gutenberg_inference.slurm"
+        SUBMITTED_COUNT=$((SUBMITTED_COUNT + 1))
         continue
     fi
 
     echo "Submitting MODEL=$MODEL ($EXP_NAME) reps=$REPETITIONS state_norm=$WANT_STATE"
     # ALL propagates the submission env (USER, PATH, ...) so $USER-based paths resolve.
     sbatch --export=ALL,"$EXPORTS" "$SCRIPT_DIR/long_gutenberg_inference.slurm"
+    SUBMITTED_COUNT=$((SUBMITTED_COUNT + 1))
 done
+
+echo "Skipped: $SKIPPED_COUNT"
+echo "Submitted: $SUBMITTED_COUNT"
