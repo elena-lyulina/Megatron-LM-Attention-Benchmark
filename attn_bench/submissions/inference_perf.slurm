@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --account=infra01
-#SBATCH --time=0:45:00
+#SBATCH --time=2:00:00
 #SBATCH --job-name=inference-perf
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
@@ -36,6 +36,7 @@ SCRATCH_DIR=$SCRATCH_PERF_BASE/$EXP_NAME
 STORE_DIR=$STORE_PERF_BASE/$EXP_NAME
 TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b
 PY=$MEGATRON_LM_DIR/attn_bench/evaluation/inference_perf.py
+CHECK_DONE_PY=$MEGATRON_LM_DIR/attn_bench/evaluation/inference_perf_units.py
 
 export PYTHONPATH=$MEGATRON_LM_DIR:${PYTHONPATH:-}
 export CUDA_DEVICE_MAX_CONNECTIONS=1
@@ -45,8 +46,7 @@ echo "RUN: model=$MODEL  exp=$EXP_NAME"
 COMMON_ARGS="--container-env $CONTAINER_ENV \
     --ckpt-dir $MODEL_DIR/checkpoints \
     --tokenizer-path $TOKENIZER_PATH \
-    --scratch-dir $SCRATCH_DIR \
-    --store-dir $STORE_DIR \
+    --output-dir $SCRATCH_DIR \
     --model-tag $MODEL"
 
 # NEEDS_UNFUSED_DECODE: TE 2.15 rejects fused attn in decode mode with a sink token.
@@ -90,8 +90,14 @@ else
             $PY $COMMON_ARGS $EXTRA_MEGATRON"
 fi
 RUN_STATUS=$?
+[ $RUN_STATUS -ne 0 ] && echo "srun exited $RUN_STATUS -- checking scratch for whatever finished anyway"
 
-### Copy scratch results to store ###
-copy_scratch_to_store $RUN_STATUS "$SCRATCH_DIR" "$STORE_DIR"
+### Copy whatever units actually finished, regardless of the srun exit status
+### (a walltime kill still leaves completed units on scratch worth keeping) --
+### force status 0 so copy_scratch_to_store always copies.
+python3 "$CHECK_DONE_PY" --dir "$SCRATCH_DIR"
+ALL_DONE=$?
+copy_scratch_to_store 0 "$SCRATCH_DIR" "$STORE_DIR"
+[ $ALL_DONE -ne 0 ] && echo "Some units still incomplete -- resubmit to pick up where this left off"
 
 echo "END TIME: $(date)"

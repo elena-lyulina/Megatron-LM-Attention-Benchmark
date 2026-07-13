@@ -4,7 +4,7 @@
 # so only one checkpoint per architecture needs profiling).
 #
 # sink gets a longer time limit -- its unfused decode backend is slower per step
-# and the base script's 45min default is sized for the fused-attention models.
+# than the base script's 2h default.
 #
 # Usage: bash attn_bench/submissions/inference_perf_all.sh
 # Add --force to resubmit even if store already has all files. Add --dry-run to
@@ -15,12 +15,10 @@ set -e
 SCRIPT_DIR=$(dirname "$0")
 source "$SCRIPT_DIR/../scripts/llama_checkpoints.sh"
 
-PERF_MODELS=(full gated sink gdn)
+PERF_MODELS=(full gated gdn)  # sink disabled -- OOMs on prefill at length>=4000, not yet fixed
 STORE_PERF_BASE=/users/$USER/store/inference-perf-results
-SINK_TIME_LIMIT="2:00:00"
-
-# Files inference_perf.py writes per model once done.
-UNITS=(prefill_bs20 bs20_prefix50 bs20_prefix5000 bs1_prefix50 bs5_prefix50 bs10_prefix50 bs40_prefix50)
+SINK_TIME_LIMIT="3:00:00"
+CHECK_DONE_PY="$SCRIPT_DIR/../evaluation/inference_perf_units.py"
 
 FORCE=0
 DRY_RUN=0
@@ -39,11 +37,7 @@ for MODEL in "${PERF_MODELS[@]}"; do
     model_config "$MODEL"
     STORE_DIR=$STORE_PERF_BASE/$EXP_NAME
 
-    ALL_DONE=1
-    for UNIT in "${UNITS[@]}"; do
-        [[ -f "$STORE_DIR/$UNIT.json" ]] || ALL_DONE=0
-    done
-    if [[ $FORCE -eq 0 && $ALL_DONE -eq 1 ]]; then
+    if [[ $FORCE -eq 0 ]] && python3 "$CHECK_DONE_PY" --dir "$STORE_DIR" >/dev/null 2>&1; then
         SKIPPED_COUNT=$((SKIPPED_COUNT + 1))
         continue
     fi

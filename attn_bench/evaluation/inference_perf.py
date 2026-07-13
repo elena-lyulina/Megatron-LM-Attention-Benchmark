@@ -3,14 +3,15 @@ Raw prefill / decode timing profiler, per attention architecture.
 
 Random token ids (content doesn't matter for timing); everything stored raw,
 no averaging/discarding at collection time. Each (batch_size, prefix_length)
-combo writes its own file, checked against --store-dir before running.
+combo writes its own file under --output-dir; already-finished ones (status
+"ok") are skipped on rerun -- see inference_perf_units.py for unit naming
+and the completion check used by the slurm wrapper.
 
 Usage (single GPU, via torchrun):
     torchrun --nproc_per_node=1 attn_bench/evaluation/inference_perf.py \
         --ckpt-dir $MODEL_DIR/checkpoints \
         --tokenizer-path $TOKENIZER_PATH \
-        --scratch-dir $SCRATCH_DIR \
-        --store-dir $STORE_DIR \
+        --output-dir $SCRATCH_DIR \
         --model-tag full
 """
 
@@ -27,20 +28,24 @@ import torch
 
 from attn_bench.evaluation.inference_common import (greedy_generate,
                                                     load_megatron_model)
+from attn_bench.evaluation.inference_perf_units import (DECODE_BATCH_SIZE,
+                                                        DECODE_PREFIX_ANCHORS,
+                                                        PREFILL_BATCH_SIZE,
+                                                        SWEEP_BATCH_SIZES,
+                                                        SWEEP_PREFIX,
+                                                        already_done,
+                                                        decode_rel_path,
+                                                        prefill_rel_path,
+                                                        sweep_rel_path)
 
-### SWEEP CONSTANTS ###
+### SWEEP CONSTANTS (not naming -- see inference_perf_units.py for that) ###
 
 PREFILL_LENGTHS = [50, 100, 250, 500, 1000, 1500, 2000, 3000, 4000, 5000]
 PREFILL_REPEATS = 5
-PREFILL_BATCH_SIZE = 20
 
-DECODE_PREFIX_ANCHORS = [50, 5000]
 DECODE_STEPS = 8192
-DECODE_BATCH_SIZE = 20
 DECODE_FLUSH_EVERY = 250
 
-SWEEP_BATCH_SIZES = [1, 5, 10, 20, 40]
-SWEEP_PREFIX = 50
 SWEEP_DECODE_STEPS = 100
 
 
@@ -76,6 +81,8 @@ class TimingCollector:
         self.events.append(e)
         if self.flush_every is not None and (step_t + 1) % self.flush_every == 0:
             self.flush("running")
+            print(f"  bs{self.meta.get('batch_size')}_prefix{self.meta.get('prefix_length')}: "
+                  f"step {step_t + 1}/{self.meta.get('decode_steps')}")
 
     def elapsed_ms(self) -> list[float]:
         torch.cuda.synchronize()
@@ -97,7 +104,8 @@ class TimingCollector:
 
 
 def vocab_size(model) -> int:
-    return model.shared_embedding_or_output_weight().shape[0]
+    from megatron.core.utils import unwrap_model
+    return unwrap_model(model).shared_embedding_or_output_weight().shape[0]
 
 
 def random_prompt(batch_size: int, prefix_length: int, vocab: int, device) -> torch.Tensor:
@@ -106,17 +114,13 @@ def random_prompt(batch_size: int, prefix_length: int, vocab: int, device) -> to
 
 ### EXPERIMENTS ###
 
-def already_done(store_dir: Path, rel_path: str) -> bool:
-    return (store_dir / rel_path).exists()
-
-
-def run_prefill_sweep(model, vocab: int, device, store_dir: Path, scratch_dir: Path, base_meta: dict):
-    rel_path = f"prefill_bs{PREFILL_BATCH_SIZE}.json"
-    if already_done(store_dir, rel_path):
-        print(f"Skipping prefill sweep -- already in store: {store_dir / rel_path}")
+def run_prefill_sweep(model, vocab: int, device, output_dir: Path, base_meta: dict):
+    rel_path = prefill_rel_path()
+    if already_done(output_dir, rel_path):
+        print(f"Skipping prefill sweep -- already done: {output_dir / rel_path}")
         return
 
-    out_path = scratch_dir / rel_path
+    out_path = output_dir / rel_path
     repeat_ms: dict[str, list[float]] = {}
     for length in PREFILL_LENGTHS:
         times = []
@@ -143,14 +147,14 @@ def run_prefill_sweep(model, vocab: int, device, store_dir: Path, scratch_dir: P
         json.dump(record, f)
 
 
-def run_decode_unit(model, vocab: int, device, store_dir: Path, scratch_dir: Path, base_meta: dict,
-                    batch_size: int, prefix_length: int, decode_steps: int, flush_every: int | None):
-    rel_path = f"bs{batch_size}_prefix{prefix_length}.json"
-    if already_done(store_dir, rel_path):
-        print(f"Skipping {rel_path} -- already in store")
+def run_decode_unit(model, vocab: int, device, output_dir: Path, base_meta: dict,
+                    rel_path: str, batch_size: int, prefix_length: int, decode_steps: int,
+                    flush_every: int | None):
+    if already_done(output_dir, rel_path):
+        print(f"Skipping {rel_path} -- already done")
         return
 
-    out_path = scratch_dir / rel_path
+    out_path = output_dir / rel_path
     meta = {
         **base_meta,
         "batch_size": batch_size,
@@ -181,9 +185,9 @@ def run_decode_unit(model, vocab: int, device, store_dir: Path, scratch_dir: Pat
 
 ### METADATA / MAIN ###
 
-def write_run_metadata(scratch_dir: Path, meta: dict) -> None:
-    scratch_dir.mkdir(parents=True, exist_ok=True)
-    with open(scratch_dir / "run_metadata.json", "w") as f:
+def write_run_metadata(output_dir: Path, meta: dict) -> None:
+    output_dir.mkdir(parents=True, exist_ok=True)
+    with open(output_dir / "run_metadata.json", "w") as f:
         json.dump(meta, f, indent=2)
 
 
@@ -191,8 +195,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--ckpt-dir", required=True)
     parser.add_argument("--tokenizer-path", required=True)
-    parser.add_argument("--scratch-dir", required=True, help="Working dir for this model's results")
-    parser.add_argument("--store-dir", required=True, help="Persistent dir to check for/write finished results")
+    parser.add_argument("--output-dir", required=True, help="Where this model's result files are read from and written to")
     parser.add_argument("--model-tag", required=True, help="Model tag, e.g. full/gated/sink/gdn")
     parser.add_argument("--container-env", default=None)
     parser.add_argument("--megatron-extra-args", nargs=argparse.REMAINDER, default=None)
@@ -201,8 +204,7 @@ def parse_args():
 
 def main():
     args = parse_args()
-    scratch_dir = Path(args.scratch_dir)
-    store_dir = Path(args.store_dir)
+    output_dir = Path(args.output_dir)
 
     base_meta = {
         "model_tag": args.model_tag,
@@ -212,28 +214,30 @@ def main():
         "hostname": socket.gethostname(),
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }
-    write_run_metadata(scratch_dir, base_meta)
+    write_run_metadata(output_dir, base_meta)
 
     model = load_megatron_model(args.ckpt_dir, args.tokenizer_path, args.megatron_extra_args)
     device = next(model.parameters()).device
     vocab = vocab_size(model)
 
     print(f"=== Prefill sweep ({args.model_tag}) ===")
-    run_prefill_sweep(model, vocab, device, store_dir, scratch_dir, base_meta)
+    run_prefill_sweep(model, vocab, device, output_dir, base_meta)
 
     print(f"=== Long decode ({args.model_tag}) ===")
     for prefix_length in DECODE_PREFIX_ANCHORS:
-        run_decode_unit(model, vocab, device, store_dir, scratch_dir, base_meta,
+        run_decode_unit(model, vocab, device, output_dir, base_meta,
+                        rel_path=decode_rel_path(DECODE_BATCH_SIZE, prefix_length),
                         batch_size=DECODE_BATCH_SIZE, prefix_length=prefix_length,
                         decode_steps=DECODE_STEPS, flush_every=DECODE_FLUSH_EVERY)
 
     print(f"=== Batch-size sweep ({args.model_tag}) ===")
     for batch_size in SWEEP_BATCH_SIZES:
-        run_decode_unit(model, vocab, device, store_dir, scratch_dir, base_meta,
+        run_decode_unit(model, vocab, device, output_dir, base_meta,
+                        rel_path=sweep_rel_path(batch_size, SWEEP_PREFIX),
                         batch_size=batch_size, prefix_length=SWEEP_PREFIX,
                         decode_steps=SWEEP_DECODE_STEPS, flush_every=None)
 
-    print(f"\nAll done. Results in: {scratch_dir}")
+    print(f"\nAll done. Results in: {output_dir}")
 
 
 if __name__ == "__main__":
