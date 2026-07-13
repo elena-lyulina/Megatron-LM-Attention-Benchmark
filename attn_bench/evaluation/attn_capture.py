@@ -34,7 +34,7 @@ Usage:
         capture.begin_batch(B)
         generated = greedy_generate(model, prompt, suffix_length,
                                     prefill_callback=capture.collect_prefill,
-                                    step_callback=capture.collect_decode)
+                                    decode_step_callback=capture.collect_decode)
         ...                                    # compute rouge_l per sample
         capture.flush_batch(rouge_l)           # route this batch into Rouge-L buckets
     capture.save(out_dir, rank)

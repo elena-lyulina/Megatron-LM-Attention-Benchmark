@@ -38,7 +38,10 @@ from torch.utils.data import DataLoader, DistributedSampler
 from verbatim_eval.LCS import find_longest_common_substrings
 from verbatim_eval.my_rouge import _compute_dp_matrix_2d, compute_rouge_l_2d
 
-from attn_bench.evaluation.inference_common import BOS_TOKEN_ID, find_rep_paths, load_megatron_model
+from attn_bench.evaluation.inference_common import (BOS_TOKEN_ID,
+                                                    find_rep_paths,
+                                                    greedy_generate,
+                                                    load_megatron_model)
 
 ### MODEL ###
 
@@ -51,7 +54,8 @@ def patch_sink_scale(model, sink_scale: float) -> list:
     Raises for vanilla attention (no softmax_offset). Returns original per-layer
     per-head values as list of lists for metadata.
     """
-    from megatron.core.transformer.dot_product_attention import DotProductAttention as MegatronDPA
+    from megatron.core.transformer.dot_product_attention import \
+        DotProductAttention as MegatronDPA
     try:
         import transformer_engine.pytorch as te
         TE_DPA = te.DotProductAttention
@@ -116,63 +120,6 @@ def compute_nll(model, input_ids: torch.Tensor, suffix_length: int):
     return mean, std, mean.exp()
 
 
-@torch.no_grad()
-def greedy_generate(model, prompt_ids: torch.Tensor, suffix_length: int,
-                    prefill_callback=None, step_callback=None):
-    """Greedy generation with StaticInferenceContext KV cache.
-
-    prompt_ids: [B, prompt_len]   — prefix tokens (BOS already included as token 0)
-    prefill_callback: optional callable() invoked right after the prefill forward
-                      (before any decode forward overwrites the attention buffers).
-    step_callback: optional callable(t: int) called after each decode step with the
-                   0-indexed step number (t=0 for first decode step, etc.).
-                   n_steps total = suffix_length - 1; prefill is not a step.
-    Returns:    [B, suffix_length] — generated tokens
-    """
-    from megatron.core.inference.contexts import StaticInferenceContext
-    from megatron.core.inference.utils import InferenceMode
-
-    B, prompt_len = prompt_ids.shape
-    device = prompt_ids.device
-    max_seq_len = prompt_len + suffix_length
-
-    ctx = StaticInferenceContext(max_batch_size=B, max_sequence_length=max_seq_len)
-    ctx.reset()
-    ctx.enable_prefill_mode()
-
-    # The model only slices the logits down to the last prompt token when InferenceMode
-    # is active (upstream gates this on InferenceMode.is_active(), not on inference_context
-    # being set). Without it the prefill returns logits for every prompt position and we
-    # would pick position 0 below, generating from the wrong token and losing all recall.
-    with InferenceMode.active():
-        # Prefill: process all prompt tokens, get logit for the first generated token
-        pos = torch.arange(prompt_len, dtype=torch.long, device=device).unsqueeze(0).expand(B, -1)
-        logits = model(prompt_ids, pos, attention_mask=None, inference_context=ctx,
-                       runtime_gather_output=True)
-        # logits: [B, 1, V]  (materialize_only_last_token_logits gives the last-token slice)
-        ctx.sequence_len_offset = prompt_len
-        ctx.enable_decode_mode()
-
-        if prefill_callback is not None:
-            prefill_callback()
-
-        next_token = logits[:, 0, :].argmax(dim=-1, keepdim=True)  # [B, 1]
-        generated = [next_token]
-
-        # Decode: one new token per step, KV of previous tokens served from cache
-        for step_t in range(suffix_length - 1):
-            pos = torch.full((B, 1), ctx.sequence_len_offset, dtype=torch.long, device=device)
-            logits = model(next_token, pos, attention_mask=None, inference_context=ctx,
-                           runtime_gather_output=True)
-            ctx.sequence_len_offset += 1
-            next_token = logits[:, 0, :].argmax(dim=-1, keepdim=True)
-            generated.append(next_token)
-            if step_callback is not None:
-                step_callback(step_t)
-
-    return torch.cat(generated, dim=1)  # [B, suffix_length]
-
-
 ### METRICS ###
 
 def text_metrics(true_seq: list, gen_seq: list) -> dict:
@@ -231,7 +178,7 @@ def run_bucket(model, dataset, prefix_length, suffix_length, batch_size, inferen
                 generated = greedy_generate(
                     model, prompt, suffix_length,
                     prefill_callback=capture.collect_prefill,
-                    step_callback=capture.collect_decode,
+                    decode_step_callback=capture.collect_decode,
                 )
             else:
                 generated = greedy_generate(model, prompt, suffix_length)
