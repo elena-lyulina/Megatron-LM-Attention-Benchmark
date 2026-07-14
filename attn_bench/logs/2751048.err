@@ -1,0 +1,41 @@
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+0:   sentry_sdk.init(
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+0:   _warnings.warn(
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py:90: UserWarning: The argument order of load has been changed. Please check the document to avoid future breakages.
+0:   result = func(*args, **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py:481: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to load in a single process.
+0:   return func(args[0], **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/planner_helpers.py:489: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   device = getattr(value, "device", None)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/default_planner.py:483: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   and md.size != obj.size()
+0: /opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/utils.py:2099: UserWarning: window_size should be (-1, -1) or (>=0, >=0) for attn_mask_type=no_mask
+0:   warnings.warn(
+0: /opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/utils.py:2099: UserWarning: window_size should be (-1, -1) or (>=0, >=0) for attn_mask_type=no_mask
+0:   warnings.warn(
+0: [2026-07-13T18:16:24.010] error: *** STEP 2751048.0 ON nid007587 CANCELLED AT 2026-07-13T18:16:24 DUE TO TIME LIMIT ***
+[2026-07-13T18:16:24.010] error: *** JOB 2751048 ON nid007587 CANCELLED AT 2026-07-13T18:16:24 DUE TO TIME LIMIT ***
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+0: W0713 18:16:24.012000 168174 torch/distributed/elastic/agent/server/api.py:739] Received 15 death signal, shutting down workers
+0: W0713 18:16:24.013000 168174 torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 168669 closing signal SIGTERM
+0: Stack (most recent call first):
+0:   File "/opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/cpp_extensions/fused_attn.py"
+0: , line 321
+0:  in fused_attn_fwd
+0:   File "/opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/backends.py", line 1329 in forward
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/autograd/function.py", line 583
+0:  in apply
+0:   File "/opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/backends.py", line 1984 in forward
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/_dynamo/eval_frame.py", line 1220 in _fn
+0:   File 
+0: "/opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/jit.py", line 67 in wrapper
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py"
+0: , line W0713 18:16:24.013000 168174 torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 168669 closing signal SIGTERM
+0: 1789 in _call_impl
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1778 in _wrapped_call_impl

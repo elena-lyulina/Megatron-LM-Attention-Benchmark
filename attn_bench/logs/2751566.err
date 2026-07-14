@@ -1,0 +1,76 @@
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+0:   _warnings.warn(
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py:90: UserWarning: The argument order of load has been changed. Please check the document to avoid future breakages.
+0:   result = func(*args, **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py:481: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to load in a single process.
+0:   return func(args[0], **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/planner_helpers.py:489: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   device = getattr(value, "device", None)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/default_planner.py:483: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   and md.size != obj.size()
+0: /opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/utils.py:2099: UserWarning: window_size should be (-1, -1) or (>=0, >=0) for attn_mask_type=no_mask
+0:   warnings.warn(
+0: /opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/utils.py:2099: UserWarning: window_size should be (-1, -1) or (>=0, >=0) for attn_mask_type=no_mask
+0:   warnings.warn(
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+0: [2026-07-13T18:43:59.014] error: *** STEP 2751566.0 ON nid007305 CANCELLED AT 2026-07-13T18:43:59 DUE TO TIME LIMIT ***
+[2026-07-13T18:43:59.014] error: *** JOB 2751566 ON nid007305 CANCELLED AT 2026-07-13T18:43:59 DUE TO TIME LIMIT ***
+0: W0713 18:43:59.015000 65362 torch/distributed/elastic/agent/server/api.py:739] Received 15 death signal, shutting down workers
+0: W0713 18:43:59.016000 65362 torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 65834 closing signal SIGTERM
+0: Stack (most recent call first):
+0:   File "/opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/cpp_extensions/fused_attn.py"
+0: , line 321 in fused_attn_fwd
+0:   File 
+0: "/opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/backends.py", line 1329 in forward
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/autograd/function.py
+0: ", line 583 in apply
+0:   File "/opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/backends.py"
+0: , line 1984 in forward
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/_dynamo/eval_frame.py"
+0: , line 1220 in _fn
+0:   File "/opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/jit.py", line 67 in wrapper
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1789
+0:  in _call_impl
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1778 in _wrapped_call_impl
+0:   File "
+0: /opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/dot_product_attention.py"
+0: , line 1525 in forward
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/_dynamo/external_utils.py
+0: ", line 203 in nonrecursive_disable_wrapper
+0:   File "/opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/jit.py", line 67 in wrapper
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/extensions/transformer_engine.py", line 1858 in forward
+0:   File 
+0: "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1789 in _call_impl
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1778
+0:  in _wrapped_call_impl
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/attention.py"
+0: , line 1284 in forward
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1789 in _call_impl
+0:   File 
+0: "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1778 in _wrapped_call_impl
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/transformer_layer.py", line 652
+0:  in _forward_attention
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/transformer_layer.py", line 740 in forward
+0:   File 
+0: "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1789 in _call_impl
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1778 in _wrapped_call_impl
+0: 
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/module.py", line 352 in __call__
+0:   File 
+0: "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/transformer_block.py", line 661 in forward
+0: 
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1789 in _call_impl
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1778 in _wrapped_call_impl
+0: 
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/module.py", line 352 in __call__
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/transformer/transformer_block.py"
+0: , line 481 in __call__
+0:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/models/gpt/gpt_model.py", line W0713 18:43:59.017000 65362 torch/distributed/elastic/multiprocessing/api.py:1010] Sending process 65834 closing signal SIGTERM
+0: 563
+0:  in forward
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py"

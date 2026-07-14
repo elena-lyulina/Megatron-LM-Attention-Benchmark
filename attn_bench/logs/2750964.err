@@ -1,0 +1,66 @@
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+0:   sentry_sdk.init(
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+0:   _warnings.warn(
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py:90: UserWarning: The argument order of load has been changed. Please check the document to avoid future breakages.
+0:   result = func(*args, **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py:481: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to load in a single process.
+0:   return func(args[0], **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/planner_helpers.py:489: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   device = getattr(value, "device", None)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/default_planner.py:483: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   and md.size != obj.size()
+0: [rank0]: Traceback (most recent call last):
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/inference_perf.py", line 240, in <module>
+0: [rank0]:     main()
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/inference_perf.py", line 219, in main
+0: [rank0]:     vocab = vocab_size(model)
+0: [rank0]:             ^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/inference_perf.py", line 100, in vocab_size
+0: [rank0]:     return model.shared_embedding_or_output_weight().shape[0]
+0: [rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]:   File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1967, in __getattr__
+0: [rank0]:     raise AttributeError(
+0: [rank0]: AttributeError: 'Float16Module' object has no attribute 'shared_embedding_or_output_weight'
+0: [rank0]:[W713 16:32:35.572691515 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: E0713 16:32:48.529000 124297 torch/distributed/elastic/multiprocessing/api.py:984] failed (exitcode: 1) local_rank: 0 (pid: 124824) of binary: /opt/venv/bin/python3
+0: Traceback (most recent call last):
+0:   File "/usr/local/bin/torchrun", line 6, in <module>
+0:     sys.exit(main())
+0:              ^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+0:     return f(*args, **kwargs)
+0:            ^^^^^^^^^^^^^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 990, in main
+0:     run(args)
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 981, in run
+0:     elastic_launch(
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 170, in __call__
+0:     return launch_agent(self._config, self._entrypoint, list(args))
+0:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 317, in launch_agent
+0:     raise ChildFailedError(
+0: torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+0: ============================================================
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/evaluation/inference_perf.py FAILED
+0: ------------------------------------------------------------
+0: Failures:
+0:   <NO_OTHER_FAILURES>
+0: ------------------------------------------------------------
+0: Root Cause (first observed failure):
+0: [0]:
+0:   time      : 2026-07-13_16:32:48
+0:   host      : nid007532
+0:   rank      : 0 (local_rank: 0)
+0:   exitcode  : 1 (pid: 124824)
+0:   error_file: <N/A>
+0:   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+0: ============================================================
+0: 
+srun: error: nid007532: task 0: Exited with exit code 1
+srun: Terminating StepId=2750964.0
