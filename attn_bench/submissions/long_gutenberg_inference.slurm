@@ -24,6 +24,7 @@
 #   MAX_SAMPLES    cap docs processed (default: all)
 #   OVERWRITE      recompute buckets that already exist
 #   LOG_STATE_NORM / STATE_CHUNK   GDN state-norm logging (no-op for attention models)
+#   STORE_INDIVIDUAL   also write raw per-sequence records to <key>_individual.jsonl
 #
 # Usage: sbatch --export=MODEL=full long_gutenberg_inference.slurm
 # (normally submitted via long_gutenberg_inference_all.sh)
@@ -45,6 +46,7 @@ MAX_SAMPLES=${MAX_SAMPLES:-}
 OVERWRITE=${OVERWRITE:-}
 LOG_STATE_NORM=${LOG_STATE_NORM:-}
 STATE_CHUNK=${STATE_CHUNK:-}
+STORE_INDIVIDUAL=${STORE_INDIVIDUAL:-}
 
 ### MODEL -> EXP_NAME + non-restored flags (registry shared with every other eval script) ###
 source $MEGATRON_LM_DIR/attn_bench/scripts/llama_checkpoints.sh
@@ -73,6 +75,10 @@ for R in "${REPS[@]}"; do
         ALL_DONE=0
         break
     fi
+    if [ -n "$STORE_INDIVIDUAL" ] && [ ! -f "$RESULTS_DIR/$CONFIG/rep_${R}_individual.jsonl" ]; then
+        ALL_DONE=0
+        break
+    fi
 done
 if [ -z "$OVERWRITE" ] && [ $ALL_DONE -eq 1 ]; then
     echo "All requested buckets already present in $RESULTS_DIR/$CONFIG -- skipping."
@@ -91,10 +97,11 @@ COMMON_ARGS="--container-env $CONTAINER_ENV \
 [ -n "$OVERWRITE" ] && COMMON_ARGS="$COMMON_ARGS --overwrite"
 [ -n "$LOG_STATE_NORM" ] && COMMON_ARGS="$COMMON_ARGS --log-state-norm"
 [ -n "$STATE_CHUNK" ] && COMMON_ARGS="$COMMON_ARGS --state-chunk $STATE_CHUNK"
+[ -n "$STORE_INDIVIDUAL" ] && COMMON_ARGS="$COMMON_ARGS --store-individual"
 EXTRA_MEGATRON=""
 [ -n "$MEGATRON_EXTRA" ] && EXTRA_MEGATRON="--megatron-extra-args $MEGATRON_EXTRA"
 
-echo "RUN: model=$MODEL  exp=$EXP_NAME  reps=$REPETITIONS  max_length=${MAX_LENGTH:-none}  max_samples=${MAX_SAMPLES:-all}  triton=$NEEDS_TRITON  state_norm=${LOG_STATE_NORM:+on}"
+echo "RUN: model=$MODEL  exp=$EXP_NAME  reps=$REPETITIONS  max_length=${MAX_LENGTH:-none}  max_samples=${MAX_SAMPLES:-all}  triton=$NEEDS_TRITON  state_norm=${LOG_STATE_NORM:+on}  individual=${STORE_INDIVIDUAL:+on}"
 
 ### Position-wise loss inference ###
 # GDN needs a per-rank node-local TRITON_CACHE_DIR: fla kernels autotune on first use and

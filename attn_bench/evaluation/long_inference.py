@@ -3,7 +3,7 @@ Shared engine for per-position long-sequence loss inference: one teacher-forced
 forward pass per sequence, recording per-token NLL past the training seq_len (where
 attention is expected to degrade but state-carrying models might not).
 
-Dataset-agnostic: takes a `dataset` of plain token-id lists and a `key` string
+Dataset-agnostic: takes a `dataset` of (token-id list, seq_id) pairs and a `key` string
 naming the output file. Callers (long_gutenberg_inference.py, long_fineweb_inference.py)
 only differ in how they build token-id sequences and what `key`s/loader args they pass.
 """
@@ -47,12 +47,14 @@ def sample_lines(path: Path, max_samples: int | None) -> list[str]:
 ### FORWARD ###
 
 @torch.no_grad()
-def per_position_nll(model, seq_ids: torch.Tensor, softmax_chunk: int) -> torch.Tensor:
-    """One forward over the whole sequence; return per-position NLL [S-1] (float32).
+def per_position_nll(model, seq_ids: torch.Tensor, softmax_chunk: int, store_individual: bool = False):
+    """One forward over the whole sequence; return per-position NLL [S-1] (float32), plus,
+    when store_individual, the argmax predicted token and the true token's rank in the
+    predicted distribution (both [S-1] long, else None).
 
     nll[k] is the loss for predicting token at index k+1, i.e. position k measured from
     the sample start (index 0 = BOS, so position 0 = first sample token c0).
-    The -log_softmax is computed chunked over the sequence dim: materializing the full
+    Logits/softmax are computed chunked over the sequence dim: materializing the full
     float logit tensor at 30k+ tokens x 128k vocab would OOM.
     """
     inputs = seq_ids[:, :-1]
@@ -65,24 +67,84 @@ def per_position_nll(model, seq_ids: torch.Tensor, softmax_chunk: int) -> torch.
     logits = model(inputs, pos, attention_mask=None, runtime_gather_output=True)  # [1, S1, V] (bf16)
 
     nll = torch.empty(S1, dtype=torch.float32, device=device)
+    argmax_token = torch.empty(S1, dtype=torch.long, device=device) if store_individual else None
+    true_rank = torch.empty(S1, dtype=torch.long, device=device) if store_individual else None
     for c0 in range(0, S1, softmax_chunk):
         c1 = min(c0 + softmax_chunk, S1)
-        logp = -F.log_softmax(logits[:, c0:c1, :].float(), dim=-1)
-        nll[c0:c1] = logp.gather(2, labels[:, c0:c1].unsqueeze(-1)).squeeze(-1).squeeze(0)
+        chunk_logits = logits[:, c0:c1, :].float()
+        label_chunk = labels[:, c0:c1].unsqueeze(-1)
+        logp = -F.log_softmax(chunk_logits, dim=-1)
+        nll[c0:c1] = logp.gather(2, label_chunk).squeeze(-1).squeeze(0)
+        if store_individual:
+            argmax_token[c0:c1] = chunk_logits.argmax(dim=-1).squeeze(0)
+            true_logit = chunk_logits.gather(2, label_chunk)
+            # Rank 0 = the true token was the model's top pick; counts strictly-higher logits.
+            true_rank[c0:c1] = (chunk_logits > true_logit).sum(dim=-1).squeeze(0)
     del logits
-    return nll
+    return nll, argmax_token, true_rank
+
+
+class IndividualCollector:
+    """Collects raw per-sequence, per-position records (NLL, argmax token, true-token rank,
+    true token) for a bucket.
+
+    Kept separate from the sum/sqsum/count aggregates above: those are additive across DP
+    ranks (plain all_reduce), but a per-sequence record lives entirely on whichever rank
+    processed that sequence, so it needs an explicit gather instead.
+    """
+
+    def __init__(self):
+        self.records = []
+
+    def reset_bucket(self):
+        self.records = []
+
+    def record(self, idx, seq_id, nll, argmax_token, true_rank, true_token):
+        self.records.append({
+            "idx": idx,
+            "seq_id": seq_id,
+            "length": nll.shape[0],
+            "nll": nll.cpu().tolist(),
+            "argmax_token": argmax_token.cpu().tolist(),
+            "true_token_rank": true_rank.cpu().tolist(),
+            "true_token": true_token.cpu().tolist(),
+        })
+
+    def gather(self, dp_group):
+        # Gathers onto the DP group's source rank (== global rank 0 for the TP=1 jobs this
+        # is used with). Merges every rank's records and sorts by idx for a deterministic
+        # file regardless of how the shard striding split the work.
+        dst = mpu.get_data_parallel_src_rank()
+        world = dist.get_world_size(dp_group)
+        gathered = [None] * world if dist.get_rank() == dst else None
+        dist.gather_object(self.records, gathered, dst=dst, group=dp_group)
+        if gathered is None:
+            self.records = []
+            return
+        self.records = sorted((r for rank_records in gathered for r in rank_records),
+                              key=lambda r: r["idx"])
+
+    def save(self, path: Path) -> None:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with open(path, "w") as f:
+            for r in self.records:
+                f.write(json.dumps(r) + "\n")
 
 
 ### RUN ###
 
-def run_inference(model, dataset, maxpos, rank, softmax_chunk, device, desc="", accum=None):
+def run_inference(model, dataset, maxpos, rank, softmax_chunk, device, desc="", accum=None,
+                  individual=None):
     """Accumulate per-position NLL sum / sqsum / count over this rank's shard.
 
     Sharding and pooling are over the *data-parallel* group, not WORLD, so it is correct at
     any tensor-parallel size. At TP=1 the DP group is WORLD (plain stride over all ranks); at
     TP=world_size the DP group is a single rank (no stride, no cross-rank reduce -- each rank
     already holds the full loss because TP gathers it). If accum is given, the GDN state norms
-    are pooled the same way.
+    are pooled the same way. If individual is given, raw per-sequence records are gathered
+    onto the DP source rank (see IndividualCollector).
+
+    dataset holds (tokens, seq_id) pairs -- seq_id is only used when individual is set.
     """
     dp_rank = mpu.get_data_parallel_rank()
     dp_size = mpu.get_data_parallel_world_size()
@@ -93,16 +155,23 @@ def run_inference(model, dataset, maxpos, rank, softmax_chunk, device, desc="", 
     pos_cnt = torch.zeros(maxpos, dtype=torch.float64, device=device)
     if accum is not None:
         accum.reset_bucket(maxpos)
+    if individual is not None:
+        individual.reset_bucket()
 
     # Each DP rank strides its own shard; only global rank 0 prints the bar.
     shard = range(dp_rank, len(dataset), dp_size)
     for idx in tqdm(shard, desc=desc, disable=(rank != 0), mininterval=5.0):
-        seq = torch.tensor(dataset[idx], dtype=torch.long, device=device).unsqueeze(0)
+        tokens, seq_id = dataset[idx]
+        seq = torch.tensor(tokens, dtype=torch.long, device=device).unsqueeze(0)
         if accum is not None:
             accum.reset_sequence()
-        nll = per_position_nll(model, seq, softmax_chunk).double()
+        nll, argmax_token, true_rank = per_position_nll(
+            model, seq, softmax_chunk, store_individual=individual is not None)
         if accum is not None:
             accum.accumulate()  # reads the norms the GDN wrappers recorded during the forward
+        if individual is not None:
+            individual.record(idx, seq_id, nll, argmax_token, true_rank, seq[0, 1:])
+        nll = nll.double()
         L = nll.shape[0]
         pos_sum[:L] += nll
         pos_sqsum[:L] += nll * nll
@@ -114,6 +183,8 @@ def run_inference(model, dataset, maxpos, rank, softmax_chunk, device, desc="", 
         dist.all_reduce(t, op=dist.ReduceOp.SUM, group=dp_group)
     if accum is not None:
         accum.reduce(dp_group)
+    if individual is not None:
+        individual.gather(dp_group)
     return pos_sum, pos_sqsum, pos_cnt
 
 
@@ -156,12 +227,18 @@ def state_npz_path(output_dir: Path, key: str) -> Path:
     return output_dir / f"{key}_state.npz"
 
 
-def result_done(output_dir: Path, key: str, log_state_norm: bool) -> bool:
-    # Done when the NLL file exists -- and, when logging state norms, its state file too
-    # (so turning --log-state-norm on for a finished model re-runs to fill it in).
+def individual_path(output_dir: Path, key: str) -> Path:
+    return output_dir / f"{key}_individual.jsonl"
+
+
+def result_done(output_dir: Path, key: str, log_state_norm: bool, store_individual: bool = False) -> bool:
+    # Done when the NLL file exists -- and, when logging state norms / individual records,
+    # those files too (so turning either flag on for a finished model re-runs to fill it in).
     if not npz_path(output_dir, key).exists():
         return False
     if log_state_norm and not state_npz_path(output_dir, key).exists():
+        return False
+    if store_individual and not individual_path(output_dir, key).exists():
         return False
     return True
 
@@ -198,6 +275,11 @@ def add_common_args(p: argparse.ArgumentParser, max_samples_default: int | None 
                         "No effect on attention models (they have no state to log).")
     p.add_argument("--state-chunk", type=int, default=128,
                    help="Read the GDN state every this many tokens (only used with --log-state-norm).")
+    p.add_argument("--store-individual", action="store_true",
+                   help="Also write raw per-sequence, per-position records (NLL, argmax predicted "
+                        "token, true-token rank, true token) to <key>_individual.jsonl -- one line "
+                        "per sequence. Off by default; the aggregated <key>.npz (mean/std/count) is "
+                        "unaffected either way.")
     p.add_argument("--overwrite", action="store_true", help="Recompute even if <key>.npz already exists")
     p.add_argument("--container-env", default=None, help="Container/env name, recorded for provenance")
     p.add_argument("--megatron-extra-args", nargs=argparse.REMAINDER, default=None,
@@ -211,12 +293,14 @@ def run_main(args, items: list[tuple[str, object]], load_dataset: Callable, meta
 
     `items` is a list of (key, loader_arg) pairs -- one per output file this invocation may
     produce (Gutenberg: one per requested repetition; fineweb: a single item). `load_dataset`
-    is called as `load_dataset(loader_arg, args.max_length, args.max_samples) -> list[list[int]]`.
+    is called as `load_dataset(loader_arg, args.max_length, args.max_samples)
+    -> list[tuple[list[int], str]]` -- (tokens, seq_id) pairs; seq_id is only used when
+    --store-individual is set (Gutenberg's book_id, fineweb's doc_id).
     """
     output_dir = config_dir(args.experiment_path, args.max_length, args.max_samples, args.tensor_parallel)
 
     if not args.overwrite and items and all(
-        result_done(output_dir, key, args.log_state_norm) for key, _ in items
+        result_done(output_dir, key, args.log_state_norm, args.store_individual) for key, _ in items
     ):
         if int(os.environ.get("RANK", "0")) == 0:
             print(f"All requested results already present in {output_dir} -- skipping checkpoint load.")
@@ -233,6 +317,8 @@ def run_main(args, items: list[tuple[str, object]], load_dataset: Callable, meta
         if accum is None and rank == 0:
             print("--log-state-norm set but model has no GatedDeltaNet layers; skipping state norms.")
 
+    individual = IndividualCollector() if args.store_individual else None
+
     if rank == 0:
         write_run_metadata(output_dir, {
             "container_env": args.container_env,
@@ -246,18 +332,19 @@ def run_main(args, items: list[tuple[str, object]], load_dataset: Callable, meta
     for key, loader_arg in items:
         out_path = npz_path(output_dir, key)
 
-        if result_done(output_dir, key, accum is not None) and not args.overwrite:
+        if result_done(output_dir, key, accum is not None, args.store_individual) and not args.overwrite:
             if rank == 0:
                 print(f"Skipping {key} (already done)")
             continue
 
         dataset = load_dataset(loader_arg, args.max_length, args.max_samples)
-        maxpos = max(len(s) for s in dataset) - 1  # same on every rank (all load the full list)
+        maxpos = max(len(tokens) for tokens, _ in dataset) - 1  # same on every rank (all load the full list)
         if rank == 0:
             print(f"{key}: {len(dataset)} sequences, maxpos={maxpos}")
 
         pos_sum, pos_sqsum, pos_cnt = run_inference(
             model, dataset, maxpos, rank, args.softmax_chunk, device, desc=key, accum=accum,
+            individual=individual,
         )
 
         if rank == 0:
@@ -267,6 +354,10 @@ def run_main(args, items: list[tuple[str, object]], load_dataset: Callable, meta
                 state_file = state_npz_path(output_dir, key)
                 accum.save(state_file, SEQ_LEN)
                 print(f"  done {key} state -> {state_file}")
+            if individual is not None:
+                indiv_file = individual_path(output_dir, key)
+                individual.save(indiv_file)
+                print(f"  done {key} individual -> {indiv_file}")
         dist.barrier()
 
     if rank == 0:

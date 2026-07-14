@@ -27,6 +27,8 @@ def load_long_sequence(path: Path, max_length: int | None, max_samples: int | No
     The record stores input_ids = [BOS] + prefix + sample + suffix + [EOS] with
     sample_offset marking the first sample token. We drop the prefix (start at the
     sample) and the trailing EOS, prepend a fresh BOS, then cap at max_length.
+
+    Returns (tokens, book_id) pairs -- book_id is only consumed by --store-individual.
     """
     sequences = []
     for line in sample_lines(path, max_samples):
@@ -41,7 +43,7 @@ def load_long_sequence(path: Path, max_length: int | None, max_samples: int | No
         sequence_tokens = [BOS_TOKEN_ID] + long_sample_tokens
         if max_length is not None:
             sequence_tokens = sequence_tokens[:max_length]
-        sequences.append(sequence_tokens)
+        sequences.append((sequence_tokens, str(record["book_id"])))
     return sequences
 
 

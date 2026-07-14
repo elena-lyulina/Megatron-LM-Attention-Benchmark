@@ -25,14 +25,17 @@ DEFAULT_MAX_SAMPLES = 660
 ### DATA ###
 
 def load_flat_docs(path: Path, max_length: int | None, max_samples: int | None) -> list:
-    """Read extract_long_docs.py's jsonl output: input_ids used as-is (already has BOS)."""
+    """Read extract_long_docs.py's jsonl output: input_ids used as-is (already has BOS).
+
+    Returns (tokens, doc_id) pairs -- doc_id is only consumed by --store-individual.
+    """
     sequences = []
     for line in sample_lines(path, max_samples):
         record = json.loads(line)
         tokens = record["input_ids"]
         if max_length is not None:
             tokens = tokens[:max_length]
-        sequences.append(tokens)
+        sequences.append((tokens, record["doc_id"]))
     return sequences
 
 

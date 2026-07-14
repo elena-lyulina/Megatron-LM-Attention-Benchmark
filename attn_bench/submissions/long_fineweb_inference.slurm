@@ -24,6 +24,7 @@
 #   MAX_SAMPLES    cap docs processed (default: 660)
 #   OVERWRITE      recompute even if store already has this bucket
 #   LOG_STATE_NORM / STATE_CHUNK   GDN state-norm logging (no-op for attention models)
+#   STORE_INDIVIDUAL   also write raw per-sequence records to <key>_individual.jsonl
 #
 # Usage: sbatch --export=MODEL=full,DATA_FILE=/path/to/long_24576_32768.jsonl long_fineweb_inference.slurm
 # (normally submitted via long_fineweb_inference_all.sh)
@@ -44,6 +45,7 @@ MAX_SAMPLES=${MAX_SAMPLES:-}
 OVERWRITE=${OVERWRITE:-}
 LOG_STATE_NORM=${LOG_STATE_NORM:-}
 STATE_CHUNK=${STATE_CHUNK:-}
+STORE_INDIVIDUAL=${STORE_INDIVIDUAL:-}
 
 ### MODEL -> EXP_NAME + non-restored flags (registry shared with every other eval script) ###
 source $MEGATRON_LM_DIR/attn_bench/scripts/llama_checkpoints.sh
@@ -69,7 +71,8 @@ CONFIG="${MAX_SAMPLES:-660}_samples_${MAX_LENGTH:-full}_tokens"
 KEY=$(basename "$DATA_FILE" .jsonl)
 STORE_NPZ=$RESULTS_DIR/$CONFIG/$KEY.npz
 if [ -z "$OVERWRITE" ] && [ -f "$STORE_NPZ" ] \
-   && { [ -z "$LOG_STATE_NORM" ] || [ -f "$RESULTS_DIR/$CONFIG/${KEY}_state.npz" ]; }; then
+   && { [ -z "$LOG_STATE_NORM" ] || [ -f "$RESULTS_DIR/$CONFIG/${KEY}_state.npz" ]; } \
+   && { [ -z "$STORE_INDIVIDUAL" ] || [ -f "$RESULTS_DIR/$CONFIG/${KEY}_individual.jsonl" ]; }; then
     echo "$STORE_NPZ already present in store -- skipping."
     exit 0
 fi
@@ -86,10 +89,11 @@ COMMON_ARGS="--container-env $CONTAINER_ENV \
 [ -n "$OVERWRITE" ] && COMMON_ARGS="$COMMON_ARGS --overwrite"
 [ -n "$LOG_STATE_NORM" ] && COMMON_ARGS="$COMMON_ARGS --log-state-norm"
 [ -n "$STATE_CHUNK" ] && COMMON_ARGS="$COMMON_ARGS --state-chunk $STATE_CHUNK"
+[ -n "$STORE_INDIVIDUAL" ] && COMMON_ARGS="$COMMON_ARGS --store-individual"
 EXTRA_MEGATRON=""
 [ -n "$MEGATRON_EXTRA" ] && EXTRA_MEGATRON="--megatron-extra-args $MEGATRON_EXTRA"
 
-echo "RUN: model=$MODEL  exp=$EXP_NAME  data_file=$DATA_FILE  tp=$TP  max_length=${MAX_LENGTH:-none}  max_samples=${MAX_SAMPLES:-660 (default)}  triton=$NEEDS_TRITON  state_norm=${LOG_STATE_NORM:+on}"
+echo "RUN: model=$MODEL  exp=$EXP_NAME  data_file=$DATA_FILE  tp=$TP  max_length=${MAX_LENGTH:-none}  max_samples=${MAX_SAMPLES:-660 (default)}  triton=$NEEDS_TRITON  state_norm=${LOG_STATE_NORM:+on}  individual=${STORE_INDIVIDUAL:+on}"
 
 ### Position-wise loss inference ###
 # GDN needs a per-rank node-local TRITON_CACHE_DIR: fla kernels autotune on first use and

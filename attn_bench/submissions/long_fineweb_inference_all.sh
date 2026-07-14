@@ -4,8 +4,9 @@
 # across 4 GPUs. A job is skipped when its bucket (<data file stem>.npz) already exists on store;
 # --force submits regardless.
 #
-# Env passthrough (optional): MAX_LENGTH, MAX_SAMPLES, LOG_STATE_NORM, STATE_CHUNK.
-# LOG_STATE_NORM is applied only to GDN variants (attention models have no state to log).
+# Env passthrough (optional): MAX_LENGTH, MAX_SAMPLES, LOG_STATE_NORM, STATE_CHUNK,
+# STORE_INDIVIDUAL. LOG_STATE_NORM is applied only to GDN variants (attention models have no
+# state to log); STORE_INDIVIDUAL applies to every model.
 #
 # To add a newly trained model to this sweep: add it to attn_bench/scripts/llama_checkpoints.sh, not here.
 #
@@ -21,6 +22,7 @@ RESULTS_BASE=/users/$USER/store/long-fineweb-results
 STORE_TOKENIZED=/users/$USER/store/datasets/tokenized
 LOG_STATE_NORM=${LOG_STATE_NORM:-}   # set to log GDN state norms (applied only to GDN variants)
 STATE_CHUNK=${STATE_CHUNK:-}         # override the state readout stride (default 128)
+STORE_INDIVIDUAL=${STORE_INDIVIDUAL:-}   # set to also write raw per-sequence records
 
 # Length range must match the extract_long_docs.py run that produced these files.
 MIN_LENGTH=${MIN_LENGTH:-24576}
@@ -74,6 +76,7 @@ for DATA_FOLDER in "${DATA_FOLDERS[@]}"; do
         DONE=1
         [[ ! -f "$RESULTS_DIR/$KEY.npz" ]] && DONE=0
         [[ $WANT_STATE -eq 1 && ! -f "$RESULTS_DIR/${KEY}_state.npz" ]] && DONE=0
+        [[ -n "$STORE_INDIVIDUAL" && ! -f "$RESULTS_DIR/${KEY}_individual.jsonl" ]] && DONE=0
         if [[ $FORCE -eq 0 && $DONE -eq 1 ]]; then
             SKIPPED_COUNT=$((SKIPPED_COUNT + 1))
             continue
@@ -84,6 +87,7 @@ for DATA_FOLDER in "${DATA_FOLDERS[@]}"; do
         [[ -n "${MAX_SAMPLES:-}" ]] && EXPORTS="$EXPORTS,MAX_SAMPLES=$MAX_SAMPLES"
         [[ $WANT_STATE -eq 1 ]] && EXPORTS="$EXPORTS,LOG_STATE_NORM=1"
         [[ $WANT_STATE -eq 1 && -n "${STATE_CHUNK:-}" ]] && EXPORTS="$EXPORTS,STATE_CHUNK=$STATE_CHUNK"
+        [[ -n "$STORE_INDIVIDUAL" ]] && EXPORTS="$EXPORTS,STORE_INDIVIDUAL=1"
         # --force also recomputes: without this the resubmitted job would just skip and no-op.
         [[ $FORCE -eq 1 ]] && EXPORTS="$EXPORTS,OVERWRITE=1"
 
@@ -93,7 +97,7 @@ for DATA_FOLDER in "${DATA_FOLDERS[@]}"; do
             continue
         fi
 
-        echo "Submitting MODEL=$MODEL ($EXP_NAME) partition=$TAG state_norm=$WANT_STATE"
+        echo "Submitting MODEL=$MODEL ($EXP_NAME) partition=$TAG state_norm=$WANT_STATE individual=${STORE_INDIVIDUAL:-0}"
         # ALL propagates the submission env (USER, PATH, ...) so $USER-based paths resolve.
         sbatch --export=ALL,"$EXPORTS" "$SCRIPT_DIR/long_fineweb_inference.slurm"
         SUBMITTED_COUNT=$((SUBMITTED_COUNT + 1))
