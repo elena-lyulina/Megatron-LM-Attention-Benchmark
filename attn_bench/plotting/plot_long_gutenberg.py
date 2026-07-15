@@ -1,9 +1,9 @@
 """Plots for the long-Gutenberg position-wise loss (and later, state norms).
 
 load_nll reads one rep_{R}.npz (mean + std across samples, per position). plot_loss_grid
-draws one cell per repetition bucket: a tall loss panel (all models, one colour each) over
-a short inverted panel showing how many sequences still reach each position, so the thinning
-tail is visible under the mean.
+draws one cell per repetition bucket: a tall loss panel (all models, one colour each), with
+an optional short panel underneath (show_count=True) showing how many sequences still reach
+each position, so a noisy tail can be checked against a thinning sample count.
 """
 
 from __future__ import annotations
@@ -12,9 +12,12 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.ticker import AutoMinorLocator, MaxNLocator
 
-SEQ_LEN = 8192     # training sequence length
-SAMPLE_LEN = 8190  # sample content tokens; predicted at positions 0..8189, so 8190 = first suffix token
+from attn_bench.plotting.long_inference_util import SAMPLE_LEN, SEQ_LEN, VOCAB_SIZE
+from attn_bench.plotting.long_inference_util import denser_grid as _denser_grid
+from attn_bench.plotting.long_inference_util import smooth as _smooth
+
 COVERAGE_HUE = "#4292C6"  # single sequential hue for the overall coverage curve
 
 # Fixed categorical order (tab10); one colour per model, assigned in the order given.
@@ -103,20 +106,19 @@ def _state_path(config_dir: Path, rep: int) -> Path:
     return Path(config_dir) / f"rep_{rep}_state.npz"
 
 
-def _smooth(y, w):
-    # Centered rolling mean with correct edge normalization (window shrinks at the ends).
-    if not w or w <= 1:
-        return y
-    k = np.ones(w)
-    return np.convolve(y, k, mode="same") / np.convolve(np.ones_like(y), k, mode="same")
-
-
 def plot_loss_grid(results_by_label, reps, ncols=3, sample_end=SAMPLE_LEN,
                    show_std=False, smooth=0, xmax=None, ymax=None, sharey=True,
-                   linestyles=None, suptitle=None, colors=None):
-    """One cell per repetition bucket; every model overlaid as a coloured mean line.
+                   linestyles=None, suptitle=None, colors=None,
+                   path_fn=_rep_path, bucket_title_fn=lambda b: f"repetition {b}",
+                   show_count=False, metric="nll", show_random_baseline=False, log_y=False):
+    """One cell per bucket; every model overlaid as a coloured mean line.
 
-    results_by_label: {label: config_dir} -- config_dir holds rep_{R}.npz.
+    results_by_label: {label: entry} -- entry is passed to path_fn(entry, bucket) to resolve
+    each npz. Default path_fn=_rep_path expects entry to be a config_dir holding rep_{R}.npz
+    (Gutenberg's layout: one dir per model, bucket = repetition number). Pass a custom path_fn
+    when the bucket changes more than the filename -- e.g. fineweb's seen/unseen partitions
+    each live in their own directory, so entry would be {bucket: dir} and
+    path_fn=lambda dirs, b: dirs[b] / "some_fixed_name.npz".
     reps: buckets to draw (a cell is made only for buckets that have at least one file).
     show_std: shade +/- one std across samples around each mean.
     smooth: rolling-mean window over position to tame per-token spikes (0 = raw).
@@ -128,6 +130,25 @@ def plot_loss_grid(results_by_label, reps, ncols=3, sample_end=SAMPLE_LEN,
     the title/legend/plot spacing stays consistent instead of floating on a fixed fraction).
     colors: optional {label: colour} override; labels not listed fall back to the tab10 cycle.
     Lets related models share a hue family (e.g. the GDN variants as shades of blue).
+    bucket_title_fn: how to render each cell's title from its bucket value (default
+    "repetition {b}"; e.g. fineweb passes `str.capitalize` for "Seen"/"Unseen").
+    show_count: add a short panel under each loss cell (sharing its x-axis) plotting each
+    label's raw sequence count per position -- the same field every model already writes,
+    so a wobbly/noisy tail can be checked against a thinning sample count for both Gutenberg
+    and FineWeb without any new data. Off by default so existing calls render unchanged.
+    metric: "nll" (default) plots the stored per-position mean NLL as-is. "ppl" plots
+    exp(mean NLL) instead -- the standard perplexity definition, applied to the already
+    -aggregated cross-entropy (not an average of per-sample exp(NLL)). show_std bands are
+    exponentiated at their mean-std/mean+std bounds, not symmetrically around the mean,
+    since perplexity is log-normal-shaped, not symmetric.
+    show_random_baseline: draw a horizontal line at the NLL/perplexity of a uniform random
+    guess over the tokenizer vocab (ln(VOCAB_SIZE) / VOCAB_SIZE) -- lines above it are
+    doing worse than guessing, which does happen in the extreme repetition bumps here.
+    log_y: log-scale the y-axis. Independent of metric -- on a log axis, "ppl" is just an
+    affine rescaling of "nll" (same curve shape, different labels), so leave this off to
+    actually see perplexity's magnitude (e.g. how enormous the repetition-bump spikes are
+    in raw terms). Consider it for "nll" with a large xmax/many reps instead, where NLL
+    itself spans a wide range and a linear axis compresses the low end.
     """
     labels = list(results_by_label)
     palette = colors or {}
@@ -135,10 +156,10 @@ def plot_loss_grid(results_by_label, reps, ncols=3, sample_end=SAMPLE_LEN,
     linestyles = linestyles or {}
 
     # Keep only buckets that actually have data on disk.
-    buckets = [r for r in reps if any(_rep_path(results_by_label[l], r).exists() for l in labels)]
+    buckets = [r for r in reps if any(path_fn(results_by_label[l], r).exists() for l in labels)]
     if not buckets:
         dirs = "\n  ".join(str(d) for d in results_by_label.values())
-        raise ValueError(f"No rep_{{R}}.npz found for reps={reps} under:\n  {dirs}")
+        raise ValueError(f"No files found for reps={reps} under:\n  {dirs}")
     nb = len(buckets)
     ncols = min(ncols, nb)
     nrows = int(np.ceil(nb / ncols))
@@ -152,15 +173,20 @@ def plot_loss_grid(results_by_label, reps, ncols=3, sample_end=SAMPLE_LEN,
         # Each plot row gets its own thin legend strip directly above it (repeated identically),
         # so on a tall grid the legend is always next to the row you are reading. constrained
         # layout keeps the strips, cells and suptitle from colliding without hand-tuned fractions.
-        cell_w, cell_h, leg_ratio = 8.0, 4.3, 0.14
-        fig_h = nrows * cell_h * (1 + leg_ratio) + (0.25 if suptitle else 0.0)
+        # leg_ratio sized for 2 legend rows (models can add a boundary + random-baseline entry,
+        # which easily overflows one row and made constrained_layout shrink the plots to fit).
+        cell_w, cell_h, leg_ratio, count_ratio = 8.0, 4.3, 0.24, 0.3
+        rows_per_group = 3 if show_count else 2
+        extra_h = count_ratio if show_count else 0.0
+        fig_h = nrows * cell_h * (1 + leg_ratio + extra_h) + (0.25 if suptitle else 0.0)
         fig = plt.figure(figsize=(cell_w * ncols, fig_h), layout="constrained")
         fig.get_layout_engine().set(w_pad=0.01, h_pad=0.02, wspace=0.0, hspace=0.04)
-        # Interleaved rows: [legend, plots, legend, plots, ...].
+        # Interleaved rows: [legend, plot, (count,) legend, plot, (count,) ...].
         # A narrow empty column on the right gives a bit of far-right margin without widening
         # the gap between the plot columns (which is what shrinking the whole layout would do).
         right_margin = 0.08   # width of the spacer relative to a plot column
-        gs = fig.add_gridspec(2 * nrows, ncols + 1, height_ratios=[leg_ratio, 1.0] * nrows,
+        row_ratios = [leg_ratio, 1.0, count_ratio] if show_count else [leg_ratio, 1.0]
+        gs = fig.add_gridspec(rows_per_group * nrows, ncols + 1, height_ratios=row_ratios * nrows,
                               width_ratios=[1.0] * ncols + [right_margin])
 
         handles = [plt.Line2D([], [], color=colors[l], linewidth=1.8, linestyle=linestyles.get(l, "-"))
@@ -171,40 +197,78 @@ def plot_loss_grid(results_by_label, reps, ncols=3, sample_end=SAMPLE_LEN,
         leg_handles = handles + [plt.Line2D([], [], **boundary_style)]
         leg_labels = labels + ["seq length (8192)"]
 
+        # Random-guess baseline: ln(V) in NLL space, V itself in perplexity space.
+        baseline_style = dict(color="#cc3333", linestyle=(0, (1, 1)), linewidth=1.2)
+        baseline_value = np.log(VOCAB_SIZE) if metric == "nll" else VOCAB_SIZE
+        if show_random_baseline:
+            leg_handles = leg_handles + [plt.Line2D([], [], **baseline_style)]
+            leg_labels = leg_labels + [f"random guess (V={VOCAB_SIZE:,})"]
+
         loss_axes = []
         for i, rep in enumerate(buckets):
             r, c = divmod(i, ncols)
-            ax = fig.add_subplot(gs[2 * r + 1, c], sharey=(loss_axes[0] if sharey and loss_axes else None))
+            ax = fig.add_subplot(gs[rows_per_group * r + 1, c],
+                                 sharey=(loss_axes[0] if sharey and loss_axes else None))
             loss_axes.append(ax)
+            if log_y:
+                ax.set_yscale("log")
+            count_ax = None
+            if show_count:
+                count_ax = fig.add_subplot(gs[rows_per_group * r + 2, c], sharex=ax)
             for lab in labels:
-                p = _rep_path(results_by_label[lab], rep)
+                p = path_fn(results_by_label[lab], rep)
                 if not p.exists():
                     continue
                 data = load_nll(p)
                 pos = data["position"]
                 mean = _smooth(data["mean"], smooth)
+                if show_std:
+                    std = _smooth(data["std"], smooth)
+                    lo, hi = mean - std, mean + std
+                if metric == "ppl":
+                    mean = np.exp(mean)
+                    if show_std:
+                        lo, hi = np.exp(lo), np.exp(hi)
                 ax.plot(pos, mean, color=colors[lab], linewidth=1.0, label=lab,
                         linestyle=linestyles.get(lab, "-"))
                 if show_std:
-                    std = _smooth(data["std"], smooth)
-                    ax.fill_between(pos, mean - std, mean + std,
-                                    color=colors[lab], alpha=0.15, linewidth=0)
+                    ax.fill_between(pos, lo, hi, color=colors[lab], alpha=0.15, linewidth=0)
+                if count_ax is not None:
+                    count_ax.plot(pos, data["count"], color=colors[lab], linewidth=0.9,
+                                  linestyle=linestyles.get(lab, "-"))
 
-            # Denser grid: a lighter minor grid between the major lines, on both axes. Hide the
-            # minor tick marks themselves so only the gridlines get denser, not the axis edges.
-            ax.minorticks_on()
-            ax.grid(which="minor", color="#ececec", linewidth=0.6)
-            ax.tick_params(which="minor", length=0)
+            _denser_grid(ax)
 
             # Sample-end / extrapolation boundary.
             ax.axvline(sample_end, **boundary_style)
-            ax.set_title(f"repetition {rep}")
+            if show_random_baseline:
+                ax.axhline(baseline_value, **baseline_style)
+            ax.set_title(bucket_title_fn(rep))
             ax.spines[["top", "right"]].set_visible(False)
             if c == 0:
-                ax.set_ylabel("NLL")
-            ax.set_xlabel("position (from sample start)")
+                ax.set_ylabel("Perplexity" if metric == "ppl" else "NLL")
             if xmax is not None:
                 ax.set_xlim(0, xmax)
+
+            if count_ax is not None:
+                # Shared x-axis with the loss panel above: the loss panel's own tick labels
+                # would just repeat, so only the count panel (bottom of the cell) carries them.
+                ax.tick_params(labelbottom=False)
+                count_ax.axvline(sample_end, **boundary_style)
+                count_ax.set_ylim(bottom=0)
+                # More major ticks than the default sparse auto-locator, plus the same denser
+                # minor grid as the loss panel, so the count is easy to read off precisely.
+                count_ax.yaxis.set_major_locator(MaxNLocator(nbins=6, min_n_ticks=4))
+                _denser_grid(count_ax)
+                # n samples specifically: 2 evenly-spaced minor ticks between majors (3 parts),
+                # denser than the auto-picked spacing everywhere else.
+                count_ax.yaxis.set_minor_locator(AutoMinorLocator(3))
+                count_ax.spines[["top", "right"]].set_visible(False)
+                count_ax.set_xlabel("position (from sample start)")
+                if c == 0:
+                    count_ax.set_ylabel("n samples")
+            else:
+                ax.set_xlabel("position (from sample start)")
         if ymax is not None:
             loss_axes[0].set_ylim(top=ymax)
 
@@ -212,10 +276,13 @@ def plot_loss_grid(results_by_label, reps, ncols=3, sample_end=SAMPLE_LEN,
         for r in range(nrows):
             if not any(r * ncols + c < nb for c in range(ncols)):
                 continue
-            legax = fig.add_subplot(gs[2 * r, 0:ncols])   # span the plot columns, not the spacer
+            legax = fig.add_subplot(gs[rows_per_group * r, 0:ncols])   # span plot columns, not the spacer
             legax.axis("off")
-            legax.legend(leg_handles, leg_labels, loc="center", ncol=len(leg_labels), frameon=False,
-                         fontsize=11, handlelength=1.4, columnspacing=1.2, handletextpad=0.5)
+            # Wrap into 2 rows instead of one -- one row can overflow the figure width once the
+            # boundary + random-baseline entries are added, which made constrained_layout shrink
+            # the plots to make room.
+            legax.legend(leg_handles, leg_labels, loc="center", ncol=int(np.ceil(len(leg_labels) / 2)),
+                         frameon=False, fontsize=11, handlelength=1.4, columnspacing=1.2, handletextpad=0.5)
         if suptitle:
             fig.suptitle(suptitle, fontweight="semibold", fontsize=16)
     return fig
@@ -286,9 +353,7 @@ def plot_state_norm_grid(results_by_label, reps, ncols=3, seq_len=SEQ_LEN,
                     ax.fill_between(pos, mean - std, mean + std,
                                     color=colors[lab], alpha=0.15, linewidth=0)
 
-            ax.minorticks_on()
-            ax.grid(which="minor", color="#ececec", linewidth=0.6)
-            ax.tick_params(which="minor", length=0)
+            _denser_grid(ax)
 
             # Training sequence length -- everything to the right is extrapolation past it.
             ax.axvline(seq_len, **boundary_style)
@@ -349,9 +414,7 @@ def plot_state_norm_by_layer(results_by_label, rep, ncols=2, seq_len=SEQ_LEN,
             for li, lid in enumerate(layers):
                 ax.plot(pos, _smooth(mean[li], smooth), color=cmap(norm(lid)), linewidth=1.0)
 
-            ax.minorticks_on()
-            ax.grid(which="minor", color="#ececec", linewidth=0.6)
-            ax.tick_params(which="minor", length=0)
+            _denser_grid(ax)
 
             # Training sequence length -- everything to the right is extrapolation past it.
             ax.axvline(seq_len, color="#999999", linestyle=(0, (2, 2)), linewidth=1.0)
