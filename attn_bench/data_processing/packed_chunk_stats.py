@@ -51,7 +51,19 @@ def build_full_epoch_dataset(dataset_dir, tokenizer_path, cache_path, seq_len, s
     """Returns the top-level dataset for one full epoch of dataset_dir (BlendedDataset if the
     dir has multiple .bin shards, plain GPTDataset if it's a single shard)."""
     prefixes = sorted(shard_prefixes(dataset_dir))
-    tokenizer = MegatronTokenizer.from_pretrained(tokenizer_path=tokenizer_path)
+    # Matches build_tokenizer(args)'s HuggingFaceTokenizer branch (megatron/core/tokenizers/
+    # utils/build_tokenizer.py): metadata is an in-memory dict, not a metadata.json on disk.
+    tokenizer = MegatronTokenizer.from_pretrained(
+        tokenizer_path=tokenizer_path,
+        metadata_path={"library": "huggingface"},
+        chat_template=None,
+        vocab_file=None,
+        merges_file=None,
+        additional_special_tokens=[],
+        use_fast=True,
+        trust_remote_code=False,
+        include_special_tokens=True,
+    )
     config = GPTDatasetConfig(
         random_seed=seed,
         sequence_length=seq_len,

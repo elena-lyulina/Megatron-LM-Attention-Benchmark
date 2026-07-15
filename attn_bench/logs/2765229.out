@@ -1,0 +1,9 @@
+START TIME: Wed Jul 15 04:56:55 CEST 2026
+### fineweb-edu-dedup-160B-datatrove_0.25 ###
+  /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_0.25
+Job failed (exit 1) -- not copying scratch results to store
+### gutenberg_rep_1_256 ###
+  /iopsstor/scratch/cscs/elyulina/datasets/tokenized/gutenberg_rep_1_256
+Job failed (exit 1) -- not copying scratch results to store
+END TIME: Wed Jul 15 04:57:39 CEST 2026
+Done. Results in /users/elyulina/store/datasets/packed_chunk_lengths/
