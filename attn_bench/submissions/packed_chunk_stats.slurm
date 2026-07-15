@@ -8,7 +8,7 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=64GB
 #SBATCH --time=00:30:00
-#SBATCH --environment=nemo
+#SBATCH --environment=nemo_26.04_te2.15
 #SBATCH --partition=normal
 #SBATCH --no-requeue
 #SBATCH --mail-type=BEGIN,END,FAIL
