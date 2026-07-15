@@ -1,0 +1,6 @@
+START TIME: Wed Jul 15 05:43:56 CEST 2026
+### fineweb-edu-dedup-160B-datatrove_long_40B ###
+  /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B
+Job failed (exit 1) -- not copying scratch results to store
+END TIME: Wed Jul 15 05:44:31 CEST 2026
+Done. Results in /users/elyulina/store/datasets/packed_chunk_lengths/
