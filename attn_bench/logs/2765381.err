@@ -1,0 +1,645 @@
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+worker-00:   0%|          | 0/264308 [00:00<?, ?it/s]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+worker-01:   0%|          | 0/264309 [00:00<?, ?it/s]worker-02:   0%|          | 0/264309 [00:00<?, ?it/s]worker-03:   0%|          | 0/264308 [00:00<?, ?it/s]
+
+
+
+
+
+
+
+
+
+worker-04:   0%|          | 0/264309 [00:00<?, ?it/s]worker-05:   0%|          | 0/264309 [00:00<?, ?it/s]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+worker-10:   0%|          | 0/264308 [00:00<?, ?it/s][A[A[A[A[A[A[A[A[A[A[A[A[Aworker-11:   0%|          | 0/264309 [00:00<?, ?it/s][A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[A[A[A[A[Aworker-15:   0%|          | 0/264309 [00:00<?, ?it/s]
+
+
+
+
+
+
+
+
+
+
+
+
+[A[A[A[A[A[A[A[A[A[A[Aworker-06:   0%|          | 0/264308 [00:00<?, ?it/s]worker-12:   0%|          | 0/264309 [00:00<?, ?it/s]worker-07:   0%|          | 0/264309 [00:00<?, ?it/s]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+worker-08:   0%|          | 0/264309 [00:00<?, ?it/s][A[A[A[A[A[A[A[A[A[A[A[A[A[A[Aworker-09:   0%|          | 0/264309 [00:00<?, ?it/s]worker-17:   0%|          | 0/264309 [00:00<?, ?it/s]
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ... (more hidden) ...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[Aworker-13:   0%|          | 0/264308 [00:00<?, ?it/s][A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[Aworker-18:   0%|          | 0/264309 [00:00<?, ?it/s][A[A[A[A[A[A[A[A[A[A[A[A[Aworker-14:   0%|          | 0/264309 [00:00<?, ?it/s][A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[Aworker-16:   0%|          | 0/264308 [00:00<?, ?it/s][A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+worker-02:  38%|███▊      | 100818/264309 [00:10<00:16, 10081.78it/s]worker-03:  35%|███▌      | 93382/264308 [00:10<00:18, 9338.19it/s]worker-04:  37%|███▋      | 96509/264309 [00:10<00:17, 9650.88it/s][A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ... (more hidden) ...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+worker-12:  35%|███▌      | 93389/264309 [00:10<00:18, 9338.83it/s]worker-13:  37%|███▋      | 97202/264308 [00:10<00:17, 9720.20it/s][A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[Aworker-08:  35%|███▌      | 93018/264309 [00:10<00:18, 9301.80it/s]
+
+
+
+
+
+[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[Aworker-05:  38%|███▊      | 100461/264309 [00:10<00:16, 10045.31it/s]worker-14:  35%|███▌      | 93749/264309 [00:10<00:18, 9374.90it/s]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[A[A[A[A[A[A[A[A[A[A[A[A[A[Aworker-07:  37%|███▋      | 98286/264309 [00:10<00:16, 9828.14it/s]worker-16:  37%|███▋      | 96968/264308 [00:10<00:17, 9696.18it/s][A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[Aworker-06:  36%|███▋      | 96366/264308 [00:10<00:17, 9635.95it/s][A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+worker-15:  38%|███▊      | 100373/264309 [00:10<00:16, 10033.30it/s][A[A[A[A[A[A[A[A[A[A[A[A[A[A[Aworker-00:  37%|███▋      | 97529/264308 [00:10<00:17, 9747.26it/s]
+
+
+
+
+
+
+
+
+worker-09:  36%|███▌      | 94687/264309 [00:10<00:17, 9463.64it/s]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[A[A[A[A[A[A[A[A[A
+worker-18:  36%|███▌      | 95409/264309 [00:10<00:17, 9535.61it/s][A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[Aworker-01:  36%|███▌      | 95004/264309 [00:10<00:17, 9494.00it/s][A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+worker-17:  38%|███▊      | 100012/264309 [00:10<00:16, 9994.82it/s]worker-11:  33%|███▎      | 87255/264309 [00:10<00:20, 8719.39it/s][A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+worker-10:  35%|███▌      | 92517/264308 [00:10<00:18, 9243.85it/s][A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+worker-13:  74%|███████▎  | 194404/264308 [00:20<00:07, 9408.76it/s][A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+worker-11:  66%|██████▌   | 174449/264309 [00:20<00:10, 8420.51it/s][A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+worker-09:  72%|███████▏  | 189324/264309 [00:20<00:08, 9102.73it/s][A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+worker-18:  72%|███████▏  | 190766/264309 [00:21<00:08, 8820.28it/s][A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[Aworker-00:  74%|███████▍  | 195002/264308 [00:21<00:07, 8951.19it/s]
+
+
+
+
+
+
+
+
+
+
+
+
+
+worker-14:  71%|███████   | 187498/264309 [00:21<00:09, 8521.34it/s][A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+worker-10:  70%|██████▉   | 184956/264308 [00:21<00:09, 8399.10it/s][A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+worker-15:  76%|███████▌  | 200706/264309 [00:22<00:07, 8958.56it/s] [A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+worker-16:  73%|███████▎  | 193930/264308 [00:22<00:08, 8638.59it/s][A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+worker-04:  73%|███████▎  | 193018/264309 [00:22<00:08, 8564.16it/s][A[A[A[A
+
+
+
+
+
+
+
+worker-08:  70%|███████   | 186036/264309 [00:22<00:09, 8214.87it/s][A[A[A[A[A[A[A[A
+
+worker-02:  76%|███████▋  | 201636/264309 [00:22<00:07, 8846.44it/s] [A[A
+
+
+
+
+
+
+
+
+
+
+
+worker-12:  71%|███████   | 186778/264309 [00:22<00:09, 8190.69it/s][A[A[A[A[A[A[A[A[A[A[A[A
+
+
+worker-03:  71%|███████   | 186764/264308 [00:22<00:09, 8142.41it/s][A[A[A
+
+
+
+
+
+worker-06:  73%|███████▎  | 192726/264308 [00:22<00:08, 8398.11it/s][A[A[A[A[A[A
+
+
+
+
+worker-05:  76%|███████▌  | 200915/264309 [00:22<00:07, 8676.70it/s] [A[A[A[A[A
+
+
+
+
+
+
+worker-07:  74%|███████▍  | 196568/264309 [00:22<00:08, 8401.23it/s][A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ... (more hidden) ...[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+worker-01:  72%|███████▏  | 189944/264309 [00:23<00:09, 8049.40it/s][A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+worker-17:  76%|███████▌  | 199961/264309 [00:23<00:07, 8435.73it/s][A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[Aworker-13: 100%|██████████| 264308/264308 [00:29<00:00, 9058.58it/s]
+worker-09: 100%|██████████| 264309/264309 [00:29<00:00, 8987.97it/s]
+worker-15: 100%|██████████| 264309/264309 [00:30<00:00, 8746.44it/s]
+worker-19: 100%|██████████| 264309/264309 [00:30<00:00, 8684.34it/s]
+worker-02: 100%|██████████| 264309/264309 [00:30<00:00, 8672.10it/s]
+worker-00: 100%|██████████| 264308/264308 [00:30<00:00, 8664.75it/s]
+
+
+
+
+
+
+
+
+
+
+
+worker-11:  98%|█████████▊| 258163/264309 [00:30<00:00, 8398.51it/s][A[A[A[A[A[A[A[A[A[A[Aworker-10: 100%|██████████| 264308/264308 [00:30<00:00, 8577.19it/s]
+worker-05: 100%|██████████| 264309/264309 [00:30<00:00, 8553.89it/s]
+worker-14: 100%|██████████| 264309/264309 [00:31<00:00, 8498.25it/s]
+worker-17: 100%|██████████| 264309/264309 [00:31<00:00, 8480.64it/s]
+worker-11: 100%|██████████| 264309/264309 [00:31<00:00, 8479.11it/s]
+worker-07: 100%|██████████| 264309/264309 [00:31<00:00, 8469.88it/s]
+worker-18: 100%|██████████| 264309/264309 [00:31<00:00, 8468.58it/s]
+worker-12: 100%|██████████| 264309/264309 [00:31<00:00, 8447.86it/s]
+worker-16: 100%|██████████| 264308/264308 [00:31<00:00, 8446.26it/s]
+worker-08: 100%|██████████| 264309/264309 [00:31<00:00, 8426.98it/s]
+worker-04: 100%|██████████| 264309/264309 [00:31<00:00, 8408.81it/s]
+worker-01: 100%|██████████| 264309/264309 [00:31<00:00, 8404.71it/s]
+worker-03: 100%|██████████| 264308/264308 [00:31<00:00, 8382.02it/s]
+worker-06: 100%|██████████| 264308/264308 [00:31<00:00, 8353.10it/s]
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found
+_: line 3: rsync: command not found

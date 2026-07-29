@@ -187,6 +187,38 @@ Slurm scripts: `attn_bench/submissions/pretrain_llama3_1b_full_attn_goldfish_fin
 
 ---
 
+## Filler data: long documents vs. same documents split into 1024-token chunks
+
+Two full-attention runs at the same ~42.8B token budget, holding the Gutenberg filler fixed and varying only the FineWeb-Edu-Dedup filler: `long` uses the longest-document subset of FineWeb-Edu-Dedup as-is (`build_long_dataset.py`/`extract_long_docs.slurm`, whole documents, budget 40B), `long-split-1024` takes that same long-document pool and splits it into fixed 1024-token chunks (`split_long_dataset.slurm`, `chunk_size=1024`, `tail_merge_threshold=256`, each chunk re-wrapped with its own BOS/EOS).
+
+| variant | Slurm job | start (CEST) | end (CEST) | run time | status | final lm loss | throughput (TFLOP/s/GPU) |
+|---|---|---|---|---|---|---|---|
+| full (long) | `2765350` | 2026-07-15 06:01 | 2026-07-15 12:04 | 6h 03m 14s | COMPLETED | 2.36721 | ~300 |
+| full (long-split-1024) | `2765404` | 2026-07-15 07:18 | 2026-07-15 13:02 | 5h 43m 53s | COMPLETED (data exhausted) | 2.465832 | ~291.9 |
+
+Note: the `2765350` (long) Slurm `.out`/`.err` logs are only available up to iteration 2092/15535 locally (checkpoint at step 2000 confirmed) — neither the scratch nor store copies had the full log when checked, cause unclear. Timing/loss/throughput for that row come from W&B instead. `2765404` (long-split-1024) has a full local log: it exited cleanly via `[exiting program after consuming all available data at iteration 15561]`, no crash, checkpoint saved at step 15561.
+
+Final step lm loss for `long` (2.36721) is essentially on par with the masked `full` baseline on the original blend (2.3824, see "Initial training" above), while `long-split-1024` (2.465832) is meaningfully higher — despite an identical token budget and near-identical Gutenberg half, splitting the FineWeb filler into 1024-token chunks costs loss relative to keeping the long documents whole.
+
+Dataset paths (`/iopsstor/scratch/cscs/$USER/datasets/tokenized/`):
+
+- long: `fineweb-edu-dedup-160B-datatrove_long_40B` — 40,000,002,920 tokens
+- long-split-1024: `fineweb-edu-dedup-160B-datatrove_long_40B_split1024` — 40,070,239,040 tokens
+- Gutenberg (both runs): `gutenberg_rep_1_256` — 2,762,833,920 tokens
+
+Container: `nemo_26.04_te2.15`.
+
+Checkpoints saved at the final step. Moved to long-term storage under:
+
+- long: `/users/elyulina/store/pretrain-results/llama3-1b-full-attn-fineweb40B-long-gutenberg3B/`
+- long-split-1024: `/users/elyulina/store/pretrain-results/llama3-1b-full-attn-fineweb40B-long-split-1024-gutenberg3B/`
+
+Slurm scripts: `attn_bench/submissions/pretrain_llama3_1b_full_attn_fineweb40B-long_gutenberg3B.slurm`, `attn_bench/submissions/pretrain_llama3_1b_full_attn_fineweb40B-long-split-1024_gutenberg3B.slurm`.
+
+Logs: `attn_bench/logs/2765350.{out,err}` (long, partial), `attn_bench/logs/2765404.err` + `attn_bench/_logs/2765404.out` (long-split-1024, full — moved to `_logs/` for exceeding 3 MB).
+
+---
+
 ## Attention variants / trained models 
 
 | variant | Megatron flag | description |
@@ -197,6 +229,9 @@ Slurm scripts: `attn_bench/submissions/pretrain_llama3_1b_full_attn_goldfish_fin
 | off-by-one | `--softmax-type off-by-one` | sink with fixed logit 0 — `1 / (1 + Σ exp(xⱼ))` |
 | full (xdoc leak) | drop `--use-packed-seq-params` + `--reset-position-ids` (keep `--eod-mask-loss`) | standard softmax, but no intra-document masking — attention leaks across document boundaries within a packed sequence |
 | gated delta net (GDN) | `--experimental-attention-variant gated_delta_net --linear-attention-freq [1]*16` | GDN linear-attention mixer replaces softmax attention on all layers; FFN shrunk to 5824 to param-match (~1.239B) |
+| GDN carry (r = 0 / 0.5 / 1) | `--gdn-state-carry-ratio {0,0.5,1}`, drop `--use-packed-seq-params` | GDN without doc-boundary state reset (leaks across docs within a sequence); recurrent + conv state additionally carried across batch boundaries with probability r |
+| full / GDN + goldfish loss | `--goldfish-k 50 --goldfish-h 50` (stacks on top of `full` or `gated delta net (GDN)`) | hash-based token dropout from the loss only (~2% of tokens), reduces verbatim memorization |
+| full (long / long-split-1024 filler) | *(none — same as `full`)* | same standard softmax attention as `full`; only the FineWeb-Edu-Dedup filler dataset differs (longest documents, whole or split into 1024-token chunks), same token budget |
 
 ---
 
@@ -213,4 +248,18 @@ Two sources blended proportionally by sequence count (all sequences are 8192 tok
 FineWeb: 0.25 partition of the 160B FineWeb-Edu-Dedup dataset (selected via datatrove partition).
 
 Gutenberg: 9 repetition-level buckets (rep 1, 2, 4, 8, 16, 32, 64, 128, 256) from the memorization study pipeline, all included. See `gutenberg_laion_pipeline.md` for the pipeline that produced this dataset.
+
+### FineWeb filler variants (long documents)
+
+Used only by the "Filler data: long documents vs. same documents split into 1024-token chunks" runs above — same Gutenberg half as the blend above, but a different FineWeb-Edu-Dedup filler (longest documents instead of the 0.25 partition):
+
+| source | tokens | path on cluster |
+|---|---|---|
+| FineWeb-Edu-Dedup, long docs | 40,000,002,920 | `datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B` |
+| FineWeb-Edu-Dedup, long docs split into 1024-token chunks | 40,070,239,040 | `datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024` |
+| Gutenberg (rep_1_256) | 2,762,833,920 | `datasets/tokenized/gutenberg_rep_1_256` |
+
+`long`: longest-document subset of FineWeb-Edu-Dedup, selected up to a 40B token budget (`build_long_dataset.py`/`extract_long_docs.slurm`), documents kept whole.
+
+`long-split-1024`: the same long-document pool, split into fixed 1024-token chunks (`split_long_dataset.slurm`, `chunk_size=1024`, `tail_merge_threshold=256`), each chunk re-wrapped with its own BOS/EOS.
 

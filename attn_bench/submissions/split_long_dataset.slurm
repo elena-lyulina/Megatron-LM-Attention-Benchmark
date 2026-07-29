@@ -80,24 +80,28 @@ if [ -f "$STORE_DIR/run_metadata.json" ]; then
     exit 0
 fi
 
-### STEP 1: split on scratch ###
+### STEP 1: split on scratch (already completed, commented out) ###
 
-python3 -u attn_bench/data_processing/split_long_dataset.py \
-    --data-folder $SRC_DIR \
-    --tokenizer-path $TOKENIZER_PATH \
-    --chunk-size $CHUNK_SIZE \
-    --tail-merge-threshold $TAIL_MERGE_THRESHOLD \
-    --num-workers $NUM_WORKERS \
-    --output-folder $OUT_DIR
+# python3 -u attn_bench/data_processing/split_long_dataset.py \
+#     --data-folder $SRC_DIR \
+#     --tokenizer-path $TOKENIZER_PATH \
+#     --chunk-size $CHUNK_SIZE \
+#     --tail-merge-threshold $TAIL_MERGE_THRESHOLD \
+#     --num-workers $NUM_WORKERS \
+#     --output-folder $OUT_DIR
 
-### STEP 2: verify every resulting document is BOS/EOS wrapped (fails the job if not) ###
+### STEP 2: verify every resulting document is BOS/EOS wrapped (already completed, commented out) ###
 
-python3 -u attn_bench/data_processing/tokenization/verify_tokenization.py \
-    --tokenized-dir $OUT_DIR \
-    --tokenizer-path $TOKENIZER_PATH \
-    --num-workers $NUM_WORKERS
+# python3 -u attn_bench/data_processing/tokenization/verify_tokenization.py \
+#     --tokenized-dir $OUT_DIR \
+#     --tokenizer-path $TOKENIZER_PATH \
+#     --num-workers $NUM_WORKERS
 
-### STEP 3: copy to store, parallel single-file rsync (-P $NUM_WORKERS) ###
+### STEP 3: copy to store, parallel single-file cp (-P $NUM_WORKERS) ###
+# nemo_26.04_te2.15 has no rsync binary (see reference_nemo26_nvrx_crash) -- cp instead.
+# Plain cp, not cp -a: -a tries to preserve permissions, which errors ("Invalid argument")
+# copying across scratch -> store here and makes cp exit nonzero even though the file
+# content copied fine. We don't need exact permission preservation, just the data.
 
 echo "Copying to store: $STORE_DIR"
 MANIFEST=$(mktemp)
@@ -108,7 +112,7 @@ echo "Files to copy: $(wc -l < "$MANIFEST")"
 
 xargs -a "$MANIFEST" -n 2 -P $NUM_WORKERS bash -c '
     mkdir -p "$(dirname "$2")"
-    rsync -a "$1" "$2"
+    cp "$1" "$2"
 ' _
 rm -f "$MANIFEST"
 
@@ -119,10 +123,10 @@ cp "$OUT_DIR/run_metadata.json" "$STORE_DIR/run_metadata.json"
 # Both scripts already handle scratch-then-store themselves -- point them at $OUT_DIR
 # (scratch, still present and fast) rather than duplicating that logic here.
 
-DOC_STATS_JOB=$(sbatch --parsable --export=ALL,DATASET_DIRS="$OUT_DIR" submissions/dataset_doc_stats.slurm)
+DOC_STATS_JOB=$(sbatch --parsable --export=ALL,DATASET_DIRS="$OUT_DIR" attn_bench/submissions/dataset_doc_stats.slurm)
 echo "Submitted dataset_doc_stats.slurm: job $DOC_STATS_JOB"
 
-CHUNK_STATS_JOB=$(sbatch --parsable --export=ALL,DATASET_DIRS="$OUT_DIR" submissions/packed_chunk_stats.slurm)
+CHUNK_STATS_JOB=$(sbatch --parsable --export=ALL,DATASET_DIRS="$OUT_DIR" attn_bench/submissions/packed_chunk_stats.slurm)
 echo "Submitted packed_chunk_stats.slurm: job $CHUNK_STATS_JOB"
 
 echo "END TIME: $(date)"

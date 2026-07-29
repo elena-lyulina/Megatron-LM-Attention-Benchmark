@@ -1,0 +1,1030 @@
+START TIME: Wed Jul 15 07:11:34 CEST 2026
+Source:      /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B
+Scratch out: /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024
+Store out:   /users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024
+chunk_size=1024  tail_merge_threshold=256  num_workers=20
+BOS id: 128000 | EOS id: 128001
+1 shard(s), 5,286,174 documents under /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B
+chunk_size=1024  tail_merge_threshold=256  num_workers=20
+5,286,174 documents -> 40,404,234 pieces -> /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/shard_*.bin/.idx
+  documents:    40,404,234
+  total tokens: 40,070,239,040
+  mean:         991.7
+  min / max:    258 / 1,279
+  percentiles:  p1=345  p5=675  p25=1,024  p50=1,024  p75=1,024  p90=1,024  p95=1,024  p99=1,195
+run_metadata.json -> /iopsstor/scratch/cscs/elyulina/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/run_metadata.json
+BOS id: 128000 | EOS id: 128001
+
+Found 20 shard(s)
+
+  shard_00000 | 2,024,907 seqs | OK
+  shard_00001 | 2,019,561 seqs | OK
+  shard_00002 | 2,013,745 seqs | OK
+  shard_00003 | 2,031,164 seqs | OK
+  shard_00004 | 2,030,863 seqs | OK
+  shard_00005 | 2,012,117 seqs | OK
+  shard_00006 | 2,020,504 seqs | OK
+  shard_00007 | 2,020,974 seqs | OK
+  shard_00008 | 2,017,101 seqs | OK
+  shard_00009 | 2,008,619 seqs | OK
+  shard_00010 | 2,028,435 seqs | OK
+  shard_00011 | 2,028,139 seqs | OK
+  shard_00012 | 2,010,722 seqs | OK
+  shard_00013 | 2,016,119 seqs | OK
+  shard_00014 | 2,025,874 seqs | OK
+  shard_00015 | 2,018,059 seqs | OK
+  shard_00016 | 2,015,769 seqs | OK
+  shard_00017 | 2,011,146 seqs | OK
+  shard_00018 | 2,023,844 seqs | OK
+  shard_00019 | 2,026,572 seqs | OK
+
+Total: 40,404,234 sequences across 20 shards
+  BOS missing at start : 0
+  EOS missing at end   : 0
+  Multiple BOS         : 0
+  Multiple EOS         : 0
+  ALL OK
+
+================================================================================
+Detailed check: shard_00000 (2,024,907 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 1024 tokens ---
+First tokens: [128000, 3563, 62165, 578, 11688, 315, 6344, 1366, 1105, 25]
+Last tokens:  [220, 2970, 348, 220, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Startseite The Language of Metaphors: Literal Metaphorical\nThe Language of Metaphors: Literal MetaphoricalAndrew Goatly\nIn this ambitious and wide-ranging textbook Andrew Goatly explores the language of metaphor. Combining insights from relevance theory and functional linguistics, h'
+Text ending:  'hor 55 2.3.2. Interplay: multiple determination 57 2.3.3. Interplay: extensions 58 v <|end_of_text|>'
+
+--- Sequence 1 | 1024 tokens ---
+First tokens: [128000, 17, 13, 18, 13, 19, 13, 5783, 1387, 25]
+Last tokens:  [15828, 220, 24, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>2.3.4. Interplay: oppositions 60 2.3.5. Interplay: reversal 63 2.3.6. Metaphorical lexis and diverse structuring of concepts 64 2.3.7. Influence of phonology/submorphemery as part of langue 74 2.4. 3 3.1. Summary and afterthought 76 METAPHOR AND THE DICTIONARY: WORD-CLASS AND WORD-F'
+Text ending:  'Multivalency 265 9.4. Diversification 267 9.5. Modification 269 9.6. Extension 271 9.<|end_of_text|>'
+
+--- Sequence 2 | 1024 tokens ---
+First tokens: [128000, 22, 13, 97699, 220, 16367, 220, 24, 13, 23]
+Last tokens:  [1495, 902, 11, 2728, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>7. Mixing 277 9.8. Compounding of metaphors 279 7 8 9 viii 9.9. Literalization of Vehicles 280 9.10. Overdescription 287 9.11. Symbolism and the complications of metaphoric interplay 288 METAPHOR IN ITS SOCIAL CONTEXT 291 10.1. Introduction 291 10.2. Development of Relevance Theory:'
+Text ending:  ' Marguerite Nesling, who worked long and hard and meticulously on a text which, given<|end_of_text|>'
+
+--- Sequence 3 | 1024 tokens ---
+First tokens: [128000, 1202, 18651, 389, 4876, 2508, 11, 2011, 617, 1027]
+Last tokens:  [40615, 17583, 374, 1766, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> its demands on graphology, must have been maddening for a copy-editor. The National University of Singapore, who allowed me, in those pre-modular days, the leisure to do the bulk of my research and writing. In particular my colleagues at that institution, Desmond Allison, Graeme Ca'
+Text ending:  'g. LF10 refers to Lord of the Flies, page 10. The key to these abbreviations is found<|end_of_text|>'
+
+--- Sequence 4 | 1024 tokens ---
+First tokens: [128000, 304, 279, 45178, 3857, 520, 279, 842, 315, 279]
+Last tokens:  [775, 719, 311, 1672, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> in the References section at the end of the book, and in the list of abbreviations. Square brackets are used to enclose supplied material • In Analogies, where the lexical details of Root Analogies are given: (x): x=part of a phrase in which the metaphor typically participates with'
+Text ending:  'urative application of words eloquence hath invented, are for nothing else but to ins<|end_of_text|>'
+
+================================================================================
+Detailed check: shard_00001 (2,019,561 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 1024 tokens ---
+First tokens: [128000, 791, 16591, 2394, 261, 540, 1413, 68072, 198, 791]
+Last tokens:  [4972, 311, 279, 20918, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>The Royal Prerogative Lecture\nThe History of the Royal Prerogative\nThroughout the UK’s constitutional history, the relationship between the monarch and Parliament has been subject to change. The Magna Carta 1215 was a key turning point in this relationship, when the feudal barons fo'
+Text ending:  'were extensive as they were all the powers that the monarch enjoyed prior to the Magn<|end_of_text|>'
+
+--- Sequence 1 | 1024 tokens ---
+First tokens: [128000, 64, 13416, 64, 11, 719, 902, 20302, 1047, 539]
+Last tokens:  [315, 279, 4717, 889, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>a Carta, but which Parliament had not removed by statute.\nA.V. Dicey, The Law of the Constitution(10th edn, MacMillan, 1959) pp.434-5 "The prerogative appears to be both historically and as a matter of actual fact nothing else than the residue of discretionary or arbitrary authority'
+Text ending:  'of commanding a majority in the commons, which is usually the leader of the party who<|end_of_text|>'
+
+--- Sequence 2 | 1024 tokens ---
+First tokens: [128000, 15160, 279, 1455, 16712, 1306, 264, 3331, 26838, 13]
+Last tokens:  [3109, 79073, 889, 1180, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> wins the most seats after a General Election. There are two possibilities where a monarch may be required to intervene in the appointment of the Prime Minister (PM).\n- In the case of a Hung Parliament where no one party commands an absolute majority. In 2010, the PM in office resig'
+Text ending:  'realm of the Crown, but over history have transferred to government Ministers who act<|end_of_text|>'
+
+--- Sequence 3 | 1024 tokens ---
+First tokens: [128000, 389, 17981, 315, 279, 29743, 304, 872, 4040, 3158]
+Last tokens:  [3298, 220, 7285, 24, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> on behalf of the Crown in their particular area of responsibility. The powers most considered to be in need of reform are those that relate to foreign relations; to declarations of war, to the deployment of troops abroad, the recognition of other states and their diplomatic staff. '
+Text ending:  'wers, e.g. Immigration Act 1971, s.33 (5) and the Emergency Powers (Defence) Act 1939<|end_of_text|>'
+
+--- Sequence 4 | 1024 tokens ---
+First tokens: [128000, 13, 763, 4689, 11, 433, 374, 19655, 430, 10079]
+Last tokens:  [17, 88381, 912, 14523, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: "<|begin_of_text|>. In general, it is assumed thatstatutory powers can overrule prerogative powers where it confers benefits upon citizens, which would be undermined by the Crown's right to retain the prerogative power. In Northumbria Police (see below), the court found that even if s.41 Police Act 1"
+Text ending:  'ible with the United Nations Charter 1948. The HL held that Article 2 imposes no duty<|end_of_text|>'
+
+================================================================================
+Detailed check: shard_00002 (2,013,745 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 1024 tokens ---
+First tokens: [128000, 791, 47643, 2641, 1047, 264, 2294, 5201, 198, 2000]
+Last tokens:  [323, 2547, 13, 1102, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>The Celts had a great respect\nfor nature and believed that\ntrees held special attributes\nand mystical qualities.\nPhoto by Louise Price\n(CC by SA 2.0)\nOne of the nine trees sacred to the Celts\nThe first tree to sprout leaves in the Spring, the birch (beith) was known as the Tree of B'
+Text ending:  ' abilites as well as its strength and represents stability, both of mind and body. It<|end_of_text|>'
+
+--- Sequence 1 | 1024 tokens ---
+First tokens: [128000, 574, 3629, 1511, 311, 9120, 819, 10723, 97712, 439]
+Last tokens:  [11846, 430, 279, 29913, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> was often used to banish mental strife as well as to stimulate psychic dreams.\nOften planted near sacred springs, it has a distinct water connection like the alder, but it too is highly flammable. Its wood is burned at Beltane to protect crops and cattle.\nWhere ash, oak and thorn g'
+Text ending:  'nd was a popular ingredient in love spells and potions.\nIt was believed that the gods<|end_of_text|>'
+
+--- Sequence 2 | 1024 tokens ---
+First tokens: [128000, 35363, 872, 12822, 555, 12459, 279, 14098, 11, 1418]
+Last tokens:  [311, 1212, 279, 33993, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: "<|begin_of_text|> retained their youth by eating the fruit, while the juice could be used to attain inner strength and beauty.\nThe Celts were known to buty apples with their dead.\nBramble often planted with fairy tree to bind the hedge\nThis probably meant brambles since vines weren't introduced unti"
+Text ending:  ') burns at a temperature similare to charcoal and was probably used to start the Belt<|end_of_text|>'
+
+--- Sequence 3 | 991 tokens ---
+First tokens: [128000, 2194, 27176, 13, 362, 7891, 315, 56062, 1606, 433]
+Last tokens:  [279, 19821, 315, 2324, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>ane fires. A symbol of resilience because it always sought the sun and, if destroyed, would sprout anew, it was also used as a purifier.\nA good plant to use when in need of a fresh start, it was used to sweep important areas clean, and it was believed that burning it could even calm'
+Text ending:  ' unforgivable sacrilege.\nIt was believed the absence of trees was the absence of life<|end_of_text|>'
+
+--- Sequence 4 | 1024 tokens ---
+First tokens: [128000, 2170, 961, 315, 1202, 2536, 782, 75, 11691, 367]
+Last tokens:  [433, 9087, 279, 3723, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>As part of its nonproliferation agenda, the United States has given an increasing role to programs focused on the scientists and engineers who make weapons of mass destruction (WMD), with a particular emphasis on reducing opportunities and incentives for scientists to disseminate th'
+Text ending:  'x. The IPP also came to argue that engagement was useful because it helped the United<|end_of_text|>'
+
+================================================================================
+Detailed check: shard_00003 (2,031,164 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 1024 tokens ---
+First tokens: [128000, 12, 8483, 4652, 198, 12, 5377, 9742, 198, 19085]
+Last tokens:  [52068, 41670, 1296, 315, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>- Research article\n- Open Access\nForce of tuberculosis infection among adolescents in a high HIV and TB prevalence community: a cross-sectional observation study\nBMC Infectious Diseases volume 11, Article number: 156 (2011)\nUnderstanding of the transmission dynamics of tuberculosis '
+Text ending:  'd the TST regardless of BCG scar status.\nThe WHO-recommended standard Mantoux test of<|end_of_text|>'
+
+--- Sequence 1 | 1024 tokens ---
+First tokens: [128000, 220, 17, 99682, 315, 393, 23891, 320, 47, 324]
+Last tokens:  [20852, 320, 4044, 53172, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> 2TU of PPD (Purified Protein Derivative) RT23 with Tween 80 (Statens Seruminstitut, Copenhagen) was administered intradermally to the volar surface of the left forearm by a trained nurse. The tuberculin reaction size was read by a trained assessor three days following the inoculati'
+Text ending:  'en enrolled in the secondary school, 839 were eligible for study participation (87%).<|end_of_text|>'
+
+--- Sequence 2 | 1024 tokens ---
+First tokens: [128000, 763, 39567, 3225, 574, 4245, 311, 22423, 4994, 315]
+Last tokens:  [279, 220, 1049, 22, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> Ineligibility was due to residence outside of the community (n = 80) or having dropped out of school (n = 40). Consent/assent was obtained for 820 children (98% of those eligible). Refusal by parent or learner accounted for 18 non-consenters and 1 child was not consented due to abs'
+Text ending:  'analysis: Repeated TST testing\nIn 2009, 159 students who had participated in the 2007<|end_of_text|>'
+
+--- Sequence 3 | 1024 tokens ---
+First tokens: [128000, 10795, 3952, 961, 304, 279, 14580, 2978, 10795, 11]
+Last tokens:  [19405, 574, 40646, 5938, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> survey took part in the secondary school survey, four of whom were HIV-infected. The mean reaction size in 2009 among participants with repeat tests was larger compared to participants who tested for the first time (15 vs 11.5 mm; p < 0.001), and this finding persisted when adjuste'
+Text ending:  'nd in South Africa. We demonstrated that force of infection was positively associated<|end_of_text|>'
+
+--- Sequence 4 | 1024 tokens ---
+First tokens: [128000, 449, 7859, 4325, 13, 4314, 14955, 527, 13263, 449]
+Last tokens:  [12884, 11, 323, 279, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> with increasing age. These findings are consistent with those reported prior to the HIV epidemic, as well as by more recent mathematical modeling. The advantage that this study had over the modeling paper is that of greater numbers of older adolescent participants all recruited fro'
+Text ending:  'y and secondary TB infection and, given the high HIV prevalence among adults, and the<|end_of_text|>'
+
+================================================================================
+Detailed check: shard_00004 (2,030,863 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 1024 tokens ---
+First tokens: [128000, 16, 13, 3639, 527, 279, 6012, 315, 279, 7901]
+Last tokens:  [31613, 4157, 1535, 23214, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>1. What are the properties of the transaction?\nAnswer: Properties of the transaction are known as ACID properties, such as\nAtomicity: Ensures the completeness of all transactions performed. Checks whether every transaction is completed successfully if not then transaction is aborted'
+Text ending:  ' functions return a single value based on the input value. For example – UCASE(), NOW<|end_of_text|>'
+
+--- Sequence 1 | 1024 tokens ---
+First tokens: [128000, 368, 374, 16997, 449, 5201, 311, 264, 925, 627]
+Last tokens:  [40559, 8, 505, 1357, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>() is calculated with respect to a string.\n13. What is a Stored Procedure?\nAnswer: A Stored Procedure is a function which consists of many SQL statements to access the database system. Several SQL statements are consolidated into a stored procedure and execute them whenever and wher'
+Text ending:  'to solve this problem.\nHere is SQL query using Subquery :\nSelect MAX(Salary) from Int<|end_of_text|>'
+
+--- Sequence 2 | 1024 tokens ---
+First tokens: [128000, 616, 575, 39367, 23319, 2603, 2176, 5401, 42858, 4276]
+Last tokens:  [311, 387, 1511, 555, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>ellipaat_emplyee WHERE Salary NOT IN ( select MAX.\n26. When is the Explicit Cursor Used?\nAnswer: If the developer needs to perform the row by row operations for the result set containing more than one row, then he unambiguously declares a pointer with a name. They are managed by OPE'
+Text ending:  'Subquery. A subquery is called inner query which returns output that is to be used by<|end_of_text|>'
+
+--- Sequence 3 | 837 tokens ---
+First tokens: [128000, 2500, 3319, 627, 1272, 13, 3639, 374, 264, 29750]
+Last tokens:  [505, 17939, 49, 0, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> another query.\n40. What is a Unique key?\nAnswer: Uniquely identifies a single row in the table.\nMultiple values allowed per table.\nNull values allowed.\nApart from this SQL Interview Questions blog, if you want to get trained from professionals on this technology, you can opt for a '
+Text ending:  'rom professionals on this technology, you can opt for a structured training from SVR!<|end_of_text|>'
+
+--- Sequence 4 | 1024 tokens ---
+First tokens: [128000, 1016, 26240, 753, 11346, 315, 7030, 20631, 2191, 198]
+Last tokens:  [37480, 278, 2191, 706, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Thailand’s History of Authoritarianism\nIn Thailand, 2020 will be remembered more for COVID-19 than for the State of Emergency which authorities decreed ostensibly to combat the virus. But Thailand’s 2020 draconian response to COVID-19 has re-illuminated the authoritarian character o'
+Text ending:  'lection of military and police commanders.\nSecond, intensifying army factionalism has<|end_of_text|>'
+
+================================================================================
+Detailed check: shard_00005 (2,012,117 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 1024 tokens ---
+First tokens: [128000, 3648, 12634, 42158, 220, 679, 23, 198, 33, 4031]
+Last tokens:  [26338, 279, 3560, 315, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: "<|begin_of_text|>New Energy Outlook 2018\nBNEF's annual long-term economic analysis\nof the world’s power sector out to 2050.\nSetting the scene\nFocusing on the electricity system, the New Energy Outlook (NEO) combines the expertise of over 65 in-house country and technology-level specialists in 12 cou"
+Text ending:  ".'s plan to close its remaining coal-fired power stations by 2025 reduces the role of<|end_of_text|>"
+
+--- Sequence 1 | 1024 tokens ---
+First tokens: [128000, 31376, 40373, 304, 9659, 311, 220, 717, 4, 555]
+Last tokens:  [1063, 315, 279, 1888, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> fossil fuels in generation to 12% by 2030.\nAt the same time, growth in high capacity factor offshore wind pushes renewables up to 73% of generation. By 2050, the U.K. has added 158GW of wind and solar, as well as 49GW of batteries and renewables provide 83% of generation.\nThe U.S. '
+Text ending:  ' to reach the 35-58% average capacity factors range, consistent with some of the best<|end_of_text|>'
+
+--- Sequence 2 | 1024 tokens ---
+First tokens: [128000, 16785, 7224, 3432, 627, 26198, 11863, 3430, 58054, 527]
+Last tokens:  [13689, 323, 430, 369, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> performing projects today.\nRecent battery price declines are largely a result of the economies of scale associated with the increase in battery manufacturing capacity.\nCurrently at 131GWh per year, we expect manufacturing capacity to rise to just over 400GWh per year by 2021.\nChina'
+Text ending:  ' global benchmark LCOE for solar PV without tracking has tumbled by 77%, and that for<|end_of_text|>'
+
+--- Sequence 3 | 1024 tokens ---
+First tokens: [128000, 389, 29526, 10160, 555, 220, 1987, 126437, 43, 8445]
+Last tokens:  [279, 6278, 315, 279, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> onshore wind by 38%.\nLCOEs for older established sources, such as coal, gas, nuclear and large hydro, have seen only very modest reductions, at best, in that time – and in some countries, they have actually increased.\nBNEF’s lithium-ion battery price index shows a fall from $1,000 '
+Text ending:  'pect around 4%, of electricity demand to move – much of it going to the middle of the<|end_of_text|>'
+
+--- Sequence 4 | 513 tokens ---
+First tokens: [128000, 1938, 11, 23828, 6714, 449, 279, 13238, 7340, 323]
+Last tokens:  [304, 279, 1887, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> day, coinciding with the solar maximum and supporting further build-out of PV capacity.\nCoal, gas, and impact on emissions.\nSince the 1970s, fossil fuels have commanded a consistent 60-70% share of the global power generation mix.\nWe think this 50-year equilibrium is coming to an e'
+Text ending:  'on technologies that can decarbonize gas at scale or supplant its role in the system.<|end_of_text|>'
+
+================================================================================
+Detailed check: shard_00006 (2,020,504 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 1024 tokens ---
+First tokens: [128000, 1729, 70643, 96096, 198, 644, 430, 1938, 279, 9046]
+Last tokens:  [44721, 315, 5414, 2291, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>by Lambert Dolphin\nIn that day the branch of the LORD shall be beautiful and glorious, and the fruit of the land shall be the pride and glory of the survivors of Israel. And he who is left in Zion and remains in Jerusalem will be called holy, every one who has been recorded for life'
+Text ending:  'al kingdom on the earth,\nruling thereafter from Jerusalem from the throne of His fore<|end_of_text|>'
+
+--- Sequence 1 | 1024 tokens ---
+First tokens: [128000, 23881, 198, 34655, 6941, 13, 578, 1561, 40214, 11266]
+Last tokens:  [3892, 7060, 5569, 4211, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: "<|begin_of_text|>father\nKing David. The New Testament Epistle to the Hebrews describes\nthe once-for-all, fully-efficacious, blood sacrifice of Jesus\nas the true Lamb of God. In contrast, the animal sacrifices of\nthe Old Covenant were but shadows pointing to Messiah's coming.\nAlthough the New Testame"
+Text ending:  " to a study of Ezekiel's Temple, and to the construction of several fine scale models<|end_of_text|>"
+
+--- Sequence 2 | 1024 tokens ---
+First tokens: [128000, 1511, 369, 16627, 10096, 627, 36, 64123, 13327, 1047]
+Last tokens:  [358, 1893, 26523, 264, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> used for educational purposes.\nEzekiel had planned to enter the priestly service in the First Temple when he reached thirty years of age. His plans were cut short in 597 when King Nebuchadnezzar raided and captured Jerusalem after a brief siege, taking with him young king Jehoichin'
+Text ending:  'be glad and rejoice for ever in that which I create; for behold, I create Jerusalem a<|end_of_text|>'
+
+--- Sequence 3 | 1024 tokens ---
+First tokens: [128000, 48041, 10332, 11, 323, 1077, 1274, 264, 16267, 13]
+Last tokens:  [13124, 11, 1093, 279, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> rejoicing, and her people a joy. I will rejoice in Jerusalem, and be glad in my people; no more shall be heard in it the sound of weeping and the cry of distress. No more shall there be in it an infant that lives but a few days, or an old man who does not fill out his days, for the'
+Text ending:  'l be a place for the spreading of nets; its fish will be of very many kinds, like the<|end_of_text|>'
+
+--- Sequence 4 | 1024 tokens ---
+First tokens: [128000, 7795, 315, 279, 8681, 15379, 13, 2030, 1202, 2064]
+Last tokens:  [9578, 627, 36, 64123, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> fish of the Great Sea. But its swamps and marshes will not become fresh; they are to be left for salt. And on the banks, on both sides of the river, there will grow all kinds of trees for food. Their leaves will not wither nor their fruit fail, but they will bear fresh fruit every '
+Text ending:  'gainst by the complex rituals proscribed for the Temple of Ezekiel on the earth.\nEzek<|end_of_text|>'
+
+================================================================================
+Detailed check: shard_00007 (2,020,974 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 1024 tokens ---
+First tokens: [128000, 32, 282, 6513, 2077, 13980, 994, 264, 1732, 596]
+Last tokens:  [311, 3217, 264, 77880, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: "<|begin_of_text|>A fawn response occurs when a person's brain acts as if they unconsciously perceive a threat, and compels survival behavior that keeps them under the radar. It is also important to note that the response can be triggered due to both real and imaginary threats. The most well-known re"
+Text ending:  "th EMDR to release the distress in the body.\nIt's possible to experience a tightening<|end_of_text|>"
+
+--- Sequence 1 | 1024 tokens ---
+First tokens: [128000, 304, 279, 28691, 11, 3235, 449, 1023, 13803, 1778]
+Last tokens:  [1427, 1093, 28559, 323, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> in the throat, along with other symptoms such as balling your hands into fists .\nLow Self-Esteem. These responses are evolutionary adaptations to increase chances of . When people experience something traumatic and/or have PTSD, they may no longer feel as though the world is a safe'
+Text ending:  'e .\nTrauma Responses: Fight, Flight, Freeze, Fawn . It can look like combinations and<|end_of_text|>'
+
+--- Sequence 2 | 1024 tokens ---
+First tokens: [128000, 27339, 315, 279, 2768, 25, 1252, 29092, 6940, 11]
+Last tokens:  [505, 1124, 13, 4427, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> variations of the following: Unstable temper, emotionally reactive (often out of proportion to the event) .\nWhen the brain can no longer perceive safety after a traumatic event, a whole host of physical and mental health complications ensue.\nThe four main trauma responses are fight'
+Text ending:  'tacked by someone - fight the person who is attacking you or run away from them. Some<|end_of_text|>'
+
+--- Sequence 3 | 1024 tokens ---
+First tokens: [128000, 11, 719, 17832, 36870, 57016, 482, 1093, 330, 40]
+Last tokens:  [21828, 477, 11213, 6, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>, but minimal verbal cues - like "I feel stuck," "I can\'t move," or "I\'m paralyzed.". A fight trauma response is when we believe that if we are able to maintain power over the threat, we will gain control. This is useful as it explains the biological and psychological reasons why we'
+Text ending:  "the threat. Most of us are already familiar with the concept of the 'fight or flight'<|end_of_text|>"
+
+--- Sequence 4 | 307 tokens ---
+First tokens: [128000, 2077, 311, 26617, 8137, 11, 32125, 430, 994, 10666]
+Last tokens:  [11, 477, 31030, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> response to perceived danger, namely that when presented with a threat our bodies respond by preparing us to fight against it or run from it.\nLike with the fight response, the flight response can be either healthy or unhealthy. Being aggressive or "Fight" is one of the 4 trauma res'
+Text ending:  ' flee the threat. But your response to trauma can go beyond fight, flight, or freeze.<|end_of_text|>'
+
+================================================================================
+Detailed check: shard_00008 (2,017,101 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 1024 tokens ---
+First tokens: [128000, 644, 279, 1176, 1060, 315, 813, 8254, 4771, 11879]
+Last tokens:  [2380, 67868, 1666, 648, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>In the first year of his seven-year journey through Siberia and Central Asia, Thomas Atkinson travelled with another Englishman called Charles Edward Austin. I decided to look into the background of Austin and soon began to uncover extensive links between Atkinson and two of the gre'
+Text ending:  'n the Urals are virtually as nothing.” Remarkably – and sadly – his three-volume Asie<|end_of_text|>'
+
+--- Sequence 1 | 1024 tokens ---
+First tokens: [128000, 5838, 46140, 320, 10336, 18, 705, 902, 743, 704]
+Last tokens:  [279, 8690, 3154, 46360, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> Centrale (1843), which set out the main findings of his Russian travels, has never been published in English.\nThis trip allowed Humboldt to develop further his theory about the proximity of diamonds to alluvial gold and platinum, an observation he had first made in Brazil 30 years '
+Text ending:  'rata from the Urals eastwards.\nMurchison, who was supportive of the Russian autocracy<|end_of_text|>'
+
+--- Sequence 2 | 1024 tokens ---
+First tokens: [128000, 11, 574, 2728, 2539, 34616, 11, 6020, 323, 96968]
+Last tokens:  [11, 779, 3117, 439, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>, was given full diplomatic, financial and logistical support by Tsar Nicholas, who became sponsor of his expeditions. The Tsar wanted to know more precisely what existed and whether or not there was sufficient coal to allow minerals to be brought across the Urals to European Russia'
+Text ending:  'dersk and other mining towns in the Altai. In both the Urals and the Altai, so far as<|end_of_text|>'
+
+--- Sequence 3 | 1024 tokens ---
+First tokens: [128000, 358, 649, 3371, 11, 2468, 51547, 323, 19816, 8272]
+Last tokens:  [2795, 25, 1054, 1548, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> I can tell, Atkinson and Austin followed almost exactly the same routes taken by both Humboldt and Murchison. The only slight difference is that Atkinson made a larger detour into the Kazakh steppes, an experience which enthralled him and made him want to come back to sketch and pa'
+Text ending:  'e? His obituary in The Engineer following his death in April 1893 in London says: “He<|end_of_text|>'
+
+--- Sequence 4 | 1024 tokens ---
+First tokens: [128000, 11838, 813, 35292, 323, 48539, 811, 389, 1403, 25975]
+Last tokens:  [279, 24845, 276, 5111, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> extended his travels and explorations on two occasions over a wide tract of Siberia. On the first tour he crossed the Altai Mountains to the Chinese frontier and during a subsequent tour, on which he was accompanied by his wife, he visited some of the exile stations of Siberia, the'
+Text ending:  'an idea to which he clung for years.” (It should be noted that during the Crimean War<|end_of_text|>'
+
+================================================================================
+Detailed check: shard_00009 (2,008,619 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 1024 tokens ---
+First tokens: [128000, 2729, 81, 4601, 3053, 4748, 328, 82149, 198, 791]
+Last tokens:  [369, 2033, 84589, 198, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Outrigger Canoe Schematic\nThe outrigger canoe has been central to the development of Hawaiian culture. So important was the canoe that the building of a new canoe was a significant event involving most of the members of a village: priests, craftsmen, laborers, helpers. From choosing'
+Text ending:  'ned to form or to use as a double canoe\n- wa‘a kaulua: another term for double canoe\n<|end_of_text|>'
+
+--- Sequence 1 | 1024 tokens ---
+First tokens: [128000, 12, 597, 2933, 74, 52206, 25, 264, 3254, 84589]
+Last tokens:  [284, 11583, 13915, 198, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>- kaukahi: a single canoe with an outrigger\n- kialoa: a long, light, and swift canoe used for racing & display. This term may also refer to a beautiful woman and her shape. Queen Ka‘ahumanu was referred to as “Kialoa” in her youth.\n- Ko‘okahi: OC1\n- Ko‘olua: OC2\n- Ko‘oha: OC4\n- Ko‘e'
+Text ending:  '- Hawai‘i = Maoli\n- Tahiti/Marquesas region = Maohi\n- Aotearao (New Zealand) = Maori\n<|end_of_text|>'
+
+--- Sequence 2 | 1024 tokens ---
+First tokens: [128000, 49078, 14336, 454, 2933, 16909, 6520, 14336, 675, 2259]
+Last tokens:  [690, 1518, 420, 8205, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Ho‘opau ka ha‘awina (end of lesson)\nKū‘auhau mai (that’s me, my name & I’m here, mai, not dead or somewhere else)\nCulture & Tradition: Ancient History\nby Terry Wallace\nI have read and heard many say, “Why must we do this,” or “why is such-and-so done this way?”\nOne of the answers is'
+Text ending:  ' (OC-6) to ho‘ekahi (OC-1). At the Moloka‘i to O‘ahu races, one will see this variety<|end_of_text|>'
+
+--- Sequence 3 | 1024 tokens ---
+First tokens: [128000, 315, 21483, 11, 505, 8834, 35915, 291, 8560, 689]
+Last tokens:  [84, 453, 64, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> of shapes, from fat-assed Malia to long and sleek “racers.”\nReferences: The Hawaiian Canoe by Tommy Holmes, Hawaiian Antiquities by David Malo, History of the Hawaiian People by Abraham Fornander, Ruling Chiefs by S.M. Kamakau and my late teacher Mary Kawena Pukui.\nWhen frustrated:'
+Text ending:  'Canoe Travel\nby Terry Wallace\n‘Olelo No‘eau - a proverb:\n‘Au i ke kai me he manu ala.<|end_of_text|>'
+
+--- Sequence 4 | 1024 tokens ---
+First tokens: [128000, 482, 11511, 279, 9581, 439, 264, 12224, 627, 4599]
+Last tokens:  [1666, 422, 279, 14290, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> - Cross the sea as a bird.\nWhen Captain James Cook landed on Kaua‘i and later on Hawai‘i, he gave the island group a name, after his patron James Montague, the Earl of Sandwich. For the next seventy-one years the islands were called (by outsiders) the Sandwich Islands. The connotat'
+Text ending:  't end, ka hope (kah hopay), you should find a small flat spot. As if the manufacturer<|end_of_text|>'
+
+================================================================================
+Detailed check: shard_00010 (2,028,435 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 1024 tokens ---
+First tokens: [128000, 32, 12035, 4868, 4793, 320, 39, 9691, 8, 374]
+Last tokens:  [389, 264, 892, 11821, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>A hardware security module (HSM) is a physical device that provides extra security for sensitive data. However, a security architecture that relies on technology alone and disregards the people and processes that impact the architecture may not perform as well as intended. Thus, the'
+Text ending:  'ing of shared resources- allows processes to use the same resources on a time sharing<|end_of_text|>'
+
+--- Sequence 1 | 1024 tokens ---
+First tokens: [128000, 8197, 13, 578, 12035, 4868, 4793, 320, 39, 9691]
+Last tokens:  [828, 11, 323, 65295, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> basis. The hardware security module (HSM) is a special “trusted” network computer performing a variety of cryptographic operations: key management, key exchange, encryption etc. Process States: A process can run in running state (CPU is executing its instructions and data),ready st'
+Text ending:  'cated to security functions an examination the! Access some data, and confidentiality<|end_of_text|>'
+
+--- Sequence 2 | 1024 tokens ---
+First tokens: [128000, 8670, 315, 85360, 71805, 10565, 6067, 649, 10299, 3241]
+Last tokens:  [10206, 323, 369, 1131, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> requirements of multitasking operating systems can manage software I/O procedures when first powered.. About the Author: Simha Sethumadhavan is an associate professor in the security kernel is hardware. Become ready includes identifying the architecture, and system integrity–checki'
+Text ending:  ' for applications and users to work within and monitor the security kernel and for...<|end_of_text|>'
+
+--- Sequence 3 | 635 tokens ---
+First tokens: [128000, 7648, 14134, 1511, 1925, 5044, 10687, 4868, 17959, 11]
+Last tokens:  [58014, 369, 24717, 0, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> Most frequently used main memory locations security guidelines, as well as the it shared services security Domain and architecture! And verified in a higher protection ring different privilege levels like kernel,. Security capabilities designed into silicon or character devices hav'
+Text ending:  'stic multi-core prototype of the system actually functions Principles for mechanisms!<|end_of_text|>'
+
+--- Sequence 4 | 1024 tokens ---
+First tokens: [128000, 2746, 499, 527, 20910, 1148, 374, 45406, 773, 10957]
+Last tokens:  [1436, 1005, 433, 439, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>If you are wondering what is Fenugreek? It is one of the most common kitchen ingredients used for cooking recipes of different cuisines, brings with it tons of health benefits. The slightly bitter-tasting fenugreek seeds or the leaves are just enough to condition your hair and enric'
+Text ending:  'em with vegetables of your choice and eat it with roti or rice or you could use it as<|end_of_text|>'
+
+================================================================================
+Detailed check: shard_00011 (2,028,139 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 1024 tokens ---
+First tokens: [128000, 4599, 264, 73681, 13980, 304, 5708, 3157, 11, 1070]
+Last tokens:  [28858, 1511, 555, 56980, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>When a alteration occurs in stock market, there is an of import deduction on a countrys economic system as this serves as a prima index of the economic system. Conversely, it is besides true that alterations in the economic system do hold an consequence on the stock market.\nA relati'
+Text ending:  'nomic public presentation. Industrial Production figures are besides used by cardinal<|end_of_text|>'
+
+--- Sequence 1 | 1024 tokens ---
+First tokens: [128000, 8715, 784, 311, 16434, 62259, 16448, 7729, 11, 439]
+Last tokens:  [28796, 3451, 82, 3682, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> Bankss to mensurate rising prices, as high degrees of industrial production can take to uncontrolled degrees of ingestion and rapid rising prices.\nEntire sum of money available in an economic system at a peculiar point in clip. Money supply informations are recorded and published, '
+Text ending:  's and has accorded a degree of stableness against the currencies of Malaysia ‘s major<|end_of_text|>'
+
+--- Sequence 2 | 1024 tokens ---
+First tokens: [128000, 11380, 66312, 627, 36, 71171, 320, 220, 1049, 24]
+Last tokens:  [449, 37545, 11928, 1963, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> trading spouses.\nEconomy ( 2009 )\nNominal GDP: $ 191.5 billion.\nAnnual existent GDP growing rate: 5.9 % ( 2006 ) ; 6.3 % ( 2007 ) ; 4.6 % ( 2008 ) ; -1.7 % ( 2009 ) ; 7.0 % ( authorities estimation for 2010 ) .\nNominal per capita income ( GNI ) : $ 6,897.\nNatural resources: Petrole'
+Text ending:  'h FTSE, its index spouse, has integrated the KLCI with internationally accepted index<|end_of_text|>'
+
+--- Sequence 3 | 1024 tokens ---
+First tokens: [128000, 35547, 1749, 5848, 6492, 311, 8312, 264, 810, 2793]
+Last tokens:  [267, 32973, 1994, 11, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> computation methodological analysis to supply a more investable, tradable and transparently managed index.\nThe enhanced KLCI, whilst staying representative of the Malayan stock market, provides a platform for a wider scope of investable and appealing chances.\n1.3 PROBLEM STATEMENT\n'
+Text ending:  'a, 1981 ; Chen, Roll, Ross, 1986 ; Cheung, Ng, 1998 ; Binswanger, 2000 ; Lakstutiene,<|end_of_text|>'
+
+--- Sequence 4 | 1024 tokens ---
+First tokens: [128000, 220, 1049, 23, 11846, 430, 20323, 5070, 527, 15499]
+Last tokens:  [23, 883, 1174, 19874, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> 2008 believed that fiscal resources are closely related to economic end product of the state which is measured by industrial production.\nDeFina ( 1991 ) asummed up that rising prices negatively influences companies due to quickly increasing costs. Looking for the relationship betwe'
+Text ending:  'n stock monetary values.\nHarmonizing to Hashemzadeh and Taylor ( 1998 ) , investigate<|end_of_text|>'
+
+================================================================================
+Detailed check: shard_00012 (2,010,722 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 1024 tokens ---
+First tokens: [128000, 644, 1054, 791, 356, 14898, 2785, 315, 279, 3778]
+Last tokens:  [814, 1541, 956, 7655, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>In “The Coddling of the American Mind,” Greg Lukianoff and Jonathan Haidt argued that too many college students engage in “catastrophizing,” which is to say, turning common events into nightmarish trials or claiming that easily bearable events are too awful to bear. After citing exa'
+Text ending:  "cide to stay with him. He ends up battling his Avengers friends when they don't agree<|end_of_text|>"
+
+--- Sequence 1 | 1024 tokens ---
+First tokens: [128000, 449, 813, 5528, 13, 362, 48853, 449, 264, 54991]
+Last tokens:  [85, 14115, 25485, 389, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: "<|begin_of_text|> with his methods. A confrontation with a rogue Doombot leaves an innocent hostage dead. Peter manages to give up the entirety of his powers, including his spider-ones. Later, Peter's child manifests a combination of Captain Universe and Spider-Man powers.\nUrich encounters Peter Par"
+Text ending:  '& issue needed]\nIn this new design, the bodysuit is made of hardened kevlar plates on<|end_of_text|>'
+
+--- Sequence 2 | 1024 tokens ---
+First tokens: [128000, 264, 71404, 1773, 6586, 24722, 323, 374, 11102, 1139]
+Last tokens:  [570, 19173, 29490, 31251, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> a titanium-dipped fiber and is broken into multiple pieces of armor over a more flexible bodysuit for greater mobility. The cowl of the Batsuit, which previously had been attached to the shoulder and neck, is now a separate component inspired by the design of motorcycle helmets, al'
+Text ending:  'd (subduing Norman and Bullseye in succession out of anger). Unfortunately Spider-Man<|end_of_text|>'
+
+--- Sequence 3 | 1024 tokens ---
+First tokens: [128000, 574, 58764, 555, 84019, 11, 6924, 505, 41168, 555]
+Last tokens:  [499, 4805, 1427, 36277, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: "<|begin_of_text|> was weakened by captivity, saved from Norman by a guilt-ridden and angry Harry, who now knew the truth about his father's relationship with Lily Hollister (Harry's girlfriend,) and began using the American Son Armor to beat up Norman. Peter watched the Osborns fight until Menace be"
+Text ending:  'd food coloring, and chocolate syrup to spatter on your clothes so you’ll look bloody<|end_of_text|>'
+
+--- Sequence 4 | 1024 tokens ---
+First tokens: [128000, 323, 342, 683, 0, 20474, 311, 1167, 2925, 1463]
+Last tokens:  [336, 83, 8517, 42236, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> and gory! Remember to zombify your face and hair, too, using dark purplish-brown makeup around your eye socket and eyelids so your eyes look sunken in, for example.\n^ Jump up to: a b c Cowsill, Alan; Gilbert, Laura, ed. (2012). "1990s". Spider-Man Chronicle Celebrating 50 Years of '
+Text ending:  'n your sentences!\nEerder dit jaar zeiden we het al: het chatbot-tijdperk neemt een vl<|end_of_text|>'
+
+================================================================================
+Detailed check: shard_00013 (2,016,119 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 1024 tokens ---
+First tokens: [128000, 2746, 584, 3350, 1057, 3446, 1701, 1176, 477, 2132]
+Last tokens:  [1541, 1431, 2349, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>If we write our story using first or second person point of view (POV), we know what POV we’ve written. First person uses I/we pronouns in the narrative as the character shares their story, and second person uses you pronouns in the narrative.\nBut if we write in third person—using h'
+Text ending:  't thoughts but wouldn’t need to be italicized because the tense and POV don’t change.<|end_of_text|>'
+
+--- Sequence 1 | 1024 tokens ---
+First tokens: [128000, 763, 5655, 75621, 11, 1455, 23719, 1053, 387, 3221]
+Last tokens:  [6138, 304, 1063, 1648, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> In deep POV, most sentences would be near-direct thoughts (using their voice), so italics aren’t appropriate unless needed.\n- Thought tags such as “he thought” or “she wondered” should not be used for internal thoughts. They add distance, which undermines the goal of this style.\nLi'
+Text ending:  'luded, the sentence would use filter words, thought tags, or add distance in some way<|end_of_text|>'
+
+--- Sequence 2 | 1024 tokens ---
+First tokens: [128000, 13, 3011, 6138, 8779, 13016, 1440, 3508, 279, 11555]
+Last tokens:  [315, 13016, 11, 779, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>. That distance helps readers know whether the thoughts or whatever are coming directly from the character or if the insights are just the narrator’s opinion of what the character is experiencing.\nIn other words, even though readers can learn of insights of characters’ internal live'
+Text ending:  'story’s future is fixed. Literary past tense is the default assumption of readers, so<|end_of_text|>'
+
+--- Sequence 3 | 1024 tokens ---
+First tokens: [128000, 22109, 311, 5813, 279, 1005, 315, 4725, 3347, 43787]
+Last tokens:  [420, 304, 220, 16, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> failing to establish the use of normal past tense right away can cause problems.\nThe same caution applies with POV. If many pages or scenes or chapters make readers think our story is one POV and we suddenly change to another, readers will feel a “speed bump” and potentially be thr'
+Text ending:  'allway. With a shrug, I walked away.\nWe never (or rarely) see mistakes like this in 1<|end_of_text|>'
+
+--- Sequence 4 | 604 tokens ---
+First tokens: [128000, 267, 29145, 75621, 1606, 12283, 3619, 1120, 1268, 3958]
+Last tokens:  [4430, 30, 20452, 1102, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>st-person POV because authors understand just how bad it would be. The same level of awkwardness applies to deep 3rd person POV.\nExamples of Other Limitations to Understand\nHere are a few other examples of issues to watch for:\n- To include an unreliable narrator, our story’s POV nee'
+Text ending:  'o understand the range of choices? Do you have any other POV insights to share?Pin It<|end_of_text|>'
+
+================================================================================
+Detailed check: shard_00014 (2,025,874 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 1024 tokens ---
+First tokens: [128000, 21060, 85710, 527, 279, 11424, 88030, 44272, 34735, 8606]
+Last tokens:  [1054, 318, 35563, 863, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>….Included are the END TIMES SIGNIFICANCE/IMPLICATIONS of the “Jewish Holocaust”\nThis annual day of remembrance of the victims is observed by Jewish communities worldwide.\nThis is a very important day on which to acknowledge that the Jewish Holocaust actually took place in history, '
+Text ending:  's buttressed by scientists who advocated “selective breeding” (eugenics) to “improve”<|end_of_text|>'
+
+--- Sequence 1 | 1024 tokens ---
+First tokens: [128000, 279, 3823, 7102, 13, 42089, 5946, 1990, 220, 7285]
+Last tokens:  [14101, 13, 16779, 8651, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> the human race. Laws passed between 1933 and 1935 aimed to reduce the future number of genetic “inferiors” through involuntary sterilization programs: 320,000 to 350,000 individuals judged physically or mentally handicapped were subjected to surgical or radiation procedures so they'
+Text ending:  '#||Camp name||Country (today)||Camp type||Dates of use||Est. prisoners||Est. deaths||<|end_of_text|>'
+
+--- Sequence 2 | 1024 tokens ---
+First tokens: [128000, 3214, 1824, 14989, 8651, 6109, 2964, 7511, 91, 16]
+Last tokens:  [1638, 8651, 7511, 91, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Sub-camps||Webpage|\n|1||Alderney||Channel Islands||Labour camps||Jan 1942 – Jun 1944||6,000||700||Lager Borkum, Lager Helgoland, Lager Norderney, Lager Sylt|||\n|2||Amersfoort||Netherlands||Transit camp and prison||Aug 1941 – Apr 1945||35,000||1,000|||\n|3||Arbeitsdorf||Germany||Labou'
+Text ending:  '|list|||\n|Netherlands||Concentration camp||1943 – Summer 1944||31,000||750||list|||\n|<|end_of_text|>'
+
+--- Sequence 3 | 1024 tokens ---
+First tokens: [128000, 1682, 8651, 39, 41622, 531, 8651, 51270, 8651, 6618]
+Last tokens:  [3799, 220, 7285, 24, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>29||Hinzert||Germany||Collection point and subcamp||Jul 1940 – Mar 1945||14,000||302 min.|||\n|30||Jägala||Estonia||Labour camp||Aug 1942 – Aug 1943||200||3,000||none|||\n|Ukraine||Ghetto; transit, labour, & extermination camp||Sep 1941 – Nov 1943||40,000 min.||none||\n|Latvia||Concent'
+Text ending:  ' 1944||2,000|||\n|Czech Republic||Transit (1939) and labour camp||Sept 1939 – Dec 1939<|end_of_text|>'
+
+--- Sequence 4 | 1024 tokens ---
+First tokens: [128000, 11, 220, 6393, 15, 4235, 6393, 18, 8651, 7007]
+Last tokens:  [323, 4029, 11351, 627, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>, 1940–1943||700||13|||\n|59||Sobibór||Poland||Extermination camp||May 1942 – Oct 1943||170,165|||\n|60||Soldau||Poland||Labour and transit camp||Winter 1939/40 – Jan 1945||30,000||13,000||3|\n|61||Stutthof||Poland||Concentration camp||Sep 1939 – May 1945||110,000||65,000||list|||\n|Ukr'
+Text ending:  'are held at schools, military bases and by other public and community organizations.\n<|end_of_text|>'
+
+================================================================================
+Detailed check: shard_00015 (2,018,059 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 1024 tokens ---
+First tokens: [128000, 3923, 374, 20442, 278, 5380, 791, 3492, 3451, 57041]
+Last tokens:  [5938, 449, 1124, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>What is Halal?\nThe word ‘Halal’ in Arabic means ‘lawful’ or ‘permitted’, its opposite is ‘Haram’ which means ‘unlawful’ or ‘prohibited’. Muslims can only consume food that is Halal.\nMany things are clearly Halal or clearly Haram; however there are some areas that are ambiguous. Such'
+Text ending:  ' Halal products because of the obvious positive health benefits associated with them.<|end_of_text|>'
+
+--- Sequence 1 | 1024 tokens ---
+First tokens: [128000, 480, 1509, 22870, 20442, 278, 3956, 617, 1579, 5990]
+Last tokens:  [6420, 279, 2592, 315, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> Genuinely Halal products have high levels of cleanliness and care throughout their preparation.\nHow Does HACCP, BRC, UKAS Fit In With Halal Certification?\nHACCP, BRC and UKAS are important quality management systems for the food industry. They ensure that the food is pure and safe '
+Text ending:  't for Muslim consumers is that most cheese manufacturers do not mention the source of<|end_of_text|>'
+
+--- Sequence 2 | 1024 tokens ---
+First tokens: [128000, 279, 49242, 389, 279, 2027, 13, 2100, 433, 374]
+Last tokens:  [311, 2567, 32462, 477, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> the enzyme on the product. So it is advisable that Muslim consumers ask the producer about the source of the enzyme themselves. Of course, it is possible that the source can change without notification.\nIs chocolate Liquor Haram?\nChocolate liquor is sweet syrup containing chocolate'
+Text ending:  'ty acid molecules used as emulsifiers. Emulsifiers are molecules used to keep oils or<|end_of_text|>'
+
+--- Sequence 3 | 945 tokens ---
+First tokens: [128000, 50127, 323, 3090, 77810, 304, 832, 10474, 311, 1376]
+Last tokens:  [8, 8964, 1888, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> fats and water dispersed in one phase to form an emulsion (i.e. they prevent oils or fats from separating). Mono- and di-glycerides are used in a wide variety of products, including baked goods, peanut butter, margarine, shortening, and other products. Mono and di-glycerides can be'
+Text ending:  'he dye is certified as Halal then it would be acceptable.\nAnd Allah (swt) knows best.<|end_of_text|>'
+
+--- Sequence 4 | 1024 tokens ---
+First tokens: [128000, 32043, 29914, 73863, 612, 480, 80718, 198, 7279, 25]
+Last tokens:  [3221, 15745, 30304, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>COLORADO GOLD & GEMS\nAuthor: Michael Kelly\nGOLD IN COLORADO\nA decade after gold was discovered at Sutter’s Mill in California, a new rush was on as gold had been discovered in Colorado Territory. With the discovery of gold on Clear Creek by John H. Gregory in 1858-59, a torrent of p'
+Text ending:  'produce gold, the Cripple Creek & Victor Gold Mine, at Victor, near Colorado Springs.<|end_of_text|>'
+
+================================================================================
+Detailed check: shard_00016 (2,015,769 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 1024 tokens ---
+First tokens: [128000, 35862, 22760, 113765, 4881, 320, 7489, 53, 8, 527]
+Last tokens:  [8405, 20789, 25474, 15771, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>Several coronaviruses (CoV) are widespread in humans and cause only mild upper respiratory infections and colds; however, pandemic outbreaks of more severe coronavirus infections in humans have become more prevalent. The severe acute respiratory syndrome (SARS) coronavirus (betaCoV '
+Text ending:  ' vaccines. The latter two have the advantage of providing universal vaccine platforms<|end_of_text|>'
+
+--- Sequence 1 | 1024 tokens ---
+First tokens: [128000, 1097, 12837, 311, 17219, 315, 502, 83089, 292, 11811]
+Last tokens:  [87764, 311, 1521, 36853, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> amenable to introduction of new antigenic targets from emerging viruses.3 They mimic attenuated vaccines by infecting host cells or inducing endogenously produced antigenic proteins to generate both antibody and T-cell immune responses.3,4,5,9 COVID-19 candidate vaccines under deve'
+Text ending:  'uding the target organs infected and the route of virus dissemination to these organs<|end_of_text|>'
+
+--- Sequence 2 | 1024 tokens ---
+First tokens: [128000, 11, 690, 7945, 304, 4500, 315, 40300, 311, 2565]
+Last tokens:  [10099, 11, 2225, 311, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>, will assist in development of vaccines to block viral dissemination and prevent infection of the target organs. An important consideration is if SARS-CoV-2 targets the lungs to cause pneumonia via viraemia or after an upper respiratory infection. If the latter, then IN vaccines us'
+Text ending:  'As such, oral attenuated vaccines were developed for use in pregnant animals, both to<|end_of_text|>'
+
+--- Sequence 3 | 1024 tokens ---
+First tokens: [128000, 5471, 8624, 304, 279, 6691, 323, 1101, 311, 49853]
+Last tokens:  [527, 520, 7191, 5326, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> prevent disease in the mother and also to induce high levels of passive IgA antibodies in milk that are transferred to neonates via suckling to prevent intestinal infection. In studies of swine, milk IgA, but not serum IgG antibodies were correlates of passive immunity to enteric C'
+Text ending:  's.\nThe elderly and those with chronic conditions or comorbidities are at greater risk<|end_of_text|>'
+
+--- Sequence 4 | 503 tokens ---
+First tokens: [128000, 315, 15748, 8624, 477, 29528, 11, 3686, 1690, 6484]
+Last tokens:  [26455, 5603, 13, 777, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> of severe disease or mortality, yet many existing vaccines (such as for influenza) have reduced efficacy in these groups. Alternative vaccination approaches such as better adjuvants and multiple or higher doses, like for high-dose inactivated influenza vaccines, may be needed to co'
+Text ending:  'd passive immunotherapy in a mouse model, and represent another promising approach.19<|end_of_text|>'
+
+================================================================================
+Detailed check: shard_00017 (2,011,146 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 1024 tokens ---
+First tokens: [128000, 38, 6204, 482, 6063, 5165, 198, 28528, 5955, 369]
+Last tokens:  [40942, 315, 279, 16287, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>GMD - German National\nResearch Center for Information Technology\nSankt Augustin, Germany\nWe introduce the generic term musical artifact to describe the different kinds of representations composers use to communicate their music. In this sense, we understand by musical artifact any k'
+Text ending:  'when listening to several variants in succession, we may gain a glimpse of the formal<|end_of_text|>'
+
+--- Sequence 1 | 1024 tokens ---
+First tokens: [128000, 4754, 555, 27393, 279, 27103, 323, 555, 44928, 287]
+Last tokens:  [1690, 2103, 6484, 72946, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> potential by comparing the variants and by reconstructing the decisions taken by the musician ó a procedure rarely applicable in practice. Thus only musicians may really experience the formal openness of a musical text since they are confronted with the alternatives and can take de'
+Text ending:  ' magnitude.\nWe are not going to argue here about the many still existing deficiencies<|end_of_text|>'
+
+--- Sequence 2 | 1024 tokens ---
+First tokens: [128000, 11, 17294, 11, 323, 304, 18837, 13757, 315, 279]
+Last tokens:  [4652, 304, 264, 6063, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>, restrictions, and incompatibilities of the current computer sound technology. It is clear that the situation is far from being satisfactory for serious composers today. Our perspective is rather oriented towards the near and middle term future, which will see many improvements on '
+Text ending:  'c installation project which was first presented as a speculative article in a German<|end_of_text|>'
+
+--- Sequence 3 | 1253 tokens ---
+First tokens: [128000, 19225, 4731, 8486, 304, 220, 2550, 19, 320, 36]
+Last tokens:  [11, 15210, 8612, 13, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> contemporary music journal in 1994 (Eckel, 1994). A first proof of concept and a feasability study was carried out at the Banff Centre for the Arts in Canada during a 3-month residency in 1995 (Eckel 1996, Eckel 1997a). A first sketch of the installation has been realized in 1997 w'
+Text ending:  'Max Graphical Programming Environment. Computer Music Journal 15(3):68-77, MIT Press.<|end_of_text|>'
+
+--- Sequence 4 | 1024 tokens ---
+First tokens: [128000, 91, 791, 64695, 9528, 16225, 198, 3198, 12170, 311]
+Last tokens:  [279, 1584, 1550, 539, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>|The Peachtree Question\nVisitors to Atlanta often remark on a certain local curiosity:\nEven though just about every other street, plaza, or business\nestablishment is dubbed "Peachtree," there doesn\'t seem\nto be a single peach tree standing in the entire city. The reason\nfor the abse'
+Text ending:  'ed Terminus.\nThe Start of Something Big\nThe small burg at the end of the line did not<|end_of_text|>'
+
+================================================================================
+Detailed check: shard_00018 (2,023,844 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 1024 tokens ---
+First tokens: [128000, 12, 5377, 9742, 198, 32, 593, 788, 30903, 315]
+Last tokens:  [389, 279, 3682, 28772, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>- Open Access\nAqueous chemistry of anthropogenically contaminated Bengaluru lakes\nSustainable Environment Research volume 30, Article number: 8 (2020)\nAnthropogenic activities impact the major ion composition of fresh water sources. The inorganic species are likely to be influenced '
+Text ending:  'ial and algal activities. The influence of bio-geochemical reactions on the major ion<|end_of_text|>'
+
+--- Sequence 1 | 1024 tokens ---
+First tokens: [128000, 18528, 315, 52673, 80744, 5070, 706, 539, 1027, 20041]
+Last tokens:  [220, 17, 8, 1501, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> composition of contaminated freshwater resources has not been studied. The present study hence examines the influence of bio-geochemical reactions on the major ion composition of sewage contaminated Bengaluru lakes. The selected lakes represent water bodies in the major valley syst'
+Text ending:  'h = 2.5 m) at PU Lake. The water column profiles of UL, PU and NG lakes (Fig. 2) show<|end_of_text|>'
+
+--- Sequence 2 | 1024 tokens ---
+First tokens: [128000, 430, 9499, 11, 37143, 11, 9503, 11, 350, 6061]
+Last tokens:  [20645, 13, 2052, 1023, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> that temperature, pH, DO, TDS and HCO3− values of a given lake vary insignificantly with depth indicative of a well-mixed system.\nSediments were collected at each lake (Figs. 3a to c) using Van Veen Grab sampler. The coordinates of the sampling points were recorded using a handheld'
+Text ending:  '1) samples were measured in the field using portable EC, pH, and DO meters. All other<|end_of_text|>'
+
+--- Sequence 3 | 1024 tokens ---
+First tokens: [128000, 5137, 1051, 17303, 304, 279, 27692, 13, 578, 21283]
+Last tokens:  [19, 34363, 65125, 555, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> parameters were measured in the laboratory. The EC values are represented as TDS using an appropriate relation. The COD concentrations of the lake water and PUIN1 and ULIN1 samples were determined with unfiltered samples using silver sulfate-sulfuric acid closed reflux method . The'
+Text ending:  '. The water leachate was examined for Ca2+, Mg2+, Na+, K+, Cl−, HCO3−and SO4− ions by<|end_of_text|>'
+
+--- Sequence 4 | 1024 tokens ---
+First tokens: [128000, 279, 8767, 7633, 16346, 627, 791, 59132, 49232, 505]
+Last tokens:  [42810, 1614, 13, 578, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> the previously described procedures.\nThe sediment residue from water leaching test was agitated again with ultra-pure water (200 mL) for 2 h to remove residual salts. The suspension was centrifuged, and the EC of the washings ranged between 25 and 45 μS cm− 1. The exchangeable cati'
+Text ending:  'range between 41 to 59 (Table 4) indicative of near eutrophic or eutrophic state. The<|end_of_text|>'
+
+================================================================================
+Detailed check: shard_00019 (2,026,572 sequences, showing 5)
+================================================================================
+
+--- Sequence 0 | 1024 tokens ---
+First tokens: [128000, 47110, 47077, 3083, 7121, 1406, 2198, 26410, 2006, 3247]
+Last tokens:  [311, 279, 330, 43, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>EVOLUTION OF CLUTCH SIZE IN THE EASTERN KINGBIRD: TESTS OF ALTERNATIVE HYPOTHESES.\nAbstract. David Lack proposed that parental feeding ability ultimately limited clutch size in bird species in which the young were dependent upon their parents for food. However, many species can rais'
+Text ending:  'l. , Stearns , and VanderWerf ). The reason why many species do not conform to the "L<|end_of_text|>'
+
+--- Sequence 1 | 1024 tokens ---
+First tokens: [128000, 474, 43789, 1404, 1, 320, 82, 729, 84, 4359]
+Last tokens:  [8, 323, 19151, 70666, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|>ack clutch size" (sensu Godfray et al. 1992) is the subject of long-standing debate (Monaghan and Nager 1997).\nTo account for the discrepancy between theoretical predictions and empirical findings, Lack suggested that young from successful broods that were larger than the modal clut'
+Text ending:  'uced from daily food intake (Winkler and Allen 1995, Perrins 1996) and egg-production<|end_of_text|>'
+
+--- Sequence 2 | 1024 tokens ---
+First tokens: [128000, 7194, 527, 1193, 264, 2678, 19983, 315, 14209, 39097]
+Last tokens:  [304, 279, 23634, 477, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> costs are only a small fraction of existence metabolism (e.g., Ward 1996). Furthermore, food and nutrient supplementation rarely results in larger clutches (Meijer et al. 1990, Ramsay and Houston 1997; reviewed by Nager et al. ). Finally, females might individualize clutch size to '
+Text ending:  'f predation. Death was ascribed to starvation if young were found dead in the nest or<|end_of_text|>'
+
+--- Sequence 3 | 1024 tokens ---
+First tokens: [128000, 3927, 23634, 19342, 1051, 7554, 505, 2967, 30797, 9204]
+Last tokens:  [2967, 30797, 690, 387, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> individual nestlings were missing from broods showing evidence of poor nutrition.\nAt day 13 young were measured and banded with one U.S. Fish and Wildlife Service band and three plastic colored leg bands to permit individual identification. Nestling measurements included mass (in g'
+Text ending:  'good years will increase linearly with brood size and that the largest broods will be<|end_of_text|>'
+
+--- Sequence 4 | 1024 tokens ---
+First tokens: [128000, 279, 1455, 27331, 13, 82671, 11, 30010, 3252, 2450]
+Last tokens:  [4103, 11, 393, 284, 128001]
+BOS at start: True | count: 1 OK
+EOS at end:   True | count: 1 OK
+Round-trip:   delta=+0 tokens OK
+Text preview: '<|begin_of_text|> the most productive. Conversely, fledging success of large broods is predicted to be low during bad years, and pairs raising intermediate-sized broods will attain the greatest success. I used linear and polynomial regression to determine whether productivity increased linearly or q'
+Text ending:  'laying date eliminated all annual differences in clutch size ([F.sub.8,494] 1.52, P =<|end_of_text|>'
+
+Round-trip summary: 0 / 100 sequences had non-zero delta
+Copying to store: /users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024
+Files to copy: 40

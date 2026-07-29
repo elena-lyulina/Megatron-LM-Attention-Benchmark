@@ -37,7 +37,7 @@ scratch copy — remove it yourself once confirmed.
 
 ## 4. Pull logs locally, update docs, commit
 
-- Pull `.out`/`.err` logs to your machine with the `cplogs` script.
+- Pull `.out`/`.err` logs to your machine with the `cplogs` script (a custom local script, `.local/bin/cplogs`).
 - Append a run entry (job ID, timing, final loss, throughput, checkpoint path) to
   `models_pretraining_fineweb40B_gutenberg3B.md`.
 - Commit the new slurm scripts + doc update.

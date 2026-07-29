@@ -1,0 +1,637 @@
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+worker-00:   0%|          | 0/264308 [00:00<?, ?it/s]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+worker-03:   0%|          | 0/264308 [00:00<?, ?it/s]worker-02:   0%|          | 0/264309 [00:00<?, ?it/s]worker-01:   0%|          | 0/264309 [00:00<?, ?it/s]
+
+
+
+
+
+
+
+
+
+
+worker-09:   0%|          | 0/264309 [00:00<?, ?it/s][A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+worker-05:   0%|          | 0/264309 [00:00<?, ?it/s][A[A[A[A[A[A[A[A[Aworker-04:   0%|          | 0/264309 [00:00<?, ?it/s]worker-10:   0%|          | 0/264308 [00:00<?, ?it/s]worker-07:   0%|          | 0/264309 [00:00<?, ?it/s][A[A[A[A[Aworker-08:   0%|          | 0/264309 [00:00<?, ?it/s]worker-11:   0%|          | 0/264309 [00:00<?, ?it/s]
+
+
+
+
+
+
+
+
+
+
+
+[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+worker-18:   0%|          | 0/264309 [00:00<?, ?it/s]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[A[A[A[A[A[A[A[Aworker-06:   0%|          | 0/264308 [00:00<?, ?it/s][A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A ... (more hidden) ...[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[Aworker-15:   0%|          | 0/264309 [00:00<?, ?it/s]worker-17:   0%|          | 0/264309 [00:00<?, ?it/s]worker-13:   0%|          | 0/264308 [00:00<?, ?it/s]worker-12:   0%|          | 0/264309 [00:00<?, ?it/s]worker-14:   0%|          | 0/264309 [00:00<?, ?it/s]worker-16:   0%|          | 0/264308 [00:00<?, ?it/s][A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+worker-00:  39%|███▊      | 101945/264308 [00:10<00:15, 10193.79it/s]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+worker-08:  36%|███▌      | 95263/264309 [00:10<00:17, 9526.28it/s]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+worker-10:  36%|███▌      | 93843/264308 [00:10<00:18, 9384.28it/s][A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+worker-09:  37%|███▋      | 98682/264309 [00:10<00:16, 9868.13it/s] ... (more hidden) ...worker-18:  35%|███▍      | 92011/264309 [00:10<00:18, 9201.10it/s]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+worker-12:  37%|███▋      | 98150/264309 [00:10<00:16, 9814.96it/s]worker-03:  34%|███▍      | 90608/264308 [00:10<00:19, 9060.06it/s][A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+worker-02:  35%|███▍      | 92152/264309 [00:10<00:18, 9215.17it/s]worker-15:  35%|███▌      | 92814/264309 [00:10<00:18, 9281.35it/s]worker-11:  36%|███▌      | 95616/264309 [00:10<00:17, 9561.59it/s][A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[Aworker-13:  36%|███▌      | 95391/264308 [00:10<00:17, 9539.07it/s]
+
+
+
+
+
+
+
+
+
+
+[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[A[A[A[A[A[A[A[A[A[A[A
+worker-07:  35%|███▌      | 93685/264309 [00:10<00:18, 9367.77it/s]worker-06:  35%|███▍      | 92445/264308 [00:10<00:18, 9243.96it/s]worker-16:  36%|███▌      | 94582/264308 [00:10<00:17, 9458.15it/s][A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[Aworker-05:  36%|███▌      | 93832/264309 [00:10<00:18, 9382.06it/s][A[A[A[A[A[A[Aworker-04:  36%|███▌      | 95021/264309 [00:10<00:17, 9500.98it/s][A[A[A[A[A[Aworker-17:  36%|███▌      | 95083/264309 [00:10<00:17, 9507.81it/s][A[A[A[Aworker-01:  37%|███▋      | 97418/264309 [00:10<00:17, 9740.34it/s][A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[Aworker-14:  36%|███▌      | 94247/264309 [00:10<00:18, 9423.89it/s][A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+worker-08:  72%|███████▏  | 190526/264309 [00:20<00:07, 9382.48it/s][A[A[A[A[A[A[A[A
+
+
+
+worker-04:  72%|███████▏  | 190031/264309 [00:20<00:08, 9047.69it/s][A[A[A[A
+
+
+worker-03:  69%|██████▊   | 181209/264308 [00:21<00:09, 8528.57it/s][A[A[A
+
+
+
+
+
+
+
+
+
+
+worker-11:  72%|███████▏  | 191232/264309 [00:21<00:08, 8970.34it/s][A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+worker-12:  74%|███████▍  | 196300/264309 [00:21<00:07, 9161.24it/s][A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+worker-14:  71%|███████▏  | 188486/264309 [00:21<00:08, 8767.00it/s][A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ... (more hidden) ...[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+worker-05:  71%|███████   | 187653/264309 [00:21<00:08, 8555.80it/s][A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+worker-16:  72%|███████▏  | 189164/264308 [00:21<00:08, 8600.45it/s][A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+worker-13:  72%|███████▏  | 190782/264308 [00:21<00:08, 8632.83it/s][A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+worker-06:  70%|██████▉   | 184885/264308 [00:21<00:09, 8330.81it/s][A[A[A[A[A[A
+
+worker-02:  70%|██████▉   | 184304/264309 [00:21<00:09, 8293.96it/s][A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+worker-18:  70%|██████▉   | 184022/264309 [00:21<00:09, 8270.04it/s][A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+worker-10:  71%|███████   | 187686/264308 [00:21<00:09, 8425.52it/s][A[A[A[A[A[A[A[A[A[Aworker-00:  77%|███████▋  | 203883/264308 [00:22<00:06, 9112.98it/s] 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+worker-15:  70%|███████   | 185628/264309 [00:22<00:09, 8227.83it/s][A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+worker-17:  72%|███████▏  | 190162/264309 [00:22<00:08, 8405.67it/s][A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A
+worker-01:  74%|███████▎  | 194822/264309 [00:22<00:08, 8586.32it/s][A
+
+
+
+
+
+
+worker-07:  71%|███████   | 187363/264309 [00:22<00:09, 8251.40it/s][A[A[A[A[A[A[A
+
+
+
+
+
+
+
+
+worker-09:  75%|███████▍  | 197364/264309 [00:22<00:07, 8635.93it/s][A[A[A[A[A[A[A[A[Aworker-08: 100%|██████████| 264309/264309 [00:29<00:00, 8979.57it/s]
+worker-00: 100%|██████████| 264308/264308 [00:29<00:00, 8935.28it/s]
+worker-11: 100%|██████████| 264309/264309 [00:29<00:00, 8858.49it/s]
+worker-14: 100%|██████████| 264309/264309 [00:30<00:00, 8788.32it/s]
+worker-13: 100%|██████████| 264308/264308 [00:30<00:00, 8754.36it/s]
+worker-12: 100%|██████████| 264309/264309 [00:30<00:00, 8728.61it/s]
+worker-05: 100%|██████████| 264309/264309 [00:30<00:00, 8717.30it/s]
+worker-04: 100%|██████████| 264309/264309 [00:30<00:00, 8697.46it/s]
+worker-01: 100%|██████████| 264309/264309 [00:30<00:00, 8633.35it/s]
+worker-09: 100%|██████████| 264309/264309 [00:30<00:00, 8595.54it/s]
+worker-19: 100%|██████████| 264309/264309 [00:30<00:00, 8589.16it/s]
+worker-16: 100%|██████████| 264308/264308 [00:31<00:00, 8517.72it/s]
+worker-17: 100%|██████████| 264309/264309 [00:31<00:00, 8489.08it/s]
+worker-07: 100%|██████████| 264309/264309 [00:31<00:00, 8460.16it/s]
+
+
+
+worker-03: 100%|█████████▉| 263131/264308 [00:31<00:00, 8308.02it/s][A[A[Aworker-15: 100%|██████████| 264309/264309 [00:31<00:00, 8432.58it/s]
+worker-03: 100%|██████████| 264308/264308 [00:31<00:00, 8426.49it/s]
+worker-06: 100%|██████████| 264308/264308 [00:31<00:00, 8374.67it/s]
+worker-10: 100%|██████████| 264308/264308 [00:31<00:00, 8367.68it/s]
+worker-18: 100%|██████████| 264309/264309 [00:31<00:00, 8346.68it/s]
+worker-02: 100%|██████████| 264309/264309 [00:31<00:00, 8325.71it/s]
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00007.idx’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00012.idx’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00017.idx’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00018.idx’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00009.idx’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00019.idx’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00005.idx’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00001.idx’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00000.idx’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00015.idx’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00016.idx’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00013.idx’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00003.idx’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00011.idx’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00006.bin’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00005.bin’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00008.bin’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00011.bin’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00008.idx’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00004.bin’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00015.bin’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00010.bin’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00002.bin’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00019.bin’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00014.bin’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00007.bin’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00006.idx’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00004.idx’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00014.idx’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00010.idx’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00002.idx’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00000.bin’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00016.bin’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00017.bin’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00012.bin’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00003.bin’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00009.bin’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00018.bin’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00013.bin’: Invalid argument
+cp: preserving permissions for ‘/users/elyulina/store/datasets/tokenized/fineweb-edu-dedup-160B-datatrove_long_40B_split1024/./shard_00001.bin’: Invalid argument
