@@ -20,3 +20,5 @@ results/datasets/
 results/diagrams/
 results/mem-results/
 results/plots/
+results/inference-perf
+results/long-fineweb-results
