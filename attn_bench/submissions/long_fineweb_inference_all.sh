@@ -5,13 +5,15 @@
 # --force submits regardless.
 #
 # Env passthrough (optional): MAX_LENGTH, MAX_SAMPLES, LOG_STATE_NORM, STATE_CHUNK,
-# STORE_INDIVIDUAL. LOG_STATE_NORM is applied only to GDN variants (attention models have no
-# state to log); STORE_INDIVIDUAL applies to every model.
+# STORE_INDIVIDUAL, EXP_SUFFIX. LOG_STATE_NORM is applied only to GDN variants (attention
+# models have no state to log); STORE_INDIVIDUAL applies to every model. EXP_SUFFIX is
+# appended to EXP_NAME for the results path only (see long_fineweb_inference.slurm)
 #
 # To add a newly trained model to this sweep: add it to attn_bench/scripts/llama_checkpoints.sh, not here.
 #
 # Usage: bash attn_bench/submissions/long_fineweb_inference_all.sh   # full sweep, all models x 2 partitions
 # Add --dry-run to print the sbatch commands that would run without submitting anything.
+# Add --models full,full-long to restrict to a subset (default: every model in the registry).
 
 set -e
 
@@ -23,6 +25,7 @@ STORE_TOKENIZED=/users/$USER/store/datasets/tokenized
 LOG_STATE_NORM=${LOG_STATE_NORM:-}   # set to log GDN state norms (applied only to GDN variants)
 STATE_CHUNK=${STATE_CHUNK:-}         # override the state readout stride (default 128)
 STORE_INDIVIDUAL=${STORE_INDIVIDUAL:-}   # set to also write raw per-sequence records
+EXP_SUFFIX=${EXP_SUFFIX:-}
 
 # Length range must match the extract_long_docs.py run that produced these files.
 MIN_LENGTH=${MIN_LENGTH:-24576}
@@ -42,7 +45,8 @@ while [[ $# -gt 0 ]]; do
     case "$1" in
         --force) FORCE=1; shift ;;
         --dry-run) DRY_RUN=1; shift ;;
-        *) echo "Unknown argument: $1"; echo "Usage: $0 [--force] [--dry-run]  (set MAX_LENGTH/MAX_SAMPLES via env)"; exit 1 ;;
+        --models) IFS=',' read -r -a MODELS <<< "$2"; shift 2 ;;
+        *) echo "Unknown argument: $1"; echo "Usage: $0 [--force] [--dry-run] [--models m1,m2]  (set MAX_LENGTH/MAX_SAMPLES via env)"; exit 1 ;;
     esac
 done
 
@@ -60,6 +64,7 @@ for DATA_FOLDER in "${DATA_FOLDERS[@]}"; do
 
     for MODEL in "${MODELS[@]}"; do
         model_config "$MODEL"
+        EXP_NAME="${EXP_NAME}${EXP_SUFFIX}"
 
         # All models run the same way now: TP=1, no length cap, default walltime.
         VAR_MAXLEN=${MAX_LENGTH:-}
@@ -88,6 +93,7 @@ for DATA_FOLDER in "${DATA_FOLDERS[@]}"; do
         [[ $WANT_STATE -eq 1 ]] && EXPORTS="$EXPORTS,LOG_STATE_NORM=1"
         [[ $WANT_STATE -eq 1 && -n "${STATE_CHUNK:-}" ]] && EXPORTS="$EXPORTS,STATE_CHUNK=$STATE_CHUNK"
         [[ -n "$STORE_INDIVIDUAL" ]] && EXPORTS="$EXPORTS,STORE_INDIVIDUAL=1"
+        [[ -n "$EXP_SUFFIX" ]] && EXPORTS="$EXPORTS,EXP_SUFFIX=$EXP_SUFFIX"
         # --force also recomputes: without this the resubmitted job would just skip and no-op.
         [[ $FORCE -eq 1 ]] && EXPORTS="$EXPORTS,OVERWRITE=1"
 

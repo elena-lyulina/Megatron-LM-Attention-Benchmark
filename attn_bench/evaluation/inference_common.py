@@ -25,6 +25,10 @@ def load_megatron_model(ckpt_dir: str, tokenizer_path: str, extra_megatron_args:
     models run at longer sequence lengths. Architecture flags are read from the checkpoint;
     extra_megatron_args allows passing boolean store_true flags (e.g. --attention-output-gate)
     that --use-checkpoint-args may not restore correctly.
+
+    --use-rope-scaling / --rope-scaling-factor are passed explicitly since
+    load_args_from_checkpoint doesn't restore them, which otherwise silently disables RoPE
+    scaling at inference; factor 8 matches the default parameter used during training.
     """
     from gpt_builders import gpt_builder
     from megatron.training import get_model
@@ -45,6 +49,8 @@ def load_megatron_model(ckpt_dir: str, tokenizer_path: str, extra_megatron_args:
         '--tokenizer-type', 'HuggingFaceTokenizer',
         '--tokenizer-model', tokenizer_path,
         '--load', ckpt_dir,
+        '--use-rope-scaling',
+        '--rope-scaling-factor', '8',
         '--no-load-optim',
         '--no-load-rng',
         '--ckpt-format', 'torch_dist',

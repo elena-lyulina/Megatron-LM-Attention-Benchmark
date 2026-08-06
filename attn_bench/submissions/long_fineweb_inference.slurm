@@ -25,6 +25,8 @@
 #   OVERWRITE      recompute even if store already has this bucket
 #   LOG_STATE_NORM / STATE_CHUNK   GDN state-norm logging (no-op for attention models)
 #   STORE_INDIVIDUAL   also write raw per-sequence records to <key>_individual.jsonl
+#   EXP_SUFFIX     appended to EXP_NAME for the results path only, e.g. EXP_SUFFIX=-scf-8;
+#                  checkpoint lookup (CKPT_NAME) is captured before the suffix is applied
 #
 # Usage: sbatch --export=MODEL=full,DATA_FILE=/path/to/long_24576_32768.jsonl long_fineweb_inference.slurm
 # (normally submitted via long_fineweb_inference_all.sh)
@@ -46,6 +48,7 @@ OVERWRITE=${OVERWRITE:-}
 LOG_STATE_NORM=${LOG_STATE_NORM:-}
 STATE_CHUNK=${STATE_CHUNK:-}
 STORE_INDIVIDUAL=${STORE_INDIVIDUAL:-}
+EXP_SUFFIX=${EXP_SUFFIX:-}
 
 ### MODEL -> EXP_NAME + non-restored flags (registry shared with every other eval script) ###
 source $MEGATRON_LM_DIR/attn_bench/scripts/llama_checkpoints.sh
@@ -55,6 +58,7 @@ TP=${TP:-1}
 model_config "$MODEL"
 
 MODEL_DIR=/users/$USER/store/pretrain-results/$CKPT_NAME
+EXP_NAME="${EXP_NAME}${EXP_SUFFIX}"
 PARTITION_DIR=$(basename "$(dirname "$DATA_FILE")")
 RESULTS_DIR=$RESULTS_BASE/$EXP_NAME/$PARTITION_DIR
 SCRATCH_RESULTS_DIR=$SCRATCH_RESULTS_BASE/$EXP_NAME/$PARTITION_DIR
