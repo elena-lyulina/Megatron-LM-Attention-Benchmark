@@ -8,6 +8,7 @@ source "$SCRIPT_DIR/llama_checkpoints.sh"   # provides MODELS + model_config -> 
 # --individual / -i        pull *_individual.jsonl files (skipped by default, see below)
 # --reps R [R ...]         only pull these repetitions' individual files (implies --individual)
 # --models TAG [TAG ...]   only pull these llama_checkpoints.sh model tags (default: all MODELS)
+# EXP_SUFFIX (env)         append to EXP_NAME, e.g. EXP_SUFFIX=-scf-8
 PULL_INDIVIDUAL=false
 REPS_FILTER=()
 MODELS_FILTER=()
@@ -43,6 +44,7 @@ if [ ${#MODELS_FILTER[@]} -eq 0 ]; then
 else
     MODELS_TO_PULL=("${MODELS_FILTER[@]}")
 fi
+EXP_SUFFIX=${EXP_SUFFIX:-}
 
 ### CONFIG ###
 REMOTE_HOST="elyulina@clariden"
@@ -57,6 +59,7 @@ GUTENBERG_INC=()
 FINEWEB_INC=()
 for MODEL in "${MODELS_TO_PULL[@]}"; do
     model_config "$MODEL"
+    EXP_NAME="${EXP_NAME}${EXP_SUFFIX}"
     GUTENBERG_INC+=(--include="$EXP_NAME/***")
     FINEWEB_INC+=(--include="$EXP_NAME/***")
 done
