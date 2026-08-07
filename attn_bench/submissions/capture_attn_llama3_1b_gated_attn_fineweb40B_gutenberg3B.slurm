@@ -32,8 +32,9 @@ PDM_DIR=/users/elyulina/scratch/PDM
 OFFSET=${OFFSET:-0}
 PREFIX_LENGTH=${PREFIX_LENGTH:-50}
 
-EXP_NAME=llama3-1b-gated-attn-fineweb40B-gutenberg3B
-MODEL_DIR=/users/elyulina/store/pretrain-results/$EXP_NAME
+source $MEGATRON_LM_DIR/attn_bench/scripts/llama_checkpoints.sh
+model_config gated-scf8
+MODEL_DIR=/users/elyulina/store/pretrain-results/$CKPT_NAME
 MEM_BASE=/users/elyulina/store/mem-results
 MEM_DIR=$MEM_BASE/SparseGutenberg/$EXP_NAME
 GUTENBERG_JSONL_DIR=/users/elyulina/store/datasets/tokenized/gutenberg_rep_jsonl
@@ -66,6 +67,6 @@ srun \
         --suffix-length 50 \
         --batch-size 20 \
         --capture-attention \
-        --megatron-extra-args --attention-output-gate"
+        --megatron-extra-args $MEGATRON_EXTRA"
 
 echo "END TIME: $(date)"

@@ -13,7 +13,7 @@
 #
 # Usage: bash attn_bench/submissions/long_fineweb_inference_all.sh   # full sweep, all models x 2 partitions
 # Add --dry-run to print the sbatch commands that would run without submitting anything.
-# Add --models full,full-long to restrict to a subset (default: every model in the registry).
+# Add --models full-scf8,full-long-scf8 to restrict to a subset (default: every model in the registry).
 
 set -e
 

@@ -273,6 +273,7 @@ def modelopt_gpt_hybrid_builder(
             "rotary_percent": args.rotary_percent,
             "rotary_base": args.rotary_base,
             "rope_scaling": args.use_rope_scaling,
+            "rope_scaling_factor": args.rope_scaling_factor,
             "pg_collection": pg_collection,
         }
         model = MCoreGPTModel(config=config, **model_kwargs)

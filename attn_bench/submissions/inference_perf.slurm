@@ -26,7 +26,7 @@ source $MEGATRON_LM_DIR/attn_bench/scripts/llama_checkpoints.sh
 source $MEGATRON_LM_DIR/attn_bench/scripts/scratch_to_store.sh
 
 ### MODEL -> EXP_NAME / MEGATRON_EXTRA / NEEDS_TRITON / NEEDS_UNFUSED_DECODE ###
-MODEL=${MODEL:-full}
+MODEL=${MODEL:-full-scf8}
 model_config "$MODEL"
 
 MODEL_DIR=/users/$USER/store/pretrain-results/$CKPT_NAME

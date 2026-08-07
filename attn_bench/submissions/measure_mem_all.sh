@@ -11,6 +11,7 @@
 #
 # Usage: bash attn_bench/submissions/measure_mem_all.sh --offsets 0 --prefixes 50 100 250 1000 1500 2000 3000 4000 5000
 # Add --dry-run to print the sbatch commands that would run without submitting anything.
+# Add --models m1,m2 to restrict to a subset (default: every model in the registry).
 
 set -e
 
@@ -35,6 +36,9 @@ while [[ $# -gt 0 ]]; do
         --dry-run)
             DRY_RUN=1; shift
             ;;
+        --models)
+            IFS=',' read -r -a MODELS <<< "$2"; shift 2
+            ;;
         --offsets)
             shift
             while [[ $# -gt 0 && "$1" != --* ]]; do
@@ -55,7 +59,7 @@ while [[ $# -gt 0 ]]; do
             ;;
         *)
             echo "Unknown argument: $1"
-            echo "Usage: $0 [--force] [--dry-run] --offsets <o1> [o2 ...] --prefixes <p1> [p2 ...] [--suffixes <s1> [s2 ...]]"
+            echo "Usage: $0 [--force] [--dry-run] [--models m1,m2] --offsets <o1> [o2 ...] --prefixes <p1> [p2 ...] [--suffixes <s1> [s2 ...]]"
             exit 1
             ;;
     esac

@@ -28,7 +28,7 @@
 #   EXP_SUFFIX     appended to EXP_NAME for the results path only, e.g. EXP_SUFFIX=-scf-8;
 #                  checkpoint lookup (CKPT_NAME) is captured before the suffix is applied
 #
-# Usage: sbatch --export=MODEL=full,DATA_FILE=/path/to/long_24576_32768.jsonl long_fineweb_inference.slurm
+# Usage: sbatch --export=MODEL=full-scf8,DATA_FILE=/path/to/long_24576_32768.jsonl long_fineweb_inference.slurm
 # (normally submitted via long_fineweb_inference_all.sh)
 
 echo "START TIME: $(date)"
@@ -53,7 +53,7 @@ EXP_SUFFIX=${EXP_SUFFIX:-}
 ### MODEL -> EXP_NAME + non-restored flags (registry shared with every other eval script) ###
 source $MEGATRON_LM_DIR/attn_bench/scripts/llama_checkpoints.sh
 source $MEGATRON_LM_DIR/attn_bench/scripts/scratch_to_store.sh
-MODEL=${MODEL:-full}
+MODEL=${MODEL:-full-scf8}
 TP=${TP:-1}
 model_config "$MODEL"
 

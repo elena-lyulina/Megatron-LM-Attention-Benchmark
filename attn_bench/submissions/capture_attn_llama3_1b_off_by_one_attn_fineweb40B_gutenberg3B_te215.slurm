@@ -32,8 +32,9 @@ PDM_DIR=/users/elyulina/scratch/PDM
 OFFSET=${OFFSET:-0}
 PREFIX_LENGTH=${PREFIX_LENGTH:-50}
 
-EXP_NAME=llama3-1b-off-by-one-attn-fineweb40B-gutenberg3B-te215
-MODEL_DIR=/users/elyulina/store/pretrain-results/llama3-1b-off-by-one-attn-fineweb40B-gutenberg3B
+source $MEGATRON_LM_DIR/attn_bench/scripts/llama_checkpoints.sh
+model_config off-by-one-scf8
+MODEL_DIR=/users/elyulina/store/pretrain-results/$CKPT_NAME
 MEM_BASE=/users/elyulina/store/mem-results
 MEM_DIR=$MEM_BASE/SparseGutenberg/$EXP_NAME
 GUTENBERG_JSONL_DIR=/users/elyulina/store/datasets/tokenized/gutenberg_rep_jsonl
@@ -76,7 +77,7 @@ srun \
         --suffix-length 50 \
         --batch-size 20 \
         --capture-attention \
-        --megatron-extra-args --softmax-type off-by-one --attention-backend unfused"
+        --megatron-extra-args $MEGATRON_EXTRA --attention-backend unfused"
         # --attention-backend unfused: avoids language_module assertion that rejects NVTE_FUSED_ATTN=0 under AttnBackend.auto
 
 echo "END TIME: $(date)"

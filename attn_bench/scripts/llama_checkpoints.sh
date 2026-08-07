@@ -19,7 +19,7 @@
 #                        pass, where TE's FusedAttention already supports softmax_type
 #                        natively, so they never need this.
 
-MODELS=(full gated full-xdoc-leak sink off-by-one gdn carry-r0 carry-r0.5 carry-r1 full-goldfish gdn-goldfish full-fineweb80B full-long full-long-split-1024)
+MODELS=(full-scf8 gated-scf8 full-xdoc-leak-scf8 sink-scf8 off-by-one-scf8 gdn carry-r0 carry-r0.5 carry-r1 full-goldfish-scf8 gdn-goldfish full-fineweb80B-scf8 full-long-scf8 full-long-split-1024-scf8)
 
 # GDN linear-attention dims -- not restored by --use-checkpoint-args, must be re-passed.
 GDN_DIMS="--experimental-attention-variant gated_delta_net \
@@ -30,6 +30,9 @@ GDN_DIMS="--experimental-attention-variant gated_delta_net \
     --linear-value-head-dim 384 \
     --linear-conv-kernel-dim 4"
 
+# Actual RoPE scaling factor these checkpoints trained with (see gpt_builders.py) -- not restored by --use-checkpoint-args, must be re-passed.
+ROPE_SCF8="--use-rope-scaling --rope-scaling-factor 8"
+
 model_config() {
     local model="$1"
     CKPT_NAME=""
@@ -37,31 +40,31 @@ model_config() {
     IS_SINK_FAMILY=0
     NEEDS_UNFUSED_DECODE=0
     case "$model" in
-        full)
-            EXP_NAME=llama3-1b-full-attn-fineweb40B-gutenberg3B
-            MEGATRON_EXTRA=""
+        full-scf8)
+            EXP_NAME=llama3-1b-full-attn-scf8-fineweb40B-gutenberg3B
+            MEGATRON_EXTRA="$ROPE_SCF8"
             ;;
-        gated)
-            EXP_NAME=llama3-1b-gated-attn-fineweb40B-gutenberg3B
-            MEGATRON_EXTRA="--attention-output-gate"
+        gated-scf8)
+            EXP_NAME=llama3-1b-gated-attn-scf8-fineweb40B-gutenberg3B
+            MEGATRON_EXTRA="$ROPE_SCF8 --attention-output-gate"
             ;;
-        full-xdoc-leak)
-            EXP_NAME=llama3-1b-full-attn-xdoc-attn-leak-fineweb40B-gutenberg3B
-            MEGATRON_EXTRA=""
+        full-xdoc-leak-scf8)
+            EXP_NAME=llama3-1b-full-attn-xdoc-attn-leak-scf8-fineweb40B-gutenberg3B
+            MEGATRON_EXTRA="$ROPE_SCF8"
             ;;
-        sink)
-            EXP_NAME=llama3-1b-sink-attn-fineweb40B-gutenberg3B-te215
-            MEGATRON_EXTRA="--softmax-type learnable"
+        sink-scf8)
+            EXP_NAME=llama3-1b-sink-attn-scf8-fineweb40B-gutenberg3B-te215
+            MEGATRON_EXTRA="$ROPE_SCF8 --softmax-type learnable"
             IS_SINK_FAMILY=1
             NEEDS_UNFUSED_DECODE=1
             ;;
-        off-by-one)
-            EXP_NAME=llama3-1b-off-by-one-attn-fineweb40B-gutenberg3B-te215
-            MEGATRON_EXTRA="--softmax-type off-by-one"
+        off-by-one-scf8)
+            EXP_NAME=llama3-1b-off-by-one-attn-scf8-fineweb40B-gutenberg3B-te215
+            MEGATRON_EXTRA="$ROPE_SCF8 --softmax-type off-by-one"
             IS_SINK_FAMILY=1
             NEEDS_UNFUSED_DECODE=1
             # checkpoint lives at the non-te215 path; EXP_NAME (results dir) stays -te215 to match the mem run
-            CKPT_NAME=llama3-1b-off-by-one-attn-fineweb40B-gutenberg3B
+            CKPT_NAME=llama3-1b-off-by-one-attn-scf8-fineweb40B-gutenberg3B
             ;;
         gdn)
             EXP_NAME=llama3-1b-gdn-fineweb40B-gutenberg3B
@@ -83,26 +86,26 @@ model_config() {
             MEGATRON_EXTRA="$GDN_DIMS"
             NEEDS_TRITON=1
             ;;
-        full-goldfish)
-            EXP_NAME=llama3-1b-full-attn-goldfish-fineweb40B-gutenberg3B
-            MEGATRON_EXTRA=""
+        full-goldfish-scf8)
+            EXP_NAME=llama3-1b-full-attn-goldfish-scf8-fineweb40B-gutenberg3B
+            MEGATRON_EXTRA="$ROPE_SCF8"
             ;;
         gdn-goldfish)
             EXP_NAME=llama3-1b-gdn-goldfish-fineweb40B-gutenberg3B
             MEGATRON_EXTRA="$GDN_DIMS"
             NEEDS_TRITON=1
             ;;
-        full-fineweb80B)
-            EXP_NAME=llama3-1b-full-attn-fineweb80B-gutenberg3B
-            MEGATRON_EXTRA=""
+        full-fineweb80B-scf8)
+            EXP_NAME=llama3-1b-full-attn-scf8-fineweb80B-gutenberg3B
+            MEGATRON_EXTRA="$ROPE_SCF8"
             ;;
-        full-long)
-            EXP_NAME=llama3-1b-full-attn-fineweb40B-long-gutenberg3B
-            MEGATRON_EXTRA=""
+        full-long-scf8)
+            EXP_NAME=llama3-1b-full-attn-scf8-fineweb40B-long-gutenberg3B
+            MEGATRON_EXTRA="$ROPE_SCF8"
             ;;
-        full-long-split-1024)
-            EXP_NAME=llama3-1b-full-attn-fineweb40B-long-split-1024-gutenberg3B
-            MEGATRON_EXTRA=""
+        full-long-split-1024-scf8)
+            EXP_NAME=llama3-1b-full-attn-scf8-fineweb40B-long-split-1024-gutenberg3B
+            MEGATRON_EXTRA="$ROPE_SCF8"
             ;;
         *)
             echo "Unknown MODEL=$model (expected one of: ${MODELS[*]})"

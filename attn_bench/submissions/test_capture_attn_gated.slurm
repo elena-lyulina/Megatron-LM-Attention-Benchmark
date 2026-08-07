@@ -29,8 +29,9 @@ CONTAINER_ENV=nemo_26
 MEGATRON_LM_DIR=/iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark
 PDM_DIR=/users/elyulina/scratch/PDM
 
-EXP_NAME=llama3-1b-gated-attn-fineweb40B-gutenberg3B
-MODEL_DIR=/users/elyulina/store/pretrain-results/$EXP_NAME
+source $MEGATRON_LM_DIR/attn_bench/scripts/llama_checkpoints.sh
+model_config gated-scf8
+MODEL_DIR=/users/elyulina/store/pretrain-results/$CKPT_NAME
 TEST_OUT=/users/elyulina/store/mem-results/SparseGutenberg/test/$EXP_NAME
 GUTENBERG_JSONL_DIR=/users/elyulina/store/datasets/tokenized/gutenberg_rep_jsonl
 TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b
@@ -63,7 +64,7 @@ srun \
         --batch-size 4 \
         --max-samples 4 \
         --capture-attention \
-        --megatron-extra-args --attention-output-gate
+        --megatron-extra-args $MEGATRON_EXTRA
 
     ### SHAPE CHECK ###
     python - <<'EOF'

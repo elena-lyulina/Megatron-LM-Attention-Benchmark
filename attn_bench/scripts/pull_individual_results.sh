@@ -3,7 +3,7 @@
 # pull_long_inference_results.sh (which mirrors whole experiment dirs), these files are large
 # (~500MB+ each), so this only fetches the reps you actually ask for.
 #
-# Usage: MODEL=full REPS=0,256 bash attn_bench/scripts/pull_individual_results.sh
+# Usage: MODEL=full-scf8 REPS=0,256 bash attn_bench/scripts/pull_individual_results.sh
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -14,7 +14,7 @@ REMOTE_HOST="elyulina@clariden"
 REMOTE_STORE="/users/elyulina/store"
 LOCAL_ROOT="$SCRIPT_DIR/../results"
 
-MODEL=${MODEL:-full}
+MODEL=${MODEL:-full-scf8}
 REPS=${REPS:-0,256}
 CONFIG=${CONFIG:-all_samples_full_tokens}   # must match config_name() in long_inference.py
 

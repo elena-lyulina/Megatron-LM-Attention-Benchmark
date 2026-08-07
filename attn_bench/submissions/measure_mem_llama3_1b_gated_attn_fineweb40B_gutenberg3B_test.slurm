@@ -26,8 +26,10 @@ CONTAINER_ENV=nemo_26
 MEGATRON_LM_DIR=/iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark
 PDM_DIR=/users/elyulina/scratch/PDM
 
-EXP_NAME=llama3-1b-gated-attn-fineweb40B-gutenberg3B-test
-MODEL_DIR=/users/elyulina/store/pretrain-results/llama3-1b-gated-attn-fineweb40B-gutenberg3B
+source $MEGATRON_LM_DIR/attn_bench/scripts/llama_checkpoints.sh
+model_config gated-scf8
+MODEL_DIR=/users/elyulina/store/pretrain-results/$CKPT_NAME
+EXP_NAME="${EXP_NAME}-test"
 MEM_BASE=/users/elyulina/store/mem-results
 MEM_DIR=$MEM_BASE/SparseGutenberg/$EXP_NAME
 GUTENBERG_JSONL_DIR=/users/elyulina/store/datasets/tokenized/gutenberg_rep_jsonl
@@ -61,7 +63,7 @@ srun \
         --suffix-length 500 \
         --batch-size 20 \
         --max-samples 50 \
-        --megatron-extra-args --attention-output-gate"
+        --megatron-extra-args $MEGATRON_EXTRA"
 
 
 ### STEP 2: compute memorization metrics ###

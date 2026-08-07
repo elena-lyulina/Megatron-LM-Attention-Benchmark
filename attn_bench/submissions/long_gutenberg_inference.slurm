@@ -26,7 +26,7 @@
 #   LOG_STATE_NORM / STATE_CHUNK   GDN state-norm logging (no-op for attention models)
 #   STORE_INDIVIDUAL   also write raw per-sequence records to <key>_individual.jsonl
 #
-# Usage: sbatch --export=MODEL=full long_gutenberg_inference.slurm
+# Usage: sbatch --export=MODEL=full-scf8 long_gutenberg_inference.slurm
 # (normally submitted via long_gutenberg_inference_all.sh)
 
 echo "START TIME: $(date)"
@@ -51,7 +51,7 @@ STORE_INDIVIDUAL=${STORE_INDIVIDUAL:-}
 ### MODEL -> EXP_NAME + non-restored flags (registry shared with every other eval script) ###
 source $MEGATRON_LM_DIR/attn_bench/scripts/llama_checkpoints.sh
 source $MEGATRON_LM_DIR/attn_bench/scripts/scratch_to_store.sh
-MODEL=${MODEL:-full}
+MODEL=${MODEL:-full-scf8}
 model_config "$MODEL"
 # All models (including sink/off-by-one) run the same way, full length by default -- see
 # llama_checkpoints.sh for why.
