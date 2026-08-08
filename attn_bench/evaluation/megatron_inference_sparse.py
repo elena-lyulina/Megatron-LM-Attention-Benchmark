@@ -111,10 +111,15 @@ def compute_nll(model, input_ids: torch.Tensor, suffix_length: int):
 
     logits = model(inputs, position_ids, attention_mask=None)  # [B, S-1, V]
 
-    token_nlls = -F.log_softmax(logits.float(), dim=-1).gather(2, labels.unsqueeze(-1)).squeeze(-1)
+    # Only the suffix positions' NLL is used below -- computing log_softmax (and upcasting
+    # to fp32) over the full prefix+suffix span wastes memory that grows with prefix length
+    # for no benefit (this is what OOM'd at prefix>=5000, see job 3036124). Slice to the
+    # last suffix_length positions first instead.
+    suffix_logits = logits[:, -suffix_length:, :].float()
+    suffix_labels = labels[:, -suffix_length:].unsqueeze(-1)
     del logits
 
-    suffix_nlls = token_nlls[:, -suffix_length:]
+    suffix_nlls = -F.log_softmax(suffix_logits, dim=-1).gather(2, suffix_labels).squeeze(-1)
     mean = suffix_nlls.mean(dim=1)
     std = suffix_nlls.std(dim=1)
     return mean, std, mean.exp()
