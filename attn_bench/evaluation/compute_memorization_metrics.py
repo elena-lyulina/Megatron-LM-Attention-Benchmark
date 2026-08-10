@@ -28,8 +28,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import numpy as np
-from controlled_expr import Results
 from numba import jit
+from verbatim_eval.controlled_expr import Results
 from verbatim_eval.my_rouge import _compute_dp_matrix_2d, compute_rouge_l_2d
 
 from attn_bench.evaluation.megatron_inference import find_suffix_dirs

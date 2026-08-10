@@ -132,6 +132,9 @@ else
 fi
 INFERENCE_STATUS=$?
 
+# Copy inference results (usually expensive) to store.
+copy_scratch_to_store $INFERENCE_STATUS "$SCRATCH_MEM_BASE/SparseGutenberg" "$STORE_MEM_BASE/SparseGutenberg"
+
 ### STEP 2: compute memorization metrics ###
 # Reads inference outputs from scratch, writes one Rouge-L/lcs_norm/TTR/token_acc/
 # divergence_point/p_z summary pkl per suffix boundary to scratch.
@@ -158,7 +161,7 @@ else
     echo "Inference (step 1) failed with status $INFERENCE_STATUS -- skipping metric computation"
 fi
 
-### Copy scratch results to store ###
+### Copy metrics (and re-copy inference, harmless no-op if unchanged) to store ###
 copy_scratch_to_store $METRIC_STATUS "$SCRATCH_MEM_BASE/SparseGutenberg" "$STORE_MEM_BASE/SparseGutenberg"
 
 echo "END TIME: $(date)"
