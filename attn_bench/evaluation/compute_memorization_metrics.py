@@ -3,8 +3,9 @@ Step 2: Rouge-L/lcs_norm/TTR/token_acc/divergence_point/p_z at each hardcoded su
 boundary, computed purely from Step 1's jsonl (CPU-only, no model). Same auto-discovery/
 skip-if-exists shape as compute_generation_quality.py/compute_mauve.py.
 
-Writes one PDM-Results-shaped .pkl per suffix value (boundary or the real suffix length),
-named offset_O_prefix_P_suffix_S_policy.pkl; skip-if-done is an exact-match path check.
+Writes one PDM-Results-shaped .pkl per suffix value (boundary or the real suffix length)
+under exp_dir/metrics/, named offset_O_prefix_P_suffix_S_policy.pkl; skip-if-done is an
+exact-match path check.
 
 Needs Phase A (megatron_inference_backfill.py) run first for NLL/p_z on older results --
 text metrics work on un-backfilled records too.
@@ -117,19 +118,23 @@ def nll_p_z_at_boundaries(ref_nll: list, gen_nll: list, p_z_logprob: list, bound
 
 def compute_rep_metrics(records: list, boundaries: list) -> dict:
     """records: one rep bucket's jsonl records. Returns {boundary: {metric: {scores, mean, std}}}."""
-    backfilled = bool(records) and "ref_nll" in records[0]
-
     per_boundary = defaultdict(lambda: defaultdict(list))
+    missing_nll = 0
     for rec in records:
         text_m = text_metrics_at_boundaries(rec["true_suffix"], rec["generated_suffix"], boundaries)
         for k, metrics in text_m.items():
             for name, val in metrics.items():
                 per_boundary[k][name].append(val)
-        if backfilled:
+        if "ref_nll" in rec:
             nll_m = nll_p_z_at_boundaries(rec["ref_nll"], rec["gen_nll"], rec["p_z_logprob"], boundaries)
             for k, metrics in nll_m.items():
                 for name, val in metrics.items():
                     per_boundary[k][name].append(val)
+        else:
+            missing_nll += 1
+    if missing_nll:
+        print(f"  {missing_nll}/{len(records)} record(s) missing ref_nll -- NLL/p_z skipped for "
+              "them (run backfill first to fill them in)")
 
     result = {}
     for k, metrics in per_boundary.items():
@@ -189,21 +194,22 @@ def load_rep_records(rep_dir: Path) -> list:
 ### METADATA ###
 
 def append_metrics_metadata(exp_dir: Path, boundary: int, offset: int, prefix_length: int, reps: list) -> None:
-    meta_path = exp_dir / "metrics_metadata.json"
-    history = []
-    if meta_path.exists():
-        with open(meta_path) as f:
-            history = json.load(f)
-    history.append({
-        "action": "metrics",
-        "offset": offset,
-        "prefix_length": prefix_length,
-        "suffix_length": boundary,
-        "reps": reps,
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-    })
+    """One file per call under metrics_metadata/, instead of one shared growing list --
+    separate (offset, prefix) jobs for the same experiment run concurrently and would
+    otherwise race on a single read-modify-write file."""
+    meta_dir = exp_dir / "metrics_metadata"
+    meta_dir.mkdir(parents=True, exist_ok=True)
+    timestamp = datetime.now(timezone.utc)
+    meta_path = meta_dir / f"offset_{offset}_prefix_{prefix_length}_suffix_{boundary}_{timestamp.strftime('%Y%m%dT%H%M%S%f')}.json"
     with open(meta_path, "w") as f:
-        json.dump(history, f, indent=2)
+        json.dump({
+            "action": "metrics",
+            "offset": offset,
+            "prefix_length": prefix_length,
+            "suffix_length": boundary,
+            "reps": reps,
+            "timestamp": timestamp.isoformat(),
+        }, f, indent=2)
 
 
 ### MAIN LOOP ###
@@ -223,7 +229,7 @@ def process_offset_prefix(exp_name: str, offset: int, prefix_length: int,
     suffix_tag = f"_{tag}" if tag else ""
 
     def pkl_path(k):
-        return save_path / exp_name / f"offset_{offset}_prefix_{prefix_length}_suffix_{k}_{policy}{suffix_tag}.pkl"
+        return save_path / exp_name / "metrics" / f"offset_{offset}_prefix_{prefix_length}_suffix_{k}_{policy}{suffix_tag}.pkl"
 
     boundaries_to_compute = sorted(k for k in reachable if force or not pkl_path(k).exists())
     if not boundaries_to_compute:

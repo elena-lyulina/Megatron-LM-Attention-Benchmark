@@ -438,7 +438,10 @@ def write_run_metadata(output_path: Path, args, world_size: int, action: str,
     history = []
     if meta_path.exists():
         with open(meta_path) as f:
-            history = json.load(f)
+            loaded = json.load(f)
+        # Legacy dirs from before this history became a list carry a single flat dict --
+        # keep it as the first entry instead of discarding it.
+        history = loaded if isinstance(loaded, list) else [loaded]
     history.append({
         "action": action,
         "extended_from_suffix": extended_from_suffix,

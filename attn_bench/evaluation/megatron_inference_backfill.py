@@ -26,8 +26,8 @@ import torch.distributed as dist
 from attn_bench.evaluation.inference_common import (
     BOS_TOKEN_ID, discover_all_offset_prefix_suffix_dirs, load_megatron_model,
     sample_idx_per_rank)
-from attn_bench.evaluation.megatron_inference import (
-    compute_nll_pz_stats, write_run_metadata)
+from attn_bench.evaluation.megatron_inference import (compute_nll_pz_stats,
+                                                      write_run_metadata)
 
 
 def parse_offset_prefix_suffix(dirname: str) -> tuple:
@@ -39,11 +39,26 @@ def record_needs_backfill(record: dict) -> bool:
     return "sample_idx" not in record or "ref_nll" not in record
 
 
-def already_backfilled(experiment_path: Path) -> bool:
+def _filter_suffix_dirs(experiment_path: Path, offset: int | None, prefix_length: int | None) -> list:
+    dirs = discover_all_offset_prefix_suffix_dirs(experiment_path)
+    if offset is None and prefix_length is None:
+        return dirs
+    kept = []
+    for suffix_dir in dirs:
+        dir_offset, dir_prefix, _ = parse_offset_prefix_suffix(suffix_dir.name)
+        if offset is not None and dir_offset != offset:
+            continue
+        if prefix_length is not None and dir_prefix != prefix_length:
+            continue
+        kept.append(suffix_dir)
+    return kept
+
+
+def already_backfilled(experiment_path: Path, offset: int | None = None, prefix_length: int | None = None) -> bool:
     """Cheap check before loading the checkpoint: peek at the first record of each rep
     dir's rank0.jsonl (records within one file are always backfilled together as a unit
     by this script, so the first record is representative)."""
-    for suffix_dir in discover_all_offset_prefix_suffix_dirs(experiment_path):
+    for suffix_dir in _filter_suffix_dirs(experiment_path, offset, prefix_length):
         for rep_dir in sorted(d for d in suffix_dir.iterdir() if d.is_dir() and d.name.startswith("rep_")):
             rank0 = rep_dir / "rank0.jsonl"
             if not rank0.exists():
@@ -118,10 +133,14 @@ def backfill_rep_dir(model, rep_dir: Path, offset: int, prefix_length: int, suff
             torch.cuda.empty_cache()
 
     for rank_file, recs in zip(rank_files, all_records):
-        with open(rank_file, "w") as f:
+        # Write to a temp file and rename into place, so a crash mid-write can never leave
+        # rank_file truncated -- readers only ever see the fully-old or fully-new content.
+        tmp_file = rank_file.with_suffix(rank_file.suffix + ".tmp")
+        with open(tmp_file, "w") as f:
             for r in recs:
                 json.dump(r, f)
                 f.write("\n")
+        tmp_file.replace(rank_file)
 
     return True
 
@@ -136,7 +155,7 @@ def run_backfill(model, args, rank: int, world_size: int):
     data_folder = Path(args.data_folder)
 
     tasks = []
-    for suffix_dir in discover_all_offset_prefix_suffix_dirs(experiment_path):
+    for suffix_dir in _filter_suffix_dirs(experiment_path, args.offset, args.prefix_length):
         offset, prefix_length, suffix_length = parse_offset_prefix_suffix(suffix_dir.name)
         for rep_dir in sorted(d for d in suffix_dir.iterdir() if d.is_dir() and d.name.startswith("rep_")):
             tasks.append((rep_dir, offset, prefix_length, suffix_length))
@@ -171,6 +190,8 @@ def parse_args():
     parser.add_argument("--tokenizer-path", required=True)
     parser.add_argument("--experiment-path", required=True, help="Same root as the live inference runs (MEM_DIR)")
     parser.add_argument("--data-folder", required=True, help="Directory of rep_*_token.jsonl files")
+    parser.add_argument("--offset", type=int, default=None, help="Restrict to one offset (default: all)")
+    parser.add_argument("--prefix-length", type=int, default=None, help="Restrict to one prefix length (default: all)")
     parser.add_argument("--batch-size", type=int, default=20)
     parser.add_argument("--container-env", default=None)
     parser.add_argument("--max-samples", type=int, default=None,
@@ -182,7 +203,7 @@ def parse_args():
 def main():
     args = parse_args()
 
-    if already_backfilled(Path(args.experiment_path)):
+    if already_backfilled(Path(args.experiment_path), args.offset, args.prefix_length):
         print(f"{args.experiment_path}: already fully backfilled -- skipping checkpoint load.")
         return
 

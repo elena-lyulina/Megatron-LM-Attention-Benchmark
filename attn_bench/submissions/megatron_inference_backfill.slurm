@@ -17,9 +17,11 @@
 # already on store for it. One-time migration -- see megatron_inference_backfill.py.
 #
 # Env vars:
-#   MODEL     checkpoint to use, see llama_checkpoints.sh (default: full-scf8)
+#   MODEL          checkpoint to use, see llama_checkpoints.sh (default: full-scf8)
+#   OFFSET         restrict to one offset (default: all offsets on store for this model)
+#   PREFIX_LENGTH  restrict to one prefix length (default: all)
 #
-# Usage: sbatch --export=MODEL=sink-scf8 megatron_inference_backfill.slurm
+# Usage: sbatch --export=MODEL=sink-scf8,OFFSET=0,PREFIX_LENGTH=500 megatron_inference_backfill.slurm
 # (normally submitted via megatron_inference_backfill_all.sh)
 
 echo "START TIME: $(date)"
@@ -64,6 +66,8 @@ COMMON_ARGS="--container-env $CONTAINER_ENV \
     --experiment-path $MEM_DIR \
     --data-folder $GUTENBERG_JSONL_DIR \
     --batch-size 20"
+[ -n "$OFFSET" ] && COMMON_ARGS="$COMMON_ARGS --offset $OFFSET"
+[ -n "$PREFIX_LENGTH" ] && COMMON_ARGS="$COMMON_ARGS --prefix-length $PREFIX_LENGTH"
 EXTRA_MEGATRON=""
 [ -n "$MEGATRON_EXTRA" ] && EXTRA_MEGATRON="--megatron-extra-args $MEGATRON_EXTRA"
 

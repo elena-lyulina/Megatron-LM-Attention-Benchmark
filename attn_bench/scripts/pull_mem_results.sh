@@ -9,11 +9,11 @@ REMOTE_SRC="elyulina@clariden:/users/elyulina/store/mem-results/SparseGutenberg/
 LOCAL_DST="/Users/Elena.Lyulina/PycharmProjects/swiss-ai/Megatron-LM-Attention-Benchmark/attn_bench/results/mem-results/SparseGutenberg2/"
 
 ### BUILD INCLUDE FILTERS ###
-# Pull each experiment dir's *_greedy.pkl summaries only, not the raw per-sample jsonls.
+# Pull each experiment dir's metrics/*_greedy.pkl summaries only, not the raw per-sample jsonls.
 INC=()
 for MODEL in "${MODELS[@]}"; do
     model_config "$MODEL"
-    INC+=(--include="$EXP_NAME/" --include="$EXP_NAME/*_greedy.pkl")
+    INC+=(--include="$EXP_NAME/" --include="$EXP_NAME/metrics/" --include="$EXP_NAME/metrics/*_greedy.pkl")
 done
 
 ### PULL ###

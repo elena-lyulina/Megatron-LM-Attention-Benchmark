@@ -62,7 +62,7 @@ export PYTHONPATH=$MEGATRON_LM_DIR:$PDM_DIR:$PDM_DIR/src:${PYTHONPATH:-}
 export CUDA_DEVICE_MAX_CONNECTIONS=1
 
 ### CHECK STORE (before doing anything expensive) ###
-STORE_PKL=$STORE_MEM_BASE/SparseGutenberg/$PDM_EXP_NAME/offset_${OFFSET}_prefix_${PREFIX_LENGTH}_suffix_${SUFFIX_LENGTH}_greedy.pkl
+STORE_PKL=$STORE_MEM_BASE/SparseGutenberg/$PDM_EXP_NAME/metrics/offset_${OFFSET}_prefix_${PREFIX_LENGTH}_suffix_${SUFFIX_LENGTH}_greedy.pkl
 if [ -z "$OVERWRITE" ] && [ -f "$STORE_PKL" ]; then
     echo "$STORE_PKL already present in store -- skipping."
     exit 0
