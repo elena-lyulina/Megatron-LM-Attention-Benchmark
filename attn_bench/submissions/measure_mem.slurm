@@ -24,7 +24,10 @@
 #   PREFIX_LENGTH  prompt length in tokens (default: 500)
 #   SUFFIX_LENGTH  generated/gold length in tokens (default: 500)
 #   SINK_SCALE     sink/off-by-one only: scale the learned sink logit
-#   OVERWRITE      recompute even if store already has this pkl
+#   OVERWRITE      skip the whole job unless set, even if store already has this suffix's pkl
+#   FORCE_METRICS  recompute every reachable boundary's pkl in Step 2, even ones that already
+#                  exist (e.g. after backfill added fields an old pkl predates) -- independent
+#                  of OVERWRITE, which only gates whether Step 1 runs at all
 #
 # Usage: sbatch --export=MODEL=sink,OFFSET=0,PREFIX_LENGTH=1000 measure_mem.slurm
 # (normally submitted via measure_mem_all.sh)
@@ -44,6 +47,7 @@ PREFIX_LENGTH=${PREFIX_LENGTH:-500}
 SUFFIX_LENGTH=${SUFFIX_LENGTH:-500}
 SINK_SCALE=${SINK_SCALE:-}
 OVERWRITE=${OVERWRITE:-}
+FORCE_METRICS=${FORCE_METRICS:-}
 
 ### MODEL -> EXP_NAME / MEGATRON_EXTRA / NEEDS_TRITON / IS_SINK_FAMILY / NEEDS_UNFUSED_DECODE ###
 MODEL=${MODEL:-full-scf8}
@@ -143,6 +147,8 @@ copy_scratch_to_store $INFERENCE_STATUS "$SCRATCH_MEM_BASE/SparseGutenberg" "$ST
 
 METRIC_STATUS=1
 if [ $INFERENCE_STATUS -eq 0 ]; then
+    FORCE_ARG=""
+    [ -n "$FORCE_METRICS" ] && FORCE_ARG="--force"
     srun \
         --cpus-per-task $SLURM_CPUS_PER_TASK \
         --environment=$CONTAINER_ENV \
@@ -155,7 +161,8 @@ if [ $INFERENCE_STATUS -eq 0 ]; then
             --base-path $SCRATCH_MEM_BASE/SparseGutenberg \
             --save-path $SCRATCH_MEM_BASE/SparseGutenberg \
             --offsets $OFFSET \
-            --prefix-lengths $PREFIX_LENGTH"
+            --prefix-lengths $PREFIX_LENGTH \
+            $FORCE_ARG"
     METRIC_STATUS=$?
 else
     echo "Inference (step 1) failed with status $INFERENCE_STATUS -- skipping metric computation"

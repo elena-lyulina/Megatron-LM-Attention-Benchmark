@@ -4,7 +4,8 @@
 #
 # Combinations whose final Stage-2 result already exists on store are skipped.
 # Even a redundant job still grabs a 4-GPU node and starts the container, so we
-# also guard here at submit time. --force submits regardless.
+# also guard here at submit time. --force submits regardless (and sets OVERWRITE=1 on the
+# job itself, so it doesn't just re-check and skip on arrival).
 #
 # To add a newly trained model to this sweep: add it to attn_bench/scripts/llama_checkpoints.sh,
 # not here.
@@ -12,6 +13,9 @@
 # Usage: bash attn_bench/submissions/measure_mem_all.sh --offsets 0 --prefixes 50 100 250 1000 1500 2000 3000 4000 5000
 # Add --dry-run to print the sbatch commands that would run without submitting anything.
 # Add --models m1,m2 to restrict to a subset (default: every model in the registry).
+# Add --force-metrics to recompute every reachable boundary's pkl in Step 2 even where one
+# already exists (e.g. a pkl that predates a backfill) -- independent of --force, which
+# controls whether Step 1 (generation) reruns at all.
 
 set -e
 
@@ -26,12 +30,16 @@ OFFSETS=()
 PREFIXES=()
 SUFFIXES=()
 FORCE=0
+FORCE_METRICS=0
 DRY_RUN=0
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --force)
             FORCE=1; shift
+            ;;
+        --force-metrics)
+            FORCE_METRICS=1; shift
             ;;
         --dry-run)
             DRY_RUN=1; shift
@@ -59,7 +67,7 @@ while [[ $# -gt 0 ]]; do
             ;;
         *)
             echo "Unknown argument: $1"
-            echo "Usage: $0 [--force] [--dry-run] [--models m1,m2] --offsets <o1> [o2 ...] --prefixes <p1> [p2 ...] [--suffixes <s1> [s2 ...]]"
+            echo "Usage: $0 [--force] [--force-metrics] [--dry-run] [--models m1,m2] --offsets <o1> [o2 ...] --prefixes <p1> [p2 ...] [--suffixes <s1> [s2 ...]]"
             exit 1
             ;;
     esac
@@ -84,13 +92,15 @@ for OFFSET in "${OFFSETS[@]}"; do
             for MODEL in "${MODELS[@]}"; do
                 model_config "$MODEL"
 
-                PKL=$MEM_BASE/SparseGutenberg/$EXP_NAME/offset_${OFFSET}_prefix_${PREFIX}_suffix_${SUFFIX}_greedy.pkl
-                if [[ $FORCE -eq 0 && -f "$PKL" ]]; then
+                PKL=$MEM_BASE/SparseGutenberg/$EXP_NAME/metrics/offset_${OFFSET}_prefix_${PREFIX}_suffix_${SUFFIX}_greedy.pkl
+                if [[ $FORCE -eq 0 && $FORCE_METRICS -eq 0 && -f "$PKL" ]]; then
                     SKIPPED_COUNT=$((SKIPPED_COUNT + 1))
                     continue
                 fi
 
                 EXPORTS="MODEL=$MODEL,OFFSET=$OFFSET,PREFIX_LENGTH=$PREFIX,SUFFIX_LENGTH=$SUFFIX"
+                [[ $FORCE -eq 1 ]] && EXPORTS="$EXPORTS,OVERWRITE=1"
+                [[ $FORCE_METRICS -eq 1 ]] && EXPORTS="$EXPORTS,FORCE_METRICS=1"
                 if [[ $DRY_RUN -eq 1 ]]; then
                     echo "[dry-run] sbatch --export=ALL,\"$EXPORTS\" $SCRIPT_DIR/measure_mem.slurm"
                     SUBMITTED_COUNT=$((SUBMITTED_COUNT + 1))
