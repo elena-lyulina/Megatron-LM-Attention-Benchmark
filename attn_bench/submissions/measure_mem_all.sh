@@ -16,6 +16,8 @@
 # Add --force-metrics to recompute every reachable boundary's pkl in Step 2 even where one
 # already exists (e.g. a pkl that predates a backfill) -- independent of --force, which
 # controls whether Step 1 (generation) reruns at all.
+# Add --time HH:MM:SS to override measure_mem.slurm's default time limit for this sweep
+# (e.g. a fresh, never-run-before suffix needs more than the default covers).
 
 set -e
 
@@ -32,6 +34,7 @@ SUFFIXES=()
 FORCE=0
 FORCE_METRICS=0
 DRY_RUN=0
+JOB_TIME=""
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -43,6 +46,9 @@ while [[ $# -gt 0 ]]; do
             ;;
         --dry-run)
             DRY_RUN=1; shift
+            ;;
+        --time)
+            JOB_TIME="$2"; shift 2
             ;;
         --models)
             IFS=',' read -r -a MODELS <<< "$2"; shift 2
@@ -101,8 +107,11 @@ for OFFSET in "${OFFSETS[@]}"; do
                 EXPORTS="MODEL=$MODEL,OFFSET=$OFFSET,PREFIX_LENGTH=$PREFIX,SUFFIX_LENGTH=$SUFFIX"
                 [[ $FORCE -eq 1 ]] && EXPORTS="$EXPORTS,OVERWRITE=1"
                 [[ $FORCE_METRICS -eq 1 ]] && EXPORTS="$EXPORTS,FORCE_METRICS=1"
+                TIME_ARG=()
+                [[ -n "$JOB_TIME" ]] && TIME_ARG=(--time="$JOB_TIME")
+
                 if [[ $DRY_RUN -eq 1 ]]; then
-                    echo "[dry-run] sbatch --export=ALL,\"$EXPORTS\" $SCRIPT_DIR/measure_mem.slurm"
+                    echo "[dry-run] sbatch ${TIME_ARG[*]} --export=ALL,\"$EXPORTS\" $SCRIPT_DIR/measure_mem.slurm"
                     SUBMITTED_COUNT=$((SUBMITTED_COUNT + 1))
                     continue
                 fi
@@ -110,7 +119,7 @@ for OFFSET in "${OFFSETS[@]}"; do
                 echo "Submitting measure_mem.slurm (model=$MODEL exp=$EXP_NAME) offset=$OFFSET prefix_length=$PREFIX suffix_length=$SUFFIX"
                 # ALL = propagate the full submission env (USER, PATH, …) so the scripts'
                 # $USER-based paths resolve, then layer our per-job vars on top.
-                sbatch --export=ALL,"$EXPORTS" "$SCRIPT_DIR/measure_mem.slurm"
+                sbatch "${TIME_ARG[@]}" --export=ALL,"$EXPORTS" "$SCRIPT_DIR/measure_mem.slurm"
                 SUBMITTED_COUNT=$((SUBMITTED_COUNT + 1))
             done
         done
