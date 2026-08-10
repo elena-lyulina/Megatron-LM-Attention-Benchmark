@@ -38,7 +38,7 @@ def greedy_cacheless(model, prompt_ids, suffix_length, return_logits=False):
 def greedy_cached(model, prompt_ids, suffix_length, return_logits=False):
     # The path under test: prefill the prompt into a StaticInferenceContext (writes the GDN conv +
     # recurrent state into the cache), then decode one token at a time. Mirrors greedy_generate in
-    # attn_bench/evaluation/megatron_inference_sparse.py, kept local so the test pulls no eval deps.
+    # attn_bench/evaluation/megatron_inference.py, kept local so the test pulls no eval deps.
     from megatron.core.inference.contexts import StaticInferenceContext
 
     B, P = prompt_ids.shape

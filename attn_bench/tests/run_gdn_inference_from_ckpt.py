@@ -1,12 +1,12 @@
 """Run the gdn_inference suite on a real GDN checkpoint.
 
 Loads the trained model via the exact same path as the memorization eval
-(`megatron_inference_sparse.load_megatron_model`) and runs the gdn_inference test
+(`megatron_inference.load_megatron_model`) and runs the gdn_inference test
 functions on it, so the cached incremental decode is validated against the
 quadratic oracle using the *actual trained weights* — not a tiny random model.
 No memorization run, no checkpoint writes.
 
-megatron_inference_sparse.py is imported, not modified.
+megatron_inference.py is imported, not modified.
 
 Usage (via torchrun, TP=1):
     torchrun --nproc_per_node=1 attn_bench/tests/run_gdn_inference_from_ckpt.py \
@@ -21,7 +21,7 @@ import sys
 
 import torch.distributed as dist
 
-from attn_bench.evaluation.megatron_inference_sparse import load_megatron_model
+from attn_bench.evaluation.megatron_inference import load_megatron_model
 from attn_bench.tests.test_gdn_inference import register
 
 

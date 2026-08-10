@@ -13,8 +13,10 @@
 #SBATCH --mail-user=clariden-jobs-elyulin-aaaauapxybdkdx42ppvef2c2eq@swissai-initiative.slack.com
 
 # Measure memorization for one trained model, one (offset, prefix, suffix) point:
-#   - Run sparse Gutenberg inference directly from torch_dist checkpoint (no HF conversion)
-#   - Compute LCS / Rouge-L memorization metrics
+#   - Run sparse Gutenberg inference directly from torch_dist checkpoint (no HF conversion),
+#     reusing/extending an existing larger-suffix run instead of regenerating if one exists
+#   - Compute Rouge-L/lcs_norm/TTR/token_acc/divergence_point/p_z at every reachable suffix
+#     boundary, not just this job's own suffix point
 #
 # Env vars:
 #   MODEL          checkpoint to use, see llama_checkpoints.sh (default: full)
@@ -54,7 +56,7 @@ SCRATCH_MEM_BASE=/iopsstor/scratch/cscs/$USER/mem-results
 MEM_DIR=$SCRATCH_MEM_BASE/SparseGutenberg/$EXP_NAME
 GUTENBERG_JSONL_DIR=/users/$USER/store/datasets/tokenized/gutenberg_rep_jsonl
 TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b
-PY=$MEGATRON_LM_DIR/attn_bench/evaluation/megatron_inference_sparse.py
+PY=$MEGATRON_LM_DIR/attn_bench/evaluation/megatron_inference.py
 
 export PYTHONPATH=$MEGATRON_LM_DIR:$PDM_DIR:$PDM_DIR/src:${PYTHONPATH:-}
 export CUDA_DEVICE_MAX_CONNECTIONS=1
@@ -131,7 +133,10 @@ fi
 INFERENCE_STATUS=$?
 
 ### STEP 2: compute memorization metrics ###
-# Reads inference outputs from scratch, writes the LCS / Rouge-L summary pkl to scratch.
+# Reads inference outputs from scratch, writes one Rouge-L/lcs_norm/TTR/token_acc/
+# divergence_point/p_z summary pkl per suffix boundary to scratch.
+# Auto-discovers every (offset, prefix) pair under $MEM_DIR/inference and every boundary
+# reachable from whatever's landed on scratch, not just this job's own suffix point.
 
 METRIC_STATUS=1
 if [ $INFERENCE_STATUS -eq 0 ]; then
@@ -142,17 +147,15 @@ if [ $INFERENCE_STATUS -eq 0 ]; then
         bash -c "
         pip install numba -q
         export PYTHONPATH='${PYTHONPATH}'
-        python $PDM_DIR/src/verbatim_eval/main.py \
+        python $MEGATRON_LM_DIR/attn_bench/evaluation/compute_memorization_metrics.py \
             --exprs $PDM_EXP_NAME \
-            --mode sparse \
-            --base-path $SCRATCH_MEM_BASE \
+            --base-path $SCRATCH_MEM_BASE/SparseGutenberg \
             --save-path $SCRATCH_MEM_BASE/SparseGutenberg \
             --offsets $OFFSET \
-            --prefix-lengths $PREFIX_LENGTH \
-            --suffix-lengths $SUFFIX_LENGTH"
+            --prefix-lengths $PREFIX_LENGTH"
     METRIC_STATUS=$?
 else
-    echo "Inference (step 1) failed with status $INFERENCE_STATUS -- skipping metric aggregation"
+    echo "Inference (step 1) failed with status $INFERENCE_STATUS -- skipping metric computation"
 fi
 
 ### Copy scratch results to store ###

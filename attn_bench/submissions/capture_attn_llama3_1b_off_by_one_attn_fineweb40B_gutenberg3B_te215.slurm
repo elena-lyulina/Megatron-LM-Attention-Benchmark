@@ -66,7 +66,7 @@ srun \
     RANK=\$SLURM_PROCID LOCAL_RANK=\$SLURM_LOCALID \
     torchrun \
         --nproc_per_node=4 \
-        $MEGATRON_LM_DIR/attn_bench/evaluation/megatron_inference_sparse.py \
+        $MEGATRON_LM_DIR/attn_bench/evaluation/megatron_inference.py \
         --ckpt-dir $MODEL_DIR/checkpoints \
         --tokenizer-path $TOKENIZER_PATH \
         --experiment-path $MEM_DIR \

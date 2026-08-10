@@ -45,8 +45,10 @@ A single inference "point" is defined by four knobs:
 - **prefix length** — how many tokens of context the model is given before it
   starts generating.
 - **suffix length** — how many tokens it generates (and how many gold tokens we
-  score against). Fixed at **500** for the metric runs, **50** for attention
-  capture.
+  score against). Metrics are computed at a hardcoded list of suffix boundaries
+  (25/50/75/100/150/250/500/750/1000/1500/2000/3000/4000/5000/7000), not a single
+  fixed value — a longer generation is reused to derive every shorter boundary for
+  free (see "Suffix reuse and sample_idx" below). Attention capture stays at 50.
 
 For each sample: `excerpt = input_ids[offset : offset + prefix + suffix]`, the
 first `prefix` tokens are the prompt, the last `suffix` tokens are the gold
@@ -60,39 +62,79 @@ One parametrized SLURM script for every model (`MODEL` picks it via
 suffix defaults to 500). Writes to scratch during the job and copies to store at
 the end (never write to capstor from a compute node).
 
-**Stage 1 — sparse inference** (`evaluation/megatron_inference_sparse.py`, 4 GPUs via torchrun)
+**Stage 1 — sparse inference** (`evaluation/megatron_inference.py`, 4 GPUs via torchrun)
 - Loads the `torch_dist` checkpoint **directly** with `--use-checkpoint-args` (no
   HF conversion — HF doesn't support the custom attentions; DCP resharding merges
   the TP shards on the fly; architecture flags are restored from the checkpoint).
-- For each rep bucket, for each sample: a single forward pass computes the
-  reference NLL on the gold suffix (`compute_nll`), then `greedy_generate` decodes
-  the suffix from the prefix using a `StaticInferenceContext` KV cache.
+- Before generating, checks sibling `offset_O_prefix_P_suffix_S'` dirs for the same
+  rep: a `S' >= S` already covers the request (nothing to do); a `S' < S` is
+  extended from via a teacher-forced prefill instead of regenerating from scratch.
+  Older, smaller-suffix dirs are kept, never auto-deleted.
+- For each rep bucket, for each sample: one forward pass over the gold suffix
+  produces full per-position `ref_nll` and `p_z_logprob` (probabilistic extraction,
+  Hayes et al. 2025 — `attn_bench/papers/`), `greedy_generate` decodes the suffix
+  from the prefix using a `StaticInferenceContext` KV cache, and a second forward
+  pass over the generated suffix produces `gen_nll`. GPU/model-only — no text
+  metrics computed here.
 - Writes one `rank{N}.jsonl` per GPU under
-  `inference/offset_O_prefix_P_suffix_S/rep_R_greedy/`, in PDM-compatible format.
+  `inference/offset_O_prefix_P_suffix_S/rep_R_greedy/`.
 
-**Stage 2 — metric aggregation** (PDM `verbatim_eval/main.py --mode sparse`)
-- Reads the jsonls and writes
-  `SparseGutenberg/<exp>/offset_O_prefix_P_suffix_S_greedy.pkl` of LCS / Rouge-L
-  summary statistics.
+**Stage 2 — metric computation** (`evaluation/compute_memorization_metrics.py`, ours, not PDM's)
+- CPU-only, no model. Reads the jsonls and writes one `Results`-shaped `.pkl` per
+  reachable suffix boundary, not just this job's own suffix point.
 
 Output root: `MEM_BASE=/users/elyulina/store/mem-results`, namespace
 `SparseGutenberg/<exp_name>/`.
 
-### Per-sample metrics (written to the jsonl)
-
-Computed in `run_bucket` / `text_metrics`:
+### Per-sample fields written by Stage 1 (the jsonl)
 
 | field | meaning |
 |---|---|
-| `lcs_norm` | normalized longest common **substring** — verbatim memorization |
-| `Rouge-L` | longest common **subsequence** overlap |
-| `TTR_ref`, `TTR_gen` | type-token ratio of gold / generated suffix (diversity) |
-| `nll_mean`, `nll_std`, `perplexity` | on the **generated** suffix |
-| `ref_nll_mean`, `ref_nll_std`, `ref_perplexity` | on the **gold** suffix |
+| `sample_idx` | 0-based line index in the source `rep_R_token.jsonl` — tagged before the `DistributedSampler` split, stable across `--batch-size`/world size, the match key for suffix reuse and Phase A backfill |
 | `prefix`, `true_suffix`, `generated_suffix` | raw token ids |
+| `ref_nll`, `gen_nll` | full per-position NLL, gold / generated suffix |
+| `p_z_logprob` | full per-position log-prob of the true token under top-k=40/T=1 sampling (Hayes et al. 2025) — `-inf` where the true token falls outside the top-k set |
+| `nll_mean`, `nll_std`, `perplexity` | flat summary over the **generated** suffix, kept for PDM compatibility |
+| `ref_nll_mean`, `ref_nll_std`, `ref_perplexity` | flat summary over the **gold** suffix |
 
-LCS comes from PDM's `verbatim_eval.LCS.find_longest_common_substrings`; Rouge-L
-from `verbatim_eval.my_rouge` (DP matrix + `compute_rouge_l_2d`).
+Rouge-L, `lcs_norm`, TTR, `token_acc`, and `divergence_point` are *not* written
+here — they don't need the model, so Stage 2 computes them from the token arrays
+above. Rouge-L reuses PDM's `verbatim_eval.my_rouge._compute_dp_matrix_2d`
+unmodified; `lcs_norm` uses a local copy of `verbatim_eval.LCS._find_lcs`'s DP
+loop that keeps the array instead of PDM's running max (needed to read every
+suffix boundary from one fill — see the plan doc for why).
+
+## Suffix reuse, sample_idx, and p_z
+
+Full design in `attn_bench/_plans/memorization_generation_reuse_plan.md` — this
+is the short version.
+
+Generated tokens nest: a longer suffix generation contains every shorter one as
+an exact prefix, so Stage 1 only ever generates the *missing* tail when a
+smaller-suffix run already exists for the same `(offset, prefix, rep)`, matched
+by `sample_idx` (not by file position, which isn't stable across different
+`--batch-size`/world size runs). Stage 2 mirrors this on the metric side: every
+persisted boundary's `.pkl` is a standalone file
+(`offset_O_prefix_P_suffix_S_greedy.pkl`, indistinguishable from a real standalone run at that suffix), so a
+smaller boundary already has an exact-match file once a bigger run has passed
+through it — no recomputation, no glob, no merge.
+
+`p_z` (Hayes et al. 2025, `attn_bench/papers/`) is a different question from
+Rouge-L/`lcs_norm`: not "did one greedy generation match," but "what's the
+probability a non-deterministic sampling scheme (top-k=40, T=1) reproduces the
+*true* suffix exactly." Computed analytically from the same forward pass as
+`ref_nll` — no extra generation. `(n, p)`-discoverable extraction (how many
+queries `n` for probability `p` of extracting at least once) is derived from
+stored `p_z` on demand (`compute_memorization_metrics.n_for_p`/`p_for_n`), not
+precomputed.
+
+Existing results predating `sample_idx`/`ref_nll`/`gen_nll`/`p_z_logprob` need
+Phase A (`evaluation/megatron_inference_backfill.py`,
+`submissions/megatron_inference_backfill_all.sh --models ...`) run once before
+Stage 2 can compute NLL/`p_z` summaries for them — it patches old jsonl records
+in place, reusing the same checkpoint-loading and NLL code Stage 1 uses. Text
+metrics (Rouge-L/`lcs_norm`/TTR/`token_acc`/`divergence_point`) work on
+un-backfilled records too, since they only ever needed the token arrays.
 
 ## The grid sweep — `measure_mem_all.sh`
 
@@ -125,7 +167,7 @@ The marker is the *final* artifact, so a half-finished point (jsonls but no pkl)
 is re-submitted.
 
 Defense in depth: even if a redundant job *is* submitted,
-`megatron_inference_sparse.py` checks for existing results (`results_already_complete`)
+`megatron_inference.py` checks for existing results (`results_already_complete`)
 **before** loading the checkpoint and exits early if everything is on disk — so the
 expensive model load is skipped, not just the per-rep generation. The submit-time
 check above still matters because the node allocation + container start are paid as
@@ -136,7 +178,7 @@ soon as the job runs, regardless.
 To measure memorization for a newly trained variant:
 
 1. **Confirm inference works.** The eval greedy-generates with a
-   `StaticInferenceContext` KV cache (`megatron_inference_sparse.py`). Standard
+   `StaticInferenceContext` KV cache (`megatron_inference.py`). Standard
    softmax variants (full, gated, sink, off-by-one) decode out of the box. A
    *different sequence mixer* may need its own cached-decode path first — e.g. GDN
    originally raised `NotImplementedError` on any `inference_context` and needed a
@@ -214,13 +256,17 @@ PDM's `verbatim_eval/compute_mauve.py`.
 
 ## Role of the PDM repo
 
-PDM (Xu et al., 2025) is an **external** repo we don't own. The memorization
-metrics reuse its machinery:
-`verbatim_eval.{LCS, my_rouge, main, utils.load_inference_data}`. We cannot push
-to it — local changes are preserved as `attn_bench/utils/PDM_patch.txt` and
-applied to a fresh clone with `patch -p1 --ignore-whitespace` (see
-`PDM-workflow.md`). On the cluster: `PDM_DIR=/users/elyulina/scratch/PDM`, added
-to `PYTHONPATH` alongside its `src/`.
+PDM (Xu et al., 2025) is an **external** repo we don't own.
+`evaluation/compute_memorization_metrics.py` (Stage 2) is ours, not PDM's — but it still
+reuses PDM's low-level pieces as plain library calls: `verbatim_eval.my_rouge`
+(Rouge-L DP), `verbatim_eval.LCS` (the substring-LCS DP loop, adapted locally),
+and `controlled_expr.Results` (the `.pkl` format itself). PDM's own
+`verbatim_eval/main.py` aggregation is no longer wired into the default
+pipeline, but stays available separately (e.g. for cross-checking) — kept alive
+for other uses beyond this. We cannot push to PDM — local changes are preserved
+as `attn_bench/utils/PDM_patch.txt` and applied to a fresh clone with `patch -p1
+--ignore-whitespace` (see `PDM-workflow.md`). On the cluster:
+`PDM_DIR=/users/elyulina/scratch/PDM`, added to `PYTHONPATH` alongside its `src/`.
 
 ## Extras
 
@@ -248,12 +294,13 @@ to `PYTHONPATH` alongside its `src/`.
 ```
 /users/elyulina/store/mem-results/SparseGutenberg/<exp_name>/
 ├── inference/
-│   └── offset_O_prefix_P_suffix_S/
-│       ├── rep_R_greedy/rank{0..3}.jsonl          # per-sample metrics
+│   └── offset_O_prefix_P_suffix_S/            # one dir per suffix actually generated
+│       ├── rep_R_greedy/rank{0..3}.jsonl         # per-sample fields, run_metadata.json history
 │       ├── attn_scores_rouge_l_{NN-MM}_rank{N}.npz   # capture (run-level)
 │       ├── norm_attn_rouge_l_{NN-MM}_rank{N}.npz
 │       └── gating_scores_rank{N}.npz                 # gated only
-├── offset_O_prefix_P_suffix_S_greedy.pkl          # LCS / Rouge-L summary
+├── offset_O_prefix_P_suffix_S_greedy.pkl      # one per reachable boundary, not just S
+├── metrics_metadata.json                      # Stage 2's own append-only history
 ├── offset_O_prefix_P_suffix_S_greedy_distinct_n.json
 ├── offset_O_prefix_P_suffix_S_greedy_perplexity.json
 └── offset_O_prefix_P_suffix_S_greedy_mauve.json
@@ -263,12 +310,15 @@ to `PYTHONPATH` alongside its `src/`.
 
 | script | purpose |
 |---|---|
-| `measure_mem.slurm` | one `(offset, prefix)` point for one `MODEL`: inference + LCS/Rouge-L |
+| `measure_mem.slurm` | one `(offset, prefix)` point for one `MODEL`: inference (Stage 1) + metric computation (Stage 2) |
 | `measure_mem_all.sh` | grid driver: submits all variants (from `scripts/llama_checkpoints.sh`) × offsets × prefixes (skips combos whose pkl exists; `--force` overrides) |
+| `megatron_inference_backfill.slurm` / `_all.sh` | Phase A: one-time backfill of `sample_idx`/`ref_nll`/`gen_nll`/`p_z_logprob` into existing results, `--models` selectable |
 | `capture_attn_<variant>_*.slurm` | capture `[L,H,S,S]` attention maps bucketed by Rouge-L |
 | `generation_quality.slurm` | distinct-n + reference-model perplexity |
 | `mauve.slurm` | MAUVE score |
 | `cross_doc_attn.slurm` | correctness test of cross-document masking (not a metric) |
-| `evaluation/megatron_inference_sparse.py` | the inference engine (greedy gen + per-sample metrics) |
+| `evaluation/megatron_inference.py` | Stage 1: greedy generation + NLL/`p_z`, GPU/model-only |
+| `evaluation/compute_memorization_metrics.py` | Stage 2: Rouge-L/`lcs_norm`/TTR/`token_acc`/`divergence_point`/`p_z` summaries per boundary, CPU-only |
+| `evaluation/megatron_inference_backfill.py` | Phase A: backfills old results to match current Stage 1 output |
 | `evaluation/attn_capture.py` | attention-map capture into Rouge-L buckets |
 | `evaluation/plot_attention_patterns.py` | plotting the captured maps |
