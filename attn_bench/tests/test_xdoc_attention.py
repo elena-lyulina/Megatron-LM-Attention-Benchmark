@@ -136,6 +136,10 @@ def test_mask_structure(model):
 # through the full model forward pass: runs forward_step on seq_A and seq_B, which share the same
 # target doc tokens but have different random prefixes, then asserts per-token losses on the target doc
 # are identical (max_diff < 1e-4). a nonzero diff means attention leaked across the document boundary.
+#
+# A second check below covers cross-BATCH-ROW isolation (packed micro-batch rows leaking into each
+# other, not just docs within one row) -- the A/B check above can't see it since repeating one row
+# mbs times makes every row identical.
 
 def _build_isolation_seqs(seq_len, bos_id, eos_id):
     # builds two packed sequences [BOS prefix_A EOS BOS target EOS label] and [BOS prefix_B EOS BOS target EOS label]
@@ -185,6 +189,68 @@ def _make_test_iter(token_seq, eos_id, args):
     return iter([batch])
 
 
+def _build_row_doc(seq_len, bos_id, eos_id, seed):
+    # one [BOS + random content + EOS] doc, sized seq_len+1 like _build_isolation_seqs
+    content_len = seq_len - 1
+    gen = torch.Generator()
+    gen.manual_seed(seed)
+    content = torch.randint(0, bos_id, (content_len,), generator=gen)
+    return torch.cat([torch.tensor([bos_id]), content, torch.tensor([eos_id])])
+
+
+def _make_multi_row_test_iter(row_seqs, eos_id, args):
+    # like _make_test_iter, but stacks distinct per-row content instead of repeating one row
+    seq_len = args.seq_length
+    rows_tokens, rows_labels, rows_loss_mask, rows_pos_ids = [], [], [], []
+    for row in row_seqs:
+        tokens_1d = row[:seq_len]
+        labels_1d = row[1:seq_len + 1]
+        _, loss_mask_1d, pos_ids_1d = _get_ltor_masks_and_position_ids(
+            data=tokens_1d,
+            eod_token=eos_id,
+            reset_position_ids=args.reset_position_ids,
+            reset_attention_mask=False,
+            eod_mask_loss=args.eod_mask_loss,
+            create_attention_mask=False,
+        )
+        rows_tokens.append(tokens_1d)
+        rows_labels.append(labels_1d)
+        rows_loss_mask.append(loss_mask_1d)
+        rows_pos_ids.append(pos_ids_1d)
+    batch = {
+        'tokens': torch.stack(rows_tokens),
+        'labels': torch.stack(rows_labels),
+        'loss_mask': torch.stack(rows_loss_mask),
+        'position_ids': torch.stack(rows_pos_ids),
+    }
+    return iter([batch])
+
+
+def _run_xbatch_row_sweep(base_forward_step, model, args, bos_id, eos_id):
+    # leave-one-out sweep: swap one row at a time, check every later row's loss is unchanged
+    mbs = args.micro_batch_size
+    if mbs < 2:
+        print_rank_0("  [SKIP] cross-row sweep: micro_batch_size=1, no row pairs to test")
+        return True, 0.0
+
+    base_rows = [_build_row_doc(args.seq_length, bos_id, eos_id, seed=100 + i) for i in range(mbs)]
+    with torch.no_grad():
+        out_base, _ = base_forward_step(_make_multi_row_test_iter(base_rows, eos_id, args), model)
+
+    max_diff = 0.0
+    for k in range(mbs - 1):
+        perturbed_rows = list(base_rows)
+        perturbed_rows[k] = _build_row_doc(args.seq_length, bos_id, eos_id, seed=200 + k)
+        with torch.no_grad():
+            out_k, _ = base_forward_step(_make_multi_row_test_iter(perturbed_rows, eos_id, args), model)
+
+        diff = (out_k[k + 1:].float() - out_base[k + 1:].float()).abs().max().item()
+        max_diff = max(max_diff, diff)
+        print_rank_0(f"  swap row {k}: max_diff on rows {k + 1}..{mbs - 1} = {diff:.6f}")
+
+    return max_diff < _ISOLATION_TOL, max_diff
+
+
 def _make_test_loss_isolation(base_forward_step):
     # returns test_loss_isolation as a (model)->bool function with base_forward_step captured in a closure.
     # test_loss_isolation needs base_forward_step from root pretrain_gpt.py, but this file cannot import it directly:
@@ -197,7 +263,7 @@ def _make_test_loss_isolation(base_forward_step):
         args = get_args()
         eos_id = tokenizer.eod
 
-        print_rank_0(f"  use_packed_seq_params={args.use_packed_seq_params}  reset_position_ids={args.reset_position_ids}  transformer_impl={args.transformer_impl}")
+        print_rank_0(f"  use_packed_seq_params={args.use_packed_seq_params}  reset_position_ids={args.reset_position_ids}  transformer_impl={args.transformer_impl}  micro_batch_size={args.micro_batch_size}")
 
         seq_A, seq_B, prefix_A, prefix_B, target_start = _build_isolation_seqs(
             args.seq_length, tokenizer.bos, eos_id
@@ -208,25 +274,28 @@ def _make_test_loss_isolation(base_forward_step):
         with torch.no_grad():
             out_A, _ = base_forward_step(_make_test_iter(seq_A, eos_id, args), model)
             out_B, _ = base_forward_step(_make_test_iter(seq_B, eos_id, args), model)
+
+        doc_losses_A = out_A[0].float()[target_start:args.seq_length]
+        doc_losses_B = out_B[0].float()[target_start:args.seq_length]
+        doc_max_diff = (doc_losses_A - doc_losses_B).abs().max().item()
+        doc_mean_diff = (doc_losses_A - doc_losses_B).abs().mean().item()
+
+        print_rank_0(f"  prefix_A[:4]={prefix_A[:4].tolist()}  prefix_B[:4]={prefix_B[:4].tolist()}")
+        print_rank_0(f"  intra-row (cross-doc) max_diff={doc_max_diff:.6f}  mean_diff={doc_mean_diff:.6f}")
+
+        row_ok, row_max_diff = _run_xbatch_row_sweep(base_forward_step, model, args, tokenizer.bos, eos_id)
+        print_rank_0(f"  cross-row (cross-batch) max_diff={row_max_diff:.6f}")
+
         if was_training:
             model.train()
 
-        losses_A = out_A.view(-1).float()[target_start:args.seq_length]
-        losses_B = out_B.view(-1).float()[target_start:args.seq_length]
-        max_diff = (losses_A - losses_B).abs().max().item()
-        mean_diff = (losses_A - losses_B).abs().mean().item()
-
-        print_rank_0(f"  prefix_A[:4]={prefix_A[:4].tolist()}  prefix_B[:4]={prefix_B[:4].tolist()}")
-        print_rank_0(f"  max_diff={max_diff:.6f}  mean_diff={mean_diff:.6f}")
-
-        # single fixed property: do the docs stay isolated (prefix leaves the other doc's losses
-        # unchanged)? the expected verdict — pass for masked/packed runs, fail for leaking runs —
-        # is declared per script in --tests, so this test never branches on the run config.
-        passed = max_diff < _ISOLATION_TOL
+        # two properties required: docs isolated within a row, and rows isolated within a
+        # micro-batch. Expected verdict is declared per script in --tests.
+        passed = doc_max_diff < _ISOLATION_TOL and row_ok
         if passed:
-            print_rank_0(f"[PASS] loss_isolation: max_diff < {_ISOLATION_TOL:g} → docs isolated (no cross-doc influence)")
+            print_rank_0(f"[PASS] loss_isolation: doc_diff={doc_max_diff:.6f}  row_diff={row_max_diff:.6f}  (both < {_ISOLATION_TOL:g}) → docs & rows isolated")
         else:
-            print_rank_0(f"[FAIL] loss_isolation: max_diff={max_diff:.6f} ≥ {_ISOLATION_TOL:g} → cross-doc leakage")
+            print_rank_0(f"[FAIL] loss_isolation: doc_diff={doc_max_diff:.6f}  row_diff={row_max_diff:.6f}  (tol {_ISOLATION_TOL:g}) → leakage detected")
         return passed
 
     return test_loss_isolation
