@@ -369,26 +369,29 @@ echo ""
 echo "Summary CSV: $SUMMARY_CSV"
 cat $SUMMARY_CSV
 
-### Log the summary CSV as a wandb.Table so every config's prediction is visible in one place ###
+### Log the summary CSV as a wandb.Table so every config's prediction is visible in one place.
+### Runs INSIDE the container (same python/wandb as the training passes) -- the bare allocation
+### shell's python3 is an unrelated stale system install and previously crashed this step. ###
 if [ -n "${WANDB_API_KEY:-}" ]; then
-    pip install --quiet wandb --upgrade
-    python3 - <<PYEOF
+    cat > $JOB_DEBUG_DIR/log_summary_to_wandb.py <<'PYEOF'
 import csv
+import sys
+
 import wandb
 
-with open("$SUMMARY_CSV") as f:
+summary_csv, project_name, run_name = sys.argv[1], sys.argv[2], sys.argv[3]
+
+with open(summary_csv) as f:
     rows = list(csv.reader(f))
 header, data = rows[0], rows[1:]
 
-run = wandb.init(
-    project="$PROJECT_NAME",
-    name="sweep-summary-$SLURM_JOB_ID",
-    job_type="scaling-sweep-summary",
-)
+run = wandb.init(project=project_name, name=run_name, job_type="scaling-sweep-summary")
 run.log({"scaling_sweep": wandb.Table(columns=header, data=data)})
 run.finish()
-print(f"Logged {len(data)} rows to wandb project $PROJECT_NAME, run sweep-summary-$SLURM_JOB_ID")
+print(f"Logged {len(data)} rows to wandb project {project_name}, run {run_name}")
 PYEOF
+    srun --nodes=1 --ntasks=1 --environment=$CONTAINER_ENV \
+        python3 $JOB_DEBUG_DIR/log_summary_to_wandb.py "$SUMMARY_CSV" "$PROJECT_NAME" "sweep-summary-$SLURM_JOB_ID"
 else
     echo "[$(date)] No WANDB_API_KEY -> summary table not uploaded, CSV is at $SUMMARY_CSV"
 fi
