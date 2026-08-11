@@ -7,7 +7,9 @@ explicit model_builder arg -- unrelated to attention variants. Everything else u
 Usage (see attn_bench/submissions/convert_and_validate_hf.slurm for the real invocation).
 Architecture flags (num-layers, hidden-size, etc.) come from the checkpoint itself via
 --use-checkpoint-args (set below in args_defaults); only rope scaling needs to be passed
-explicitly, since the checkpoint can't restore it (NVIDIA/Megatron-LM#6306):
+explicitly, since the checkpoint can't restore it (NVIDIA/Megatron-LM#6306). Step 2
+(checkpoint_conversion/convert_megatron_to_hf.py, not PDM's) needs a separate, fixed rope-base
+constant that has nothing to do with any CLI flag here -- see that script's docstring.
 CUDA_DEVICE_MAX_CONNECTIONS=1 torchrun attn_bench/checkpoint_conversion/convert_torch_dist_to_torch.py \
     --bf16 \
     --use-precision-aware-optimizer \
@@ -49,11 +51,6 @@ def main():
         "no_load_optim": True,
         "no_save_optim": True,
         "untie_embeddings_and_output_weights": True,
-
-        # --norm-epsilon now sets args.layernorm_epsilon, not args.norm_epsilon, in this fork.
-        # PDM's convert_megatron_to_hf.py (run unedited in step 2) still reads args.norm_epsilon.
-        # 1e-5 for every model here (Llama-3.2-1B rms_norm_eps).
-        "norm_epsilon": 1e-5,
 
         # Fake args for initialization
         "micro_batch_size": 1,

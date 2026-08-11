@@ -12,9 +12,9 @@
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=clariden-jobs-elyulin-aaaauapxybdkdx42ppvef2c2eq@swissai-initiative.slack.com
 
-# Convert a Megatron torch_dist checkpoint to a real HF LlamaForCausalLM (step 2 runs PDM's
-# own convert_megatron_to_hf.py unmodified; only step 1 is a locally-edited copy), then
-# validate the conversion two ways: a single-forward-pass logits diff on random tokens
+# Convert a Megatron torch_dist checkpoint to a real HF LlamaForCausalLM (steps 1 and 2 are
+# both locally-edited copies of PDM's converters, see checkpoint_conversion/ for what and why),
+# then validate the conversion two ways: a single-forward-pass logits diff on random tokens
 # (step 3), and a real multi-step greedy-decode comparison on real excerpts (step 4) -- the
 # latter is the only one that exercises this project's own KV-cache decode loop.
 # Full-attention only -- no path here for the custom attention variants (sink/off-by-one/
@@ -69,9 +69,11 @@ srun \
 
     echo '### STEP 1: torch_dist -> torch ###'
     # Architecture flags come from the checkpoint itself (--use-checkpoint-args, set in
-    # convert_torch_dist_to_torch.py's args_defaults) -- no need to retype them here. The only
-    # thing the checkpoint can't restore is rope scaling (NVIDIA/Megatron-LM#6306), so
-    # \$MEGATRON_EXTRA supplies --use-rope-scaling/--rope-scaling-factor per model tag.
+    # convert_torch_dist_to_torch.py's args_defaults) -- no need to retype them here, and no
+    # need to override any of them: the real checkpoint values are what Step 1 should use for
+    # its own model construction. The only thing the checkpoint can't restore is rope scaling
+    # (NVIDIA/Megatron-LM#6306), so \$MEGATRON_EXTRA supplies
+    # --use-rope-scaling/--rope-scaling-factor per model tag.
     torchrun --nproc_per_node=1 $CONV_DIR/convert_torch_dist_to_torch.py \
         --tokenizer-type HuggingFaceTokenizer \
         --tokenizer-model $TOKENIZER_PATH \
@@ -91,8 +93,15 @@ srun \
     if [ \$STEP1_STATUS -ne 0 ]; then echo 'Step 1 failed'; exit \$STEP1_STATUS; fi
 
     echo '### STEP 2: torch -> HF ###'
-    # Unedited, so run PDM's own copy directly rather than duplicating it here.
-    python $PDM_DIR/src/convert/convert_megatron_to_hf.py --experiment-path $SCRATCH_CONVERT_DIR
+    # Local copy (checkpoint_conversion/convert_megatron_to_hf.py), not PDM's: create_llama_config
+    # needs the true rope-scaling base (always 8192 here, hardcoded in Megatron's own
+    # rotary_pos_embedding.py) for rope_scaling.original_max_position_embeddings, which is a
+    # different question from args.max_position_embeddings (this checkpoint's real buffer-size
+    # setting, 131072) -- PDM's original reads the latter for both, which breaks once the two
+    # diverge. See convert_megatron_to_hf.py's own docstring for the full explanation.
+    # utils.py isn't forked -- it's unmodified, so reuse PDM's copy directly via PYTHONPATH
+    # (scoped to this one command only, doesn't leak into steps 1/3/4).
+    PYTHONPATH=\"$PDM_DIR/src/convert:\$PYTHONPATH\" python $CONV_DIR/convert_megatron_to_hf.py --experiment-path $SCRATCH_CONVERT_DIR
     STEP2_STATUS=\$?
     if [ \$STEP2_STATUS -ne 0 ]; then echo 'Step 2 failed'; exit \$STEP2_STATUS; fi
 
