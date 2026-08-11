@@ -233,16 +233,21 @@ def _run_xbatch_row_sweep(base_forward_step, model, args, bos_id, eos_id):
         print_rank_0("  [SKIP] cross-row sweep: micro_batch_size=1, no row pairs to test")
         return True, 0.0
 
-    base_rows = [_build_row_doc(args.seq_length, bos_id, eos_id, seed=100 + i) for i in range(mbs)]
+    seq_len = args.seq_length
+    base_rows = [_build_row_doc(seq_len, bos_id, eos_id, seed=100 + i) for i in range(mbs)]
     with torch.no_grad():
         out_base, _ = base_forward_step(_make_multi_row_test_iter(base_rows, eos_id, args), model)
+    # --use-packed-seq-params flattens the batch to [1, mbs*seq_len] before the forward pass
+    # (pack_batch_with_cu_seqlens); reshape back to [mbs, seq_len] to index by row.
+    out_base = out_base.reshape(mbs, seq_len)
 
     max_diff = 0.0
     for k in range(mbs - 1):
         perturbed_rows = list(base_rows)
-        perturbed_rows[k] = _build_row_doc(args.seq_length, bos_id, eos_id, seed=200 + k)
+        perturbed_rows[k] = _build_row_doc(seq_len, bos_id, eos_id, seed=200 + k)
         with torch.no_grad():
             out_k, _ = base_forward_step(_make_multi_row_test_iter(perturbed_rows, eos_id, args), model)
+        out_k = out_k.reshape(mbs, seq_len)
 
         diff = (out_k[k + 1:].float() - out_base[k + 1:].float()).abs().max().item()
         max_diff = max(max_diff, diff)
@@ -274,9 +279,10 @@ def _make_test_loss_isolation(base_forward_step):
         with torch.no_grad():
             out_A, _ = base_forward_step(_make_test_iter(seq_A, eos_id, args), model)
             out_B, _ = base_forward_step(_make_test_iter(seq_B, eos_id, args), model)
-
-        doc_losses_A = out_A[0].float()[target_start:args.seq_length]
-        doc_losses_B = out_B[0].float()[target_start:args.seq_length]
+        # --use-packed-seq-params flattens the batch to [1, mbs*seq_len]; reshape back to index row 0.
+        mbs = args.micro_batch_size
+        doc_losses_A = out_A.reshape(mbs, args.seq_length)[0].float()[target_start:args.seq_length]
+        doc_losses_B = out_B.reshape(mbs, args.seq_length)[0].float()[target_start:args.seq_length]
         doc_max_diff = (doc_losses_A - doc_losses_B).abs().max().item()
         doc_mean_diff = (doc_losses_A - doc_losses_B).abs().mean().item()
 
