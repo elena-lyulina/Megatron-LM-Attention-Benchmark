@@ -48,7 +48,12 @@ def main():
         "no_load_rng": True,
         "no_load_optim": True,
         "no_save_optim": True,
-        "--untie-embeddings-and-output-weights": True,
+        "untie_embeddings_and_output_weights": True,
+
+        # --norm-epsilon now sets args.layernorm_epsilon, not args.norm_epsilon, in this fork.
+        # PDM's convert_megatron_to_hf.py (run unedited in step 2) still reads args.norm_epsilon.
+        # 1e-5 for every model here (Llama-3.2-1B rms_norm_eps).
+        "norm_epsilon": 1e-5,
 
         # Fake args for initialization
         "micro_batch_size": 1,
