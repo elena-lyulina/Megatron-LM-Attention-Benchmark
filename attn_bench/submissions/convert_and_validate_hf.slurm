@@ -21,8 +21,9 @@
 # gated/GDN aren't representable in plain HF Llama).
 #
 # Env vars:
-#   MODEL      checkpoint to use, see llama_checkpoints.sh (default: full-scf8)
-#   OVERWRITE  reconvert even if the HF checkpoint already exists in store
+#   MODEL checkpoint to use, see llama_checkpoints.sh (default: full-scf8)
+#   OVERWRITE reconvert even if the HF checkpoint already exists in store
+#   EXPECTED_ROPE_FACTOR expected rope-scaling-factor for the sanity check (default: 8)
 #
 # Usage: sbatch --export=MODEL=full-scf8 convert_and_validate_hf.slurm
 
@@ -38,6 +39,7 @@ source $MEGATRON_LM_DIR/attn_bench/scripts/scratch_to_store.sh
 
 MODEL=${MODEL:-full-scf8}
 OVERWRITE=${OVERWRITE:-}
+EXPECTED_ROPE_FACTOR=${EXPECTED_ROPE_FACTOR:-8}
 model_config "$MODEL"
 
 MODEL_DIR=/users/$USER/store/pretrain-results/$CKPT_NAME
@@ -68,12 +70,7 @@ srun \
     export CUDA_DEVICE_MAX_CONNECTIONS=1
 
     echo '### STEP 1: torch_dist -> torch ###'
-    # Architecture flags come from the checkpoint itself (--use-checkpoint-args, set in
-    # convert_torch_dist_to_torch.py's args_defaults) -- no need to retype them here, and no
-    # need to override any of them: the real checkpoint values are what Step 1 should use for
-    # its own model construction. The only thing the checkpoint can't restore is rope scaling
-    # (NVIDIA/Megatron-LM#6306), so \$MEGATRON_EXTRA supplies
-    # --use-rope-scaling/--rope-scaling-factor per model tag.
+    # Rope scaling isn't restored from checkpoint, so \$MEGATRON_EXTRA supplies it.
     torchrun --nproc_per_node=1 $CONV_DIR/convert_torch_dist_to_torch.py \
         --tokenizer-type HuggingFaceTokenizer \
         --tokenizer-model $TOKENIZER_PATH \
@@ -93,28 +90,20 @@ srun \
     if [ \$STEP1_STATUS -ne 0 ]; then echo 'Step 1 failed'; exit \$STEP1_STATUS; fi
 
     echo '### STEP 2: torch -> HF ###'
-    # Local copy (checkpoint_conversion/convert_megatron_to_hf.py), not PDM's: create_llama_config
-    # needs the true rope-scaling base (always 8192 here, hardcoded in Megatron's own
-    # rotary_pos_embedding.py) for rope_scaling.original_max_position_embeddings, which is a
-    # different question from args.max_position_embeddings (this checkpoint's real buffer-size
-    # setting, 131072) -- PDM's original reads the latter for both, which breaks once the two
-    # diverge. See convert_megatron_to_hf.py's own docstring for the full explanation.
-    # utils.py isn't forked -- it's unmodified, so reuse PDM's copy directly via PYTHONPATH
-    # (scoped to this one command only, doesn't leak into steps 1/3/4).
+    # Local copy (see convert_megatron_to_hf.py). utils.py is unforked -- pull PDM's via PYTHONPATH.
     PYTHONPATH=\"$PDM_DIR/src/convert:\$PYTHONPATH\" python $CONV_DIR/convert_megatron_to_hf.py --experiment-path $SCRATCH_CONVERT_DIR
     STEP2_STATUS=\$?
     if [ \$STEP2_STATUS -ne 0 ]; then echo 'Step 2 failed'; exit \$STEP2_STATUS; fi
 
-    echo '### Sanity check: does the written config.json actually have this checkpoints real rope-scaling-factor? ###'
-    # Cheap, no-GPU check for exactly the failure mode that already bit this project once
-    # (da76e69e1, silently dropped rope-scaling-factor) -- catch it here, not several GPU
-    # minutes later as a subtle logits mismatch.
+    echo '### Sanity check: rope factor before the GPU-heavy steps 3/4 ###'
     python -c \"
 import json
 cfg = json.load(open('$SCRATCH_CONVERT_DIR/HF/config.json'))
-factor = cfg.get('rope_scaling', {}).get('factor')
-assert factor == 8, f'expected rope_scaling.factor == 8, got {factor!r} -- conversion likely dropped it silently'
-print(f'rope_scaling.factor = {factor} (expected 8) -- OK')
+# transformers>=5 uses 'rope_parameters', not 'rope_scaling'.
+rope_cfg = cfg.get('rope_parameters') or cfg.get('rope_scaling', {})
+factor = rope_cfg.get('factor')
+assert factor == $EXPECTED_ROPE_FACTOR, f'expected rope factor == $EXPECTED_ROPE_FACTOR, got {factor!r} -- conversion likely dropped it silently'
+print(f'rope factor = {factor} (expected $EXPECTED_ROPE_FACTOR) -- OK')
 tie = cfg.get('tie_word_embeddings')
 print(f'tie_word_embeddings = {tie} (expect False for full-scf8)')
 \"
