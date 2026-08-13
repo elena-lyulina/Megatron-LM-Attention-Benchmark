@@ -178,7 +178,8 @@ LOGGING_ARGS=(
     --timing-log-level 2 # level 1 = forward-backward + optimizer; level 2 adds forward-compute + backward-compute
     --no-log-loss-scale-to-tensorboard
     --log-memory-to-tensorboard
-    --config-logger-dir $DEBUG_DIR/config_logger # dumps the real entry-point configs actually used at init
+    # --config-logger-dir removed: GPTModel._postprocess dumps input_ids/logits via torch.save
+    # on every forward call with no guard, which fills scratch storage within one training step
 )
 
 REGULARIZATION_ARGS=(
