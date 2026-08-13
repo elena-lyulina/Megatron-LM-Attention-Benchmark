@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import copy
 import dataclasses
 import json
 import os
@@ -56,6 +57,22 @@ def get_path_with_count(path):
     return f'{path}.iter{get_path_count(path)}'
 
 
+def _safe_asdict(obj, encoder):
+    # dataclasses.asdict() deepcopies every leaf field, which crashes on
+    # uncopyable objects (e.g. ProcessGroup) before encoder.default() can
+    # special-case them; recurse manually and fall back to the encoder instead.
+    if dataclasses.is_dataclass(obj) and not isinstance(obj, type):
+        return {f.name: _safe_asdict(getattr(obj, f.name), encoder) for f in dataclasses.fields(obj)}
+    if isinstance(obj, dict):
+        return {k: _safe_asdict(v, encoder) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple)):
+        return [_safe_asdict(v, encoder) for v in obj]
+    try:
+        return copy.deepcopy(obj)
+    except TypeError:
+        return encoder.default(obj)
+
+
 class JSONEncoderWithMcoreTypes(json.JSONEncoder):
     """
     Custom JSON encoder that serializes according to types in mcore.
@@ -87,7 +104,7 @@ class JSONEncoderWithMcoreTypes(json.JSONEncoder):
         if type(o).__name__ in ['ABCMeta', 'type', 'AttnMaskType']:
             return str(o)
         if dataclasses.is_dataclass(o) or type(o).__name__ in ['ModuleSpec', 'TransformerConfig']:
-            return dataclasses.asdict(o)
+            return _safe_asdict(o, self)
         try:
             return super().default(o)
         except:
