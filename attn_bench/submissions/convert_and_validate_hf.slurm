@@ -104,14 +104,12 @@ rope_cfg = cfg.get('rope_parameters') or cfg.get('rope_scaling', {})
 factor = rope_cfg.get('factor')
 assert factor == $EXPECTED_ROPE_FACTOR, f'expected rope factor == $EXPECTED_ROPE_FACTOR, got {factor!r} -- conversion likely dropped it silently'
 print(f'rope factor = {factor} (expected $EXPECTED_ROPE_FACTOR) -- OK')
-tie = cfg.get('tie_word_embeddings')
-print(f'tie_word_embeddings = {tie} (expect False for full-scf8)')
 \"
     CFG_CHECK_STATUS=\$?
     if [ \$CFG_CHECK_STATUS -ne 0 ]; then echo 'Config sanity check failed'; exit \$CFG_CHECK_STATUS; fi
 
     echo '### STEP 3: compare logits (random tokens, single forward pass) ###'
-    python $CONV_DIR/compare_megatron_hf_logits.py \
+    torchrun --nproc_per_node=1 $CONV_DIR/compare_megatron_hf_logits.py \
         --ckpt-dir $MODEL_DIR/checkpoints \
         --tokenizer-path $TOKENIZER_PATH \
         --hf-dir $SCRATCH_CONVERT_DIR/HF \
@@ -120,12 +118,12 @@ print(f'tie_word_embeddings = {tie} (expect False for full-scf8)')
     if [ \$STEP3_STATUS -ne 0 ]; then echo 'Step 3 failed'; exit \$STEP3_STATUS; fi
 
     echo '### STEP 4: compare generation (real excerpts, multi-step decode loop) ###'
-    python $CONV_DIR/compare_megatron_hf_generation.py \
+    torchrun --nproc_per_node=1 $CONV_DIR/compare_megatron_hf_generation.py \
         --ckpt-dir $MODEL_DIR/checkpoints \
         --tokenizer-path $TOKENIZER_PATH \
         --hf-dir $SCRATCH_CONVERT_DIR/HF \
         --data-folder $GUTENBERG_JSONL_DIR \
-        --rep 0 --offset 0 --prefix-length 50 --suffix-length 50 --num-samples 5 \
+        --rep 0 --offset 0 --prefix-length 500 --suffix-length 500 --num-samples 5 \
         --megatron-extra-args $MEGATRON_EXTRA
     "
 CONVERT_STATUS=$?

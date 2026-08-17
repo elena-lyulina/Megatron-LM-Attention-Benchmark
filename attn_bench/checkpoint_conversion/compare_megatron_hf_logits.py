@@ -1,14 +1,10 @@
 """
-Validates a Megatron -> HF conversion by comparing logits on random tokens, not real text --
-deliberately data-agnostic, so this tests only "does the HF model compute the same thing as
-the Megatron model", nothing about generation quality or memorization.
+Validates a Megatron -> HF conversion: compares logits on random tokens (data-agnostic --
+tests only that HF computes the same thing as Megatron, not generation quality).
 
 Adapted from swiss-ai/Megatron-LM's tools/checkpoint/loader_core.py --test-logits and
-tools/checkpoint/saver_swissai_hf.py: random tokens come from a plain torch.randint instead of
-MockGPTDataset/_NullTokenizer/BlendedMegatronDatasetBuilder, and both models are loaded and
-compared in one process via this project's own load_megatron_model (inference_common.py). The
-two pass/fail checks (argmax agreement, elementwise atol/rtol closeness) and their thresholds
-are copied unchanged from saver_swissai_hf.py's test_logits block.
+tools/checkpoint/saver_swissai_hf.py, but runs both loads and the comparison in one script
+instead of two.
 
 Usage (see attn_bench/submissions/convert_and_validate_hf.slurm):
     python attn_bench/checkpoint_conversion/compare_megatron_hf_logits.py \
@@ -29,8 +25,7 @@ from attn_bench.evaluation.inference_common import load_megatron_model
 
 def compare_logits(megatron_model, hf_model, vocab_size: int, seq_length: int,
                    batch_size: int = 4, device: str = "cuda"):
-    """Forward both models on the same random tokens and diff the logits. Checks and
-    thresholds copied from swiss-ai/Megatron-LM's saver_swissai_hf.py test_logits block."""
+    """Forward both models on the same random tokens and diff the logits."""
     tokens = torch.randint(0, vocab_size, (batch_size, seq_length), device=device)
     position_ids = torch.arange(seq_length, device=device).unsqueeze(0).expand(batch_size, -1)
 
