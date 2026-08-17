@@ -4,7 +4,7 @@
 # Each job checks its own store results before loading the checkpoint and no-ops if
 # already fully backfilled -- safe to resubmit.
 #
-# Usage: bash attn_bench/submissions/megatron_inference_backfill_all.sh --models full-scf8 gated-scf8
+# Usage: bash attn_bench/submissions/prefix_extraction_inference_backfill_all.sh --models full-scf8 gated-scf8
 # Add --dry-run to print the sbatch commands that would run without submitting anything.
 # Omit --models to backfill every model in the registry.
 
@@ -42,9 +42,9 @@ fi
 for MODEL in "${SELECTED_MODELS[@]}"; do
     model_config "$MODEL"  # validates the tag, unused result here
     if [[ $DRY_RUN -eq 1 ]]; then
-        echo "[dry-run] sbatch --export=ALL,MODEL=$MODEL $SCRIPT_DIR/megatron_inference_backfill.slurm"
+        echo "[dry-run] sbatch --export=ALL,MODEL=$MODEL $SCRIPT_DIR/prefix_extraction_inference_backfill.slurm"
         continue
     fi
-    echo "Submitting megatron_inference_backfill.slurm (model=$MODEL exp=$EXP_NAME)"
-    sbatch --export=ALL,MODEL="$MODEL" "$SCRIPT_DIR/megatron_inference_backfill.slurm"
+    echo "Submitting prefix_extraction_inference_backfill.slurm (model=$MODEL exp=$EXP_NAME)"
+    sbatch --export=ALL,MODEL="$MODEL" "$SCRIPT_DIR/prefix_extraction_inference_backfill.slurm"
 done

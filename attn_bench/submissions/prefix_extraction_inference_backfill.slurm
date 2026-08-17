@@ -14,15 +14,15 @@
 
 # Phase A: backfill one trained model's existing memorization results with sample_idx
 # and full per-position ref_nll/gen_nll/p_z, across every (offset, prefix, suffix) point
-# already on store for it. One-time migration -- see megatron_inference_backfill.py.
+# already on store for it. One-time migration -- see prefix_extraction_inference_backfill.py.
 #
 # Env vars:
 #   MODEL          checkpoint to use, see llama_checkpoints.sh (default: full-scf8)
 #   OFFSET         restrict to one offset (default: all offsets on store for this model)
 #   PREFIX_LENGTH  restrict to one prefix length (default: all)
 #
-# Usage: sbatch --export=MODEL=sink-scf8,OFFSET=0,PREFIX_LENGTH=500 megatron_inference_backfill.slurm
-# (normally submitted via megatron_inference_backfill_all.sh)
+# Usage: sbatch --export=MODEL=sink-scf8,OFFSET=0,PREFIX_LENGTH=500 prefix_extraction_inference_backfill.slurm
+# (normally submitted via prefix_extraction_inference_backfill_all.sh)
 
 echo "START TIME: $(date)"
 
@@ -44,7 +44,7 @@ MEM_DIR=$SCRATCH_MEM_BASE/SparseGutenberg/$EXP_NAME
 STORE_EXP_DIR=$STORE_MEM_BASE/SparseGutenberg/$EXP_NAME
 GUTENBERG_JSONL_DIR=/users/$USER/store/datasets/tokenized/gutenberg_rep_jsonl
 TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b
-PY=$MEGATRON_LM_DIR/attn_bench/evaluation/megatron_inference_backfill.py
+PY=$MEGATRON_LM_DIR/attn_bench/evaluation/prefix_extraction_inference_backfill.py
 
 export PYTHONPATH=$MEGATRON_LM_DIR:$PDM_DIR:$PDM_DIR/src:${PYTHONPATH:-}
 export CUDA_DEVICE_MAX_CONNECTIONS=1

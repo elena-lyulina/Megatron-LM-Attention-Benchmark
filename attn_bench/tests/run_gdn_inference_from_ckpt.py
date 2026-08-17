@@ -1,12 +1,10 @@
 """Run the gdn_inference suite on a real GDN checkpoint.
 
 Loads the trained model via the exact same path as the memorization eval
-(`megatron_inference.load_megatron_model`) and runs the gdn_inference test
-functions on it, so the cached incremental decode is validated against the
-quadratic oracle using the *actual trained weights* — not a tiny random model.
-No memorization run, no checkpoint writes.
-
-megatron_inference.py is imported, not modified.
+(`MegatronBackend`) and runs the gdn_inference test functions on it, so the
+cached incremental decode is validated against the quadratic oracle using the
+*actual trained weights* — not a tiny random model. No memorization run, no
+checkpoint writes.
 
 Usage (via torchrun, TP=1):
     torchrun --nproc_per_node=1 attn_bench/tests/run_gdn_inference_from_ckpt.py \
@@ -21,7 +19,7 @@ import sys
 
 import torch.distributed as dist
 
-from attn_bench.evaluation.megatron_inference import load_megatron_model
+from attn_bench.evaluation.inference_backend import MegatronBackend
 from attn_bench.tests.test_gdn_inference import register
 
 
@@ -38,13 +36,14 @@ def parse_args():
 def main():
     args = parse_args()
 
-    model = load_megatron_model(args.ckpt_dir, args.tokenizer_path, args.megatron_extra_args)
+    backend = MegatronBackend(args.ckpt_dir, args.tokenizer_path, args.megatron_extra_args)
+    backend.load_model()
 
     # register(base_forward_step) -> [test_fn, ...]; base_forward_step is unused by the two
     # gdn_inference suites (they call the model directly), so None is fine. The functions print
     # their own PASS/FAIL via print_rank_0 and build tiny random prompts internally.
     tests = register(base_forward_step=None)
-    results = {fn.__name__: bool(fn(model)) for fn in tests}
+    results = {fn.__name__: bool(fn(backend.model)) for fn in tests}
 
     all_ok = all(results.values())
     if dist.get_rank() == 0:

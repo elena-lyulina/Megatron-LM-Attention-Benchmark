@@ -26,8 +26,7 @@ from pathlib import Path
 
 import torch
 
-from attn_bench.evaluation.inference_common import (greedy_generate,
-                                                    load_megatron_model)
+from attn_bench.evaluation.inference_backend import MegatronBackend
 from attn_bench.evaluation.inference_perf_units import (DECODE_BATCH_SIZE,
                                                         DECODE_PREFIX_ANCHORS,
                                                         PREFILL_BATCH_SIZE,
@@ -52,7 +51,7 @@ SWEEP_DECODE_STEPS = 100
 ### TIMING ###
 
 class TimingCollector:
-    """torch.cuda.Event pairs around greedy_generate's prefill/decode callbacks.
+    """torch.cuda.Event pairs around generate_with_capture's prefill/decode callbacks.
 
     No sync during the run (decode is already serialized by its own data
     dependency, so syncing per step would only add overhead). elapsed_time()
@@ -114,7 +113,7 @@ def random_prompt(batch_size: int, prefix_length: int, vocab: int, device) -> to
 
 ### EXPERIMENTS ###
 
-def run_prefill_sweep(model, vocab: int, device, output_dir: Path, base_meta: dict):
+def run_prefill_sweep(backend: MegatronBackend, vocab: int, device, output_dir: Path, base_meta: dict):
     rel_path = prefill_rel_path()
     if already_done(output_dir, rel_path):
         print(f"Skipping prefill sweep -- already done: {output_dir / rel_path}")
@@ -128,8 +127,8 @@ def run_prefill_sweep(model, vocab: int, device, output_dir: Path, base_meta: di
             prompt = random_prompt(PREFILL_BATCH_SIZE, length, vocab, device)
             collector = TimingCollector(meta={})
             collector.mark_start()
-            greedy_generate(model, prompt, suffix_length=1,
-                            prefill_callback=collector.prefill_callback)
+            backend.generate_with_capture(prompt, suffix_length=1,
+                                          prefill_callback=collector.prefill_callback)
             times.append(collector.elapsed_ms()[0])
             del prompt
         repeat_ms[str(length)] = times
@@ -147,7 +146,7 @@ def run_prefill_sweep(model, vocab: int, device, output_dir: Path, base_meta: di
         json.dump(record, f)
 
 
-def run_decode_unit(model, vocab: int, device, output_dir: Path, base_meta: dict,
+def run_decode_unit(backend: MegatronBackend, vocab: int, device, output_dir: Path, base_meta: dict,
                     rel_path: str, batch_size: int, prefix_length: int, decode_steps: int,
                     flush_every: int | None):
     if already_done(output_dir, rel_path):
@@ -165,9 +164,9 @@ def run_decode_unit(model, vocab: int, device, output_dir: Path, base_meta: dict
     prompt = random_prompt(batch_size, prefix_length, vocab, device)
     try:
         collector.mark_start()
-        greedy_generate(model, prompt, suffix_length=decode_steps + 1,
-                        prefill_callback=collector.prefill_callback,
-                        decode_step_callback=collector.decode_step_callback)
+        backend.generate_with_capture(prompt, suffix_length=decode_steps + 1,
+                                      prefill_callback=collector.prefill_callback,
+                                      decode_step_callback=collector.decode_step_callback)
         collector.flush("ok")
         print(f"  {rel_path}: done")
     except torch.cuda.OutOfMemoryError:
@@ -216,23 +215,24 @@ def main():
     }
     write_run_metadata(output_dir, base_meta)
 
-    model = load_megatron_model(args.ckpt_dir, args.tokenizer_path, args.megatron_extra_args)
-    device = next(model.parameters()).device
-    vocab = vocab_size(model)
+    backend = MegatronBackend(args.ckpt_dir, args.tokenizer_path, args.megatron_extra_args)
+    backend.load_model()
+    device = backend.device
+    vocab = vocab_size(backend.model)
 
     print(f"=== Prefill sweep ({args.model_tag}) ===")
-    run_prefill_sweep(model, vocab, device, output_dir, base_meta)
+    run_prefill_sweep(backend, vocab, device, output_dir, base_meta)
 
     print(f"=== Long decode ({args.model_tag}) ===")
     for prefix_length in DECODE_PREFIX_ANCHORS:
-        run_decode_unit(model, vocab, device, output_dir, base_meta,
+        run_decode_unit(backend, vocab, device, output_dir, base_meta,
                         rel_path=decode_rel_path(DECODE_BATCH_SIZE, prefix_length),
                         batch_size=DECODE_BATCH_SIZE, prefix_length=prefix_length,
                         decode_steps=DECODE_STEPS, flush_every=DECODE_FLUSH_EVERY)
 
     print(f"=== Batch-size sweep ({args.model_tag}) ===")
     for batch_size in SWEEP_BATCH_SIZES:
-        run_decode_unit(model, vocab, device, output_dir, base_meta,
+        run_decode_unit(backend, vocab, device, output_dir, base_meta,
                         rel_path=sweep_rel_path(batch_size, SWEEP_PREFIX),
                         batch_size=batch_size, prefix_length=SWEEP_PREFIX,
                         decode_steps=SWEEP_DECODE_STEPS, flush_every=None)

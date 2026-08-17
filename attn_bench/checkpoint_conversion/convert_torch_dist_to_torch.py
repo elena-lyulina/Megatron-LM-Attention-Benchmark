@@ -59,8 +59,8 @@ def main():
     }
 
     # args_defaults now belongs to parse_and_validate_args, not initialize_megatron
-    # (arg parsing was moved out of initialize_megatron, see inference_common.py's
-    # load_megatron_model for the same pattern).
+    # (arg parsing was moved out of initialize_megatron, see inference_backend.py's
+    # MegatronBackend.load_model for the same pattern).
     parse_and_validate_args(args_defaults=args_defaults)
     initialize_megatron()
     args = get_args()

@@ -18,27 +18,28 @@ from __future__ import annotations
 import argparse
 
 import torch
-from transformers import AutoModelForCausalLM
 
-from attn_bench.evaluation.inference_common import load_megatron_model
+from attn_bench.evaluation.inference_backend import (HFBackend,
+                                                     InferenceBackend,
+                                                     MegatronBackend)
 
 
-def compare_logits(megatron_model, hf_model, vocab_size: int, seq_length: int,
-                   batch_size: int = 4, device: str = "cuda"):
-    """Forward both models on the same random tokens and diff the logits."""
+def compare_logits(ref_backend: InferenceBackend, new_backend: InferenceBackend, vocab_size: int,
+                   seq_length: int, batch_size: int = 4, device: str = "cuda"):
+    """Forward both backends on the same random tokens and diff the logits."""
     tokens = torch.randint(0, vocab_size, (batch_size, seq_length), device=device)
     position_ids = torch.arange(seq_length, device=device).unsqueeze(0).expand(batch_size, -1)
 
-    megatron_model = megatron_model.to(device).float()
+    ref_backend.model = ref_backend.model.to(device).float()
     with torch.no_grad():
-        ref_output = megatron_model(tokens, position_ids, attention_mask=None)
-    del megatron_model
+        ref_output = ref_backend.forward_logits(tokens, position_ids)
+    del ref_backend
     torch.cuda.empty_cache()
 
-    hf_model = hf_model.to(device).float()
+    new_backend.model = new_backend.model.to(device).float()
     with torch.no_grad():
-        output = hf_model(input_ids=tokens, position_ids=position_ids).logits
-    del hf_model
+        output = new_backend.forward_logits(tokens, position_ids)
+    del new_backend
     torch.cuda.empty_cache()
 
     assert output.size() == ref_output.size()
@@ -86,11 +87,13 @@ def parse_args():
 def main():
     args = parse_args()
 
-    megatron_model = load_megatron_model(args.ckpt_dir, args.tokenizer_path, args.megatron_extra_args)
-    hf_model = AutoModelForCausalLM.from_pretrained(args.hf_dir, torch_dtype="auto")
-    vocab_size = hf_model.config.vocab_size
+    megatron_backend = MegatronBackend(args.ckpt_dir, args.tokenizer_path, args.megatron_extra_args)
+    megatron_backend.load_model()
+    hf_backend = HFBackend(args.hf_dir)
+    hf_backend.load_model()
+    vocab_size = hf_backend.model.config.vocab_size
 
-    compare_logits(megatron_model, hf_model, vocab_size, args.seq_length, args.batch_size)
+    compare_logits(megatron_backend, hf_backend, vocab_size, args.seq_length, args.batch_size)
     print("Logits check passed.")
 
 

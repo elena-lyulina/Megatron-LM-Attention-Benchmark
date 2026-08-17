@@ -25,7 +25,7 @@ import torch.nn.functional as F
 from tqdm import tqdm
 
 from attn_bench.evaluation.gdn_state_norm import install_state_norm_hooks
-from attn_bench.evaluation.inference_common import load_megatron_model
+from attn_bench.evaluation.inference_backend import MegatronBackend
 from megatron.core import parallel_state as mpu
 
 SEQ_LEN = 8192  # training sequence length; suffix (position >= sample_len) is the extrapolation region
@@ -47,7 +47,8 @@ def sample_lines(path: Path, max_samples: int | None) -> list[str]:
 ### FORWARD ###
 
 @torch.no_grad()
-def per_position_nll(model, seq_ids: torch.Tensor, softmax_chunk: int, store_individual: bool = False):
+def per_position_nll(backend: MegatronBackend, seq_ids: torch.Tensor, softmax_chunk: int,
+                     store_individual: bool = False):
     """One forward over the whole sequence; return per-position NLL [S-1] (float32), plus,
     when store_individual, the argmax predicted token and the true token's rank in the
     predicted distribution (both [S-1] long, else None).
@@ -63,8 +64,7 @@ def per_position_nll(model, seq_ids: torch.Tensor, softmax_chunk: int, store_ind
     device = seq_ids.device
     pos = torch.arange(S1, dtype=torch.long, device=device).unsqueeze(0)
 
-    # runtime_gather_output gathers the vocab-parallel logits under TP (no-op at TP=1).
-    logits = model(inputs, pos, attention_mask=None, runtime_gather_output=True)  # [1, S1, V] (bf16)
+    logits = backend.forward_logits(inputs, pos)  # [1, S1, V] (bf16)
 
     nll = torch.empty(S1, dtype=torch.float32, device=device)
     argmax_token = torch.empty(S1, dtype=torch.long, device=device) if store_individual else None
@@ -133,16 +133,13 @@ class IndividualCollector:
 
 ### RUN ###
 
-def run_inference(model, dataset, maxpos, rank, softmax_chunk, device, desc="", accum=None,
-                  individual=None):
+def run_inference(backend: MegatronBackend, dataset, maxpos, rank, softmax_chunk, device, desc="",
+                  accum=None, individual=None):
     """Accumulate per-position NLL sum / sqsum / count over this rank's shard.
 
-    Sharding and pooling are over the *data-parallel* group, not WORLD, so it is correct at
-    any tensor-parallel size. At TP=1 the DP group is WORLD (plain stride over all ranks); at
-    TP=world_size the DP group is a single rank (no stride, no cross-rank reduce -- each rank
-    already holds the full loss because TP gathers it). If accum is given, the GDN state norms
-    are pooled the same way. If individual is given, raw per-sequence records are gathered
-    onto the DP source rank (see IndividualCollector).
+    Sharding and pooling are over the data-parallel group (== WORLD, TP is always 1 here).
+    If accum is given, the GDN state norms are pooled the same way. If individual is given,
+    raw per-sequence records are gathered onto the DP source rank (see IndividualCollector).
 
     dataset holds (tokens, seq_id) pairs -- seq_id is only used when individual is set.
     """
@@ -166,7 +163,7 @@ def run_inference(model, dataset, maxpos, rank, softmax_chunk, device, desc="", 
         if accum is not None:
             accum.reset_sequence()
         nll, argmax_token, true_rank = per_position_nll(
-            model, seq, softmax_chunk, store_individual=individual is not None)
+            backend, seq, softmax_chunk, store_individual=individual is not None)
         if accum is not None:
             accum.accumulate()  # reads the norms the GDN wrappers recorded during the forward
         if individual is not None:
@@ -204,19 +201,16 @@ def save_npz(path: Path, pos_sum, pos_sqsum, pos_cnt, seq_len: int = SEQ_LEN):
 
 ### CONFIG / OUTPUT PATHS ###
 
-def config_name(max_length: int | None, max_samples: int | None, tensor_parallel: int = 1) -> str:
+def config_name(max_length: int | None, max_samples: int | None) -> str:
     # Encodes the params that change the numbers, so different runs land in different
-    # folders and the "already done" check doubles as a validity check. tp>1 gets a suffix
-    # so a TP run does not clash with the data-parallel (TP=1) run at the same length.
+    # folders and the "already done" check doubles as a validity check.
     samples = max_samples if max_samples is not None else "all"
     length = max_length if max_length is not None else "full"
-    tp = f"_tp{tensor_parallel}" if tensor_parallel > 1 else ""
-    return f"{samples}_samples_{length}_tokens{tp}"
+    return f"{samples}_samples_{length}_tokens"
 
 
-def config_dir(experiment_path: str, max_length: int | None, max_samples: int | None,
-               tensor_parallel: int = 1) -> Path:
-    return Path(experiment_path) / config_name(max_length, max_samples, tensor_parallel)
+def config_dir(experiment_path: str, max_length: int | None, max_samples: int | None) -> Path:
+    return Path(experiment_path) / config_name(max_length, max_samples)
 
 
 def npz_path(output_dir: Path, key: str) -> Path:
@@ -264,9 +258,6 @@ def add_common_args(p: argparse.ArgumentParser, max_samples_default: int | None 
     p.add_argument("--max-samples", type=int, default=max_samples_default,
                    help="Randomly subsample to this many sequences (fixed seed, for testing/calibration "
                         f"or to avoid running on all available data). Default: {max_samples_default or 'no cap'}.")
-    p.add_argument("--tensor-parallel", type=int, default=1,
-                   help="Tensor-parallel size. >1 shards the attention heads across GPUs (less memory "
-                        "per GPU, no data-parallel throughput), letting unfused-attention models run longer.")
     p.add_argument("--softmax-chunk", type=int, default=4096,
                    help="How many positions to run log_softmax over at once. Smaller uses less memory, "
                         "same result. Does not change the NLL values.")
@@ -297,7 +288,7 @@ def run_main(args, items: list[tuple[str, object]], load_dataset: Callable, meta
     -> list[tuple[list[int], str]]` -- (tokens, seq_id) pairs; seq_id is only used when
     --store-individual is set (Gutenberg's book_id, fineweb's doc_id).
     """
-    output_dir = config_dir(args.experiment_path, args.max_length, args.max_samples, args.tensor_parallel)
+    output_dir = config_dir(args.experiment_path, args.max_length, args.max_samples)
 
     if not args.overwrite and items and all(
         result_done(output_dir, key, args.log_state_norm, args.store_individual) for key, _ in items
@@ -306,14 +297,14 @@ def run_main(args, items: list[tuple[str, object]], load_dataset: Callable, meta
             print(f"All requested results already present in {output_dir} -- skipping checkpoint load.")
         return
 
-    model = load_megatron_model(args.ckpt_dir, args.tokenizer_path, args.megatron_extra_args,
-                                tensor_parallel=args.tensor_parallel)
+    backend = MegatronBackend(args.ckpt_dir, args.tokenizer_path, args.megatron_extra_args)
+    backend.load_model()
     rank = dist.get_rank()
-    device = next(model.parameters()).device
+    device = backend.device
 
     accum = None
     if args.log_state_norm:
-        accum = install_state_norm_hooks(model, args.state_chunk, device)
+        accum = install_state_norm_hooks(backend.model, args.state_chunk, device)
         if accum is None and rank == 0:
             print("--log-state-norm set but model has no GatedDeltaNet layers; skipping state norms.")
 
@@ -325,7 +316,6 @@ def run_main(args, items: list[tuple[str, object]], load_dataset: Callable, meta
             "ckpt_dir": args.ckpt_dir,
             "max_length": args.max_length,
             "max_samples": args.max_samples,
-            "tensor_parallel": args.tensor_parallel,
             **metadata_extra,
         })
 
@@ -343,7 +333,7 @@ def run_main(args, items: list[tuple[str, object]], load_dataset: Callable, meta
             print(f"{key}: {len(dataset)} sequences, maxpos={maxpos}")
 
         pos_sum, pos_sqsum, pos_cnt = run_inference(
-            model, dataset, maxpos, rank, args.softmax_chunk, device, desc=key, accum=accum,
+            backend, dataset, maxpos, rank, args.softmax_chunk, device, desc=key, accum=accum,
             individual=individual,
         )
 

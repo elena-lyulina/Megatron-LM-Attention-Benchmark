@@ -19,11 +19,14 @@
 #     boundary, not just this job's own suffix point
 #
 # Env vars:
-#   MODEL          checkpoint to use, see llama_checkpoints.sh (default: full)
+#   MODEL              checkpoint to use, see llama_checkpoints.sh (default: full)
+#   CHECKPOINT_BACKEND megatron (default, all attention variants) or hf (already-converted HF
+#                      checkpoint, faster generate(), full-attention models only -- run
+#                      convert_and_validate_hf.slurm first)
 #   OFFSET         document start offset (default: 0)
 #   PREFIX_LENGTH  prompt length in tokens (default: 500)
 #   SUFFIX_LENGTH  generated/gold length in tokens (default: 500)
-#   SINK_SCALE     sink/off-by-one only: scale the learned sink logit
+#   SINK_SCALE     sink/off-by-one only: scale the learned sink logit (megatron backend only)
 #   OVERWRITE      skip the whole job unless set, even if store already has this suffix's pkl
 #   FORCE_METRICS  recompute every reachable boundary's pkl in Step 2, even ones that already
 #                  exist (e.g. after backfill added fields an old pkl predates) -- independent
@@ -45,6 +48,7 @@ source $MEGATRON_LM_DIR/attn_bench/scripts/scratch_to_store.sh
 OFFSET=${OFFSET:-0}
 PREFIX_LENGTH=${PREFIX_LENGTH:-500}
 SUFFIX_LENGTH=${SUFFIX_LENGTH:-500}
+CHECKPOINT_BACKEND=${CHECKPOINT_BACKEND:-megatron}
 SINK_SCALE=${SINK_SCALE:-}
 OVERWRITE=${OVERWRITE:-}
 FORCE_METRICS=${FORCE_METRICS:-}
@@ -52,7 +56,15 @@ FORCE_METRICS=${FORCE_METRICS:-}
 ### MODEL -> EXP_NAME / MEGATRON_EXTRA / NEEDS_TRITON / IS_SINK_FAMILY / NEEDS_UNFUSED_DECODE ###
 MODEL=${MODEL:-full-scf8}
 model_config "$MODEL"
-[ -n "$SINK_SCALE" ] && PDM_EXP_NAME="${EXP_NAME}_sscale${SINK_SCALE}" || PDM_EXP_NAME="$EXP_NAME"
+
+# Mirrors InferenceBackend.experiment_path_suffix() in inference_backend.py -- keep in sync.
+if [ "$CHECKPOINT_BACKEND" = "hf" ]; then
+    PDM_EXP_NAME="${EXP_NAME}_hf"
+elif [ -n "$SINK_SCALE" ]; then
+    PDM_EXP_NAME="${EXP_NAME}_sscale${SINK_SCALE}"
+else
+    PDM_EXP_NAME="$EXP_NAME"
+fi
 
 MODEL_DIR=/users/$USER/store/pretrain-results/$CKPT_NAME
 STORE_MEM_BASE=/users/$USER/store/mem-results
@@ -60,7 +72,7 @@ SCRATCH_MEM_BASE=/iopsstor/scratch/cscs/$USER/mem-results
 MEM_DIR=$SCRATCH_MEM_BASE/SparseGutenberg/$EXP_NAME
 GUTENBERG_JSONL_DIR=/users/$USER/store/datasets/tokenized/gutenberg_rep_jsonl
 TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b
-PY=$MEGATRON_LM_DIR/attn_bench/evaluation/megatron_inference.py
+PY=$MEGATRON_LM_DIR/attn_bench/evaluation/prefix_extraction_inference.py
 
 export PYTHONPATH=$MEGATRON_LM_DIR:$PDM_DIR:$PDM_DIR/src:${PYTHONPATH:-}
 export CUDA_DEVICE_MAX_CONNECTIONS=1
@@ -72,12 +84,22 @@ if [ -z "$OVERWRITE" ] && [ -f "$STORE_PKL" ]; then
     exit 0
 fi
 
-echo "RUN: model=$MODEL  exp=$EXP_NAME  offset=$OFFSET  prefix=$PREFIX_LENGTH  suffix=$SUFFIX_LENGTH${SINK_SCALE:+  sink_scale=$SINK_SCALE}"
+# HF checkpoint must already exist (produced separately by convert_and_validate_hf.slurm) --
+# this also doubles as the "is this model even HF-convertible" check, since sink/gated/GDN
+# models never get one.
+if [ "$CHECKPOINT_BACKEND" = "hf" ]; then
+    HF_DIR=/users/$USER/store/hf-checkpoints/$EXP_NAME
+    if [ ! -f "$HF_DIR/config.json" ]; then
+        echo "CHECKPOINT_BACKEND=hf requested but $HF_DIR/config.json not found -- run convert_and_validate_hf.slurm (MODEL=$MODEL) first."
+        exit 1
+    fi
+fi
+
+echo "RUN: model=$MODEL  exp=$EXP_NAME  backend=$CHECKPOINT_BACKEND  offset=$OFFSET  prefix=$PREFIX_LENGTH  suffix=$SUFFIX_LENGTH${SINK_SCALE:+  sink_scale=$SINK_SCALE}"
 
 # --experiment-path is the scratch working dir; copy_scratch_to_store handles the store side.
 COMMON_ARGS="--container-env $CONTAINER_ENV \
-    --ckpt-dir $MODEL_DIR/checkpoints \
-    --tokenizer-path $TOKENIZER_PATH \
+    --checkpoint-backend $CHECKPOINT_BACKEND \
     --experiment-path $MEM_DIR \
     --data-folder $GUTENBERG_JSONL_DIR \
     --repetitions 0,1,2,4,8,16,32,64,128,256 \
@@ -85,18 +107,24 @@ COMMON_ARGS="--container-env $CONTAINER_ENV \
     --prefix-length $PREFIX_LENGTH \
     --suffix-length $SUFFIX_LENGTH \
     --batch-size 20"
-[ "$IS_SINK_FAMILY" = "1" ] && [ -n "$SINK_SCALE" ] && COMMON_ARGS="$COMMON_ARGS --sink-scale $SINK_SCALE"
 
-# NEEDS_UNFUSED_DECODE: TE 2.15 rejects fused attn in decode mode with a sink token (see
-# llama_checkpoints.sh). Forces the pure-PyTorch UnfusedDotProductAttention path.
-GREEDY_MEGATRON_EXTRA="$MEGATRON_EXTRA"
-EXTRA_ENV=""
-if [ "$NEEDS_UNFUSED_DECODE" = "1" ]; then
-    GREEDY_MEGATRON_EXTRA="$GREEDY_MEGATRON_EXTRA --attention-backend unfused"
-    EXTRA_ENV="export NVTE_FUSED_ATTN=0; export CUDNN_LOGERR_DBG=1; export CUDNN_LOGDEST_DBG=stderr;"
-fi
 EXTRA_MEGATRON=""
-[ -n "$GREEDY_MEGATRON_EXTRA" ] && EXTRA_MEGATRON="--megatron-extra-args $GREEDY_MEGATRON_EXTRA"
+EXTRA_ENV=""
+if [ "$CHECKPOINT_BACKEND" = "hf" ]; then
+    COMMON_ARGS="$COMMON_ARGS --hf-dir $HF_DIR"
+else
+    COMMON_ARGS="$COMMON_ARGS --ckpt-dir $MODEL_DIR/checkpoints --tokenizer-path $TOKENIZER_PATH"
+    [ "$IS_SINK_FAMILY" = "1" ] && [ -n "$SINK_SCALE" ] && COMMON_ARGS="$COMMON_ARGS --sink-scale $SINK_SCALE"
+
+    # NEEDS_UNFUSED_DECODE: TE 2.15 rejects fused attn in decode mode with a sink token (see
+    # llama_checkpoints.sh). Forces the pure-PyTorch UnfusedDotProductAttention path.
+    GREEDY_MEGATRON_EXTRA="$MEGATRON_EXTRA"
+    if [ "$NEEDS_UNFUSED_DECODE" = "1" ]; then
+        GREEDY_MEGATRON_EXTRA="$GREEDY_MEGATRON_EXTRA --attention-backend unfused"
+        EXTRA_ENV="export NVTE_FUSED_ATTN=0; export CUDNN_LOGERR_DBG=1; export CUDNN_LOGDEST_DBG=stderr;"
+    fi
+    [ -n "$GREEDY_MEGATRON_EXTRA" ] && EXTRA_MEGATRON="--megatron-extra-args $GREEDY_MEGATRON_EXTRA"
+fi
 
 ### STEP 1: sparse Gutenberg inference ###
 # Loads torch_dist checkpoint directly (DCP resharding merges TP shards on the fly).

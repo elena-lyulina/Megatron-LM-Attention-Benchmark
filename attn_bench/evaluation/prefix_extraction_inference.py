@@ -1,17 +1,18 @@
 """
-Megatron-native sparse Gutenberg inference for memorization measurement (Step 1).
+Sparse Gutenberg inference for memorization measurement (Step 1): greedy-generate a suffix
+from a prefix at increasing repetition counts and score it. Backend-agnostic via
+InferenceBackend (inference_backend.py) -- Megatron or an already-converted HF checkpoint.
+GPU-dependent work only (generation, NLL, p_z -- Hayes et al. 2025); text metrics live in
+compute_memorization_metrics.py.
 
-Loads the model directly from a torch_dist checkpoint (no HF conversion -- HF doesn't
-support the custom attention variants). GPU/model-dependent work only: greedy generation,
-NLL, and p_z (Hayes et al. 2025). Text metrics live in compute_memorization_metrics.py.
-
-Writes one rank{N}.jsonl per GPU under offset_O_prefix_P_suffix_S/rep_R_greedy/. Reuses
-a sibling suffix' >= the request if one exists (nothing to compute), or extends from a
-smaller suffix' via teacher-forced prefill instead of regenerating. Smaller suffix dirs
-are kept, not deleted, as a check that extending reproduces a fresh run's tokens.
+Writes one rank{N}.jsonl per GPU under offset_O_prefix_P_suffix_S/rep_R_greedy/. Reuses a
+sibling suffix' >= the request, or extends a smaller one via teacher-forced prefill instead
+of regenerating -- smaller suffix dirs are kept as a check that extending reproduces a
+fresh run's tokens.
 
 Usage (via torchrun):
-    torchrun --nproc_per_node=4 attn_bench/evaluation/megatron_inference.py \
+    torchrun --nproc_per_node=4 attn_bench/evaluation/prefix_extraction_inference.py \
+        --checkpoint-backend megatron \
         --ckpt-dir $MODEL_DIR/checkpoints \
         --tokenizer-path $TOKENIZER_PATH \
         --experiment-path $MEM_DIR \
@@ -21,13 +22,18 @@ Usage (via torchrun):
         --prefix-length 500 \
         --suffix-length 500 \
         --batch-size 20
+
+    # or, against an already HF-converted checkpoint (faster generate(), full-attention only):
+    torchrun --nproc_per_node=4 attn_bench/evaluation/prefix_extraction_inference.py \
+        --checkpoint-backend hf --hf-dir $HF_DIR \
+        --experiment-path $MEM_DIR --data-folder $GUTENBERG_JSONL_DIR \
+        --repetitions 0,1,2,4,8,16,32,64,128,256 --offset 0 --prefix-length 500 --suffix-length 500 --batch-size 20
 """
 
 from __future__ import annotations
 
 import argparse
 import json
-import math
 import os
 import subprocess
 import time
@@ -39,76 +45,26 @@ import torch.distributed as dist
 import torch.nn.functional as F
 from torch.utils.data import DataLoader, DistributedSampler
 
+from attn_bench.evaluation.inference_backend import (HFBackend,
+                                                     InferenceBackend,
+                                                     MegatronBackend)
 from attn_bench.evaluation.inference_common import (
     BOS_TOKEN_ID, discover_all_offset_prefix_suffix_dirs, find_rep_paths,
-    greedy_generate, load_megatron_model, load_records_by_sample_idx)
+    load_records_by_sample_idx)
 
 P_Z_TOP_K = 40
 P_Z_TEMPERATURE = 1.0
 
-### MODEL ###
-
-def patch_sink_scale(model, sink_scale: float) -> list:
-    """Scale the virtual sink weight at inference: offset_new = offset_trained + log(sink_scale).
-
-    Equivalently: exp(offset_new) = sink_scale × exp(offset_trained).
-    sink_scale=1 is identity; >1 strengthens the sink, <1 weakens it.
-    Supports off-by-one (trained offset=0, so offset_new=log(sink_scale)) and learnable.
-    Raises for vanilla attention (no softmax_offset). Returns original per-layer
-    per-head values as list of lists for metadata.
-    """
-    from megatron.core.transformer.dot_product_attention import \
-        DotProductAttention as MegatronDPA
-    try:
-        import transformer_engine.pytorch as te
-        TE_DPA = te.DotProductAttention
-    except ImportError:
-        TE_DPA = None
-
-    if sink_scale < 0:
-        raise ValueError(f"sink_scale must be >= 0, got {sink_scale}")
-    log_scale = math.log(sink_scale) if sink_scale > 0 else float("-inf")
-    originals = []
-    count = 0
-    for module in model.modules():
-        if isinstance(module, MegatronDPA) and module.softmax_offset is not None:
-            assert module.config.softmax_type in ("off-by-one", "learnable"), (
-                f"patch_sink_scale only supports off-by-one and learnable attention, "
-                f"got softmax_type='{module.config.softmax_type}'"
-            )
-            originals.append(module.softmax_offset.detach().cpu().tolist())
-            module.softmax_offset.data.add_(log_scale)
-            count += 1
-        elif TE_DPA is not None and isinstance(module, TE_DPA) and module.softmax_offset is not None:
-            assert module.softmax_type in ("off-by-one", "learnable"), (
-                f"patch_sink_scale only supports off-by-one and learnable attention, "
-                f"got softmax_type='{module.softmax_type}'"
-            )
-            originals.append(module.softmax_offset.detach().cpu().tolist())
-            module.softmax_offset.data.add_(log_scale)
-            count += 1
-
-    if count == 0:
-        raise RuntimeError(
-            "patch_sink_scale: no patchable attention layers found "
-            "(neither MegatronDPA nor TE DPA with softmax_offset != None)."
-        )
-    print(f"Patched softmax_offset += log({sink_scale}) = {log_scale:.4f} in {count} attention layers")
-    return originals
-
-
 ### NLL / p_z ###
 
 @torch.no_grad()
-def compute_nll(model, input_ids: torch.Tensor, suffix_length: int):
-    """One forward pass; per-position NLL for the last suffix_length tokens.
+def compute_nll(backend: InferenceBackend, input_ids: torch.Tensor, suffix_length: int):
+    """One forward pass; per-position NLL for the last suffix_length tokens. Also returns
+    the logits/labels so callers (p_z_log_probs) can reuse this pass instead of paying for
+    another one.
 
-    Also returns the logits/labels that produced it, so callers (p_z_log_probs) can
-    reuse the same forward pass instead of paying for another one.
-
-    input_ids: [B, S]  — BOS + prefix + suffix (or BOS + prefix + generated)
-    Returns: per_position_nll [B, suffix_length], suffix_logits [B, suffix_length, V],
-             suffix_labels [B, suffix_length]
+    input_ids: [B, S] -- BOS + prefix + suffix (or BOS + prefix + generated)
+    Returns: per_position_nll [B, suffix_length], suffix_logits [B, suffix_length, V], suffix_labels [B, suffix_length]
     """
     B, S = input_ids.shape
     device = input_ids.device
@@ -116,12 +72,10 @@ def compute_nll(model, input_ids: torch.Tensor, suffix_length: int):
     labels = input_ids[:, 1:]
     position_ids = torch.arange(S - 1, dtype=torch.long, device=device).unsqueeze(0).expand(B, -1)
 
-    logits = model(inputs, position_ids, attention_mask=None)  # [B, S-1, V]
+    logits = backend.forward_logits(inputs, position_ids)  # [B, S-1, V]
 
-    # Only the suffix positions' NLL is used below -- computing log_softmax (and upcasting
-    # to fp32) over the full prefix+suffix span wastes memory that grows with prefix length
-    # for no benefit (this is what OOM'd at prefix>=5000, see job 3036124). Slice to the
-    # last suffix_length positions first instead.
+    # Slice to suffix_length first -- log_softmax in fp32 over the full prefix+suffix span
+    # wasted memory that grew with prefix length for no benefit (OOM'd at prefix>=5000, job 3036124).
     suffix_logits = logits[:, -suffix_length:, :].float()
     suffix_labels = labels[:, -suffix_length:]
     del logits
@@ -140,9 +94,8 @@ def nll_stats(per_position_nll: torch.Tensor):
 def p_z_log_probs(suffix_logits: torch.Tensor, suffix_labels: torch.Tensor,
                   top_k: int = P_Z_TOP_K, temperature: float = P_Z_TEMPERATURE) -> torch.Tensor:
     """Per-position log-probability of the true token under top-k/temperature sampling
-    (Hayes et al. 2025's p_z). Computed from the same forward pass as NLL, no generation involved.
-     -inf at positions where the true token falls outside the top-k set, since that scheme could never sample it there.
-    """
+    (Hayes et al. 2025's p_z), from the same forward pass as NLL -- no generation involved.
+    -inf where the true token falls outside the top-k set (that scheme could never sample it there)."""
     scaled = suffix_logits / temperature
     topk_vals, topk_idx = scaled.topk(top_k, dim=-1)
     topk_log_probs = F.log_softmax(topk_vals, dim=-1)
@@ -153,13 +106,13 @@ def p_z_log_probs(suffix_logits: torch.Tensor, suffix_labels: torch.Tensor,
     return torch.where(in_top_k, log_prob, torch.full_like(log_prob, float("-inf")))
 
 
-def compute_nll_pz_stats(model, true_full_sequence: torch.Tensor, gen_full_sequence: torch.Tensor,
-                         suffix_length: int):
+def compute_nll_pz_stats(backend: InferenceBackend, true_full_sequence: torch.Tensor,
+                         gen_full_sequence: torch.Tensor, suffix_length: int):
     """ref/gen NLL, p_z, and their mean/std/ppl summaries for one batch."""
-    ref_nll, ref_logits, ref_labels = compute_nll(model, true_full_sequence, suffix_length)
+    ref_nll, ref_logits, ref_labels = compute_nll(backend, true_full_sequence, suffix_length)
     p_z = p_z_log_probs(ref_logits, ref_labels)
     del ref_logits, ref_labels
-    gen_nll, gen_logits, gen_labels = compute_nll(model, gen_full_sequence, suffix_length)
+    gen_nll, gen_logits, gen_labels = compute_nll(backend, gen_full_sequence, suffix_length)
     del gen_logits, gen_labels
     ref_mean, ref_std, ref_ppl = nll_stats(ref_nll)
     gen_mean, gen_std, gen_ppl = nll_stats(gen_nll)
@@ -207,11 +160,9 @@ def find_rep_source(experiment_path: Path, offset: int, prefix_length: int,
 ### MAIN LOOP ###
 
 def _capture_rouge_l(true_suffixes: list, gen_suffixes: list) -> list:
-    """Per-sample Rouge-L, computed locally only to route attention maps into buckets
-    for --capture-attention. Not persisted to the jsonl -- that's Step 2's job for
-    everything else. Deferred import so the common (non-capture) path stays free of
-    PDM/verbatim_eval deps.
-    """
+    """Per-sample Rouge-L, computed locally just to route attention maps into buckets for
+    --capture-attention -- not persisted (that's Step 2's job). Deferred import keeps the
+    common non-capture path free of PDM/verbatim_eval deps."""
     import numpy as np
     from verbatim_eval.my_rouge import (_compute_dp_matrix_2d,
                                         compute_rouge_l_2d)
@@ -223,26 +174,23 @@ def _capture_rouge_l(true_suffixes: list, gen_suffixes: list) -> list:
     return scores
 
 
-def run_bucket(model, dataset, prefix_length, suffix_length, batch_size, inference_dir,
-               rank, world_size, needs_bos: bool, capture=None,
-               extend_records: dict | None = None, extend_from_suffix: int | None = None) -> float:
+def run_bucket(backend: InferenceBackend, dataset, prefix_length, suffix_length, batch_size,
+              inference_dir, rank, world_size, needs_bos: bool, capture=None,
+              extend_records: dict | None = None, extend_from_suffix: int | None = None) -> float:
     """Run inference for one repetition bucket.
 
-    dataset: list of (sample_idx, excerpt_tokens) -- sample_idx tagged before this
-             DistributedSampler split, so it survives regardless of --batch-size/world
-             size across separate job invocations.
-    needs_bos: True when offset > 0, i.e. the excerpts don't start with BOS and we must prepend it.
-    extend_records: {sample_idx: old_record} from a smaller suffix' run to extend from
-                    (old_record must have "generated_suffix" of length extend_from_suffix),
-                    or None to generate fresh.
-    capture: shared AttentionCapture instance (or None). Always regenerates from scratch
-             (extend_records is ignored when capture is set) -- the maps need the actual
-             forward passes.
+    dataset: (sample_idx, excerpt_tokens) list -- sample_idx tagged pre-split, so it's
+             stable across --batch-size/world size in later runs.
+    needs_bos: True when offset > 0 (excerpts don't start with BOS, so we prepend it).
+    extend_records: {sample_idx: old_record} to extend from a smaller suffix' run, or None
+                    to generate fresh (old_record needs "generated_suffix" of length
+                    extend_from_suffix).
+    capture: shared AttentionCapture, or None. Always regenerates from scratch when set
+             (extend_records is ignored) -- the maps need real forward passes.
 
-    Returns: total wall time spent in greedy_generate, isolated from everything else in
-             this loop (checkpoint load happened before this function is ever called).
+    Returns: wall time spent generating (checkpoint load happens before this is called).
     """
-    device = next(model.parameters()).device
+    device = backend.device
 
     sampler = DistributedSampler(dataset, num_replicas=world_size, rank=rank, shuffle=False)
     loader = DataLoader(dataset, batch_size=batch_size, sampler=sampler, collate_fn=lambda b: b)
@@ -281,26 +229,26 @@ def run_bucket(model, dataset, prefix_length, suffix_length, batch_size, inferen
                 decode_prompt = torch.cat([prompt, old_generated], dim=1)
                 new_steps = suffix_length - extend_from_suffix
                 t0 = time.monotonic()
-                new_tokens = greedy_generate(model, decode_prompt, new_steps)
+                new_tokens = backend.generate(decode_prompt, new_steps)
                 generation_time += time.monotonic() - t0
                 generated = torch.cat([old_generated, new_tokens], dim=1)
             elif capture is not None:
                 capture.begin_batch(B)
                 t0 = time.monotonic()
-                generated = greedy_generate(
-                    model, prompt, suffix_length,
+                generated = backend.generate_with_capture(
+                    prompt, suffix_length,
                     prefill_callback=capture.collect_prefill,
                     decode_step_callback=capture.collect_decode,
                 )
                 generation_time += time.monotonic() - t0
             else:
                 t0 = time.monotonic()
-                generated = greedy_generate(model, prompt, suffix_length)
+                generated = backend.generate(prompt, suffix_length)
                 generation_time += time.monotonic() - t0
 
             gen_full = torch.cat([prompt, generated], dim=1)
             ref_nll, gen_nll, p_z, ref_mean, ref_std, ref_ppl, gen_mean, gen_std, gen_ppl = \
-                compute_nll_pz_stats(model, seq, gen_full, suffix_length)
+                compute_nll_pz_stats(backend, seq, gen_full, suffix_length)
 
             # Raw prefix/suffix from the original excerpt (for output, no BOS management)
             prefixes = batch_tensor[:, :prefix_length].cpu().tolist()
@@ -348,8 +296,15 @@ def run_bucket(model, dataset, prefix_length, suffix_length, batch_size, inferen
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--ckpt-dir", required=True, help="torch_dist checkpoint directory")
-    parser.add_argument("--tokenizer-path", required=True)
+    parser.add_argument("--checkpoint-backend", choices=["megatron", "hf"], default="megatron",
+                        help="megatron: load the torch_dist checkpoint directly (all attention "
+                             "variants). hf: load an already-converted HF checkpoint (faster "
+                             "generate(), full-attention models only). Requires --hf-dir; "
+                             "incompatible with --sink-scale/--capture-attention.")
+    parser.add_argument("--ckpt-dir", default=None, help="torch_dist checkpoint directory (megatron backend)")
+    parser.add_argument("--tokenizer-path", default=None, help="(megatron backend)")
+    parser.add_argument("--hf-dir", default=None,
+                        help="Output of checkpoint_conversion/convert_megatron_to_hf.py (hf backend)")
     parser.add_argument("--experiment-path", required=True, help="Output root (MEM_DIR)")
     parser.add_argument("--data-folder", required=True, help="Directory of rep_*_token.jsonl files")
     parser.add_argument("--repetitions", required=True, help="Comma-separated, e.g. 0,1,2,4,8,16,32,64,128,256")
@@ -368,17 +323,35 @@ def parse_args():
     parser.add_argument("--sink-scale", type=float, default=None,
                         help="Scale the virtual sink weight at inference: offset_new = offset_trained + log(sink_scale). "
                              "sink_scale=1 is identity, >1 strengthens the sink, <1 weakens it. "
-                             "Supports off-by-one and learnable attention. "
+                             "Supports off-by-one and learnable attention (megatron backend only). "
                              "Original per-head values saved to sink_scale_metadata.json. "
                              "Appends _sscale{X} to experiment path.")
     parser.add_argument("--capture-attention", action="store_true",
                         help="Capture full causal attention maps (prefill + decode), averaged into "
-                             "Rouge-L buckets across all repetition buckets. Writes "
-                             "attn_scores_rouge_l_{NN-MM}_rank{N}.npz, norm_attn_rouge_l_{NN-MM}_rank{N}.npz "
-                             "and (gated only) gating_scores_rank{N}.npz at the run-level inference dir. "
+                             "Rouge-L buckets across all repetition buckets (megatron backend only). "
+                             "Writes attn_scores_rouge_l_{NN-MM}_rank{N}.npz, "
+                             "norm_attn_rouge_l_{NN-MM}_rank{N}.npz and (gated only) "
+                             "gating_scores_rank{N}.npz at the run-level inference dir. "
                              "Requires prefix+suffix <= 600 (maps are O((prefix+suffix)^2) per layer/head). "
                              "Always regenerates from scratch, ignoring any reusable smaller-suffix run.")
     return parser.parse_args()
+
+
+def build_backend(args) -> InferenceBackend:
+    """Constructs the requested backend (raises if required args are missing/invalid), then
+    checks any optional capability flags against what it actually implements -- fails before
+    load_model()'s GPU/checkpoint work, without main() hardcoding which backend supports what."""
+    if args.checkpoint_backend == "hf":
+        backend = HFBackend(args.hf_dir)
+    else:
+        backend = MegatronBackend(args.ckpt_dir, args.tokenizer_path, args.megatron_extra_args,
+                                  sink_scale=args.sink_scale)
+
+    if args.sink_scale is not None and type(backend).patch_sink_scale is InferenceBackend.patch_sink_scale:
+        raise ValueError(f"--sink-scale: {backend.name} backend does not implement patch_sink_scale.")
+    if args.capture_attention and type(backend).setup_attention_capture is InferenceBackend.setup_attention_capture:
+        raise ValueError(f"--capture-attention: {backend.name} backend does not implement setup_attention_capture.")
+    return backend
 
 
 def load_rep_bucket(path: Path, offset: int, prefix_length: int, suffix_length: int,
@@ -401,24 +374,6 @@ def load_rep_bucket(path: Path, offset: int, prefix_length: int, suffix_length: 
     return dataset
 
 
-def _make_capture(model, args, needs_bos: bool):
-    """Instantiate and register a shared AttentionCapture spanning all repetition buckets."""
-    from attn_bench.evaluation.attn_capture import AttentionCapture
-
-    cfg = model.config
-    prompt_len = args.prefix_length + (1 if needs_bos else 0)
-
-    capture = AttentionCapture(
-        n_layers=cfg.num_layers,
-        n_heads=cfg.num_attention_heads,
-        prompt_len=prompt_len,
-        suffix_length=args.suffix_length,
-        is_gated=getattr(cfg, 'attention_output_gate', False),
-    )
-    capture.register(model)
-    return capture
-
-
 def _git_commit() -> str | None:
     try:
         return subprocess.check_output(
@@ -428,8 +383,8 @@ def _git_commit() -> str | None:
         return None
 
 
-def write_run_metadata(output_path: Path, args, world_size: int, action: str,
-                       extended_from_suffix: int | None = None) -> None:
+def write_run_metadata(output_path: Path, args, backend: InferenceBackend, world_size: int,
+                       action: str, extended_from_suffix: int | None = None) -> None:
     """Append one entry to run_metadata.json -- generate/extend/backfill/metrics jobs can
     all touch the same directory over time, so the history is what's useful, not just the
     last write.
@@ -447,7 +402,9 @@ def write_run_metadata(output_path: Path, args, world_size: int, action: str,
         "extended_from_suffix": extended_from_suffix,
         "container_env": args.container_env,
         "job_id": os.environ.get("SLURM_JOB_ID"),
-        "ckpt_dir": args.ckpt_dir,
+        "checkpoint_backend": backend.name,
+        "ckpt_dir": getattr(args, "ckpt_dir", None),
+        "hf_dir": getattr(args, "hf_dir", None),
         "world_size": world_size,
         "max_samples": args.max_samples,
         "git_commit": _git_commit(),
@@ -457,22 +414,8 @@ def write_run_metadata(output_path: Path, args, world_size: int, action: str,
         json.dump(history, f, indent=2)
 
 
-def _setup_capture(model, args, output_path: Path, rank: int, needs_bos: bool):
-    """Attention capture (when requested) aggregates full maps across ALL repetition
-    buckets into Rouge-L buckets, written once at run level. A run-level marker decides
-    resume."""
-    from attn_bench.evaluation.attn_capture import N_BUCKETS, bucket_label
-
-    last_bucket = bucket_label(N_BUCKETS - 1)
-    capture_marker = output_path / f"attn_scores_rouge_l_{last_bucket}_rank{rank}.npz"
-    do_capture = args.capture_attention and not capture_marker.exists()
-    if args.capture_attention and not do_capture and rank == 0:
-        print("Attention capture already done — skipping capture (jsonl still processed as needed).")
-    return _make_capture(model, args, needs_bos) if do_capture else None
-
-
-def _process_rep(model, args, experiment_path: Path, output_path: Path, path: Path,
-                 rank: int, world_size: int, needs_bos: bool, capture):
+def _process_rep(backend: InferenceBackend, args, experiment_path: Path, output_path: Path,
+                 path: Path, rank: int, world_size: int, needs_bos: bool, capture):
     """Runs (or skips, or extends) one repetition bucket. Returns None if skipped,
     else (extend_from_suffix_or_None, generation_time)."""
     rep = int(path.stem.split("_")[1])
@@ -508,7 +451,7 @@ def _process_rep(model, args, experiment_path: Path, output_path: Path, path: Pa
             print(f"  Extending from suffix={extend_from_suffix}")
 
     generation_time = run_bucket(
-        model, dataset,
+        backend, dataset,
         args.prefix_length, args.suffix_length,
         args.batch_size, inference_dir,
         rank, world_size,
@@ -531,7 +474,7 @@ def _save_capture(output_path: Path, rank: int, capture) -> None:
         capture.remove()
 
 
-def _write_run_summary(output_path: Path, args, world_size: int, rank: int,
+def _write_run_summary(output_path: Path, args, backend: InferenceBackend, world_size: int, rank: int,
                        did_generate: bool, did_extend: bool, extended_from_suffixes: set,
                        total_generation_time: float) -> None:
     """Appends a run_metadata.json entry (skipped if nothing was generated/extended this
@@ -543,7 +486,7 @@ def _write_run_summary(output_path: Path, args, world_size: int, rank: int,
             "generate" if did_generate and not did_extend else "generate+extend"
         )
         write_run_metadata(
-            output_path, args, world_size, action=action,
+            output_path, args, backend, world_size, action=action,
             extended_from_suffix=(next(iter(extended_from_suffixes)) if len(extended_from_suffixes) == 1
                                   else sorted(extended_from_suffixes) or None),
         )
@@ -551,7 +494,7 @@ def _write_run_summary(output_path: Path, args, world_size: int, rank: int,
     print(f"\nAll repetitions done. Results in: {output_path}")
 
 
-def run_inference(model, args, rank: int, world_size: int) -> None:
+def run_inference(backend: InferenceBackend, args, rank: int, world_size: int) -> None:
     experiment_path = Path(args.experiment_path)
     output_path = (
         experiment_path
@@ -562,7 +505,7 @@ def run_inference(model, args, rank: int, world_size: int) -> None:
 
     paths = find_rep_paths(Path(args.data_folder), {int(r) for r in args.repetitions.split(",")})
     needs_bos = args.offset > 0  # offset==0: BOS already at token 0; offset>0: must prepend
-    capture = _setup_capture(model, args, output_path, rank, needs_bos)
+    capture = backend.setup_attention_capture(args, output_path, rank, needs_bos) if args.capture_attention else None
 
     did_generate = False
     did_extend = False
@@ -570,7 +513,7 @@ def run_inference(model, args, rank: int, world_size: int) -> None:
     total_generation_time = 0.0
 
     for path in paths:
-        result = _process_rep(model, args, experiment_path, output_path, path,
+        result = _process_rep(backend, args, experiment_path, output_path, path,
                               rank, world_size, needs_bos, capture)
         if result is None:
             continue
@@ -583,18 +526,15 @@ def run_inference(model, args, rank: int, world_size: int) -> None:
             did_generate = True
 
     _save_capture(output_path, rank, capture)
-    _write_run_summary(output_path, args, world_size, rank,
+    _write_run_summary(output_path, args, backend, world_size, rank,
                        did_generate, did_extend, extended_from_suffixes, total_generation_time)
 
 
 def results_already_complete(args, world_size: int) -> bool:
-    """True if every requested rep already has a suffix' >= args.suffix_length on disk
-    (and, when capturing, every rank's capture file too) — i.e. there is nothing left to
-    compute. Checked before the expensive checkpoint load.
-
-    Checked from env (WORLD_SIZE), not torch.distributed, so it can run *before* the
-    process group is initialized — no barrier to deadlock on an early exit.
-    """
+    """True if every requested rep already has a suffix' >= args.suffix_length on disk (and,
+    when capturing, every rank's capture file too) -- nothing left to compute. Checked before
+    the expensive checkpoint load, from env (WORLD_SIZE) not torch.distributed, so it can run
+    before the process group is initialized -- no barrier to deadlock on an early exit."""
     from attn_bench.evaluation.attn_capture import N_BUCKETS, bucket_label
 
     experiment_path = Path(args.experiment_path)
@@ -641,8 +581,8 @@ def main():
             f"{args.prefix_length}+{args.suffix_length}={args.prefix_length + args.suffix_length}."
         )
 
-    if args.sink_scale is not None:
-        args.experiment_path = args.experiment_path.rstrip('/') + f"_sscale{args.sink_scale:g}"
+    backend = build_backend(args)
+    args.experiment_path = args.experiment_path.rstrip('/') + backend.experiment_path_suffix()
 
     # Check results before loading the checkpoint: loading the model is the
     # expensive part, so if everything is already on disk we skip it entirely.
@@ -657,10 +597,10 @@ def main():
             )
         return
 
-    model = load_megatron_model(args.ckpt_dir, args.tokenizer_path, args.megatron_extra_args)
+    backend.load_model()
 
     if args.sink_scale is not None:
-        originals = patch_sink_scale(model, args.sink_scale)
+        originals = backend.patch_sink_scale()
         if dist.get_rank() == 0:
             meta_path = Path(args.experiment_path) / "sink_scale_metadata.json"
             meta_path.parent.mkdir(parents=True, exist_ok=True)
@@ -670,7 +610,7 @@ def main():
 
     rank = dist.get_rank()
     world_size = dist.get_world_size()
-    run_inference(model, args, rank, world_size)
+    run_inference(backend, args, rank, world_size)
 
 
 if __name__ == "__main__":

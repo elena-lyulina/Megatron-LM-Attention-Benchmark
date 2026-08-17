@@ -26,15 +26,15 @@ Three families of files are written per rank (aggregated across ALL repetition b
         per-(Rouge-L bucket, layer, head) histogram of sigmoid(gate) over all gate
         elements / query positions / samples, for normalized-density plots.
 
-Usage:
+Usage (see MegatronBackend.setup_attention_capture in inference_backend.py):
     capture = AttentionCapture(n_layers, n_heads, prompt_len, suffix_length, is_gated)
     capture.register(model)
     ...
     for batch in loader:
         capture.begin_batch(B)
-        generated = greedy_generate(model, prompt, suffix_length,
-                                    prefill_callback=capture.collect_prefill,
-                                    decode_step_callback=capture.collect_decode)
+        generated = backend.generate_with_capture(prompt, suffix_length,
+                                                  prefill_callback=capture.collect_prefill,
+                                                  decode_step_callback=capture.collect_decode)
         ...                                    # compute rouge_l per sample
         capture.flush_batch(rouge_l)           # route this batch into Rouge-L buckets
     capture.save(out_dir, rank)

@@ -7,7 +7,7 @@ Writes one PDM-Results-shaped .pkl per suffix value (boundary or the real suffix
 under exp_dir/metrics/, named offset_O_prefix_P_suffix_S_policy.pkl; skip-if-done is an
 exact-match path check.
 
-Needs Phase A (megatron_inference_backfill.py) run first for NLL/p_z on older results --
+Needs Phase A (prefix_extraction_inference_backfill.py) run first for NLL/p_z on older results --
 text metrics work on un-backfilled records too.
 
 Usage:
@@ -32,7 +32,7 @@ from numba import jit
 from verbatim_eval.controlled_expr import Results
 from verbatim_eval.my_rouge import _compute_dp_matrix_2d, compute_rouge_l_2d
 
-from attn_bench.evaluation.megatron_inference import find_suffix_dirs
+from attn_bench.evaluation.prefix_extraction_inference import find_suffix_dirs
 
 BOUNDARIES = [25, 50, 75, 100, 150, 250, 500, 750, 1000, 1500, 2000, 3000, 4000, 5000, 7000]
 

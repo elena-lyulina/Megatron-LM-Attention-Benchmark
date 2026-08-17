@@ -1,12 +1,12 @@
 """
 Backfills existing inference results with sample_idx and full per-position
-ref_nll/gen_nll/p_z, matching Step 1's (megatron_inference_sparse.py) output format.
+ref_nll/gen_nll/p_z, matching Step 1's (prefix_extraction_inference.py) output format.
 One-time migration, kept separate from the live path. Doesn't compute Rouge-L/lcs_norm/
 TTR/token_acc/divergence_point -- that's compute_memorization_metrics.py's job.
 
 Usage (via torchrun, one model/experiment per invocation -- see
-megatron_inference_backfill_all.sh for selecting several):
-    torchrun --nproc_per_node=4 attn_bench/evaluation/megatron_inference_backfill.py \
+prefix_extraction_inference_backfill_all.sh for selecting several):
+    torchrun --nproc_per_node=4 attn_bench/evaluation/prefix_extraction_inference_backfill.py \
         --ckpt-dir $MODEL_DIR/checkpoints \
         --tokenizer-path $TOKENIZER_PATH \
         --experiment-path $MEM_DIR \
@@ -23,11 +23,11 @@ from pathlib import Path
 import torch
 import torch.distributed as dist
 
+from attn_bench.evaluation.inference_backend import MegatronBackend
 from attn_bench.evaluation.inference_common import (
-    BOS_TOKEN_ID, discover_all_offset_prefix_suffix_dirs, load_megatron_model,
-    sample_idx_per_rank)
-from attn_bench.evaluation.megatron_inference import (compute_nll_pz_stats,
-                                                      write_run_metadata)
+    BOS_TOKEN_ID, discover_all_offset_prefix_suffix_dirs, sample_idx_per_rank)
+from attn_bench.evaluation.prefix_extraction_inference import (
+    compute_nll_pz_stats, write_run_metadata)
 
 
 def parse_offset_prefix_suffix(dirname: str) -> tuple:
@@ -70,8 +70,8 @@ def already_backfilled(experiment_path: Path, offset: int | None = None, prefix_
     return True
 
 
-def backfill_rep_dir(model, rep_dir: Path, offset: int, prefix_length: int, suffix_length: int,
-                     data_folder: Path, batch_size: int) -> bool:
+def backfill_rep_dir(backend: MegatronBackend, rep_dir: Path, offset: int, prefix_length: int,
+                     suffix_length: int, data_folder: Path, batch_size: int) -> bool:
     """Rewrites rep_dir's rank*.jsonl in place. Returns False if nothing needed backfilling."""
     rank_files = sorted(rep_dir.glob("rank*.jsonl"))
     if not rank_files:
@@ -93,7 +93,7 @@ def backfill_rep_dir(model, rep_dir: Path, offset: int, prefix_length: int, suff
     per_rank_indices = sample_idx_per_rank(world_size, dataset_len)
 
     needs_bos = offset > 0
-    device = next(model.parameters()).device
+    device = backend.device
 
     for rank, recs in enumerate(all_records):
         indices = per_rank_indices[rank]
@@ -114,7 +114,7 @@ def backfill_rep_dir(model, rep_dir: Path, offset: int, prefix_length: int, suff
                 gen_full = torch.cat([bos, gen_full], dim=1)
 
             ref_nll, gen_nll, p_z, ref_mean, ref_std, ref_ppl, gen_mean, gen_std, gen_ppl = \
-                compute_nll_pz_stats(model, true_full, gen_full, suffix_length)
+                compute_nll_pz_stats(backend, true_full, gen_full, suffix_length)
 
             for i, rec in enumerate(batch):
                 rec["sample_idx"] = batch_indices[i]
@@ -145,7 +145,7 @@ def backfill_rep_dir(model, rep_dir: Path, offset: int, prefix_length: int, suff
     return True
 
 
-def run_backfill(model, args, rank: int, world_size: int):
+def run_backfill(backend: MegatronBackend, args, rank: int, world_size: int):
     """Each rank has its own full model copy (tensor_parallel=1, same as Step 1) --
     no cross-rank collectives needed for the forward passes, so work is split by rep_dir
     across ranks (round-robin) rather than every rank redundantly processing everything.
@@ -163,7 +163,7 @@ def run_backfill(model, args, rank: int, world_size: int):
     touched_dirs = set()
     for rep_dir, offset, prefix_length, suffix_length in tasks[rank::world_size]:
         print(f"[rank {rank}] Backfilling {rep_dir} ...")
-        changed = backfill_rep_dir(model, rep_dir, offset, prefix_length, suffix_length,
+        changed = backfill_rep_dir(backend, rep_dir, offset, prefix_length, suffix_length,
                                    data_folder, args.batch_size)
         if changed:
             touched_dirs.add(rep_dir.parent)  # the offset_..._suffix_... dir, where metadata lives
@@ -180,7 +180,7 @@ def run_backfill(model, args, rank: int, world_size: int):
 
     if rank == 0:
         for suffix_dir in sorted(all_touched):
-            write_run_metadata(suffix_dir, args, world_size=world_size, action="backfill")
+            write_run_metadata(suffix_dir, args, backend, world_size=world_size, action="backfill")
         print("Backfill pass complete." if all_touched else "Nothing needed backfilling.")
 
 
@@ -207,10 +207,11 @@ def main():
         print(f"{args.experiment_path}: already fully backfilled -- skipping checkpoint load.")
         return
 
-    model = load_megatron_model(args.ckpt_dir, args.tokenizer_path, args.megatron_extra_args)
+    backend = MegatronBackend(args.ckpt_dir, args.tokenizer_path, args.megatron_extra_args)
+    backend.load_model()
     rank = dist.get_rank()
     world_size = dist.get_world_size()
-    run_backfill(model, args, rank, world_size)
+    run_backfill(backend, args, rank, world_size)
 
 
 if __name__ == "__main__":

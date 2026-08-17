@@ -45,8 +45,7 @@ esac
 MODEL_DIR=/users/elyulina/store/pretrain-results/$EXP_NAME
 TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b
 
-# PDM on PYTHONPATH + numba: importing load_megatron_model pulls in megatron_inference, whose
-# module-level imports include verbatim_eval.LCS (numba). Mirrors the measure script's env.
+# Mirrors the measure script's env (PDM on PYTHONPATH + numba).
 export PYTHONPATH=$MEGATRON_LM_DIR:$PDM_DIR:$PDM_DIR/src:${PYTHONPATH:-}
 export CUDA_DEVICE_MAX_CONNECTIONS=1
 

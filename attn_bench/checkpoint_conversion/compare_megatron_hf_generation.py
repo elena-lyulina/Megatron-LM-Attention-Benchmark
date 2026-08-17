@@ -1,9 +1,9 @@
 """
-Generation-level comparison: run the same real excerpts through greedy_generate (this
-project's own KV-cache multi-step decode loop, inference_common.py) and HF's own
-model.generate() (greedy), and print both generations side by side plus an exact-match count
-and a wall-clock timing comparison. This exists to exercise the actual multi-step decode loop,
-which compare_megatron_hf_logits.py's single forward pass on random tokens never touches.
+Generation-level comparison: run the same real excerpts through MegatronBackend.generate and
+HFBackend.generate (inference_backend.py), and print both generations side by side plus an
+exact-match count and a wall-clock timing comparison. This exists to exercise the actual
+multi-step decode loop, which compare_megatron_hf_logits.py's single forward pass on random
+tokens never touches.
 
 Usage:
     python attn_bench/checkpoint_conversion/compare_megatron_hf_generation.py \
@@ -21,22 +21,11 @@ import time
 from pathlib import Path
 
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoTokenizer
 
-from attn_bench.evaluation.inference_common import (BOS_TOKEN_ID,
-                                                    greedy_generate,
-                                                    load_megatron_model)
-from attn_bench.evaluation.megatron_inference import load_rep_bucket
-
-
-def generate_hf(model, prompt: torch.Tensor, suffix_length: int) -> torch.Tensor:
-    output = model.generate(
-        input_ids=prompt,
-        max_new_tokens=suffix_length,
-        min_new_tokens=suffix_length,  # matches greedy_generate: always exactly suffix_length tokens
-        do_sample=False,
-    )
-    return output[:, prompt.shape[1]:]
+from attn_bench.evaluation.inference_backend import HFBackend, MegatronBackend
+from attn_bench.evaluation.inference_common import BOS_TOKEN_ID
+from attn_bench.evaluation.prefix_extraction_inference import load_rep_bucket
 
 
 def timed(fn, *fn_args):
@@ -75,8 +64,10 @@ def main():
                               max_samples=args.num_samples)
 
     tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_path)
-    megatron_model = load_megatron_model(args.ckpt_dir, args.tokenizer_path, args.megatron_extra_args)
-    hf_model = AutoModelForCausalLM.from_pretrained(args.hf_dir, torch_dtype="auto").to(device)
+    megatron_backend = MegatronBackend(args.ckpt_dir, args.tokenizer_path, args.megatron_extra_args)
+    megatron_backend.load_model()
+    hf_backend = HFBackend(args.hf_dir)
+    hf_backend.load_model()
 
     needs_bos = args.offset > 0  # offset == 0: excerpt already starts with BOS
     prompt_end = args.prefix_length + (1 if needs_bos else 0)
@@ -90,8 +81,8 @@ def main():
             excerpt_t = torch.cat([bos, excerpt_t], dim=1)
         prompt = excerpt_t[:, :prompt_end]
 
-        megatron_suffix, megatron_time = timed(greedy_generate, megatron_model, prompt, args.suffix_length)
-        hf_suffix, hf_time = timed(generate_hf, hf_model, prompt, args.suffix_length)
+        megatron_suffix, megatron_time = timed(megatron_backend.generate, prompt, args.suffix_length)
+        hf_suffix, hf_time = timed(hf_backend.generate, prompt, args.suffix_length)
 
         megatron_tokens = megatron_suffix[0].tolist()
         hf_tokens = hf_suffix[0].tolist()

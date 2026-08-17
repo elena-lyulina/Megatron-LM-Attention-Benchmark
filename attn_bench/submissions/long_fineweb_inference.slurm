@@ -19,7 +19,6 @@
 # Env vars:
 #   MODEL          checkpoint to use, see llama_checkpoints.sh (default: full)
 #   DATA_FILE      required; jsonl produced by extract_long_docs.py
-#   TP             tensor-parallel degree (default: 1)
 #   MAX_LENGTH     cap sequence length (default: uncapped)
 #   MAX_SAMPLES    cap docs processed (default: 660)
 #   OVERWRITE      recompute even if store already has this bucket
@@ -54,7 +53,6 @@ EXP_SUFFIX=${EXP_SUFFIX:-}
 source $MEGATRON_LM_DIR/attn_bench/scripts/llama_checkpoints.sh
 source $MEGATRON_LM_DIR/attn_bench/scripts/scratch_to_store.sh
 MODEL=${MODEL:-full-scf8}
-TP=${TP:-1}
 model_config "$MODEL"
 
 MODEL_DIR=/users/$USER/store/pretrain-results/$CKPT_NAME
@@ -69,9 +67,8 @@ export CUDA_DEVICE_MAX_CONNECTIONS=1
 
 ### CHECK STORE (before doing anything expensive) ###
 # CONFIG must match config_name() in long_inference.py: unset MAX_SAMPLES falls back to
-# long_fineweb_inference.py's own DEFAULT_MAX_SAMPLES (660), not "all"; tp>1 appends "_tp{TP}".
+# long_fineweb_inference.py's own DEFAULT_MAX_SAMPLES (660), not "all".
 CONFIG="${MAX_SAMPLES:-660}_samples_${MAX_LENGTH:-full}_tokens"
-[ "$TP" -gt 1 ] && CONFIG="${CONFIG}_tp${TP}"
 KEY=$(basename "$DATA_FILE" .jsonl)
 STORE_NPZ=$RESULTS_DIR/$CONFIG/$KEY.npz
 if [ -z "$OVERWRITE" ] && [ -f "$STORE_NPZ" ] \
@@ -87,7 +84,6 @@ COMMON_ARGS="--container-env $CONTAINER_ENV \
     --tokenizer-path $TOKENIZER_PATH \
     --experiment-path $SCRATCH_RESULTS_DIR \
     --data-file $DATA_FILE"
-[ "$TP" -gt 1 ] && COMMON_ARGS="$COMMON_ARGS --tensor-parallel $TP"
 [ -n "$MAX_LENGTH" ] && COMMON_ARGS="$COMMON_ARGS --max-length $MAX_LENGTH"
 [ -n "$MAX_SAMPLES" ] && COMMON_ARGS="$COMMON_ARGS --max-samples $MAX_SAMPLES"
 [ -n "$OVERWRITE" ] && COMMON_ARGS="$COMMON_ARGS --overwrite"
@@ -97,7 +93,7 @@ COMMON_ARGS="--container-env $CONTAINER_ENV \
 EXTRA_MEGATRON=""
 [ -n "$MEGATRON_EXTRA" ] && EXTRA_MEGATRON="--megatron-extra-args $MEGATRON_EXTRA"
 
-echo "RUN: model=$MODEL  exp=$EXP_NAME  data_file=$DATA_FILE  tp=$TP  max_length=${MAX_LENGTH:-none}  max_samples=${MAX_SAMPLES:-660 (default)}  triton=$NEEDS_TRITON  state_norm=${LOG_STATE_NORM:+on}  individual=${STORE_INDIVIDUAL:+on}"
+echo "RUN: model=$MODEL  exp=$EXP_NAME  data_file=$DATA_FILE  max_length=${MAX_LENGTH:-none}  max_samples=${MAX_SAMPLES:-660 (default)}  triton=$NEEDS_TRITON  state_norm=${LOG_STATE_NORM:+on}  individual=${STORE_INDIVIDUAL:+on}"
 
 ### Position-wise loss inference ###
 # GDN needs a per-rank node-local TRITON_CACHE_DIR: fla kernels autotune on first use and

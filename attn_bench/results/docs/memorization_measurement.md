@@ -62,7 +62,7 @@ One parametrized SLURM script for every model (`MODEL` picks it via
 suffix defaults to 500). Writes to scratch during the job and copies to store at
 the end (never write to capstor from a compute node).
 
-**Stage 1 — sparse inference** (`evaluation/megatron_inference.py`, 4 GPUs via torchrun)
+**Stage 1 — sparse inference** (`evaluation/prefix_extraction_inference.py`, 4 GPUs via torchrun)
 - Loads the `torch_dist` checkpoint **directly** with `--use-checkpoint-args` (no
   HF conversion — HF doesn't support the custom attentions; DCP resharding merges
   the TP shards on the fly; architecture flags are restored from the checkpoint).
@@ -129,8 +129,8 @@ stored `p_z` on demand (`compute_memorization_metrics.n_for_p`/`p_for_n`), not
 precomputed.
 
 Existing results predating `sample_idx`/`ref_nll`/`gen_nll`/`p_z_logprob` need
-Phase A (`evaluation/megatron_inference_backfill.py`,
-`submissions/megatron_inference_backfill_all.sh --models ...`) run once before
+Phase A (`evaluation/prefix_extraction_inference_backfill.py`,
+`submissions/prefix_extraction_inference_backfill_all.sh --models ...`) run once before
 Stage 2 can compute NLL/`p_z` summaries for them — it patches old jsonl records
 in place, reusing the same checkpoint-loading and NLL code Stage 1 uses. Text
 metrics (Rouge-L/`lcs_norm`/TTR/`token_acc`/`divergence_point`) work on
@@ -167,7 +167,7 @@ The marker is the *final* artifact, so a half-finished point (jsonls but no pkl)
 is re-submitted.
 
 Defense in depth: even if a redundant job *is* submitted,
-`megatron_inference.py` checks for existing results (`results_already_complete`)
+`prefix_extraction_inference.py` checks for existing results (`results_already_complete`)
 **before** loading the checkpoint and exits early if everything is on disk — so the
 expensive model load is skipped, not just the per-rep generation. The submit-time
 check above still matters because the node allocation + container start are paid as
@@ -178,7 +178,7 @@ soon as the job runs, regardless.
 To measure memorization for a newly trained variant:
 
 1. **Confirm inference works.** The eval greedy-generates with a
-   `StaticInferenceContext` KV cache (`megatron_inference.py`). Standard
+   `StaticInferenceContext` KV cache (`prefix_extraction_inference.py`). Standard
    softmax variants (full, gated, sink, off-by-one) decode out of the box. A
    *different sequence mixer* may need its own cached-decode path first — e.g. GDN
    originally raised `NotImplementedError` on any `inference_context` and needed a
@@ -312,13 +312,13 @@ as `attn_bench/utils/PDM_patch.txt` and applied to a fresh clone with `patch -p1
 |---|---|
 | `measure_mem.slurm` | one `(offset, prefix)` point for one `MODEL`: inference (Stage 1) + metric computation (Stage 2) |
 | `measure_mem_all.sh` | grid driver: submits all variants (from `scripts/llama_checkpoints.sh`) × offsets × prefixes (skips combos whose pkl exists; `--force` overrides) |
-| `megatron_inference_backfill.slurm` / `_all.sh` | Phase A: one-time backfill of `sample_idx`/`ref_nll`/`gen_nll`/`p_z_logprob` into existing results, `--models` selectable |
+| `prefix_extraction_inference_backfill.slurm` / `_all.sh` | Phase A: one-time backfill of `sample_idx`/`ref_nll`/`gen_nll`/`p_z_logprob` into existing results, `--models` selectable |
 | `capture_attn_<variant>_*.slurm` | capture `[L,H,S,S]` attention maps bucketed by Rouge-L |
 | `generation_quality.slurm` | distinct-n + reference-model perplexity |
 | `mauve.slurm` | MAUVE score |
 | `cross_doc_attn.slurm` | correctness test of cross-document masking (not a metric) |
-| `evaluation/megatron_inference.py` | Stage 1: greedy generation + NLL/`p_z`, GPU/model-only |
+| `evaluation/prefix_extraction_inference.py` | Stage 1: greedy generation + NLL/`p_z`, GPU/model-only |
 | `evaluation/compute_memorization_metrics.py` | Stage 2: Rouge-L/`lcs_norm`/TTR/`token_acc`/`divergence_point`/`p_z` summaries per boundary, CPU-only |
-| `evaluation/megatron_inference_backfill.py` | Phase A: backfills old results to match current Stage 1 output |
+| `evaluation/prefix_extraction_inference_backfill.py` | Phase A: backfills old results to match current Stage 1 output |
 | `evaluation/attn_capture.py` | attention-map capture into Rouge-L buckets |
 | `evaluation/plot_attention_patterns.py` | plotting the captured maps |
