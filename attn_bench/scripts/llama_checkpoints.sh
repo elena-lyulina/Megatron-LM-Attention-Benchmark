@@ -19,7 +19,7 @@
 #                        pass, where TE's FusedAttention already supports softmax_type
 #                        natively, so they never need this.
 
-MODELS=(full-scf8 gated-scf8 full-xdoc-leak-scf8 sink-scf8 off-by-one-scf8 gdn carry-r0 carry-r0.5 carry-r1 full-goldfish-scf8 gdn-goldfish full-fineweb80B-scf8 full-long-scf8 full-long-split-1024-scf8)
+MODELS=(full-scf8 gated-scf8 full-xdoc-leak-scf8 sink-scf8 off-by-one-scf8 gdn carry-r0 carry-r0.5 carry-r1 full-goldfish-scf8 gdn-goldfish full-fineweb80B-scf8 full-long-scf8 full-long-split-1024-scf8 full-scf1)
 
 # GDN linear-attention dims -- not restored by --use-checkpoint-args, must be re-passed.
 GDN_DIMS="--experimental-attention-variant gated_delta_net \
@@ -32,6 +32,7 @@ GDN_DIMS="--experimental-attention-variant gated_delta_net \
 
 # Actual RoPE scaling factor these checkpoints trained with (see gpt_builders.py) -- not restored by --use-checkpoint-args, must be re-passed.
 ROPE_SCF8="--use-rope-scaling --rope-scaling-factor 8"
+ROPE_SCF1="--use-rope-scaling --rope-scaling-factor 1"
 
 model_config() {
     local model="$1"
@@ -106,6 +107,10 @@ model_config() {
         full-long-split-1024-scf8)
             EXP_NAME=llama3-1b-full-attn-scf8-fineweb40B-long-split-1024-gutenberg3B
             MEGATRON_EXTRA="$ROPE_SCF8"
+            ;;
+        full-scf1)
+            EXP_NAME=llama3-1b-full-attn-scf1-fineweb40B-gutenberg3B
+            MEGATRON_EXTRA="$ROPE_SCF1"
             ;;
         *)
             echo "Unknown MODEL=$model (expected one of: ${MODELS[*]})"

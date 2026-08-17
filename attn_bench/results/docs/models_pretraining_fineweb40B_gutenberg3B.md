@@ -219,6 +219,28 @@ Logs: `attn_bench/logs/2765350.{out,err}` (long, partial), `attn_bench/logs/2765
 
 ---
 
+## Full attention, scf=1 (explicit rope-scaling-factor)
+
+Full attention re-trained with `--rope-scaling-factor` explicitly set to `1` (previously Megatron used hardcoded 8; `--max-position-embeddings` correspondingly dropped 131072 → 8192).
+Also changed: `--weight-decay` 0.01 → 0.1, `--lr-warmup-iters` 2000 → 500, distributed/batch config 14 nodes/TP=2/MBS=4/GBS=336 → 8 nodes/TP=1/MBS=3/GBS=288 (same token budget, so `TRAINING_STEPS` 15550 → 18141), container `nemo_26` → `nemo_26.04_te2.15`, and periodic checkpointing added (`CHECKPOINT_STEPS=2000`, previously only saved at the final step).
+
+First attempt (`3073433`) was cancelled after a node failure at iteration 2394 (SIGTERM triggered Megatron's exit-signal checkpoint at iteration 2395, though its confirmation print never flushed to the log before the process was killed); restarted (`3074350`), which loaded that iteration-2395 checkpoint and resumed at iteration 2396 — zero repeated iterations.
+
+| variant | Slurm job | start (CEST) | end (CEST) | run time | status | final lm loss (step 18141) | throughput (TFLOP/s/GPU) |
+|---|---|---|---|---|---|---|---|
+| full (scf1) | `3073433` (1h 16m) → `3074350` (7h 17m) | 2026-08-13 12:34 | 2026-08-14 08:52 | 8h 33m combined | cancelled → COMPLETED (data exhausted) | 2.3946 | ~356.8 (avg) |
+
+W&B run: `llama3-1b-full-attn-scf1-fineweb40B-gutenberg3B-3074350` (`14gbs383`, project `fineweb-40B_gutenberg-3B`).
+
+Checkpoint saved at step 18141. Moved to long-term storage under:
+`/users/elyulina/store/pretrain-results/llama3-1b-full-attn-scf1-fineweb40B-gutenberg3B/`
+
+Slurm script: `attn_bench/submissions/pretrain_llama3_1b_full_attn_fineweb40B_gutenberg3B.slurm`
+
+Logs: `attn_bench/logs/3073433.{out,err}` (cancelled attempt), `attn_bench/logs/3074350.err` + `attn_bench/_logs/3074350.out` (resume, full — moved to `_logs/` for exceeding 3 MB).
+
+---
+
 ## Attention variants / trained models 
 
 | variant | Megatron flag | description |
