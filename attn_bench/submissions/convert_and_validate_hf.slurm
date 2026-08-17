@@ -109,10 +109,14 @@ print(f'rope factor = {factor} (expected $EXPECTED_ROPE_FACTOR) -- OK')
     if [ \$CFG_CHECK_STATUS -ne 0 ]; then echo 'Config sanity check failed'; exit \$CFG_CHECK_STATUS; fi
 
     echo '### STEP 3: compare logits (random tokens, single forward pass) ###'
+    # batch-size 1 (default 4 OOMs: fp32 SDPA has no flash kernel, so it materializes the full
+    # batch x heads x seq x seq attention matrix -- 4x32x8192x8192x4 bytes = 32 GiB).
+    # --megatron-extra-args must stay last -- it's argparse.REMAINDER, swallows everything after it.
     torchrun --nproc_per_node=1 $CONV_DIR/compare_megatron_hf_logits.py \
         --ckpt-dir $MODEL_DIR/checkpoints \
         --tokenizer-path $TOKENIZER_PATH \
         --hf-dir $SCRATCH_CONVERT_DIR/HF \
+        --batch-size 1 \
         --megatron-extra-args $MEGATRON_EXTRA
     STEP3_STATUS=\$?
     if [ \$STEP3_STATUS -ne 0 ]; then echo 'Step 3 failed'; exit \$STEP3_STATUS; fi
