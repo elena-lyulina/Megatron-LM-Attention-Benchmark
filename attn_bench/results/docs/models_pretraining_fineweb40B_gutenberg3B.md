@@ -241,6 +241,47 @@ Logs: `attn_bench/logs/3073433.{out,err}` (cancelled attempt), `attn_bench/logs/
 
 ---
 
+## Gated attention, scf=1
+
+Gated attention re-trained with the same scf=1 config as the full-attention run above (`--rope-scaling-factor 1`, 8 nodes / TP=1 / MBS=3 / GBS=288, `TRAINING_STEPS=18141`, container `nemo_26.04_te2.15`).
+
+| variant | Slurm job | start (CEST) | end (CEST) | run time | status | final lm loss (step 18141) | throughput (TFLOP/s/GPU) |
+|---|---|---|---|---|---|---|---|
+| gated (scf1) | `3108434` | 2026-08-18 03:52:54 | 2026-08-18 11:59:50 | 8h 06m 56s | COMPLETED (data exhausted) | 2.3832 | ~360 (avg) |
+
+Note: local `.out`/`.err` logs for job `3108434` are incomplete — the scratch copy was deleted mid-run, before `move_checkpoint_to_store.sh` could archive it (its "slurm log not found" warning confirms this), so the file on disk stops at iteration 1069/18141 with no crash.
+Training and checkpointing were unaffected; the figures above come from the run's W&B-captured console output instead.
+
+W&B run: `llama3-1b-gated-attn-scf1-fineweb40B-gutenberg3B-3108434` (`guoowo9z`, project `fineweb-40B_gutenberg-3B`).
+
+Checkpoint saved at step 18141. Moved to long-term storage under:
+`/users/elyulina/store/pretrain-results/llama3-1b-gated-attn-scf1-fineweb40B-gutenberg3B/`
+
+Slurm script: `attn_bench/submissions/pretrain_llama3_1b_gated_attn_fineweb40B_gutenberg3B.slurm`
+
+Logs: `attn_bench/logs/3108434.{out,err}` (partial — see note above).
+
+---
+
+## Sink attention, scf=1
+
+Sink attention re-trained with the same scf=1 config as the full-attention run above (`--rope-scaling-factor 1`, 8 nodes / TP=1 / MBS=3 / GBS=288, `TRAINING_STEPS=18141`, container `nemo_26.04_te2.15`).
+
+| variant | Slurm job | start (CEST) | end (CEST) | run time | status | final lm loss (step 18141) | throughput (TFLOP/s/GPU) |
+|---|---|---|---|---|---|---|---|
+| sink (scf1) | `3108550` | 2026-08-18 04:24:28 | 2026-08-18 12:35:07 | 8h 10m 39s | COMPLETED (data exhausted) | 2.3941 | ~359 (avg) |
+
+W&B run: `llama3-1b-sink-attn-scf1-fineweb40B-gutenberg3B-3108550` (`k48e1gw9`, project `fineweb-40B_gutenberg-3B`).
+
+Checkpoint saved at step 18141. Moved to long-term storage under:
+`/users/elyulina/store/pretrain-results/llama3-1b-sink-attn-scf1-fineweb40B-gutenberg3B/`
+
+Slurm script: `attn_bench/submissions/pretrain_llama3_1b_sink_attn_fineweb40B_gutenberg3B_te215.slurm`
+
+Logs: `attn_bench/logs/3108550.err` + `attn_bench/_logs/3108550.out` (full — moved to `_logs/` for exceeding 3 MB).
+
+---
+
 ## Attention variants / trained models 
 
 | variant | Megatron flag | description |
