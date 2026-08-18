@@ -36,7 +36,7 @@ def sink_flash_attention_forward(module, query, key, value, attention_mask, scal
     return attn_output, None
 
 
-ALL_ATTENTION_FUNCTIONS.register("sink_flash_attention", sink_flash_attention_forward)
+ALL_ATTENTION_FUNCTIONS.register("sink_cute_attention", sink_flash_attention_forward)
 
 
 class SinkLlamaConfig(LlamaConfig):
@@ -46,7 +46,7 @@ class SinkLlamaConfig(LlamaConfig):
         # Defaults to our registered kernel rather than PreTrainedConfig's usual "sdpa" --
         # sdpa/eager would silently drop the learnable_sink kwarg instead of erroring, so
         # this can't be left to the normal fallback chain.
-        kwargs.setdefault("attn_implementation", "sink_flash_attention")
+        kwargs.setdefault("attn_implementation", "sink_cute_attention")
         super().__init__(**kwargs)
 
 
