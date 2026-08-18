@@ -1,5 +1,7 @@
 ############ LLAMA 1B CONFIG #################
-# Softmax-attention baseline: LLaMA-3.2-1B architecture
+# Sink-attention variant: LLaMA-3.2-1B architecture + --softmax-type learnable
+# --softmax-type learnable registers a learnable softmax_offset (one scalar per head,
+# 32 params) -- unlike off-by-one, which uses a fixed non-learnable offset.
 # args values taken from: https://huggingface.co/meta-llama/Llama-3.2-1B/blob/main/config.json
 # args names taken from: megatron/core/transformer/transformer_config.py
 
@@ -35,6 +37,7 @@
 # low_freq_factor=1
 # original_max_position_embeddings=8192
 # rope_type: llama3
+--softmax-type learnable                    # adds a learnable per-head sink logit (softmax_offset, num_attention_heads params)
 ## default params:
 # --kv-channels auto = hidden/heads
 # --add-qkv-bias false
