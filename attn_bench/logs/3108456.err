@@ -1,0 +1,559 @@
+cat: '': No such file or directory
+/var/spool/slurmd/job3108456/slurm_script: line 414: python: command not found
+22: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+22:   import pynvml  # type: ignore[import]
+21: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+21:   import pynvml  # type: ignore[import]
+23: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+23:   import pynvml  # type: ignore[import]
+20: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+20:   import pynvml  # type: ignore[import]
+10: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+10:   import pynvml  # type: ignore[import]
+ 8: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+ 8:   import pynvml  # type: ignore[import]
+ 9: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+ 9:   import pynvml  # type: ignore[import]
+11: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+11:   import pynvml  # type: ignore[import]
+16: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+16:   import pynvml  # type: ignore[import]
+17: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+17:   import pynvml  # type: ignore[import]
+18: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+18:   import pynvml  # type: ignore[import]
+19: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+19:   import pynvml  # type: ignore[import]
+ 4: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+ 4:   import pynvml  # type: ignore[import]
+12: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+12:   import pynvml  # type: ignore[import]
+ 5: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+ 5:   import pynvml  # type: ignore[import]
+13: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+13:   import pynvml  # type: ignore[import]
+ 6: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+ 6:   import pynvml  # type: ignore[import]
+14: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+14:   import pynvml  # type: ignore[import]
+ 7: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+ 7:   import pynvml  # type: ignore[import]
+15: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+15:   import pynvml  # type: ignore[import]
+24: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+24:   import pynvml  # type: ignore[import]
+25: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+25:   import pynvml  # type: ignore[import]
+31: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+31:   import pynvml  # type: ignore[import]
+26: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+26:   import pynvml  # type: ignore[import]
+28: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+28:   import pynvml  # type: ignore[import]
+27: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+27:   import pynvml  # type: ignore[import]
+29: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+29:   import pynvml  # type: ignore[import]
+ 2: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+ 2:   import pynvml  # type: ignore[import]
+30: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+30:   import pynvml  # type: ignore[import]
+ 3: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+ 3:   import pynvml  # type: ignore[import]
+ 0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+ 0:   import pynvml  # type: ignore[import]
+ 1: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+ 1:   import pynvml  # type: ignore[import]
+19: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+16: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+17: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+18: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+24: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+27: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+25: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+26: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 9: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 8: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+10: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+11: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 2: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 0: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 3: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 1: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+31: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+30: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+28: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+29: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 7: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 6: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 4: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 5: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+15: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+12: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+14: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+13: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+20: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+21: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+22: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+23: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+19: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+19:   sentry_sdk.init(
+22: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+22:   sentry_sdk.init(
+31: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+31:   sentry_sdk.init(
+24: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+24:   sentry_sdk.init(
+ 8: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+ 8:   sentry_sdk.init(
+ 2: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+ 2:   sentry_sdk.init(
+28: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+28:   sentry_sdk.init(
+29: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+29:   sentry_sdk.init(
+25: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+25:   sentry_sdk.init(
+21: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+21:   sentry_sdk.init(
+ 3: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+ 3:   sentry_sdk.init(
+26: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+26:   sentry_sdk.init(
+ 7: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+ 7:   sentry_sdk.init(
+ 1: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+ 1:   sentry_sdk.init(
+ 5: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+ 5:   sentry_sdk.init(
+ 4: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+ 4:   sentry_sdk.init(
+ 6: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+10: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+15: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+12: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+27: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+16: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 9: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+18: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+14: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+17: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+13: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+19: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+22: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 2: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+31: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+24: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+28: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 1: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 8: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+21: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+25: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+11: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+23: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 7: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+20: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+30: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 5: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 3: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+29: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 4: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+26: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+10: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+10:   _warnings.warn(
+ 8: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+ 8:   _warnings.warn(
+ 9: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+ 9:   _warnings.warn(
+11: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+11:   _warnings.warn(
+22: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+22:   _warnings.warn(
+20: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+20:   _warnings.warn(
+23: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+23:   _warnings.warn(
+21: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+21:   _warnings.warn(
+31: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+31:   _warnings.warn(
+28: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+28:   _warnings.warn(
+30: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+30:   _warnings.warn(
+29: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+29:   _warnings.warn(
+19: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+19:   _warnings.warn(
+16: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+16:   _warnings.warn(
+18: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+18:   _warnings.warn(
+17: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+17:   _warnings.warn(
+ 3: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+ 3:   _warnings.warn(
+ 2: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+ 2:   _warnings.warn(
+ 1: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+ 1:   _warnings.warn(
+ 0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+ 0:   _warnings.warn(
+24: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+24:   _warnings.warn(
+27: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+27:   _warnings.warn(
+25: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+25:   _warnings.warn(
+26: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+26:   _warnings.warn(
+15: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+15:   _warnings.warn(
+13: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+13:   _warnings.warn(
+14: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+14:   _warnings.warn(
+12: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+12:   _warnings.warn(
+ 6: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+ 6:   _warnings.warn(
+ 4: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+ 4:   _warnings.warn(
+ 5: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+ 5:   _warnings.warn(
+ 7: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+ 7:   _warnings.warn(
+ 0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils/common_utils.py:430: UserWarning: Overriding default arguments for tokenizer_type:GPT2BPETokenizer with tokenizer_type:HuggingFaceTokenizer
+ 0:   warnings.warn(message)
+25: [W818 04:04:34.462049984 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+22: [W818 04:04:34.011321292 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 1: [W818 04:04:34.250693041 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 3: [W818 04:04:34.250685009 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+28: [W818 04:04:34.770874394 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+29: [W818 04:04:34.770881114 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+30: [W818 04:04:34.770874970 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 9: [W818 04:04:34.482353713 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+11: [W818 04:04:34.482363633 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+27: [W818 04:04:34.486358776 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+26: [W818 04:04:34.486388215 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+12: [W818 04:04:34.462163132 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+13: [W818 04:04:34.462164444 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+14: [W818 04:04:34.462169340 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+21: [W818 04:04:34.037993329 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+20: [W818 04:04:34.038014769 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+23: [W818 04:04:34.038042864 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+17: [W818 04:04:34.510312914 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 6: [W818 04:04:34.153582856 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 2: [W818 04:04:35.629979883 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 7: [W818 04:04:35.197099574 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+18: [W818 04:04:35.694445061 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+19: [W818 04:04:35.723062670 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 8: [W818 04:04:35.947784753 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+31: [W818 04:04:35.310980324 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 4: [W818 04:04:35.362579597 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+10: [W818 04:04:35.025861104 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+16: [W818 04:04:35.841024740 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+24: [W818 04:04:35.051227837 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 5: [W818 04:04:35.417806046 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+15: [W818 04:04:35.098267694 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 0: [W818 04:04:35.917288296 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 4: [rank4]:W0818 04:04:54.886000 54230 torch/_inductor/triton_bundler.py:396] [0/0] Directory /tmp/.triton/cache/tmp.aa994818-be01-412a-9845-f8bbbdf8f97a is not empty - skipping!
+ 0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/models/mimo/config/base_configs.py:12: UserWarning: MimoModelConfig is experimental and still under active development. The API may change without notice in future releases.
+ 0:   class MimoModelConfig:
+ 1: [rank1]:W0818 04:04:59.214000 58525 torch/_inductor/triton_bundler.py:396] [2/0] Directory /tmp/.triton/cache/tmp.41cffda1-f105-45a5-9297-4a15002ad1ab is not empty - skipping!
+29: [rank29]:W0818 04:04:59.214000 140909 torch/_inductor/triton_bundler.py:396] [2/0] Directory /tmp/.triton/cache/tmp.d2f9328f-2661-47f0-8517-3f615656d082 is not empty - skipping!
+ 7: [rank7]:W0818 04:04:59.223000 54233 torch/_inductor/triton_bundler.py:396] [2/0] Directory /tmp/.triton/cache/tmp.eb122906-b80f-40b2-bd00-636ca7444288 is not empty - skipping!
+ 3: [rank3]:W0818 04:04:59.275000 58527 torch/_inductor/triton_bundler.py:396] [3/0] Directory /tmp/.triton/cache/tmp.c0e70ce9-5522-4ed0-b1ff-52df6c0c3e7b is not empty - skipping!
+ 5: [rank5]:W0818 04:04:59.283000 54231 torch/_inductor/triton_bundler.py:396] [3/0] Directory /tmp/.triton/cache/tmp.ab0d9192-d2ef-48d4-9319-cc5f734d03b9 is not empty - skipping!
+ 6: [rank6]:W0818 04:04:59.418000 54232 torch/_inductor/triton_bundler.py:396] [2/1] Directory /tmp/.triton/cache/tmp.d289a8ef-1cdd-4032-80e1-6fadd7e8a467 is not empty - skipping!
+ 2: [rank2]:W0818 04:05:01.464000 58526 torch/_inductor/triton_bundler.py:396] [1/2_1] Directory /tmp/.triton/cache/tmp.1870c797-3b4a-426a-815f-e0c324ab356d is not empty - skipping!
+ 5: [rank5]:W0818 04:05:01.485000 54231 torch/_inductor/triton_bundler.py:396] [1/2_1] Directory /tmp/.triton/cache/tmp.f5099c41-3c40-41b6-b5d4-132da191c649 is not empty - skipping!
+ 0: /usr/local/lib/python3.12/dist-packages/torch/autograd/graph.py:865: UserWarning: The AccumulateGrad node's stream does not match the stream of the node that produced the incoming gradient. This may incur unnecessary synchronization and break CUDA graph capture if the AccumulateGrad node's stream is the default stream. This mismatch is caused by an AccumulateGrad node created prior to the current iteration being kept alive. This can happen if the autograd graph is still being kept alive by tensors such as the loss, or if you are using DDP, which will stash a reference to the node. To resolve the mismatch, delete all references to the autograd graph or ensure that DDP initialization is performed under the same stream as subsequent forwards. If the mismatch is intentional, you can use torch.autograd.graph.set_warn_on_accumulate_grad_stream_mismatch(False) to suppress this warning. (Triggered internally at /opt/pytorch/pytorch/torch/csrc/autograd/input_buffer.cpp:240.)
+ 0:   return Variable._execution_engine.run_bac
+ 0: kward(  # Calls into the C++ engine to run the backward pass
+16: [rank16]:[W818 04:05:11.682472619 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+ 4: [rank4]:[W818 04:05:11.236062785 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+24: [rank24]:[W818 04:05:11.896568709 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+ 8: [rank8]:[W818 04:05:11.902157231 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+12: [rank12]:[W818 04:05:11.890378836 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+28: [rank28]:[W818 04:05:11.222111585 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+ 0: [rank0]:[W818 04:05:11.704330389 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+20: [rank20]:[W818 04:05:11.475781177 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+ 1: [rank1]:[W818 04:05:12.051802472 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+ 2: [rank2]:[W818 04:05:12.051797960 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+ 3: [rank3]:[W818 04:05:12.061835096 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+ 5: [rank5]:[W818 04:05:12.636838940 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+ 6: [rank6]:[W818 04:05:12.636840124 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+ 7: [rank7]:[W818 04:05:12.654860479 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+ 9: [rank9]:[W818 04:05:12.336786244 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+10: [rank10]:[W818 04:05:12.338876609 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+11: [rank11]:[W818 04:05:12.356897377 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+13: [rank13]:[W818 04:05:12.345038493 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+14: [rank14]:[W818 04:05:12.347125112 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+15: [rank15]:[W818 04:05:12.365140074 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+17: [rank17]:[W818 04:05:12.205207584 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+18: [rank18]:[W818 04:05:12.207298015 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+19: [rank19]:[W818 04:05:12.225303601 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+21: [rank21]:[W818 04:05:12.991278970 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+22: [rank22]:[W818 04:05:12.991292441 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+23: [rank23]:[W818 04:05:12.001338017 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+25: [rank25]:[W818 04:05:12.474254509 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+26: [rank26]:[W818 04:05:12.474240846 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+27: [rank27]:[W818 04:05:12.484286902 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+29: [rank29]:[W818 04:05:12.804764135 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+31: [rank31]:[W818 04:05:12.814735891 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+30: [rank30]:[W818 04:05:12.817013677 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+17: [rank17]:[W818 04:05:22.521625591 TCPStore.cpp:125] [c10d] recvValue failed on SocketImpl(fd=69, addr=[nid007598]:38008, remote=[nid007590]:8888): Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+17: Exception raised from recvBytes at /opt/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:682 (most recent call first):
+17: frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0xd4 (0x40003bf239f4 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+17: frame #1: <unknown function> + 0x655f304 (0x4000395ff304 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+17: frame #2: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x164 (0x400039604474 in /usr/local/lib/python3.12/dist-packages/torch/lib/
+17: libtorch_cpu.so)
+17: frame #3: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x2ec (0x400040ea2c9c in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+17: frame #4: <unknown function> + 0xe1ae0 (0x40003ca01ae0 in /usr/lib/aarch64-linux-gnu/libstdc++.so.6)
+17: frame #5: <unknown function> + 0x8595c (0x4000310e595c in /usr/lib/aarch64-linux-gnu/libc.so.6)
+17: frame #6: <unknown function> + 0xebb4c (0x40003114bb4c in /usr/lib/aarch64-linux-gnu/libc.so.6)
+17: 
+17: [rank17]:[W818 04:05:22.523673239 ProcessGroupNCCL.cpp:1818] [PG ID 0 PG GUID 0(default_pg) Rank 17] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+ 2: [rank2]:[W818 04:05:23.639153695 TCPStore.cpp:125] [c10d] recvValue failed on SocketImpl(fd=69, addr=[nid007590]:51224, remote=[nid007590]:8888): Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+ 2: Exception raised from recvBytes at /opt/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:682 (most recent call first):
+ 2: frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0xd4 (0x4000283639f4 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+ 2: frame #1: <unknown function> + 0x655f304 (0x400025a3f304 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+ 2: frame #2: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x164 (0x400025a44474 in /usr/local/lib/python3.12/dist-packages/torch/lib/l
+ 2: ibtorch_cpu.so)
+ 2: frame #3: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x2ec (0x400040ea2c9c in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+ 2: frame #4: <unknown function> + 0xe1ae0 (0x400029001ae0 in /usr/lib/aarch64-linux-gnu/libstdc++.so.6)
+ 2: frame #5: <unknown function> + 0x8595c (0x40001d52595c in /usr/lib/aarch64-linux-gnu/libc.so.6)
+ 2: frame #6: <unknown function> + 0xebb4c (0x40001d58bb4c in /usr/lib/aarch64-linux-gnu/libc.so.6)
+ 2: 
+ 2: [rank2]:[W818 04:05:23.641102308 ProcessGroupNCCL.cpp:1818] [PG ID 0 PG GUID 0(default_pg) Rank 2] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+18: [rank18]:[W818 04:05:23.701319123 TCPStore.cpp:125] [c10d] recvValue failed on SocketImpl(fd=69, addr=[nid007598]:38016, remote=[nid007590]:8888): Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+18: Exception raised from recvBytes at /opt/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:682 (most recent call first):
+18: frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0xd4 (0x400039f439f4 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+18: frame #1: <unknown function> + 0x655f304 (0x40003761f304 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+18: frame #2: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x164 (0x400037624474 in /usr/local/lib/python3.12/dist-packages/torch/lib/
+18: libtorch_cpu.so)
+18: frame #3: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x2ec (0x400040ea2c9c in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+18: frame #4: <unknown function> + 0xe1ae0 (0x40003aa01ae0 in /usr/lib/aarch64-linux-gnu/libstdc++.so.6)
+18: frame #5: <unknown function> + 0x8595c (0x40002f10595c in /usr/lib/aarch64-linux-gnu/libc.so.6)
+18: frame #6: <unknown function> + 0xebb4c (0x40002f16bb4c in /usr/lib/aarch64-linux-gnu/libc.so.6)
+18: 
+18: [rank18]:[W818 04:05:23.703109883 ProcessGroupNCCL.cpp:1818] [PG ID 0 PG GUID 0(default_pg) Rank 18] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+19: [rank19]:[W818 04:05:23.730216723 TCPStore.cpp:125] [c10d] recvValue failed on SocketImpl(fd=69, addr=[nid007598]:38018, remote=[nid007590]:8888): Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+19: Exception raised from recvBytes at /opt/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:682 (most recent call first):
+19: frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0xd4 (0x4000185f39f4 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+19: frame #1: <unknown function> + 0x655f304 (0x400015ccf304 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+19: frame #2: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x164 (0x400015cd4474 in /usr/local/lib/python3.12/dist-packages/torch/lib/
+19: libtorch_cpu.so)
+19: frame #3: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x2ec (0x400020ea2c9c in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+19: frame #4: <unknown function> + 0xe1ae0 (0x400019201ae0 in /usr/lib/aarch64-linux-gnu/libstdc++.so.6)
+19: frame #5: <unknown function> + 0x8595c (0x40000d7b595c in /usr/lib/aarch64-linux-gnu/libc.so.6)
+19: frame #6: <unknown function> + 0xebb4c (0x40000d81bb4c in /usr/lib/aarch64-linux-gnu/libc.so.6)
+19: 
+19: [rank19]:[W818 04:05:23.731819362 ProcessGroupNCCL.cpp:1818] [PG ID 0 PG GUID 0(default_pg) Rank 19] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+31: [rank31]:[W818 04:05:23.321498588 TCPStore.cpp:125] [c10d] recvValue failed on SocketImpl(fd=69, addr=[nid007604]:40808, remote=[nid007590]:8888): Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+31: Exception raised from recvBytes at /opt/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:682 (most recent call first):
+31: frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0xd4 (0x400015e039f4 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+31: frame #1: <unknown function> + 0x655f304 (0x4000134df304 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+31: frame #2: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x164 (0x4000134e4474 in /usr/local/lib/python3.12/dist-packages/torch/lib/
+31: libtorch_cpu.so)
+31: frame #3: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x2ec (0x400020ea2c9c in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+31: frame #4: <unknown function> + 0xe1ae0 (0x400016a01ae0 in /usr/lib/aarch64-linux-gnu/libstdc++.so.6)
+31: frame #5: <unknown function> + 0x8595c (0x40000afc595c in /usr/lib/aarch64-linux-gnu/libc.so.6)
+31: frame #6: <unknown function> + 0xebb4c (0x40000b02bb4c in /usr/lib/aarch64-linux-gnu/libc.so.6)
+31: 
+31: [rank31]:[W818 04:05:23.323579707 ProcessGroupNCCL.cpp:1818] [PG ID 0 PG GUID 0(default_pg) Rank 31] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+10: [rank10]:[W818 04:05:23.036372357 TCPStore.cpp:125] [c10d] recvValue failed on SocketImpl(fd=69, addr=[nid007596]:38934, remote=[nid007590]:8888): Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+10: Exception raised from recvBytes at /opt/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:682 (most recent call first):
+10: frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0xd4 (0x40002c2439f4 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+10: frame #1: <unknown function> + 0x655f304 (0x40002991f304 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+10: frame #2: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x164 (0x400029924474 in /usr/local/lib/python3.12/dist-packages/torch/lib/
+10: libtorch_cpu.so)
+10: frame #3: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x2ec (0x400040ea2c9c in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+10: frame #4: <unknown function> + 0xe1ae0 (0x40002ce01ae0 in /usr/lib/aarch64-linux-gnu/libstdc++.so.6)
+10: frame #5: <unknown function> + 0x8595c (0x40002140595c in /usr/lib/aarch64-linux-gnu/libc.so.6)
+10: frame #6: <unknown function> + 0xebb4c (0x40002146bb4c in /usr/lib/aarch64-linux-gnu/libc.so.6)
+10: 
+10: [rank10]:[W818 04:05:23.038449699 ProcessGroupNCCL.cpp:1818] [PG ID 0 PG GUID 0(default_pg) Rank 10] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+16: [rank16]:[W818 04:05:23.848678971 TCPStore.cpp:125] [c10d] recvValue failed on SocketImpl(fd=69, addr=[nid007598]:38024, remote=[nid007590]:8888): Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+16: Exception raised from recvBytes at /opt/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:682 (most recent call first):
+16: frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0xd4 (0x4000442739f4 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+16: frame #1: <unknown function> + 0x655f304 (0x40004194f304 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+16: frame #2: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x164 (0x400041954474 in /usr/local/lib/python3.12/dist-packages/torch/lib/
+16: libtorch_cpu.so)
+16: frame #3: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x2ec (0x400060ea2c9c in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+16: frame #4: <unknown function> + 0xe1ae0 (0x400044e01ae0 in /usr/lib/aarch64-linux-gnu/libstdc++.so.6)
+16: frame #5: <unknown function> + 0x8595c (0x40003943595c in /usr/lib/aarch64-linux-gnu/libc.so.6)
+16: frame #6: <unknown function> + 0xebb4c (0x40003949bb4c in /usr/lib/aarch64-linux-gnu/libc.so.6)
+16: 
+16: [rank16]:[W818 04:05:23.850395685 ProcessGroupNCCL.cpp:1818] [PG ID 0 PG GUID 0(default_pg) Rank 16] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+ 9: [rank9]:[W818 04:05:23.489584172 TCPStore.cpp:125] [c10d] recvValue failed on SocketImpl(fd=68, addr=[nid007596]:38924, remote=[nid007590]:8888): Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+ 9: Exception raised from recvBytes at /opt/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:682 (most recent call first):
+ 9: frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0xd4 (0x40003f9e39f4 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+ 9: frame #1: <unknown function> + 0x655f304 (0x40003d0bf304 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+ 9: frame #2: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x164 (0x40003d0c4474 in /usr/local/lib/python3.12/dist-packages/torch/lib/l
+ 9: ibtorch_cpu.so)
+ 9: frame #3: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x2ec (0x400040ea2c9c in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+ 9: frame #4: <unknown function> + 0xe1ae0 (0x4000608f1ae0 in /usr/lib/aarch64-linux-gnu/libstdc++.so.6)
+ 9: frame #5: <unknown function> + 0x8595c (0x400034ba595c in /usr/lib/aarch64-linux-gnu/libc.so.6)
+ 9: frame #6: <unknown function> + 0xebb4c (0x400034c0bb4c in /usr/lib/aarch64-linux-gnu/libc.so.6)
+ 9: 
+ 9: [rank9]:[W818 04:05:23.491405970 ProcessGroupNCCL.cpp:1818] [PG ID 0 PG GUID 0(default_pg) Rank 9] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+17: [rank17]:[W818 04:05:23.523849430 TCPStore.cpp:106] [c10d] sendBytes failed on SocketImpl(fd=69, addr=[nid007598]:38008, remote=[nid007590]:8888): Broken pipe
+17: Exception raised from sendBytes at /opt/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:653 (most recent call first):
+17: frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0xd4 (0x40003bf239f4 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+17: frame #1: <unknown function> + 0x655df84 (0x4000395fdf84 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+17: frame #2: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x148 (0x400039604458 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+17: frame #3: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x2ec (
+17: 0x400040ea2c9c in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+17: frame #4: <unknown function> + 0xe1ae0 (0x40003ca01ae0 in /usr/lib/aarch64-linux-gnu/libstdc++.so.6)
+17: frame #5: <unknown function> + 0x8595c (0x4000310e595c in /usr/lib/aarch64-linux-gnu/libc.so.6)
+17: frame #6: <unknown function> + 0xebb4c (0x40003114bb4c in /usr/lib/aarch64-linux-gnu/libc.so.6)
+17: 
+17: [rank17]:[W818 04:05:23.525675229 ProcessGroupNCCL.cpp:1818] [PG ID 0 PG GUID 0(default_pg) Rank 17] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Broken pipe
+31: [rank31]:[W818 04:05:24.323721932 TCPStore.cpp:106] [c10d] sendBytes failed on SocketImpl(fd=69, addr=[nid007604]:40808, remote=[nid007590]:8888): Broken pipe
+31: Exception raised from sendBytes at /opt/pytorch/pytorch/torch/csrc/distributed/c10d/Utils.hpp:653 (most recent call first):
+31: frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0xd4 (0x400015e039f4 in /usr/local/lib/python3.12/dist-packages/torch/lib/libc10.so)
+31: frame #1: <unknown function> + 0x655df84 (0x4000134ddf84 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+31: frame #2: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x148 (0x4000134e4458 in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cpu.so)
+31: frame #3: c10d::ProcessGroupNCCL::HeartbeatMonitor::runLoop() + 0x2ec (
+31: 0x400020ea2c9c in /usr/local/lib/python3.12/dist-packages/torch/lib/libtorch_cuda.so)
+31: frame #4: <unknown function> + 0xe1ae0 (0x400016a01ae0 in /usr/lib/aarch64-linux-gnu/libstdc++.so.6)
+31: frame #5: <unknown function> + 0x8595c (0x40000afc595c in /usr/lib/aarch64-linux-gnu/libc.so.6)
+31: frame #6: <unknown function> + 0xebb4c (0x40000b02bb4c in /usr/lib/aarch64-linux-gnu/libc.so.6)
+31: 
+31: [rank31]:[W818 04:05:24.325572498 ProcessGroupNCCL.cpp:1818] [PG ID 0 PG GUID 0(default_pg) Rank 31] Failed to check the "should dump" flag on TCPStore, (maybe TCPStore server has shut down too early), with error: Broken pipe
+ 0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+ 0:   import pynvml  # type: ignore[import]
+10: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 8: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 9: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+11: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 2: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 3: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 0: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 1: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+23: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+22: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+20: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+21: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+15: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+14: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+12: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+13: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+24: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+25: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+27: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+26: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+31: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+28: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+29: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+30: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 6: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 5: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 7: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 4: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+19: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+18: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+16: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+17: Error.  nthreads cannot be larger than environment variable "NUMEXPR_MAX_THREADS" (64)
+ 0: /opt/venv/lib/python3.12/site-packages/comet_ml/error_tracking/api.py:51: UserWarning: We won't be continuing development on SDK 3.0. Please use the last stable version of the SDK to get access to the newest features and fixes. See https://github.com/getsentry/sentry-python/discussions/4955
+ 0:   sentry_sdk.init(
+ 8: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+10: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+11: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 2: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 9: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+19: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+21: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 3: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+31: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 1: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+13: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+23: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+16: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+22: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+17: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+20: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+25: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 7: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+28: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+15: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+30: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+29: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+14: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+18: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 5: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+12: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+27: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+24: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+26: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 4: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 6: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+ 0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+ 0:   _warnings.warn(
+ 0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils/common_utils.py:430: UserWarning: Overriding default arguments for tokenizer_type:GPT2BPETokenizer with tokenizer_type:HuggingFaceTokenizer
+ 0:   warnings.warn(message)
+ 1: [W818 04:06:19.618424315 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 9: [W818 04:06:20.849866008 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+11: [W818 04:06:20.899481862 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+22: [W818 04:06:20.501704672 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 8: [W818 04:06:20.997677378 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+23: [W818 04:06:20.546607567 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+31: wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+20: [W818 04:06:20.570126934 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+21: [W818 04:06:20.570160437 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+10: [W818 04:06:20.036429388 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+28: [W818 04:06:20.431373241 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+29: [W818 04:06:20.441687162 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+30: [W818 04:06:20.442532223 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 3: [W818 04:06:20.940722123 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+19: [W818 04:06:20.971624862 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+31: wandb: Currently logged in as: elyulina (elyulina-thesis) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+18: [W818 04:06:20.026115685 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+16: [W818 04:06:20.027187523 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+17: [W818 04:06:20.028203396 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+15: [W818 04:06:20.247670582 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 2: [W818 04:06:20.100614329 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+14: [W818 04:06:20.298877115 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+12: [W818 04:06:20.298912346 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+13: [W818 04:06:20.298925274 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+24: [W818 04:06:20.546425213 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+25: [W818 04:06:20.570334646 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+26: [W818 04:06:20.594102355 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+27: [W818 04:06:20.594100563 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 6: [W818 04:06:20.064151061 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 4: [W818 04:06:20.073946448 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 5: [W818 04:06:20.098408948 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 7: [W818 04:06:20.098409556 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+31: wandb: Tracking run with wandb version 0.27.0
+31: wandb: Run data is saved locally in /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/results/pretrain/fineweb-40B_gutenberg-3B/test-llama3-1b-sink-attn-scf1-fineweb40B-gutenberg3B/logging/wandb/run-20260818_040620-hrn5i0yg
+31: wandb: Run `wandb offline` to turn off syncing.
+31: wandb: Syncing run test-llama3-1b-sink-attn-scf1-fineweb40B-gutenberg3B-3108456
+31: wandb: ⭐️ View project at https://wandb.ai/elyulina-thesis/fineweb-40B_gutenberg-3B
+31: wandb: 🚀 View run at https://wandb.ai/elyulina-thesis/fineweb-40B_gutenberg-3B/runs/hrn5i0yg
+31: wandb: Detected [openai] in use.
+31: wandb: Use W&B Weave for improved LLM call tracing. Install Weave with `pip install weave` then add `import weave` to the top of your script.
+31: wandb: For more information, check out the docs at: https://weave-docs.wandb.ai
+31: [W818 04:06:22.293782406 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 0: [W818 04:06:22.778413008 ProcessGroupNCCL.cpp:930] Warning: TORCH_NCCL_AVOID_RECORD_STREAMS is the default now, this environment variable is thus deprecated. (function operator())
+ 0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/models/mimo/config/base_configs.py:12: UserWarning: MimoModelConfig is experimental and still under active development. The API may change without notice in future releases.
+ 0:   class MimoModelConfig:
+25: [rank25]:W0818 04:06:43.104000 9395 torch/_inductor/triton_bundler.py:396] [2/0] Directory /tmp/.triton/cache/tmp.e40ade72-5786-40b9-8ee8-116d7c1a0388 is not empty - skipping!
+ 5: [rank5]:W0818 04:06:43.111000 57128 torch/_inductor/triton_bundler.py:396] [2/0] Directory /tmp/.triton/cache/tmp.b8a144a9-ad52-431c-9dd6-7401c9598e95 is not empty - skipping!
+30: [rank30]:W0818 04:06:43.760000 143790 torch/_inductor/triton_bundler.py:396] [4/0] Directory /tmp/.triton/cache/tmp.b4a3f4d9-6516-491c-b695-65ef7ac04f45 is not empty - skipping!
+31: [rank31]:W0818 04:06:43.760000 143791 torch/_inductor/triton_bundler.py:396] [4/0] Directory /tmp/.triton/cache/tmp.f78a1a8d-0596-4dcd-b59a-0c6042d7f5e4 is not empty - skipping!
+ 8: [rank8]:W0818 04:06:43.856000 291323 torch/_inductor/triton_bundler.py:396] [6/0] Directory /tmp/.triton/cache/tmp.c3ea8e6d-34e2-4de7-bc30-0cf6f0bbfb99 is not empty - skipping!
+ 2: [rank2]:W0818 04:06:43.901000 61536 torch/_inductor/triton_bundler.py:396] [5/0] Directory /tmp/.triton/cache/tmp.01c6dac0-cedd-4452-940d-040ba4a13e10 is not empty - skipping!
+28: [rank28]:W0818 04:06:43.908000 143788 torch/_inductor/triton_bundler.py:396] [5/0] Directory /tmp/.triton/cache/tmp.2c20e4ea-4a67-41b4-a177-ca7b0fb7662e is not empty - skipping!
+ 0: [rank0]:W0818 04:06:43.954000 61534 torch/_inductor/triton_bundler.py:396] [6/0] Directory /tmp/.triton/cache/tmp.67cc41fe-f1ad-4414-9404-3c6bda9a450b is not empty - skipping!
+31: [rank31]:W0818 04:06:43.966000 143791 torch/_inductor/triton_bundler.py:396] [6/0] Directory /tmp/.triton/cache/tmp.79be76dd-ed6d-4373-a3f3-683a073a3550 is not empty - skipping!
+31: [rank31]:W0818 04:06:43.967000 143791 torch/_inductor/triton_bundler.py:396] [6/0] Directory /tmp/.triton/cache/tmp.5ee6449d-4d84-4cd3-88e0-94d5dd997af3 is not empty - skipping!
+ 0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/pipeline_parallel/schedules.py:211: UserWarning: The AccumulateGrad node's stream does not match the stream of the node that produced the incoming gradient. This may incur unnecessary synchronization and break CUDA graph capture if the AccumulateGrad node's stream is the default stream. This mismatch is caused by an AccumulateGrad node created prior to the current iteration being kept alive. This can happen if the autograd graph is still being kept alive by tensors such as the loss, or if you are using DDP, which will stash a reference to the node. To resolve the mismatch, delete all references to the autograd graph or ensure that DDP initialization is performed under the same stream as subsequent forwards. If the mismatch is intentional, you can use torch.autograd.graph.set_warn_on_accumulate_grad_stream_mismatch(False) to suppress this warning. (Triggered internally at /opt/pytorch/pytorch/torch/csrc/autograd/input_buffer.cpp:240.
+ 0: )
+ 0:   Variable._execution_engine.run_backward(
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+ 0: [2026-08-18T04:17:57.018] error: *** STEP 3108456.2 ON nid007590 CANCELLED AT 2026-08-18T04:17:57 DUE TO TIME LIMIT ***
+[2026-08-18T04:17:57.018] error: *** JOB 3108456 ON nid007590 CANCELLED AT 2026-08-18T04:17:57 DUE TO TIME LIMIT ***

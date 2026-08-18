@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --account=infra01
-#SBATCH --time=7:00:00
-#SBATCH --job-name=pretrain-llama1B-sink-attn-fineweb40B-gutenberg3B-te215
+#SBATCH --time=10:00:00
+#SBATCH --job-name=pretrain-llama1B-sink-attn-fineweb40B-gutenberg3B
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
-#SBATCH --nodes=14
+#SBATCH --nodes=8
 #SBATCH --ntasks-per-node=4
 #SBATCH --cpus-per-task=72
 #SBATCH --no-requeue
@@ -13,10 +13,9 @@
 
 # Train a LLaMA 3.2 1B model with sink attention (--softmax-type learnable) on a blended dataset:
 #   - FineWeb-Edu-Dedup 40B (0.25 partition of 160B)  — 40,038,865,413 tokens
-#   - Gutenberg (all rep levels, rep_1_256)           — 2,762,833,920 tokens
+#   - Gutenberg (all rep levels, rep_1_256)           — 2,762,833,920  tokens
 #   - Total                                           — 42,801,699,333 tokens (~42.8B)
 # Sink attention variant for comparison with full and gated attention baselines.
-# Uses nemo_26.04_te2.15 container: fixes softmax_offset init (zeros) and gradient flow.
 #
 # Usage:
 #   sbatch attn_bench/submissions/pretrain_llama3_1b_sink_attn_fineweb40B_gutenberg3B_te215.slurm
@@ -61,20 +60,25 @@ TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b  # Assumes t
 
 SEQ_LEN=8192
 
-MBS=4
-# seq_length * MBS * DP * GAS = 8192 * 4 * 28 * 3 = 2.75 M tokens/step
-GBS=336
+MBS=3
+# TinyLlama use 1.8M to 2M https://arxiv.org/pdf/2401.02385
+# following https://arxiv.org/html/2412.01505v1, the optimal batch can be calculated as
+#   B = 3.24 * 10^3 * (43 * 10^9)^0.264 = 2.1 M tokens/step
+# most compute-efficient config from attn_training_perf_bench sweep is tp=1/mbs=3;
+# so stick with mbs=3 at nodes=8
+# seq_length * MBS * DP * GAS = 8192 * 3 * 32 * 3 = 2.36 M tokens/step
+# This gives us GBS = MBS * DP * GAS = 3 * 32 * 3 = 288
+GBS=288
 # 40,038,865,413 (fineweb 40B) + 2,762,833,920 (gutenberg 3B) = 42,801,699,333 tokens
 TARGET_TOKENS=42801699333
-#  tokens/step = GBS × SEQ_LEN = 336 × 8192 = 2,752,512
-#  raw steps = 42,801,699,333 / 2,752,512 = 15550
-TRAINING_STEPS=$((TARGET_TOKENS / (GBS * SEQ_LEN)))  # = 15550; must match original run (LR scheduler checkpoint assertion)
+#  tokens/step = GBS × SEQ_LEN = 288 × 8192 = 2,359,296
+#  raw steps = 42,801,699,333 / 2,359,296 = 18,141 (18141.7250455)
+CHECKPOINT_STEPS=2000
+CHECKPOINT_RETAIN_STEPS=50000
+TRAINING_STEPS=$((TARGET_TOKENS / (GBS * SEQ_LEN)))  # = 18141; must match original run (LR scheduler checkpoint assertion)
 # round to nearest multiple of CHECKPOINT_STEPS -- drop for memorization studies to ensure no under / over seeing
 #TRAINING_STEPS=$((((TRAINING_STEPS + CHECKPOINT_STEPS/2) / CHECKPOINT_STEPS) * CHECKPOINT_STEPS))
-# data exhausts at step 15550; checkpoint at step 15549 (last valid step) saves before crash
-TRAINING_STEPS=15549 # not all tokens are fully utilized, so in reality there is 15549 steps, hardcoding it so it doesn't crash
-CHECKPOINT_STEPS=1500
-#CHECKPOINT_RETAIN_STEPS=50000
+# data exhausts at step 18141; data exhaustion fix will checkpoint at the last valid step before crash (todo check it doesnt repeat the data)
 
 #### Debugging ####
 LOG_NCCL=false  # Log NCCL_DEBUG=info. Every process will dump the logging into separate files, check `NCCL_DEBUG_FILE`
@@ -88,7 +92,7 @@ PYTHON_CACHE_DIR=/tmp/.python_cache
 # Logging directories & artifacts
 PROJECT_NAME="fineweb-40B_gutenberg-3B"
 PROJECT_DIR=$MEGATRON_LM_DIR/attn_bench/results/pretrain/$PROJECT_NAME
-EXP_NAME="llama3-1b-sink-attn-fineweb40B-gutenberg3B-te215"
+EXP_NAME="llama3-1b-sink-attn-scf1-fineweb40B-gutenberg3B"
 EXP_DIR=$PROJECT_DIR/$EXP_NAME
 CKPT_DIR=$EXP_DIR/checkpoints
 TRIGGER_DIR=$EXP_DIR/triggers
@@ -139,25 +143,29 @@ NETWORK_SIZE_ARGS=(
     --num-layers 16 # "num_hidden_layers": 16 -- following Llama-3.2-1B config
     --hidden-size 2048 # "hidden_size": 2048  -- following Llama-3.2-1B config
     --ffn-hidden-size 8192  # "intermediate_size": 8192  -- following Llama-3.2-1B config
+    --normalization RMSNorm
+    --norm-epsilon 1e-5 # "rms_norm_eps": 1e-05  -- following Llama-3.2-1B config
+    --swiglu # "hidden_act": "silu"  -- following Llama-3.2-1B config + gating
+    --disable-bias-linear # "mlp_bias": false, "attention_bias": false  -- following Llama-3.2-1B config
+    # Llama-3.2-1B config: "tie_word_embeddings": true -- embeddings tied by default; need to pass --untie-embeddings-and-output-weights to disable
+    # Llama-3.2-1B config: "vocab_size": 128256 -- derived from the tokenizer
+)
+
+ATTENTION_ARGS=(
     --num-attention-heads 32 # "num_attention_heads": 32  -- following Llama-3.2-1B config
     --group-query-attention
     --num-query-groups 8 # "num_key_value_heads": 8  -- following Llama-3.2-1B config
-    --max-position-embeddings 131072  # "max_position_embeddings": 131072  -- following Llama-3.2-1B config
+    --max-position-embeddings 8192  # "max_position_embeddings":  8192 since the scaling factor is 1| 131072  in the Llama-3.2-1B config
     --position-embedding-type rope
     --use-rope-scaling
     --rotary-base 500000 # "rope_theta": 500000.0  -- following Llama-3.2-1B config
-    --rope-scaling-factor 32 # "rope_scaling": "factor": 32.0  -- following Llama-3.2-1B config
+    --rope-scaling-factor 1 # "rope_scaling": 1 -- pretraining from scratch | "factor": 32.0  in the Llama-3.2-1B config
     # hardcoded in Megatron (megatron/core/models/common/embeddings/rotary_pos_embedding.py:92-98), correspond to Llama-3.2-1B config:
     # high_freq_factor=4
     # low_freq_factor=1
     # original_max_position_embeddings=8192
     # rope_type: llama3
-    --normalization RMSNorm
-    --norm-epsilon 1e-5 # "rms_norm_eps": 1e-05  -- following Llama-3.2-1B config
-    --swiglu # "hidden_act": "silu"  -- following Llama-3.2-1B config
-    --disable-bias-linear # "mlp_bias": false, "attention_bias": false  -- following Llama-3.2-1B config
-    # Llama-3.2-1B config: "tie_word_embeddings": true -- embeddings tied by default; need to pass --untie-embeddings-and-output-weights to disable
-    # Llama-3.2-1B config: "vocab_size": 128256 -- derived from the tokenizer
+    --softmax-type learnable
 )
 
 LOGGING_ARGS=(
@@ -170,13 +178,15 @@ LOGGING_ARGS=(
     --timing-log-level 2 # level 1 = forward-backward + optimizer; level 2 adds forward-compute + backward-compute
     --no-log-loss-scale-to-tensorboard
     --log-memory-to-tensorboard
+    # --config-logger-dir removed: GPTModel._postprocess dumps input_ids/logits via torch.save
+    # on every forward call with no guard, which fills scratch storage within one training step
 )
 
 REGULARIZATION_ARGS=(
     --attention-dropout 0.0 # "attention_dropout": 0.0  -- following Llama-3.2-1B config
     --hidden-dropout 0.0 # following standard practice / LLama doesn't use it
     --clip-grad 1.0 # 1.0 — from the Llama 3 paper (gradient clipping = 1.0)
-    --weight-decay 0.01 # 0.01 -- following Xu et al, default Megatron + large WD can harm attention matrices https://openreview.net/pdf?id=oDeqjIM9Sk
+    --weight-decay 0.1 # 0.1 -- default for pre-training
     --optimizer adam # AdamW (decoupled weight decay) -- following Llama 3 paper
     --adam-beta1 0.9 # 0.9 — from the Llama 1/2 paper
     --adam-beta2 0.95 # 0.95 — from the Llama 1/2 paper
@@ -192,7 +202,7 @@ TRAINING_ARGS=(
     --manual-gc-interval 500
     --exit-signal-handler # listen for SIGTERM/SIGINT and do a clean checkpoint save before exiting
     --eval-interval 100000000000  # must match or be a multiple of checkpoint interval, must be set to avoid TypeError even when EVAL_ITERS=0
-    --eval-iters 0                     # no validation split for pretraining (--split 100,0,0)
+    --eval-iters 0                # no validation split for pretraining (--split 100,0,0)
 )
 
 
@@ -207,7 +217,7 @@ LEARNING_RATE_ARGS=(
     --lr 0.0004 # 4 × 10^−4 -- following Tiny llama
     --min-lr 0.00004  # x10 reduction, 4 × 10^−5 -- following Tiny llama
     --lr-decay-style cosine # cosine -- following LLama3 paper
-    --lr-warmup-iters 2000 # 2000 -- following LLama3 / Tiny llama paper
+    --lr-warmup-iters 500 # ~2.75% of 18141 steps; LLama3 / Tiny llama used 2000 steps (~0.5-1%) but with higher budgets
 )
 
 
@@ -215,7 +225,7 @@ CHECKPOINTING_ARGS=(
     --load $CKPT_DIR  # delete this to NOT reload from the latest checkpoint
     --save $CKPT_DIR
     --save-interval $CHECKPOINT_STEPS
-    #--save-retain-interval $CHECKPOINT_RETAIN_STEPS
+    --save-retain-interval $CHECKPOINT_RETAIN_STEPS
     --ckpt-format torch_dist
     #--async-save  # disabled: sync save ensures checkpoint at step 15549 completes before crash at step 15550
     --ckpt-fully-parallel-load # all ranks load checkpoint shards in parallel instead of sequentially
@@ -228,17 +238,16 @@ MIXED_PRECISION_ARGS=(
 )
 
 
-# Pads vocab to a multiple of 128 for even TP splits
+# Pads vocab to a multiple of 128 for even TP splits (noop sine llama vocab is already divisible)
 VOCAB_ARGS=(
     --make-vocab-size-divisible-by 128
 )
 
 
 DISTRIBUTED_ARGS=(
-    --tensor-model-parallel-size 2
+    --tensor-model-parallel-size 1
     --pipeline-model-parallel-size 1
     --context-parallel-size 1
-    --sequence-parallel
     --use-distributed-optimizer
     --overlap-grad-reduce
     --overlap-param-gather
@@ -258,7 +267,7 @@ DATA_ARGS=(
     --num-workers 2
     --num-dataset-builder-threads 4
     --reset-position-ids
-    #    --reset-attention-mask
+    #    --reset-attention-mask -- noop in megatron either way + we're using packed_seq
     --eod-mask-loss
     --use-packed-seq-params
     --no-create-attention-mask-in-dataloader
@@ -277,18 +286,12 @@ DATA_ARGS=(
 #CMD_PREFIX="numactl --membind=0-3"
 
 
-
-### ATTENTION ARGS ###
-
-ATTENTION_ARGS=(
-    --softmax-type learnable
-)
-
 ### TRAINING CMD ###
 
 TRAINING_CMD="python3 $MEGATRON_LM_DIR/pretrain_gpt.py \
     ${TRANSFORMER_ENGINE_ARGS[@]} \
     ${NETWORK_SIZE_ARGS[@]} \
+    ${ATTENTION_ARGS[@]} \
     ${LOGGING_ARGS[@]} \
     ${REGULARIZATION_ARGS[@]} \
     ${TRAINING_ARGS[@]} \
@@ -299,8 +302,7 @@ TRAINING_CMD="python3 $MEGATRON_LM_DIR/pretrain_gpt.py \
     ${DISTRIBUTED_ARGS[@]} \
     ${TOKENIZER_ARGS[@]} \
     ${VOCAB_ARGS[@]} \
-    ${DATA_ARGS[@]} \
-    ${ATTENTION_ARGS[@]}"
+    ${DATA_ARGS[@]}"
 
 # W&B Logging
 if [ -n "$WANDB_API_KEY" ]; then
