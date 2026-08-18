@@ -1,4 +1,4 @@
-=== Parameter count: full_attn_llama_1B_args ===
+=== Parameter count: off_by_one_attn_llama_1B_args ===
 (embeddings tied with output head)
 
 TOTAL                                                           1,235,814,400

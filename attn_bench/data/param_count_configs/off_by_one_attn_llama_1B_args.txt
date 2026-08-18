@@ -2,7 +2,7 @@
 # Off-by-one attention variant: LLaMA-3.2-1B architecture + --softmax-type off-by-one
 # Off-by-one is sink attention with a fixed (non-learnable) sink logit of 0:
 #   denominator = 1 + sum_j exp(x_j)  instead of sum_j exp(x_j)
-# Unlike --softmax-type learnable, this adds no extra parameters.
+# Unlike --softmax-type learnable, this adds no extra parameters, the params count is 1,235,814,400 same as full attention.
 # args values taken from: https://huggingface.co/meta-llama/Llama-3.2-1B/blob/main/config.json
 # args names taken from: megatron/core/transformer/transformer_config.py
 

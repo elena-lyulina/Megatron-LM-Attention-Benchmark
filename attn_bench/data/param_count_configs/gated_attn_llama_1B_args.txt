@@ -1,5 +1,6 @@
 ############ LLAMA 1B CONFIG #################
 # Gated-attention variant: LLaMA-3.2-1B architecture + --attention-output-gate
+# Comparing to the baseline full attention model (1,235,814,400 params), this model is 5.05% params more (1,302,923,264 params) => probably needs scaling down
 # args values taken from: https://huggingface.co/meta-llama/Llama-3.2-1B/blob/main/config.json
 # args names taken from: megatron/core/transformer/transformer_config.py
 

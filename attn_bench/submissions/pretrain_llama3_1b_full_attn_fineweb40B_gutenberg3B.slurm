@@ -225,7 +225,7 @@ CHECKPOINTING_ARGS=(
     --load $CKPT_DIR  # delete this to NOT reload from the latest checkpoint
     --save $CKPT_DIR
     --save-interval $CHECKPOINT_STEPS
-    #--save-retain-interval $CHECKPOINT_RETAIN_STEPS
+    --save-retain-interval $CHECKPOINT_RETAIN_STEPS
     --ckpt-format torch_dist
     #--async-save  # disabled: sync save ensures checkpoint at step 15549 completes before crash at step 15550
     --ckpt-fully-parallel-load # all ranks load checkpoint shards in parallel instead of sequentially

@@ -1,7 +1,7 @@
 ############ GDN 1B CONFIG (param-matched to Llama-3.2-1B) #################
 # GDN-attention baseline: LLaMA-3.2-1B backbone with GDN mixer, FFN shrunk to match Llama 1B param count
 # Same as gdn_1B_args_8heads.txt but --ffn-hidden-size 8192 -> 5824 to absorb the wider GDN mixer.
-# Target: Llama-3.2-1B = 1,236,076,544 params. This config: ~1,239,097,600 (+0.24%).
+# Target: Llama-3.2-1B = 1,235,814,400 params. This config: ~1,239,097,600 (+0.27%).
 # args values taken from:
 # args names taken from: megatron/core/transformer/transformer_config.py
 
