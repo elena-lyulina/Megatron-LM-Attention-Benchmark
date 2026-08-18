@@ -53,8 +53,10 @@ def convert_megatron_checkpoint_to_hf(checkpoint_path: str,
     model_dict = checkpoint['model']
     hf_dict = attn_family.build_state_dict(model_dict, args)
 
-    # Create and load model
-    model = AutoModelForCausalLM.from_config(config)
+    # Create and load model -- attn_family owns construction (and, for custom
+    # architectures, auto_map registration) since AutoModelForCausalLM.from_config only
+    # works for model_types registered in transformers itself.
+    model = attn_family.build_model(config)
     model.load_state_dict(hf_dict)
 
     # Calculate trainable parameters

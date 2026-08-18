@@ -12,14 +12,14 @@
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=clariden-jobs-elyulin-aaaauapxybdkdx42ppvef2c2eq@swissai-initiative.slack.com
 
-# Convert a Megatron torch_dist checkpoint to a real HF LlamaForCausalLM (steps 1 and 2 are
-# both locally-edited copies of PDM's converters, see checkpoint_conversion/ for what and why),
+# Convert a Megatron torch_dist checkpoint to a real HF model (steps 1 and 2 are both
+# locally-edited copies of PDM's converters, see checkpoint_conversion/ for what and why),
 # then validate the conversion two ways: a single-forward-pass logits diff on random tokens
 # (step 3), and a real multi-step greedy-decode comparison on real excerpts (step 4) -- the
 # latter is the only one that exercises this project's own KV-cache decode loop.
 # Step 2 auto-detects the checkpoint's attention family from its own restored args and picks
 # the matching attn_families/ module (see checkpoint_conversion/attn_families/registry.py) --
-# families without one yet (sink/gated/GDN) fail there with a clear NotImplementedError.
+# families without one yet (gated/GDN) fail there with a clear NotImplementedError.
 #
 # Env vars:
 #   MODEL checkpoint to use, see llama_checkpoints.sh (default: full-scf1)
@@ -52,6 +52,27 @@ CONV_DIR=$MEGATRON_LM_DIR/attn_bench/checkpoint_conversion
 
 export PYTHONPATH=$MEGATRON_LM_DIR:${PYTHONPATH:-}
 export CUDA_DEVICE_MAX_CONNECTIONS=1
+
+# Steps 2-4: sink's HF architecture (SinkLlamaForCausalLM) needs a patched flash-attn checkout
+# for its fused kernel -- see flash-attention-cute-workflow.md
+SINK_ENV=""
+if [ "$IS_SINK_FAMILY" = "1" ]; then
+    SINK_ENV="export FLASH_ATTN_SRC_DIR=/users/$USER/scratch/flash-attention; pip install --quiet 'nvidia-cutlass-dsl==4.6.2';"
+fi
+
+# Step 3: flash_attn.cute (sink's kernel) only supports fp16/bf16, not the fp32 the logits
+# comparison defaults to for precision.
+DTYPE_ARG=""
+[ "$IS_SINK_FAMILY" = "1" ] && DTYPE_ARG="--dtype bfloat16"
+
+# Step 4: TE 2.15 rejects fused attn in decode mode with a sink token (see llama_checkpoints.sh).
+# Only the decode loop needs this -- step 3 is a single forward pass, no decode.
+STEP4_MEGATRON_EXTRA="$MEGATRON_EXTRA"
+STEP4_ENV=""
+if [ "$NEEDS_UNFUSED_DECODE" = "1" ]; then
+    STEP4_MEGATRON_EXTRA="$STEP4_MEGATRON_EXTRA --attention-backend unfused"
+    STEP4_ENV="export NVTE_FUSED_ATTN=0; export CUDNN_LOGERR_DBG=1; export CUDNN_LOGDEST_DBG=stderr;"
+fi
 
 ### CHECK STORE (before doing anything expensive) ###
 STORE_HF_DIR=$STORE_HF_BASE/$EXP_NAME
@@ -91,6 +112,7 @@ srun \
     if [ \$STEP1_STATUS -ne 0 ]; then echo 'Step 1 failed'; exit \$STEP1_STATUS; fi
 
     echo '### STEP 2: torch -> HF ###'
+    $SINK_ENV
     # Local copy (see convert_megatron_to_hf.py). utils.py is unforked -- pull PDM's via PYTHONPATH.
     PYTHONPATH=\"$PDM_DIR/src/convert:\$PYTHONPATH\" python $CONV_DIR/convert_megatron_to_hf.py --experiment-path $SCRATCH_CONVERT_DIR
     STEP2_STATUS=\$?
@@ -118,18 +140,20 @@ print(f'rope factor = {factor} (expected $EXPECTED_ROPE_FACTOR) -- OK')
         --tokenizer-path $TOKENIZER_PATH \
         --hf-dir $SCRATCH_CONVERT_DIR/HF \
         --batch-size 1 \
+        $DTYPE_ARG \
         --megatron-extra-args $MEGATRON_EXTRA
     STEP3_STATUS=\$?
     if [ \$STEP3_STATUS -ne 0 ]; then echo 'Step 3 failed'; exit \$STEP3_STATUS; fi
 
     echo '### STEP 4: compare generation (real excerpts, multi-step decode loop) ###'
+    $STEP4_ENV
     torchrun --nproc_per_node=1 $CONV_DIR/compare_megatron_hf_generation.py \
         --ckpt-dir $MODEL_DIR/checkpoints \
         --tokenizer-path $TOKENIZER_PATH \
         --hf-dir $SCRATCH_CONVERT_DIR/HF \
         --data-folder $GUTENBERG_JSONL_DIR \
         --rep 0 --offset 0 --prefix-length 500 --suffix-length 500 --num-samples 5 \
-        --megatron-extra-args $MEGATRON_EXTRA
+        --megatron-extra-args $STEP4_MEGATRON_EXTRA
     "
 CONVERT_STATUS=$?
 

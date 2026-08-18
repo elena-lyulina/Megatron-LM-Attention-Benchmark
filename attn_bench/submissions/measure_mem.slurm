@@ -21,7 +21,7 @@
 # Env vars:
 #   MODEL              checkpoint to use, see llama_checkpoints.sh (default: full)
 #   CHECKPOINT_BACKEND megatron (default, all attention variants) or hf (already-converted HF
-#                      checkpoint, faster generate(), full-attention models only -- run
+#                      checkpoint, faster generate(); full and sink attention only -- run
 #                      convert_and_validate_hf.slurm first)
 #   OFFSET         document start offset (default: 0)
 #   PREFIX_LENGTH  prompt length in tokens (default: 500)
@@ -85,8 +85,8 @@ if [ -z "$OVERWRITE" ] && [ -f "$STORE_PKL" ]; then
 fi
 
 # HF checkpoint must already exist (produced separately by convert_and_validate_hf.slurm) --
-# this also doubles as the "is this model even HF-convertible" check, since sink/gated/GDN
-# models never get one.
+# this also doubles as the "is this model even HF-convertible" check, since gated/GDN models
+# never get one.
 if [ "$CHECKPOINT_BACKEND" = "hf" ]; then
     HF_DIR=/users/$USER/store/hf-checkpoints/$EXP_NAME
     if [ ! -f "$HF_DIR/config.json" ]; then
@@ -112,6 +112,12 @@ EXTRA_MEGATRON=""
 EXTRA_ENV=""
 if [ "$CHECKPOINT_BACKEND" = "hf" ]; then
     COMMON_ARGS="$COMMON_ARGS --hf-dir $HF_DIR"
+    if [ "$IS_SINK_FAMILY" = "1" ]; then
+        # sink's HF architecture (SinkLlamaForCausalLM) needs a patched flash-attn checkout
+        # for its fused kernel -- see flash-attention-cute-workflow.md. Only sink pays this
+        # cost: full's HF path never imports flash_attn.cute at all.
+        EXTRA_ENV="export FLASH_ATTN_SRC_DIR=/users/$USER/scratch/flash-attention; pip install --quiet 'nvidia-cutlass-dsl==4.6.2';"
+    fi
 else
     COMMON_ARGS="$COMMON_ARGS --ckpt-dir $MODEL_DIR/checkpoints --tokenizer-path $TOKENIZER_PATH"
     [ "$IS_SINK_FAMILY" = "1" ] && [ -n "$SINK_SCALE" ] && COMMON_ARGS="$COMMON_ARGS --sink-scale $SINK_SCALE"

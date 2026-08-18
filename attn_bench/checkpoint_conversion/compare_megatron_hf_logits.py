@@ -25,18 +25,21 @@ from attn_bench.evaluation.inference_backend import (HFBackend,
 
 
 def compare_logits(ref_backend: InferenceBackend, new_backend: InferenceBackend, vocab_size: int,
-                   seq_length: int, batch_size: int = 4, device: str = "cuda"):
-    """Forward both backends on the same random tokens and diff the logits."""
+                   seq_length: int, batch_size: int = 4, device: str = "cuda",
+                   dtype: torch.dtype = torch.float32):
+    """Forward both backends on the same random tokens and diff the logits. dtype defaults to
+    fp32 for precision, but fused kernels like flash_attn.cute (sink) only support fp16/bf16
+    -- pass bfloat16 for those."""
     tokens = torch.randint(0, vocab_size, (batch_size, seq_length), device=device)
     position_ids = torch.arange(seq_length, device=device).unsqueeze(0).expand(batch_size, -1)
 
-    ref_backend.model = ref_backend.model.to(device).float()
+    ref_backend.model = ref_backend.model.to(device).to(dtype)
     with torch.no_grad():
         ref_output = ref_backend.forward_logits(tokens, position_ids)
     del ref_backend
     torch.cuda.empty_cache()
 
-    new_backend.model = new_backend.model.to(device).float()
+    new_backend.model = new_backend.model.to(device).to(dtype)
     with torch.no_grad():
         output = new_backend.forward_logits(tokens, position_ids)
     del new_backend
@@ -80,12 +83,15 @@ def parse_args():
     parser.add_argument("--hf-dir", required=True, help="Output of convert_megatron_to_hf.py")
     parser.add_argument("--seq-length", type=int, default=8192)
     parser.add_argument("--batch-size", type=int, default=4)
+    parser.add_argument("--dtype", choices=["float32", "bfloat16"], default="float32",
+                       help="fp32 for precision (default); bfloat16 for fused kernels that don't support fp32 (e.g. sink)")
     parser.add_argument("--megatron-extra-args", nargs=argparse.REMAINDER, default=None)
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
+    dtype = getattr(torch, args.dtype)
 
     megatron_backend = MegatronBackend(args.ckpt_dir, args.tokenizer_path, args.megatron_extra_args)
     megatron_backend.load_model()
@@ -93,7 +99,7 @@ def main():
     hf_backend.load_model()
     vocab_size = hf_backend.model.config.vocab_size
 
-    compare_logits(megatron_backend, hf_backend, vocab_size, args.seq_length, args.batch_size)
+    compare_logits(megatron_backend, hf_backend, vocab_size, args.seq_length, args.batch_size, dtype=dtype)
     print("Logits check passed.")
 
 

@@ -255,7 +255,11 @@ class HFBackend(InferenceBackend):
         if not dist.is_initialized():
             dist.init_process_group(backend="nccl")  # env://, reads torchrun's RANK/WORLD_SIZE/MASTER_ADDR/PORT
 
-        self.model = AutoModelForCausalLM.from_pretrained(self.hf_dir, torch_dtype="auto").to(f"cuda:{local_rank}")
+        # trust_remote_code: no-op for standard architectures (full), required for custom ones
+        # (sink) that ship their own modeling code alongside the checkpoint via auto_map.
+        self.model = AutoModelForCausalLM.from_pretrained(
+            self.hf_dir, torch_dtype="auto", trust_remote_code=True
+        ).to(f"cuda:{local_rank}")
         self.model.eval()
 
     @property

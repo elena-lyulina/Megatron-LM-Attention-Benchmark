@@ -17,7 +17,7 @@ from collections import OrderedDict
 from typing import Any, Dict, Tuple
 
 import torch
-from transformers import AutoConfig, PretrainedConfig
+from transformers import AutoConfig, AutoModelForCausalLM, PretrainedConfig
 # utils.py isn't forked -- it's PDM's own, unmodified. Not a local import: made available
 # only via the scoped PYTHONPATH convert_and_validate_hf.slurm sets for Step 2.
 from utils import is_rank_0
@@ -88,6 +88,12 @@ def build_config(args: Any) -> PretrainedConfig:
         use_cache=True,
         vocab_size=args.padded_vocab_size
     )
+
+
+def build_model(config: PretrainedConfig) -> AutoModelForCausalLM:
+    """Construct an uninitialized model from config -- standard registered architecture,
+    no auto_map/trust_remote_code needed (unlike custom families e.g. sink)."""
+    return AutoModelForCausalLM.from_config(config)
 
 
 def convert_qkv_weights(qkv_weights: torch.Tensor, num_heads: int,
