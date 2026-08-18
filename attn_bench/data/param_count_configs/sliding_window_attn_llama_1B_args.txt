@@ -1,0 +1,50 @@
+############ LLAMA 1B CONFIG #################
+# Sliding window attention variant: LLaMA-3.2-1B architecture + --window-size (all layers, no
+# --window-attn-skip-freq -- not a hybrid). window_size is a masking parameter passed straight
+# into TE's DotProductAttention (megatron/core/extensions/transformer_engine.py); it changes which
+# keys are visible to each query, not any weight shape. Params count is 1,235,814,400, identical to
+# full attention, for ANY window size (256/1024/4096/...) -- the value below is just a placeholder.
+# args values taken from: https://huggingface.co/meta-llama/Llama-3.2-1B/blob/main/config.json
+# args names taken from: megatron/core/transformer/transformer_config.py
+
+### Embeddings / input-output:
+--make-vocab-size-divisible-by 128      # sizes the mode's input / output embedding matrix (vocab x hidden / hidden x vocab))
+# Llama-3.2-1B config: "vocab_size": 128256 -- derived from the tokenizer
+# Llama-3.2-1B config: "tie_word_embeddings": true -- embeddings tied by default; need to pass --untie-embeddings-and-output-weights to disable
+
+### Global / model-wide
+--hidden-size 2048                      # representing 1 token
+--num-layers 16                         # how many blocks
+--normalization RMSNorm                 # used before the blocks (both attn and mlp) throughout the model
+--norm-epsilon 1e-5                     # "rms_norm_eps"
+--disable-bias-linear                   # "mlp_bias": false, "attention_bias": false  -- following Llama-3.2-1B config
+--transformer-impl transformer_engine
+--seq-length 8192                       # runtime, doesnt affect the model's size but required to build a model
+
+### MLP
+--ffn-hidden-size 8192
+--swiglu                                # "hidden_act": "silu"  -- following Llama-3.2-1B config + gating
+
+### Token mixer
+--num-attention-heads 32
+--group-query-attention
+--num-query-groups 8
+--position-embedding-type rope
+--max-position-embeddings 8192              # 8192 since the scaling factor is 1 | 131072 in the Llama-3.2-1B config
+--rotary-base 500000
+--rope-scaling-factor 1                     # pretraining from scratch | "factor": 32.0 in the Llama-3.2-1B config
+--use-rope-scaling
+# hardcoded in Megatron (megatron/core/models/common/embeddings/rotary_pos_embedding.py:92-98), correspond to Llama-3.2-1B config:
+# high_freq_factor=4
+# low_freq_factor=1
+# original_max_position_embeddings=8192
+# rope_type: llama3
+--window-size 4096,0                        # causal sliding window (left=4096, right=0); no --window-attn-skip-freq -- every layer is SWA
+## default params:
+# --kv-channels auto = hidden/heads
+# --add-qkv-bias false
+# --qk-layernorm false
+# --num-experts None (dense MLP)
+# --apply-layernorm-1p false (standard RMSNorm)
+# --rotary-percent 1.0
+# --multi-latent-attention false
