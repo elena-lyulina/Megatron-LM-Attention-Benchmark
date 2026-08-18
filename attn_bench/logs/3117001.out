@@ -1,0 +1,4 @@
+reference formula sanity check vs SDPA (sink=-inf, i.e. no-op): max abs diff 0.000809
+fraction close (atol=0.001, rtol=0.02): 0.9998
+max abs diff: 0.006310
+RESULT: CORRECT -- 99.98% of values close (need >= 99%).

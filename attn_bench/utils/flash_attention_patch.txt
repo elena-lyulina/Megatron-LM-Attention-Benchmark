@@ -1,0 +1,12 @@
+diff --git a/flash_attn/cute/utils.py b/flash_attn/cute/utils.py
+index bc26d12..9a8957e 100644
+--- a/flash_attn/cute/utils.py
++++ b/flash_attn/cute/utils.py
+@@ -352,6 +352,7 @@ def fmax(
+ ) -> Float32:
+     return Float32(
+         nvvm.fmax(
++            T.f32(),
+             Float32(a).ir_value(loc=loc, ip=ip),
+             Float32(b).ir_value(loc=loc, ip=ip),
+             c=Float32(c).ir_value(loc=loc, ip=ip) if c is not None else None,

@@ -1,0 +1,47 @@
+installed flash_attn: 2.7.4.post1 at /usr/local/lib/python3.12/dist-packages/flash_attn/__init__.py
+imported flash_attn.cute.interface OK
+candidate entry points: ['flash_attn_combine', 'flash_attn_func', 'flash_attn_varlen_func']
+flash_attn_combine('out_partial', 'lse_partial', 'out', 'out_dtype', 'cu_seqlens', 'seqused', 'virtual_batch_idx', 'return_lse') -- sink-like params: []
+flash_attn_func('q', 'k', 'v', 'qv', 'gather_kv_indices', 'softmax_scale', 'causal', 'window_size', 'learnable_sink', 'softcap', 'num_splits', 'pack_gqa', 'deterministic', 'score_mod', 'score_mod_bwd', 'mask_mod', 'aux_tensors', 'aux_scalars', 'block_sparse_tensors', 'block_sparse_tensors_bwd', 'return_lse') -- sink-like params: ['learnable_sink']
+flash_attn_varlen_func('q', 'k', 'v', 'qv', 'cu_seqlens_q', 'cu_seqlens_k', 'max_seqlen_q', 'max_seqlen_k', 'min_seqlen_k', 'seqused_q', 'seqused_k', 'gather_kv_indices', 'page_table', 'softmax_scale', 'causal', 'window_size', 'learnable_sink', 'softcap', 'num_splits', 'pack_gqa', 'deterministic', 'score_mod', 'score_mod_bwd', 'mask_mod', 'block_sparse_tensors', 'aux_tensors', 'aux_scalars', 'return_lse', 'scheduler_metadata', 'seqlen_k_per_split', 'disable_scheduler_metadata') -- sink-like params: ['learnable_sink']
+nvvm module file: /opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/_mlir/dialects/nvvm.py
+nvvm.fmax signature: (res, a, b, *, c=None, ftz=None, nan=None, abs=None, loc=None, ip=None) -> cutlass._mlir._mlir_libs._cutlass_ir._mlir.ir.Value
+cloned flash_attn/cute/utils.py fmax() source:
+@dsl_user_op
+def fmax(
+    a: float | Float32, b: float | Float32, c: float | Float32 | None = None, *, loc=None, ip=None
+) -> Float32:
+    return Float32(
+        nvvm.fmax(
+            Float32(a).ir_value(loc=loc, ip=ip),
+            Float32(b).ir_value(loc=loc, ip=ip),
+            c=Float32(c).ir_value(loc=loc, ip=ip) if c is not None else None,
+            loc=loc,
+            ip=ip,
+        )
+    )
+
+cute.arch module file: /opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/cute/arch/__init__.py
+installed cute.arch.fmax source:
+@dsl_user_op
+def fmax(
+    a: Union[float, Float32],
+    b: Union[float, Float32],
+    *,
+    loc: Optional[ir.Location] = None,
+    ip: Optional[ir.InsertionPoint] = None,
+) -> Float32:
+
+    return Float32(
+        nvvm.fmax(
+            T.f32(),
+            Float32(a).ir_value(loc=loc, ip=ip),
+            Float32(b).ir_value(loc=loc, ip=ip),
+            loc=loc,
+            ip=ip,
+        )
+    )
+
+trying WITHOUT learnable_sink first, to isolate whether fmax breaks generally...
+RESULT: FAILED
+Job failed (exit 1) -- not copying scratch results to store

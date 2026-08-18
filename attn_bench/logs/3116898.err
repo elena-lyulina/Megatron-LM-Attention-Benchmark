@@ -1,0 +1,22 @@
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+tensorrt-llm 1.2.0 requires opencv-python-headless, which is not installed.
+vllm 0.17.2.dev0+g95c0f928c.d20260313.cu131 requires opencv-python-headless>=4.13.0, which is not installed.
+tensorrt-llm 1.2.0 requires apache-tvm-ffi==0.1.6, but you have apache-tvm-ffi 0.1.11 which is incompatible.
+tensorrt-llm 1.2.0 requires numpy<2, but you have numpy 2.2.6 which is incompatible.
+tensorrt-llm 1.2.0 requires nvidia-cutlass-dsl==4.3.4; python_version >= "3.10", but you have nvidia-cutlass-dsl 4.6.2 which is incompatible.
+tensorrt-llm 1.2.0 requires onnx<1.20.0,>=1.18.0, but you have onnx 1.21.0 which is incompatible.
+tensorrt-llm 1.2.0 requires setuptools<80, but you have setuptools 82.0.1 which is incompatible.
+vllm 0.17.2.dev0+g95c0f928c.d20260313.cu131 requires llguidance<1.4.0,>=1.3.0; platform_machine == "x86_64" or platform_machine == "arm64" or platform_machine == "aarch64" or platform_machine == "s390x" or platform_machine == "ppc64le", but you have llguidance 0.7.29 which is incompatible.
+vllm 0.17.2.dev0+g95c0f928c.d20260313.cu131 requires mistral_common[image]>=1.9.1, but you have mistral-common 1.8.6 which is incompatible.
+vllm 0.17.2.dev0+g95c0f928c.d20260313.cu131 requires setuptools<81.0.0,>=77.0.3; python_version > "3.11", but you have setuptools 82.0.1 which is incompatible.
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+Traceback (most recent call last):
+  File "/users/elyulina/scratch/tmp/check_sink_kernel_3116898/check_sink_kernel.py", line 25, in <module>
+    main(sys.argv[1])
+  File "/users/elyulina/scratch/tmp/check_sink_kernel_3116898/check_sink_kernel.py", line 20, in main
+    print(f'forward pass OK, output shape {tuple(out.shape)}, dtype {out.dtype}')
+                                                 ^^^^^^^^^
+AttributeError: 'tuple' object has no attribute 'shape'
+srun: error: nid007620: task 0: Exited with exit code 1
+srun: Terminating StepId=3116898.0

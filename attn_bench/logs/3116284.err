@@ -1,0 +1,171 @@
+Cloning into '/users/elyulina/scratch/tmp/check_sink_kernel_3116284/flash-attention-src'...
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+tensorrt-llm 1.2.0 requires opencv-python-headless, which is not installed.
+vllm 0.17.2.dev0+g95c0f928c.d20260313.cu131 requires opencv-python-headless>=4.13.0, which is not installed.
+flashinfer-python 0.6.4 requires nvidia-cutlass-dsl>=4.3.4, but you have nvidia-cutlass-dsl 4.2.0 which is incompatible.
+tensorrt-llm 1.2.0 requires apache-tvm-ffi==0.1.6, but you have apache-tvm-ffi 0.1.11 which is incompatible.
+tensorrt-llm 1.2.0 requires cuda-python>=13, but you have cuda-python 12.9.7 which is incompatible.
+tensorrt-llm 1.2.0 requires numpy<2, but you have numpy 2.2.6 which is incompatible.
+tensorrt-llm 1.2.0 requires nvidia-cutlass-dsl==4.3.4; python_version >= "3.10", but you have nvidia-cutlass-dsl 4.2.0 which is incompatible.
+tensorrt-llm 1.2.0 requires onnx<1.20.0,>=1.18.0, but you have onnx 1.21.0 which is incompatible.
+tensorrt-llm 1.2.0 requires setuptools<80, but you have setuptools 82.0.1 which is incompatible.
+vllm 0.17.2.dev0+g95c0f928c.d20260313.cu131 requires llguidance<1.4.0,>=1.3.0; platform_machine == "x86_64" or platform_machine == "arm64" or platform_machine == "aarch64" or platform_machine == "s390x" or platform_machine == "ppc64le", but you have llguidance 0.7.29 which is incompatible.
+vllm 0.17.2.dev0+g95c0f928c.d20260313.cu131 requires mistral_common[image]>=1.9.1, but you have mistral-common 1.8.6 which is incompatible.
+vllm 0.17.2.dev0+g95c0f928c.d20260313.cu131 requires nvidia-cutlass-dsl>=4.4.0.dev1, but you have nvidia-cutlass-dsl 4.2.0 which is incompatible.
+vllm 0.17.2.dev0+g95c0f928c.d20260313.cu131 requires setuptools<81.0.0,>=77.0.3; python_version > "3.11", but you have setuptools 82.0.1 which is incompatible.
+quack-kernels 0.4.1 requires nvidia-cutlass-dsl>=4.4.2, but you have nvidia-cutlass-dsl 4.2.0 which is incompatible.
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+Traceback (most recent call last):
+  File "/users/elyulina/scratch/tmp/check_sink_kernel_3116284/check_sink_kernel.py", line 47, in <module>
+    main(sys.argv[1])
+  File "/users/elyulina/scratch/tmp/check_sink_kernel_3116284/check_sink_kernel.py", line 41, in main
+    out = sink_fn(q, k, v, causal=True, **{sink_param: sink})
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/elyulina/scratch/tmp/check_sink_kernel_3116284/flash-attention-src/flash_attn/cute/interface.py", line 3394, in flash_attn_func
+    return FlashAttnFunc.apply(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/autograd/function.py", line 583, in apply
+    return super().apply(*args, **kwargs)  # type: ignore[misc]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/elyulina/scratch/tmp/check_sink_kernel_3116284/flash-attention-src/flash_attn/cute/interface.py", line 3096, in forward
+    out, lse, p, row_max = _flash_attn_fwd(
+                           ^^^^^^^^^^^^^^^^
+  File "/users/elyulina/scratch/tmp/check_sink_kernel_3116284/flash-attention-src/flash_attn/cute/interface.py", line 1452, in _flash_attn_fwd
+    _flash_attn_fwd.compile_cache[compile_key] = cute.compile(*compile_args, options="--enable-tvm-ffi")
+                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/base_dsl/compiler.py", line 582, in __call__
+    return self._compile(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/base_dsl/compiler.py", line 661, in _compile
+    return func._dsl_object._func(func, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/base_dsl/dsl.py", line 2214, in _func
+    result = self.generate_mlir(
+             ^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/base_dsl/dsl.py", line 1835, in generate_mlir
+    module, module_hash, result = self.generate_original_ir(
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/base_dsl/dsl.py", line 1599, in generate_original_ir
+    module, result = build_ir_module()
+                     ^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/base_dsl/dsl.py", line 1575, in build_ir_module
+    result = funcBody(*ir_args, **ir_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/elyulina/scratch/tmp/check_sink_kernel_3116284/flash-attention-src/flash_attn/cute/flash_fwd_sm90.py", line 399, in __call__
+    ).launch(
+  File "/opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/cutlass_dsl/cutlass.py", line 1372, in launch
+    ret, name = kernel_generator(*self.func_args, **self.func_kwargs, config=config)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/base_dsl/dsl.py", line 2538, in kernel_wrapper
+    kernel_ret = funcBody(*ir_args, **ir_kwargs)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/elyulina/scratch/tmp/check_sink_kernel_3116284/flash-attention-src/flash_attn/cute/flash_fwd_sm90.py", line 585, in kernel
+    if warp_idx < 4:  # Producer
+  File "/opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/base_dsl/ast_helpers.py", line 270, in ir_loop
+    return func(pred, *write_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/elyulina/scratch/tmp/check_sink_kernel_3116284/flash-attention-src/flash_attn/cute/flash_fwd_sm90.py", line 585, in if_region_8
+    if warp_idx < 4:  # Producer
+  File "/opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/base_dsl/ast_helpers.py", line 306, in if_executor
+    return executor.if_execute(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/base_dsl/ast_helpers.py", line 155, in if_execute
+    return self._if_dynamic(
+           ^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/cutlass_dsl/cutlass_ast_decorators.py", line 508, in _if_execute_dynamic
+    return scf_gen.scf_execute_dynamic(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/cutlass_dsl/cutlass_ast_decorators.py", line 197, in scf_execute_dynamic
+    region_result = builder(
+                    ^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/cutlass_dsl/cutlass_ast_decorators.py", line 504, in else_builder
+    return else_block(*flat_args)
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/elyulina/scratch/tmp/check_sink_kernel_3116284/flash-attention-src/flash_attn/cute/flash_fwd_sm90.py", line 615, in else_block_9
+    self.mma(
+  File "/opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/base_dsl/dsl.py", line 801, in jit_wrapper
+    return getattr(func._dsl_object, executor_name)(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/base_dsl/dsl.py", line 2152, in _func
+    return funcBody(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/elyulina/scratch/tmp/check_sink_kernel_3116284/flash-attention-src/flash_attn/cute/flash_fwd_sm90.py", line 1051, in mma
+    while work_tile.is_valid_tile:
+  File "/opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/base_dsl/ast_helpers.py", line 277, in ir_while_loop
+    return func(*write_args)
+           ^^^^^^^^^^^^^^^^^
+  File "/users/elyulina/scratch/tmp/check_sink_kernel_3116284/flash-attention-src/flash_attn/cute/flash_fwd_sm90.py", line 1051, in while_region_2
+    while work_tile.is_valid_tile:
+  File "/opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/base_dsl/ast_helpers.py", line 289, in while_executor
+    return executor.while_execute(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/base_dsl/ast_helpers.py", line 175, in while_execute
+    return self._while_dynamic(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/cutlass_dsl/cutlass_ast_decorators.py", line 641, in _while_execute_dynamic
+    return scf_gen.scf_execute_dynamic(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/cutlass_dsl/cutlass_ast_decorators.py", line 197, in scf_execute_dynamic
+    region_result = builder(
+                    ^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/cutlass_dsl/cutlass_ast_decorators.py", line 628, in after_block_builder
+    after_results = while_after_block(*flat_args)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/elyulina/scratch/tmp/check_sink_kernel_3116284/flash-attention-src/flash_attn/cute/flash_fwd_sm90.py", line 1121, in while_after_block_3
+    kv_consumer_state = process_first_half_block(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/base_dsl/dsl.py", line 801, in jit_wrapper
+    return getattr(func._dsl_object, executor_name)(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/base_dsl/dsl.py", line 2152, in _func
+    return funcBody(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/elyulina/scratch/tmp/check_sink_kernel_3116284/flash-attention-src/flash_attn/cute/flash_fwd_sm90.py", line 1306, in first_half_block_overlap
+    row_scale = softmax.online_softmax(acc_S, is_first=is_first_block)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/base_dsl/dsl.py", line 801, in jit_wrapper
+    return getattr(func._dsl_object, executor_name)(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/base_dsl/dsl.py", line 2152, in _func
+    return funcBody(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/elyulina/scratch/tmp/check_sink_kernel_3116284/flash-attention-src/flash_attn/cute/softmax.py", line 150, in online_softmax
+    for r in cutlass.range(cute.size(row_max), unroll_full=True):
+  File "/opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/base_dsl/ast_helpers.py", line 242, in ir_loop
+    return executor.for_execute(
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/base_dsl/ast_helpers.py", line 128, in for_execute
+    return self._loop_execute_range_dynamic(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/cutlass_dsl/cutlass_ast_decorators.py", line 430, in _loop_execute_range_dynamic
+    return scf_gen.scf_execute_dynamic(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/cutlass_dsl/cutlass_ast_decorators.py", line 197, in scf_execute_dynamic
+    region_result = builder(
+                    ^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/cutlass_dsl/cutlass_ast_decorators.py", line 426, in for_body_builder
+    updated_func_args = func(iv, *func_args)
+                        ^^^^^^^^^^^^^^^^^^^^
+  File "/users/elyulina/scratch/tmp/check_sink_kernel_3116284/flash-attention-src/flash_attn/cute/softmax.py", line 153, in loop_body_0
+    row_max_cur = utils.fmax_reduce(
+              ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/base_dsl/dsl.py", line 801, in jit_wrapper
+    return getattr(func._dsl_object, executor_name)(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/base_dsl/dsl.py", line 2152, in _func
+    return funcBody(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/elyulina/scratch/tmp/check_sink_kernel_3116284/flash-attention-src/flash_attn/cute/utils.py", line 382, in fmax_reduce
+    local_max[0] = fmax(local_max[0], res[i + 0])
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/base_dsl/_mlir_helpers/op.py", line 154, in wrapper
+    raise e
+  File "/opt/venv/lib/python3.12/site-packages/nvidia_cutlass_dsl/python_packages/cutlass/base_dsl/_mlir_helpers/op.py", line 121, in wrapper
+    res_or_list = opFunc(*args, **kwargs, loc=loc)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/elyulina/scratch/tmp/check_sink_kernel_3116284/flash-attention-src/flash_attn/cute/utils.py", line 354, in fmax
+    nvvm.fmax(
+TypeError: fmax() missing 1 required positional argument: 'b'
+srun: error: nid007620: task 0: Exited with exit code 1
+srun: Terminating StepId=3116284.0

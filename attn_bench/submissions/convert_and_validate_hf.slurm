@@ -17,15 +17,16 @@
 # then validate the conversion two ways: a single-forward-pass logits diff on random tokens
 # (step 3), and a real multi-step greedy-decode comparison on real excerpts (step 4) -- the
 # latter is the only one that exercises this project's own KV-cache decode loop.
-# Full-attention only -- no path here for the custom attention variants (sink/off-by-one/
-# gated/GDN aren't representable in plain HF Llama).
+# Step 2 auto-detects the checkpoint's attention family from its own restored args and picks
+# the matching attn_families/ module (see checkpoint_conversion/attn_families/registry.py) --
+# families without one yet (sink/gated/GDN) fail there with a clear NotImplementedError.
 #
 # Env vars:
-#   MODEL checkpoint to use, see llama_checkpoints.sh (default: full-scf8)
+#   MODEL checkpoint to use, see llama_checkpoints.sh (default: full-scf1)
 #   OVERWRITE reconvert even if the HF checkpoint already exists in store
-#   EXPECTED_ROPE_FACTOR expected rope-scaling-factor for the sanity check (default: 8)
+#   EXPECTED_ROPE_FACTOR expected rope-scaling-factor for the sanity check (default: 1)
 #
-# Usage: sbatch --export=MODEL=full-scf8 convert_and_validate_hf.slurm
+# Usage: sbatch --export=MODEL=full-scf1 convert_and_validate_hf.slurm
 
 echo "START TIME: $(date)"
 
@@ -37,9 +38,9 @@ PDM_DIR=/users/$USER/scratch/PDM
 source $MEGATRON_LM_DIR/attn_bench/scripts/llama_checkpoints.sh
 source $MEGATRON_LM_DIR/attn_bench/scripts/scratch_to_store.sh
 
-MODEL=${MODEL:-full-scf8}
+MODEL=${MODEL:-full-scf1}
 OVERWRITE=${OVERWRITE:-}
-EXPECTED_ROPE_FACTOR=${EXPECTED_ROPE_FACTOR:-8}
+EXPECTED_ROPE_FACTOR=${EXPECTED_ROPE_FACTOR:-1}
 model_config "$MODEL"
 
 MODEL_DIR=/users/$USER/store/pretrain-results/$CKPT_NAME
@@ -99,7 +100,7 @@ srun \
     python -c \"
 import json
 cfg = json.load(open('$SCRATCH_CONVERT_DIR/HF/config.json'))
-# transformers>=5 uses 'rope_parameters', not 'rope_scaling'.
+# This transformers version stores rope scaling under 'rope_parameters', not 'rope_scaling'.
 rope_cfg = cfg.get('rope_parameters') or cfg.get('rope_scaling', {})
 factor = rope_cfg.get('factor')
 assert factor == $EXPECTED_ROPE_FACTOR, f'expected rope factor == $EXPECTED_ROPE_FACTOR, got {factor!r} -- conversion likely dropped it silently'
