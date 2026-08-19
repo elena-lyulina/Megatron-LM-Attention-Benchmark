@@ -19,7 +19,7 @@
 #                        pass, where TE's FusedAttention already supports softmax_type
 #                        natively, so they never need this.
 
-MODELS=(full-scf8 gated-scf8 full-xdoc-leak-scf8 sink-scf8 off-by-one-scf8 gdn carry-r0 carry-r0.5 carry-r1 full-goldfish-scf8 gdn-goldfish full-fineweb80B-scf8 full-long-scf8 full-long-split-1024-scf8 full-scf1 gated-scf1 sink-scf1)
+MODELS=(full-scf8 gated-scf8 full-xdoc-leak-scf8 sink-scf8 off-by-one-scf8 gdn carry-r0 carry-r0.5 carry-r1 full-goldfish-scf8 gdn-goldfish full-fineweb80B-scf8 full-long-scf8 full-long-split-1024-scf8 full-scf1 gated-scf1 sink-scf1 swa-w256-scf1 swa-w1024-scf1 swa-w4096-scf1)
 
 # GDN linear-attention dims -- not restored by --use-checkpoint-args, must be re-passed.
 GDN_DIMS="--experimental-attention-variant gated_delta_net \
@@ -121,6 +121,18 @@ model_config() {
             MEGATRON_EXTRA="$ROPE_SCF1 --softmax-type learnable"
             IS_SINK_FAMILY=1
             NEEDS_UNFUSED_DECODE=1
+            ;;
+        swa-w256-scf1)
+            EXP_NAME=llama3-1b-swa-w256-scf1-fineweb40B-gutenberg3B
+            MEGATRON_EXTRA="$ROPE_SCF1 --window-size 256,0"
+            ;;
+        swa-w1024-scf1)
+            EXP_NAME=llama3-1b-swa-w1024-scf1-fineweb40B-gutenberg3B
+            MEGATRON_EXTRA="$ROPE_SCF1 --window-size 1024,0"
+            ;;
+        swa-w4096-scf1)
+            EXP_NAME=llama3-1b-swa-w4096-scf1-fineweb40B-gutenberg3B
+            MEGATRON_EXTRA="$ROPE_SCF1 --window-size 4096,0"
             ;;
         *)
             echo "Unknown MODEL=$model (expected one of: ${MODELS[*]})"

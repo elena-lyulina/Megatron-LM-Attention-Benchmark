@@ -282,6 +282,34 @@ Logs: `attn_bench/logs/3108550.err` + `attn_bench/_logs/3108550.out` (full — m
 
 ---
 
+## Sliding window attention (SWA), scf=1
+
+Sliding window (causal, left-only) attention on all layers — not a Gemma2/Mistral-style hybrid with full-attention layers mixed in (`--window-attn-skip-freq` left unset, so every layer uses the window). Same scf=1 config as the full/gated/sink runs above (`--rope-scaling-factor 1`, 8 nodes / TP=1 / MBS=3 / GBS=288, `TRAINING_STEPS=18141`, container `nemo_26.04_te2.15`). Three window sizes launched together on 2026-08-19 via `--window-size $WINDOW_SIZE,0`.
+
+All three completed cleanly via the data-exhaustion fix — exited with `[exiting program after consuming all available data at iteration 18141]`, no crash.
+
+| variant | Slurm job | start (CEST) | end (CEST) | run time | status | final lm loss (step 18141) | throughput (TFLOP/s/GPU) |
+|---|---|---|---|---|---|---|---|
+| swa w=4096 | `3119138` | 2026-08-19 00:54:21 | 2026-08-19 08:42:43 | 7h 48m 22s | COMPLETED (data exhausted) | 2.3923 | ~380.1 (avg) |
+| swa w=1024 | `3119140` | 2026-08-19 00:54:31 | 2026-08-19 08:08:44 | 7h 14m 13s | COMPLETED (data exhausted) | 2.4013 | ~410.2 (avg) |
+| swa w=256 | `3119141` | 2026-08-19 00:54:40 | 2026-08-19 07:53:17 | 6h 58m 37s | COMPLETED (data exhausted) | 2.4305 | ~425.6 (avg) |
+
+Throughput increases as the window shrinks (less attention compute per token), while final loss worsens — the expected quality/speed trade-off of restricting the attention context.
+
+W&B runs (project `fineweb-40B_gutenberg-3B`):
+
+- w=4096: `llama3-1b-swa-w4096-scf1-fineweb40B-gutenberg3B-3119138` (`05fak7uh`)
+- w=1024: `llama3-1b-swa-w1024-scf1-fineweb40B-gutenberg3B-3119140` (`a7fkl5p5`)
+- w=256: `llama3-1b-swa-w256-scf1-fineweb40B-gutenberg3B-3119141` (`kxayjfpn`)
+
+Checkpoints saved at step 18141, on scratch under `attn_bench/results/pretrain/fineweb-40B_gutenberg-3B/llama3-1b-swa-w{4096,1024,256}-scf1-fineweb40B-gutenberg3B/checkpoints/` — not yet moved to long-term store.
+
+Slurm script: `attn_bench/submissions/pretrain_llama3_1b_sliding_window_attn_fineweb40B_gutenberg3B.slurm`, launched via `sbatch --export=ALL,WINDOW_SIZE={4096,1024,256} attn_bench/submissions/pretrain_llama3_1b_sliding_window_attn_fineweb40B_gutenberg3B.slurm`.
+
+Logs: `attn_bench/logs/3119138.err` + `attn_bench/_logs/3119138.out` (w=4096), `3119140.err` + `_logs/3119140.out` (w=1024), `3119141.err` + `_logs/3119141.out` (w=256) — `.out` files moved to `_logs/` for exceeding 3 MB.
+
+---
+
 ## Attention variants / trained models 
 
 | variant | Megatron flag | description |
@@ -295,6 +323,7 @@ Logs: `attn_bench/logs/3108550.err` + `attn_bench/_logs/3108550.out` (full — m
 | GDN carry (r = 0 / 0.5 / 1) | `--gdn-state-carry-ratio {0,0.5,1}`, drop `--use-packed-seq-params` | GDN without doc-boundary state reset (leaks across docs within a sequence); recurrent + conv state additionally carried across batch boundaries with probability r |
 | full / GDN + goldfish loss | `--goldfish-k 50 --goldfish-h 50` (stacks on top of `full` or `gated delta net (GDN)`) | hash-based token dropout from the loss only (~2% of tokens), reduces verbatim memorization |
 | full (long / long-split-1024 filler) | *(none — same as `full`)* | same standard softmax attention as `full`; only the FineWeb-Edu-Dedup filler dataset differs (longest documents, whole or split into 1024-token chunks), same token budget |
+| sliding window attention (SWA), w = 256/1024/4096 | `--window-size {256,1024,4096},0` | causal sliding window on all layers (left=w, right=0), no full-attention layers mixed in |
 
 ---
 
