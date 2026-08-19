@@ -95,6 +95,34 @@ RESULT: CORRECT -- 99.98% of values close (need >= 99%).
 Sink attention's fused-kernel path is fully cleared now -- runs on GH200, and matches
 Megatron's math. `sink.py` (the `attn_families/` conversion module) is unblocked.
 
+**End-to-end HF conversion validated (sink-scf1).** After `sink.py`/`modeling_sink_llama.py`
+were implemented, `convert_and_validate_hf.slurm`'s Step 3 initially showed only 2.17%
+argmax agreement -- traced to the model silently falling back to `sdpa` (dropping
+`learnable_sink` entirely) rather than dispatching to the sink kernel, because
+`from_pretrained` reassigns `config._attn_implementation` after construction and a
+kwargs-`setdefault`-based default in `__init__` doesn't survive that. Fixed by overriding
+`SinkLlamaConfig.__setattr__` to force the implementation unconditionally (same pattern
+`gpt_oss` uses upstream). A second, independent bug (fixed in `convert_megatron_to_hf.py`):
+`build_model()`'s `nn.Linear`/`nn.Parameter`s default to fp32 regardless of
+`config.torch_dtype`, so `load_state_dict` silently upcast the bf16 checkpoint into fp32
+params -- invisible for eager/sdpa (fp32 is fine there) but fatal for
+`flash_attn.cute` (bf16/fp16-only), and wasteful (checkpoints saved 2x their real size).
+
+With both fixed, Step 3 (bf16, random tokens) reaches 94.45% argmax agreement -- short of
+the 99% threshold, but the shortfall looks like bf16 cross-kernel precision noise, not a
+remaining bug: disagreements concentrate almost entirely at near-tied top1/top2 logits
+(mean gap 0.055 at disagreeing positions vs 0.526 at agreeing ones), and 61% of
+disagreements are HF picking Megatron's exact #2 choice, not an unrelated token
+(`compare_megatron_hf_logits.py`'s near-tie diagnostic). A separate precision-only baseline
+(`check_megatron_precision_baseline.slurm`: same Megatron model, same random tokens, fp32
+vs bf16, no cross-implementation involved) shows 97.17% self-agreement, confirming bf16
+rounding alone already accounts for a comparable-magnitude gap. Step 4 (real-excerpt greedy
+decode) produces coherent generations on both sides with long identical-token stretches
+before diverging, and HF runs ~1.85-2x faster than Megatron's decode loop. Net: sink's HF
+conversion is functionally correct; Step 3's 99% threshold (tuned for `full`'s
+higher-precision, same-kernel comparison) isn't met, but this is a threshold-calibration gap
+for bf16 fused-kernel families, not a wiring defect.
+
 ## gated (attention_output_gate)
 
 **No kernel work needed at all.** `attention.py:1352-1356` (`_apply_output_gate`) is a

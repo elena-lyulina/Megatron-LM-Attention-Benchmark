@@ -1,0 +1,143 @@
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+0:   _warnings.warn(
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils/common_utils.py:430: UserWarning: Overriding default arguments for transformer_impl:transformer_engine with transformer_impl:transformer_engine
+0:   warnings.warn(message)
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils/common_utils.py:430: UserWarning: Overriding default arguments for use_checkpoint_args:True with use_checkpoint_args:False
+0:   warnings.warn(message)
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils/common_utils.py:430: UserWarning: Overriding default arguments for ckpt_format:torch_dist with ckpt_format:torch_dist
+0:   warnings.warn(message)
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/training/utils/common_utils.py:430: UserWarning: Overriding default arguments for untie_embeddings_and_output_weights:True with untie_embeddings_and_output_weights:False
+0:   warnings.warn(message)
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/megatron/core/models/mimo/config/base_configs.py:12: UserWarning: MimoModelConfig is experimental and still under active development. The API may change without notice in future releases.
+0:   class MimoModelConfig:
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py:90: UserWarning: The argument order of load has been changed. Please check the document to avoid future breakages.
+0:   result = func(*args, **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py:481: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to load in a single process.
+0:   return func(args[0], **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/planner_helpers.py:489: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   device = getattr(value, "device", None)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/default_planner.py:483: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   and md.size != obj.size()
+0: [rank0]:[W819 20:28:27.252684504 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+0: tensorrt-llm 1.2.0 requires opencv-python-headless, which is not installed.
+0: vllm 0.17.2.dev0+g95c0f928c.d20260313.cu131 requires opencv-python-headless>=4.13.0, which is not installed.
+0: tensorrt-llm 1.2.0 requires apache-tvm-ffi==0.1.6, but you have apache-tvm-ffi 0.1.11 which is incompatible.
+0: tensorrt-llm 1.2.0 requires numpy<2, but you have numpy 2.2.6 which is incompatible.
+0: tensorrt-llm 1.2.0 requires nvidia-cutlass-dsl==4.3.4; python_version >= "3.10", but you have nvidia-cutlass-dsl 4.6.2 which is incompatible.
+0: tensorrt-llm 1.2.0 requires onnx<1.20.0,>=1.18.0, but you have onnx 1.21.0 which is incompatible.
+0: tensorrt-llm 1.2.0 requires setuptools<80, but you have setuptools 82.0.1 which is incompatible.
+0: vllm 0.17.2.dev0+g95c0f928c.d20260313.cu131 requires llguidance<1.4.0,>=1.3.0; platform_machine == "x86_64" or platform_machine == "a
+0: rm64" or platform_machine == "aarch64" or platform_machine == "s390x" or platform_machine == "ppc64le", but you have llguidance 0.7.29 which is incompatible.
+0: vllm 0.17.2.dev0+g95c0f928c.d20260313.cu131 requires mistral_common[image]>=1.9.1, but you have mistral-common 1.8.6 which is incompatible.
+0: vllm 0.17.2.dev0+g95c0f928c.d20260313.cu131 requires setuptools<81.0.0,>=77.0.3; python_version > "3.11", but you have setuptools 82.0.1 which is incompatible.
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: `torch_dtype` is deprecated! Use `dtype` instead!
+0: Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]
+0: Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  2.39it/s]
+0: Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  2.39it/s]
+0: 
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+0:   _warnings.warn(
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py:90: UserWarning: The argument order of load has been changed. Please check the document to avoid future breakages.
+0:   result = func(*args, **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py:481: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to load in a single process.
+0:   return func(args[0], **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/planner_helpers.py:489: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   device = getattr(value, "device", None)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/default_planner.py:483: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   and md.size != obj.size()
+0: Loading weights:   0%|          | 0/163 [00:00<?, ?it/s]
+0: Loading weights: 100%|██████████| 163/163 [00:00<00:00, 2155.99it/s]
+0: [rank0]: Traceback (most recent call last):
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/checkpoint_conversion/compare_megatron_hf_logits.py", line 129, in <module>
+0: [rank0]:     main()
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/checkpoint_conversion/compare_megatron_hf_logits.py", line 124, in main
+0: [rank0]:     compare_logits(megatron_backend, hf_backend, vocab_size, args.seq_length, args.batch_size, dtype=dtype)
+0: [rank0]:   File "/iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/checkpoint_conversion/compare_megatron_hf_logits.py", line 97, in compare_logits
+0: [rank0]:     assert agree >= argmax_threshold, f"Only {100 * agree:.2f}% argmax agreement (need >= {100 * argmax_threshold:.0f}%)"
+0: [rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^
+0: [rank0]: AssertionError: Only 94.45% argmax agreement (need >= 99%)
+0: [rank0]:[W819 20:30:05.887271943 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+0: E0819 20:30:19.727000 4402 torch/distributed/elastic/multiprocessing/api.py:984] failed (exitcode: 1) local_rank: 0 (pid: 4490) of binary: /opt/venv/bin/python3
+0: Traceback (most recent call last):
+0:   File "/usr/local/bin/torchrun", line 6, in <module>
+0:     sys.exit(main())
+0:              ^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+0:     return f(*args, **kwargs)
+0:            ^^^^^^^^^^^^^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 990, in main
+0:     run(args)
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 981, in run
+0:     elastic_launch(
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 170, in __call__
+0:     return launch_agent(self._config, self._entrypoint, list(args))
+0:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0:   File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 317, in launch_agent
+0:     raise ChildFailedError(
+0: torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+0: ============================================================
+0: /iopsstor/scratch/cscs/elyulina/Megatron-LM-Attention-Benchmark/attn_bench/checkpoint_conversion/compare_megatron_hf_logits.py FAILED
+0: ------------------------------------------------------------
+0: Failures:
+0:   <NO_OTHER_FAILURES>
+0: ------------------------------------------------------------
+0: Root Cause (first observed failure):
+0: [0]:
+0:   time      : 2026-08-19_20:30:19
+0:   host      : nid005395
+0:   rank      : 0 (local_rank: 0)
+0:   exitcode  : 1 (pid: 4490)
+0:   error_file: <N/A>
+0:   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+0: ============================================================
+0: 
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: /usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+0:   import pynvml  # type: ignore[import]
+0: Multiple distributions found for package modelopt. Picked distribution: nvidia-modelopt
+0: /opt/venv/lib/python3.12/site-packages/modelopt/torch/__init__.py:53: UserWarning: transformers>=5.0 support is experimental. Unified Hugging Face checkpoint export for quantized checkpoints may not work for some models yet.
+0:   _warnings.warn(
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/logger.py:90: UserWarning: The argument order of load has been changed. Please check the document to avoid future breakages.
+0:   result = func(*args, **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/utils.py:481: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to load in a single process.
+0:   return func(args[0], **kwargs)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/planner_helpers.py:489: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   device = getattr(value, "device", None)
+0: /usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/default_planner.py:483: FutureWarning: Please use DTensor instead and we are deprecating ShardedTensor.
+0:   and md.size != obj.size()
+0: Loading weights:   0%|          | 0/163 [00:00<?, ?it/s]
+0: Loading weights:  66%|██████▋   | 108/163 [00:00<00:00, 1031.75it/s]
+0: Loading weights: 100%|██████████| 163/163 [00:00<00:00, 1073.08it/s]
+0: 
+0: /opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/utils.py:2099: UserWarning: window_size should be (-1, -1) or (>=0, >=0) for attn_mask_type=no_mask
+0:   warnings.warn(
+0: /opt/venv/lib/python3.12/site-packages/transformer_engine/pytorch/attention/dot_product_attention/utils.py:2099: UserWarning: window_size should be (-1, -1) or (>=0, >=0) for attn_mask_type=no_mask
+0:   warnings.warn(
+0: The attention mask and the pad token id were not set. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+0: Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+0: The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+0: The attention mask and the pad token id were not set. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+0: Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+0: The attention mask and the pad token id were not set. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+0: Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+0: The attention mask and the pad token id were not set. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+0: Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+0: The attention mask and the pad token id were not set. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+0: Setting `pad_token_id` to `eos_token_id`:128001 for open-end generation.
+0: [rank0]:[W819 20:33:07.905643338 ProcessGroupNCCL.cpp:1569] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+srun: error: nid005395: task 0: Exited with exit code 1
+srun: Terminating StepId=3127334.0
