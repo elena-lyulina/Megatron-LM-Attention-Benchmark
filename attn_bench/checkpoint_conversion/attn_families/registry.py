@@ -5,7 +5,7 @@ user-facing flag needed -- and looks up that attn_family's config/state-dict bui
 
 from typing import Any
 
-from attn_bench.checkpoint_conversion.attn_families import full
+from attn_bench.checkpoint_conversion.attn_families import full, swa
 
 ATTN_FAMILIES = ("full", "sink", "gated", "swa")
 
@@ -19,9 +19,8 @@ def detect_attn_family(args: Any) -> str:
     if softmax_type == "learnable":
         return "sink"
     if softmax_type == "off-by-one":
-        # Distinct from "sink": off-by-one's softmax_offset is a fixed zero tensor, never
-        # registered as an nn.Parameter, so it never lands in the checkpoint's state dict --
-        # a real, separate conversion path, not just a variant of "sink".
+        # off-by-one's softmax_offset is a fixed zero tensor, not an nn.Parameter -- never
+        # lands in the checkpoint's state dict, so it needs its own conversion path.
         return "off-by-one"
     if getattr(args, "window_size", None) is not None:
         return "swa"
@@ -30,19 +29,19 @@ def detect_attn_family(args: Any) -> str:
 
 def get_attn_family_module(args: Any):
     attn_family = detect_attn_family(args)
-    if attn_family not in ATTN_FAMILIES:
-        raise NotImplementedError(
-            f"HF conversion for the '{attn_family}' attention family isn't implemented yet "
-            f"(only {sorted(ATTN_FAMILIES)} are). See attn_bench/checkpoint_conversion/attn_families/."
-        )
     if attn_family == "full":
         return full
-    if attn_family == "gated":
-        raise NotImplementedError("TODO")
     if attn_family == "swa":
-        raise NotImplementedError("TODO")
-    # sink imported here, not at module top -- it pulls in modeling_sink_llama.py, which
-    # needs flash_attn.cute available (see flash-attention-cute-workflow.md). Importing it
-    # eagerly at module scope would force that cost onto every attn_family, not just sink.
-    from attn_bench.checkpoint_conversion.attn_families import sink
-    return sink
+        return swa
+    if attn_family == "gated":
+        from attn_bench.checkpoint_conversion.attn_families import gated
+        return gated
+    if attn_family == "sink":
+        # lazy: pulls in modeling_sink_llama.py, which needs flash_attn.cute (see
+        # flash-attention-cute-workflow.md).
+        from attn_bench.checkpoint_conversion.attn_families import sink
+        return sink
+    raise NotImplementedError(
+        f"HF conversion for the '{attn_family}' attention family isn't implemented yet "
+        f"(only {sorted(ATTN_FAMILIES)} are). See attn_bench/checkpoint_conversion/attn_families/."
+    )

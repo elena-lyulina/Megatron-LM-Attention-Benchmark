@@ -113,15 +113,10 @@ srun \
 
     echo '### STEP 2: torch -> HF ###'
     $SINK_ENV
-    if [ '$IS_SINK_FAMILY' = '1' ]; then
-        # save_pretrained()'s custom-code copy (register_for_auto_class) and
-        # trust_remote_code's dynamic-module import cache both skip re-copying
-        # modeling_sink_llama.py if a file/entry already exists from a prior conversion --
-        # leaves stale code loaded after editing it and reconverting. Clear both so this
-        # step always picks up the current source.
-        rm -rf '$SCRATCH_CONVERT_DIR/HF'
-        rm -rf ~/.cache/huggingface/modules/transformers_modules/HF
-    fi
+    # Prevents stale custom modeling_*.py (sink, gated) from being silently reused on
+    # reconvert -- no-op for full/swa (no custom code).
+    rm -rf '$SCRATCH_CONVERT_DIR/HF'
+    rm -rf ~/.cache/huggingface/modules/transformers_modules/HF
     # Local copy (see convert_megatron_to_hf.py). utils.py is unforked -- pull PDM's via PYTHONPATH.
     PYTHONPATH=\"$PDM_DIR/src/convert:\$PYTHONPATH\" python $CONV_DIR/convert_megatron_to_hf.py --experiment-path $SCRATCH_CONVERT_DIR
     STEP2_STATUS=\$?
