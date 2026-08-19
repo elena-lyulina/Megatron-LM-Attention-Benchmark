@@ -57,6 +57,13 @@ def convert_megatron_checkpoint_to_hf(checkpoint_path: str,
     # architectures, auto_map registration) since AutoModelForCausalLM.from_config only
     # works for model_types registered in transformers itself.
     model = attn_family.build_model(config)
+    # build_model()'s nn.Linear/nn.Parameter default to fp32 regardless of config.torch_dtype
+    # -- without this cast, load_state_dict below silently upcasts the bf16 checkpoint data
+    # into fp32 params, so save_pretrained() writes fp32 weights to disk even though
+    # config.json's torch_dtype metadata says bfloat16. Invisible for eager/sdpa (fp32 is
+    # fine there) but crashes fp16/bf16-only fused kernels (e.g. sink's flash_attn.cute).
+    dtype = getattr(torch, config.torch_dtype) if isinstance(config.torch_dtype, str) else config.torch_dtype
+    model = model.to(dtype)
     model.load_state_dict(hf_dict)
 
     # Calculate trainable parameters

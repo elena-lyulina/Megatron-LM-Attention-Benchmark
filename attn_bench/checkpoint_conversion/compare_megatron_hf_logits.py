@@ -48,15 +48,33 @@ def compare_logits(ref_backend: InferenceBackend, new_backend: InferenceBackend,
     assert output.size() == ref_output.size()
 
     # Check one: both models agree on next-token predictions in "most cases".
-    threshold = 0.99
+    argmax_threshold = 0.99
     preds_ref = torch.max(ref_output, dim=-1)[1]
     preds_new = torch.max(output, dim=-1)[1]
-    agree = torch.sum(preds_ref == preds_new) / preds_ref.numel()
+    disagree_mask = preds_ref != preds_new
+    agree = 1 - torch.sum(disagree_mask) / preds_ref.numel()
     print(f"Converted model agrees on {100 * agree:.2f}% of predictions")
-    assert agree >= threshold, f"Only {100 * agree:.2f}% argmax agreement (need >= {100 * threshold:.0f}%)"
+
+    # Near-tie diagnostic: is disagreement concentrated where ref's top-1/top-2 logits were
+    # nearly tied (bf16-rounding-sensitive, expected) or does HF pick something far down ref's
+    # ranking (would point at a real bug, not precision noise)? Computed on ref_output's own
+    # [B, S, V] shape, before it gets flattened for check two below.
+    if disagree_mask.any():
+        top2_vals, top2_idx = torch.topk(ref_output, 2, dim=-1)
+        top1_minus_top2 = top2_vals[..., 0] - top2_vals[..., 1]
+        disagree_gap = top1_minus_top2[disagree_mask]
+        agree_gap = top1_minus_top2[~disagree_mask]
+        is_second_choice = preds_new[disagree_mask] == top2_idx[..., 1][disagree_mask]
+        print(f"Top1-Top2 logit gap (ref) at disagreeing positions: "
+              f"mean={disagree_gap.mean():.4f} median={disagree_gap.median():.4f}")
+        if agree_gap.numel() > 0:
+            print(f"Top1-Top2 logit gap (ref) at agreeing positions:    "
+                  f"mean={agree_gap.mean():.4f} median={agree_gap.median():.4f}")
+        print(f"Fraction of disagreements where HF picked ref's #2 choice: "
+              f"{100 * is_second_choice.float().mean():.2f}%")
 
     # Check two: atol and rtol on all logits.
-    threshold = 0.95
+    close_threshold = 0.95
     atol = 1e-05
     rtol = 0.016
     output = torch.flatten(output).cpu()
@@ -73,7 +91,11 @@ def compare_logits(ref_backend: InferenceBackend, new_backend: InferenceBackend,
     print(f"Max relative difference: {torch.max(rel_diff)}")
     print(f"Mean relative difference (no inf): {torch.mean(rel_diff_no_inf)}")
     print(f"Relative difference inf proportion: {torch.mean(rel_diff_inf_mask.float())}")
-    assert close >= threshold, f"Only {100 * close:.2f}% of logits close (need >= {100 * threshold:.0f}%)"
+
+    # Both checks' stats are always printed above regardless of pass/fail, so a failure on
+    # either one still leaves the full picture in the log.
+    assert agree >= argmax_threshold, f"Only {100 * agree:.2f}% argmax agreement (need >= {100 * argmax_threshold:.0f}%)"
+    assert close >= close_threshold, f"Only {100 * close:.2f}% of logits close (need >= {100 * close_threshold:.0f}%)"
 
 
 def parse_args():
