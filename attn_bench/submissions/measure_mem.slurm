@@ -21,7 +21,7 @@
 # Env vars:
 #   MODEL              checkpoint to use, see llama_checkpoints.sh (default: full)
 #   CHECKPOINT_BACKEND megatron (default, all attention variants) or hf (already-converted HF
-#                      checkpoint, faster generate(); full and sink attention only -- run
+#                      checkpoint, faster generate(); full/sink/gated/swa only, not GDN -- run
 #                      convert_and_validate_hf.slurm first)
 #   OFFSET         document start offset (default: 0)
 #   PREFIX_LENGTH  prompt length in tokens (default: 500)
@@ -85,7 +85,7 @@ if [ -z "$OVERWRITE" ] && [ -f "$STORE_PKL" ]; then
 fi
 
 # HF checkpoint must already exist (produced separately by convert_and_validate_hf.slurm) --
-# this also doubles as the "is this model even HF-convertible" check, since gated/GDN models
+# this also doubles as the "is this model even HF-convertible" check, since GDN models
 # never get one.
 if [ "$CHECKPOINT_BACKEND" = "hf" ]; then
     HF_DIR=/users/$USER/store/hf-checkpoints/$EXP_NAME
