@@ -7,7 +7,7 @@ from typing import Any
 
 from attn_bench.checkpoint_conversion.attn_families import full
 
-ATTN_FAMILIES = ("full", "sink")
+ATTN_FAMILIES = ("full", "sink", "gated", "swa")
 
 
 def detect_attn_family(args: Any) -> str:
@@ -23,6 +23,8 @@ def detect_attn_family(args: Any) -> str:
         # registered as an nn.Parameter, so it never lands in the checkpoint's state dict --
         # a real, separate conversion path, not just a variant of "sink".
         return "off-by-one"
+    if getattr(args, "window_size", None) is not None:
+        return "swa"
     return "full"
 
 
@@ -35,6 +37,10 @@ def get_attn_family_module(args: Any):
         )
     if attn_family == "full":
         return full
+    if attn_family == "gated":
+        raise NotImplementedError("TODO")
+    if attn_family == "swa":
+        raise NotImplementedError("TODO")
     # sink imported here, not at module top -- it pulls in modeling_sink_llama.py, which
     # needs flash_attn.cute available (see flash-attention-cute-workflow.md). Importing it
     # eagerly at module scope would force that cost onto every attn_family, not just sink.

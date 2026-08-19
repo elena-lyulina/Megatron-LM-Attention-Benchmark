@@ -19,6 +19,10 @@
 # mask applied to real logits, sink appended as-is, softmax over the extended dim, sink
 # column dropped), then diffed. No checkpoint needed -- this validates the kernel's math,
 # not any specific trained weights.
+# Runs two shapes: equal q/k/v heads, and sink-scf1's real GQA shape (32 query heads, 8
+# key/value heads) -- the first version of this test only covered the equal-heads case and
+# missed a real GQA-specific bug (job 3118223, sink-scf1 end-to-end conversion: 2.17%
+# argmax agreement with Megatron, near-random, not just imprecise).
 #
 # Usage: sbatch check_sink_kernel_correctness.slurm
 
@@ -37,44 +41,49 @@ import torch
 
 def reference_sink_attention(q, k, v, sink):
     """Megatron's exact formula (fused_softmax.py: forward_torch_softmax + SoftmaxOne).
-    q/k/v: [B, S, H, D]. sink: [H]. Returns [B, S, H, D]."""
-    B, S, H, D = q.shape
+    q: [B, S, Hq, D]. k/v: [B, S, Hkv, D], Hq a multiple of Hkv (GQA) or equal. sink: [Hq].
+    Returns [B, S, Hq, D]."""
+    B, S, Hq, D = q.shape
+    Hkv = k.shape[2]
+    n_rep = Hq // Hkv
     qf, kf, vf = q.float(), k.float(), v.float()
+    if n_rep > 1:
+        # matches transformers' repeat_kv: query heads [g*n_rep : (g+1)*n_rep] share kv head g.
+        kf = kf.repeat_interleave(n_rep, dim=2)
+        vf = vf.repeat_interleave(n_rep, dim=2)
     scale = D ** -0.5
-    # [B, H, Sq, Sk]
     scores = torch.einsum('bshd,bthd->bhst', qf, kf) * scale
     causal_mask = torch.triu(torch.ones(S, S, dtype=torch.bool, device=q.device), diagonal=1)
     scores = scores.masked_fill(causal_mask, float('-inf'))
-    sink_col = sink.float().reshape(1, H, 1, 1).expand(B, H, S, 1)
+    sink_col = sink.float().reshape(1, Hq, 1, 1).expand(B, Hq, S, 1)
     extended = torch.cat([scores, sink_col], dim=-1)
     probs = torch.softmax(extended, dim=-1)[..., :-1]
     out = torch.einsum('bhst,bthd->bshd', probs, vf)
     return out
 
 def sanity_check_reference_formula(q, k, v):
-    """Cross-checks the einsum indexing in reference_sink_attention (minus the sink term,
-    which SDPA can't do) against torch's own scaled_dot_product_attention, so a mistake in
-    my einsum wouldn't be mistaken for a kernel bug."""
+    """Cross-checks reference_sink_attention (minus the sink term, which SDPA can't do)
+    against torch's own scaled_dot_product_attention (enable_gqa handles unequal q/k/v
+    head counts natively), so a mistake in the reference isn't mistaken for a kernel bug."""
     import torch.nn.functional as F
-    H = q.shape[2]
-    mine = reference_sink_attention(q, k, v, torch.full((H,), float('-inf'), device=q.device))
+    Hq = q.shape[2]
+    mine = reference_sink_attention(q, k, v, torch.full((Hq,), float('-inf'), device=q.device))
     q2, k2, v2 = (t.transpose(1, 2).float() for t in (q, k, v))
-    ref = F.scaled_dot_product_attention(q2, k2, v2, is_causal=True).transpose(1, 2)
+    ref = F.scaled_dot_product_attention(q2, k2, v2, is_causal=True, enable_gqa=(q.shape[2] != k.shape[2])).transpose(1, 2)
     diff = (mine - ref).abs().max().item()
     print(f'reference formula sanity check vs SDPA (sink=-inf, i.e. no-op): max abs diff {diff:.6f}')
-    assert diff < 1e-3, 'reference_sink_attention disagrees with SDPA even with the sink term neutralized -- fix the reference before trusting the kernel comparison'
+    # GQA's SDPA path uses a different (non-materializing) reduction order than my naive
+    # repeat_interleave+einsum, so it picks up slightly more fp32 rounding noise than the
+    # equal-heads case (0.0008) -- 3e-3 still catches a real indexing/logic bug (which would
+    # show as a much larger diff) while tolerating that.
+    assert diff < 3e-3, 'reference_sink_attention disagrees with SDPA even with the sink term neutralized -- fix the reference before trusting the kernel comparison'
 
-def main(src_dir):
-    import flash_attn
-    flash_attn.__path__.append(f'{src_dir}/flash_attn')
-    from flash_attn.cute.interface import flash_attn_func
-
+def check_shape(flash_attn_func, label, B, S, Hq, Hkv, D):
     torch.manual_seed(0)
-    B, S, H, D = 1, 128, 4, 64
-    q = torch.randn(B, S, H, D, device='cuda', dtype=torch.bfloat16)
-    k = torch.randn(B, S, H, D, device='cuda', dtype=torch.bfloat16)
-    v = torch.randn(B, S, H, D, device='cuda', dtype=torch.bfloat16)
-    sink = torch.randn(H, device='cuda', dtype=torch.bfloat16)
+    q = torch.randn(B, S, Hq, D, device='cuda', dtype=torch.bfloat16)
+    k = torch.randn(B, S, Hkv, D, device='cuda', dtype=torch.bfloat16)
+    v = torch.randn(B, S, Hkv, D, device='cuda', dtype=torch.bfloat16)
+    sink = torch.randn(Hq, device='cuda', dtype=torch.bfloat16)
 
     sanity_check_reference_formula(q, k, v)
 
@@ -85,14 +94,23 @@ def main(src_dir):
     abs_diff = (kernel_out - ref_out).abs()
     atol, rtol = 1e-3, 0.02
     close = (abs_diff <= atol + rtol * ref_out.abs()).float().mean().item()
-    max_abs_diff = abs_diff.max().item()
-    print(f'fraction close (atol={atol}, rtol={rtol}): {close:.4f}')
-    print(f'max abs diff: {max_abs_diff:.6f}')
+    print(f'[{label}] fraction close (atol={atol}, rtol={rtol}): {close:.4f}, max abs diff: {abs_diff.max().item():.6f}')
     threshold = 0.99
     if close >= threshold:
-        print(f'RESULT: CORRECT -- {100 * close:.2f}% of values close (need >= {100 * threshold:.0f}%).')
-    else:
-        print(f'RESULT: MISMATCH -- only {100 * close:.2f}% of values close (need >= {100 * threshold:.0f}%).')
+        print(f'[{label}] RESULT: CORRECT -- {100 * close:.2f}% of values close (need >= {100 * threshold:.0f}%).')
+        return True
+    print(f'[{label}] RESULT: MISMATCH -- only {100 * close:.2f}% of values close (need >= {100 * threshold:.0f}%).')
+    return False
+
+def main(src_dir):
+    import flash_attn
+    flash_attn.__path__.append(f'{src_dir}/flash_attn')
+    from flash_attn.cute.interface import flash_attn_func
+
+    ok_equal = check_shape(flash_attn_func, 'equal-heads', B=1, S=128, Hq=4, Hkv=4, D=64)
+    ok_gqa = check_shape(flash_attn_func, 'gqa-sink-scf1-shape', B=1, S=128, Hq=32, Hkv=8, D=64)
+
+    if not (ok_equal and ok_gqa):
         sys.exit(1)
 
 if __name__ == '__main__':

@@ -17,7 +17,10 @@ from transformers.models.llama.modeling_llama import (LlamaAttention,
                                                       LlamaConfig,
                                                       LlamaDecoderLayer,
                                                       LlamaForCausalLM,
-                                                      LlamaModel)
+                                                      LlamaModel,
+                                                      LlamaPreTrainedModel,
+                                                      LlamaRMSNorm,
+                                                      LlamaRotaryEmbedding)
 
 if not hasattr(flash_attn, "cute"):
     flash_attn.__path__.append(f"{os.environ['FLASH_ATTN_SRC_DIR']}/flash_attn")
@@ -40,14 +43,16 @@ ALL_ATTENTION_FUNCTIONS.register("sink_cute_attention", sink_flash_attention_for
 
 
 class SinkLlamaConfig(LlamaConfig):
+    """Forces attn_implementation via __setattr__ rather than an __init__ default -- kwargs
+    defaulting isn't enough, since from_pretrained's own loading path reassigns
+    _attn_implementation after construction (confirmed: wiring test showed our kernel was
+    never actually invoked, silently falling back to sdpa, which drops learnable_sink)."""
     model_type = "sink_llama"
 
-    def __init__(self, **kwargs):
-        # Defaults to our registered kernel rather than PreTrainedConfig's usual "sdpa" --
-        # sdpa/eager would silently drop the learnable_sink kwarg instead of erroring, so
-        # this can't be left to the normal fallback chain.
-        kwargs.setdefault("attn_implementation", "sink_cute_attention")
-        super().__init__(**kwargs)
+    def __setattr__(self, key, value):
+        if key in ("_attn_implementation", "_attn_implementation_internal"):
+            value = "sink_cute_attention"
+        super().__setattr__(key, value)
 
 
 class SinkLlamaAttention(LlamaAttention):
@@ -67,20 +72,36 @@ class SinkLlamaDecoderLayer(LlamaDecoderLayer):
 
 
 class SinkLlamaModel(LlamaModel):
+    """Builds via the grandparent's __init__, not LlamaModel's, to avoid constructing a
+    throwaway LlamaModel first (see SinkLlamaForCausalLM)."""
     config: SinkLlamaConfig
 
     def __init__(self, config: SinkLlamaConfig):
-        super().__init__(config)
+        LlamaPreTrainedModel.__init__(self, config)
+        self.padding_idx = config.pad_token_id
+        self.vocab_size = config.vocab_size
+        self.embed_tokens = nn.Embedding(config.vocab_size, config.hidden_size, self.padding_idx)
         self.layers = nn.ModuleList(
             [SinkLlamaDecoderLayer(config, layer_idx) for layer_idx in range(config.num_hidden_layers)]
         )
+        self.norm = LlamaRMSNorm(config.hidden_size, eps=config.rms_norm_eps)
+        self.rotary_emb = LlamaRotaryEmbedding(config=config)
+        self.gradient_checkpointing = False
         self.post_init()
 
 
 class SinkLlamaForCausalLM(LlamaForCausalLM):
+    """Builds via the grandparent's __init__ (skips constructing a throwaway LlamaModel that
+    LlamaForCausalLM.__init__ would tie lm_head to before we swap in SinkLlamaModel).
+    _tied_weights_keys is cleared too -- confirmed necessary in isolation (job 3118149):
+    without it, from_pretrained's meta-device loading still leaves lm_head.weight stuck on
+    the meta device for this custom class, even with a single clean construction."""
     config: SinkLlamaConfig
+    _tied_weights_keys = None
 
     def __init__(self, config: SinkLlamaConfig):
-        super().__init__(config)
+        LlamaPreTrainedModel.__init__(self, config)
         self.model = SinkLlamaModel(config)
+        self.vocab_size = config.vocab_size
+        self.lm_head = nn.Linear(config.hidden_size, config.vocab_size, bias=False)
         self.post_init()

@@ -74,7 +74,7 @@ forward pass OK, output shape (1, 128, 4, 64), dtype torch.bfloat16
 RESULT: flash_attn_func(..., learnable_sink=...) works on NVIDIA GH200 120GB.
 ```
 
-**Correctness validated too (job 3117001, `attn_bench/scripts/check_sink_kernel_correctness.slurm`)**:
+**Correctness validated too (job 3117001, `attn_bench/submissions/check_sink_kernel_correctness.slurm`)**:
 running was not enough on its own -- upstream has no passing Hopper GPU-correctness CI
 signal, so a numerically wrong kernel could have passed the run-only check just as easily.
 Compared `flash_attn.cute`'s `learnable_sink` output against a plain-PyTorch reference

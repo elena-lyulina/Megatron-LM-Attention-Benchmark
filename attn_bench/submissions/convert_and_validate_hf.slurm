@@ -19,7 +19,7 @@
 # latter is the only one that exercises this project's own KV-cache decode loop.
 # Step 2 auto-detects the checkpoint's attention family from its own restored args and picks
 # the matching attn_families/ module (see checkpoint_conversion/attn_families/registry.py) --
-# families without one yet (gated/GDN) fail there with a clear NotImplementedError.
+# families without one yet (GDN) fail there with a clear NotImplementedError.
 #
 # Env vars:
 #   MODEL checkpoint to use, see llama_checkpoints.sh (default: full-scf1)
@@ -113,6 +113,15 @@ srun \
 
     echo '### STEP 2: torch -> HF ###'
     $SINK_ENV
+    if [ '$IS_SINK_FAMILY' = '1' ]; then
+        # save_pretrained()'s custom-code copy (register_for_auto_class) and
+        # trust_remote_code's dynamic-module import cache both skip re-copying
+        # modeling_sink_llama.py if a file/entry already exists from a prior conversion --
+        # leaves stale code loaded after editing it and reconverting. Clear both so this
+        # step always picks up the current source.
+        rm -rf '$SCRATCH_CONVERT_DIR/HF'
+        rm -rf ~/.cache/huggingface/modules/transformers_modules/HF
+    fi
     # Local copy (see convert_megatron_to_hf.py). utils.py is unforked -- pull PDM's via PYTHONPATH.
     PYTHONPATH=\"$PDM_DIR/src/convert:\$PYTHONPATH\" python $CONV_DIR/convert_megatron_to_hf.py --experiment-path $SCRATCH_CONVERT_DIR
     STEP2_STATUS=\$?
@@ -143,7 +152,9 @@ print(f'rope factor = {factor} (expected $EXPECTED_ROPE_FACTOR) -- OK')
         $DTYPE_ARG \
         --megatron-extra-args $MEGATRON_EXTRA
     STEP3_STATUS=\$?
-    if [ \$STEP3_STATUS -ne 0 ]; then echo 'Step 3 failed'; exit \$STEP3_STATUS; fi
+    # Don't exit on a Step 3 failure -- run Step 4 regardless so both results land in the
+    # same run instead of needing a separate resubmission to see the generation comparison.
+    if [ \$STEP3_STATUS -ne 0 ]; then echo 'Step 3 failed (continuing to Step 4 anyway)'; fi
 
     echo '### STEP 4: compare generation (real excerpts, multi-step decode loop) ###'
     $STEP4_ENV
@@ -154,6 +165,10 @@ print(f'rope factor = {factor} (expected $EXPECTED_ROPE_FACTOR) -- OK')
         --data-folder $GUTENBERG_JSONL_DIR \
         --rep 0 --offset 0 --prefix-length 500 --suffix-length 500 --num-samples 5 \
         --megatron-extra-args $STEP4_MEGATRON_EXTRA
+    STEP4_STATUS=\$?
+    if [ \$STEP4_STATUS -ne 0 ]; then echo 'Step 4 failed'; fi
+
+    if [ \$STEP3_STATUS -ne 0 ] || [ \$STEP4_STATUS -ne 0 ]; then exit 1; fi
     "
 CONVERT_STATUS=$?
 
