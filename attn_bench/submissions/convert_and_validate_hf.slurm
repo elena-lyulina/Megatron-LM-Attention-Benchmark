@@ -113,8 +113,9 @@ srun \
 
     echo '### STEP 2: torch -> HF ###'
     $SINK_ENV
-    # Prevents stale custom modeling_*.py (sink, gated) from being silently reused on
-    # reconvert -- no-op for full/swa (no custom code).
+    # Forces every rerun to regenerate rather than skip (convert_megatron_to_hf.py no-ops if
+    # $SCRATCH_CONVERT_DIR/HF already exists) -- also clears stale custom modeling_*.py
+    # (sink, gated) from HF's trust_remote_code cache; that second rm is a no-op for full/swa.
     rm -rf '$SCRATCH_CONVERT_DIR/HF'
     rm -rf ~/.cache/huggingface/modules/transformers_modules/HF
     # Local copy (see convert_megatron_to_hf.py). utils.py is unforked -- pull PDM's via PYTHONPATH.

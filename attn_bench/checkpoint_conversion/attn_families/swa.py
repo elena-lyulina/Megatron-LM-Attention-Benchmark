@@ -53,7 +53,12 @@ def build_config(args: Any) -> MistralConfig:
         rope_theta=args.rotary_base,
         # args.window_size is a (window, 0) tuple -- see megatron/core/transformer/
         # transformer_config.py; the 0 is the (unused, right-side) part of a causal window.
-        sliding_window=args.window_size[0],
+        # +1: Megatron/TE forwards window_size straight to flash-attn, whose (left, right)
+        # convention is EXCLUSIVE of self (window=256 -> 257 total positions: 256 before +
+        # self); HF's sliding_window is INCLUSIVE of self (sliding_window=256 -> 256 total
+        # positions), confirmed via masking_utils.py's own worked example. Without +1 the
+        # converted model's window is one token narrower than what was actually trained.
+        sliding_window=args.window_size[0] + 1,
         tie_word_embeddings=not args.untie_embeddings_and_output_weights,
         torch_dtype=args.params_dtype,
         use_cache=True,
