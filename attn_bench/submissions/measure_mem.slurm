@@ -72,6 +72,8 @@ MODEL_DIR=/users/$USER/store/pretrain-results/$CKPT_NAME
 STORE_MEM_BASE=/users/$USER/store/mem-results
 SCRATCH_MEM_BASE=/iopsstor/scratch/cscs/$USER/mem-results
 MEM_DIR=$SCRATCH_MEM_BASE/SparseGutenberg/$EXP_NAME
+SCRATCH_EXP=$SCRATCH_MEM_BASE/SparseGutenberg/$PDM_EXP_NAME
+STORE_EXP=$STORE_MEM_BASE/SparseGutenberg/$PDM_EXP_NAME
 GUTENBERG_JSONL_DIR=/users/$USER/store/datasets/tokenized/gutenberg_rep_jsonl
 TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b
 PY=$MEGATRON_LM_DIR/attn_bench/evaluation/prefix_extraction_inference.py
@@ -172,8 +174,14 @@ else
 fi
 INFERENCE_STATUS=$?
 
-# Copy inference results (usually expensive) to store.
-copy_scratch_to_store $INFERENCE_STATUS "$SCRATCH_MEM_BASE/SparseGutenberg" "$STORE_MEM_BASE/SparseGutenberg"
+# Copy inference results (usually expensive) to store -- Step 1 only ever writes its own
+# exact suffix dir, no wildcard needed.
+SUFFIX_DIR="offset_${OFFSET}_prefix_${PREFIX_LENGTH}_suffix_${SUFFIX_LENGTH}"
+copy_scratch_to_store $INFERENCE_STATUS "$SCRATCH_EXP/inference/$SUFFIX_DIR" "$STORE_EXP/inference/$SUFFIX_DIR"
+if [ $INFERENCE_STATUS -eq 0 ] && [ -f "$SCRATCH_EXP/sink_scale_metadata.json" ]; then
+    mkdir -p "$STORE_EXP"
+    cp -a "$SCRATCH_EXP/sink_scale_metadata.json" "$STORE_EXP/"
+fi
 
 ### STEP 2: compute memorization metrics ###
 # Reads inference outputs from scratch, writes one Rouge-L/lcs_norm/TTR/token_acc/
@@ -204,7 +212,10 @@ else
     echo "Inference (step 1) failed with status $INFERENCE_STATUS -- skipping metric computation"
 fi
 
-### Copy metrics (and re-copy inference, harmless no-op if unchanged) to store ###
-copy_scratch_to_store $METRIC_STATUS "$SCRATCH_MEM_BASE/SparseGutenberg" "$STORE_MEM_BASE/SparseGutenberg"
+### Copy metrics to store -- every suffix boundary Step 2 reached for this offset/prefix,
+### not just this job's own suffix point (see Step 2 comment above). ###
+BOUNDARY_PATTERN="offset_${OFFSET}_prefix_${PREFIX_LENGTH}_suffix_*"
+copy_scratch_to_store $METRIC_STATUS "$SCRATCH_EXP/metrics" "$STORE_EXP/metrics" "$BOUNDARY_PATTERN"
+copy_scratch_to_store $METRIC_STATUS "$SCRATCH_EXP/metrics_metadata" "$STORE_EXP/metrics_metadata" "$BOUNDARY_PATTERN"
 
 echo "END TIME: $(date)"
