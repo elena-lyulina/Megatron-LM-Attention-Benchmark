@@ -26,6 +26,10 @@
 # default megatron decode loop (run convert_and_validate_hf.slurm per model first -- this
 # script does not check or convert; measure_mem.slurm itself fails fast per-job if a model's
 # HF checkpoint is missing).
+# Add --repetitions r1,r2,... to restrict which repetition buckets each job generates (default:
+# measure_mem.slurm's own default, 0,1,2,4,8,16,32,64,128,256) -- e.g. for a dense offset x
+# prefix grid where only the higher reps show any structure, --repetitions 32,64,128,256 cuts
+# generation cost roughly proportionally to how many reps are dropped.
 
 set -e
 
@@ -45,6 +49,7 @@ FORCE_METRICS=0
 DRY_RUN=0
 JOB_TIME=""
 BACKEND="megatron"
+REPETITIONS=""
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -69,6 +74,9 @@ while [[ $# -gt 0 ]]; do
             ;;
         --models)
             IFS=',' read -r -a MODELS <<< "$2"; shift 2
+            ;;
+        --repetitions)
+            REPETITIONS="$2"; shift 2
             ;;
         --offsets)
             shift
@@ -168,6 +176,7 @@ for PAIR in "${PAIRS[@]}"; do
             EXPORTS="MODEL=$MODEL,OFFSET=$OFFSET,PREFIX_LENGTH=$PREFIX,SUFFIX_LENGTH=$SUFFIX,CHECKPOINT_BACKEND=$BACKEND"
             [[ $FORCE -eq 1 ]] && EXPORTS="$EXPORTS,OVERWRITE=1"
             [[ $FORCE_METRICS -eq 1 ]] && EXPORTS="$EXPORTS,FORCE_METRICS=1"
+            [[ -n "$REPETITIONS" ]] && EXPORTS="$EXPORTS,REPETITIONS=$REPETITIONS"
             TIME_ARG=()
             [[ -n "$JOB_TIME" ]] && TIME_ARG=(--time="$JOB_TIME")
 

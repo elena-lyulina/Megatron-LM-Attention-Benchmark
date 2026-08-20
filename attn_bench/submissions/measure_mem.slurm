@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --account=infra01
-#SBATCH --time=0:40:00
+#SBATCH --time=0:50:00
 #SBATCH --job-name=measure-mem
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
@@ -26,6 +26,7 @@
 #   OFFSET         document start offset (default: 0)
 #   PREFIX_LENGTH  prompt length in tokens (default: 500)
 #   SUFFIX_LENGTH  generated/gold length in tokens (default: 500)
+#   REPETITIONS    comma-separated repetition buckets to run (default: 0,1,2,4,8,16,32,64,128,256)
 #   SINK_SCALE     sink/off-by-one only: scale the learned sink logit (megatron backend only)
 #   OVERWRITE      skip the whole job unless set, even if store already has this suffix's pkl
 #   FORCE_METRICS  recompute every reachable boundary's pkl in Step 2, even ones that already
@@ -48,6 +49,7 @@ source $MEGATRON_LM_DIR/attn_bench/scripts/scratch_to_store.sh
 OFFSET=${OFFSET:-0}
 PREFIX_LENGTH=${PREFIX_LENGTH:-500}
 SUFFIX_LENGTH=${SUFFIX_LENGTH:-500}
+REPETITIONS=${REPETITIONS:-0,1,2,4,8,16,32,64,128,256}
 CHECKPOINT_BACKEND=${CHECKPOINT_BACKEND:-megatron}
 SINK_SCALE=${SINK_SCALE:-}
 OVERWRITE=${OVERWRITE:-}
@@ -102,7 +104,7 @@ COMMON_ARGS="--container-env $CONTAINER_ENV \
     --checkpoint-backend $CHECKPOINT_BACKEND \
     --experiment-path $MEM_DIR \
     --data-folder $GUTENBERG_JSONL_DIR \
-    --repetitions 0,1,2,4,8,16,32,64,128,256 \
+    --repetitions $REPETITIONS \
     --offset $OFFSET \
     --prefix-length $PREFIX_LENGTH \
     --suffix-length $SUFFIX_LENGTH \
