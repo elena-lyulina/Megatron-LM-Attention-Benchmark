@@ -47,9 +47,11 @@ from torch.utils.data import DataLoader, DistributedSampler
 from attn_bench.evaluation.inference_backend import (HFBackend,
                                                      InferenceBackend,
                                                      MegatronBackend)
-from attn_bench.evaluation.inference_common import (
-    BOS_TOKEN_ID, discover_all_offset_prefix_suffix_dirs, find_rep_paths,
-    load_records_by_sample_idx)
+from attn_bench.evaluation.inference_common import (BOS_TOKEN_ID,
+                                                    find_rep_paths,
+                                                    find_suffix_dirs,
+                                                    load_records_by_sample_idx,
+                                                    parse_points)
 
 P_Z_TOP_K = 40
 P_Z_TEMPERATURE = 1.0
@@ -134,26 +136,6 @@ def file_exists_in_locations(locations, file: str, require_nonempty: bool = Fals
 
 
 ### CROSS-SUFFIX LOOKUP ###
-
-def find_suffix_dirs(experiment_path: Path, offset: int, prefix_length: int,
-                     persistent_storage_path: Path | None = None) -> list:
-    """All existing offset_O_prefix_P_suffix_* dirs for this (offset, prefix), as
-    (suffix_length, path) pairs. experiment_path first, then persistent_storage_path as a
-    fallback for results experiment_path no longer has. On a tied suffix' between the two,
-    experiment_path wins (find_rep_source's min/max keeps the first-seen entry on ties)."""
-    prefix_str = f"offset_{offset}_prefix_{prefix_length}_suffix_"
-    found = []
-    for base in (experiment_path, persistent_storage_path):
-        if base is None:
-            continue
-        for d in discover_all_offset_prefix_suffix_dirs(base):
-            if d.name.startswith(prefix_str):
-                try:
-                    found.append((int(d.name[len(prefix_str):]), d))
-                except ValueError:
-                    continue
-    return found
-
 
 def find_rep_source(experiment_path: Path, offset: int, prefix_length: int,
                     suffix_length: int, rep: int, persistent_storage_path: Path | None = None):
@@ -363,15 +345,6 @@ def parse_args():
                         help="Report which points are already complete, write nothing, skip "
                              "checkpoint load entirely.")
     return parser.parse_args()
-
-
-def parse_points(points: list) -> list:
-    """Parse ['offset:prefix_length', ...] CLI strings into [(offset, prefix_length), ...] int pairs."""
-    parsed = []
-    for p in points:
-        offset_str, prefix_str = p.split(":")
-        parsed.append((int(offset_str), int(prefix_str)))
-    return parsed
 
 
 def build_backend(args) -> InferenceBackend:

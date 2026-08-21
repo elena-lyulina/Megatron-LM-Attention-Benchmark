@@ -37,8 +37,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
-from attn_bench.evaluation.prefix_extraction_inference import (
-    find_suffix_dirs, parse_points)
+from attn_bench.evaluation.inference_common import (find_suffix_dirs,
+                                                    parse_points)
 
 SUFFIX_BOUNDARIES = [25, 50, 75, 100, 150, 250, 500, 750, 1000, 1500, 2000, 3000, 4000, 5000, 7000]
 

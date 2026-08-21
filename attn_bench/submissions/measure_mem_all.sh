@@ -19,6 +19,10 @@ set -e
 SCRIPT_DIR=$(dirname "$0")
 source "$SCRIPT_DIR/../scripts/llama_checkpoints.sh"
 
+# So the bare login-node python3 (no container, no venv) below can `import attn_bench` --
+# compute_memorization_metrics.py --dry-run is deliberately stdlib-only so it can run here.
+export PYTHONPATH="$SCRIPT_DIR/../..:${PYTHONPATH:-}"
+
 # "Done" marker: the Stage-2 pkl, checked on scratch then store (compute_memorization_metrics.py
 # --dry-run) -- its presence means both inference and metric aggregation finished.
 STORE_MEM_BASE=/users/$USER/store/mem-results
