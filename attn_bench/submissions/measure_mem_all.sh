@@ -141,6 +141,10 @@ else
     done
 fi
 
+# For display only -- matches measure_mem.slurm's own default when REPETITIONS isn't set.
+IFS=',' read -r -a REP_ARR <<< "${REPETITIONS:-0,1,2,4,8,16,32,64,128,256}"
+REP_COUNT=${#REP_ARR[@]}
+
 SKIPPED_COUNT=0
 SUBMITTED_COUNT=0
 JOBS_SUBMITTED=0
@@ -173,7 +177,7 @@ for MODEL in "${MODELS[@]}"; do
     SKIPPED_COUNT=$((SKIPPED_COUNT + ${#PAIRS[@]} - ${#GROUP_POINTS[@]}))
 
     if [[ ${#GROUP_POINTS[@]} -eq 0 ]]; then
-        echo "All ${#PAIRS[@]} point(s) already complete for (model=$MODEL suffix=$SUFFIX_LENGTH) -- nothing to submit."
+        echo "All ${#PAIRS[@]} point(s) already complete for (model=$MODEL suffix=$SUFFIX_LENGTH reps=$REP_COUNT) -- nothing to submit."
         continue
     fi
     POINTS_CSV=$(IFS=,; echo "${GROUP_POINTS[*]}")
@@ -191,7 +195,7 @@ for MODEL in "${MODELS[@]}"; do
         continue
     fi
 
-    echo "Submitting measure_mem.slurm (model=$MODEL exp=$EXP_NAME backend=$BACKEND) points=$POINTS_CSV suffix_length=$SUFFIX_LENGTH (${#GROUP_POINTS[@]} points, 1 job)"
+    echo "Submitting measure_mem.slurm (model=$MODEL exp=$EXP_NAME backend=$BACKEND) points=$POINTS_CSV suffix_length=$SUFFIX_LENGTH (${#GROUP_POINTS[@]} points x $REP_COUNT repetitions, 1 job)"
     # ALL = propagate the full submission env (USER, PATH, …) so the scripts'
     # $USER-based paths resolve, then layer our per-job vars on top.
     sbatch "${TIME_ARG[@]}" --export=ALL,"$EXPORTS" "$SCRIPT_DIR/measure_mem.slurm"
@@ -200,4 +204,4 @@ for MODEL in "${MODELS[@]}"; do
 done
 
 echo "Skipped: $SKIPPED_COUNT"
-echo "Submitted: $SUBMITTED_COUNT points across $JOBS_SUBMITTED job(s)"
+echo "Submitted: $SUBMITTED_COUNT points x $REP_COUNT repetitions across $JOBS_SUBMITTED job(s)"

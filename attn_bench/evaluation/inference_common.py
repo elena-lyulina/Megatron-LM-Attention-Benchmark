@@ -9,6 +9,7 @@ prefix_extraction_inference.py because compute_memorization_metrics.py needs the
 from __future__ import annotations
 
 import json
+from functools import lru_cache
 from pathlib import Path
 
 BOS_TOKEN_ID = 128000  # Llama-3 beginning-of-sequence token
@@ -22,10 +23,16 @@ def find_rep_paths(data_folder: Path, repetitions: set) -> list:
     )
 
 
+@lru_cache(maxsize=None)
 def discover_all_offset_prefix_suffix_dirs(experiment_path: Path) -> list:
     """Every existing offset_O_prefix_P_suffix_S dir under experiment_path/inference,
     unfiltered. Callers that already know a specific (offset, prefix_length) should
-    filter this down rather than re-scanning the directory themselves."""
+    filter this down rather than re-scanning the directory themselves.
+
+    Cached per experiment_path -- a multi-point job/sweep calls this once per point (per
+    rep, for Stage 1), and the listing never changes mid-run (nothing here writes to a
+    *different* point's offset dir while checking this one), so re-scanning a
+    network-filesystem directory dozens of times per invocation was pure wasted I/O."""
     inference_root = experiment_path / "inference"
     if not inference_root.exists():
         return []
