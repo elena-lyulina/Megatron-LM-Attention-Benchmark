@@ -87,11 +87,11 @@ currently in `MODELS` (`llama_checkpoints.sh`), that's up to `39 × 11 = 429`
 
 ```bash
 # from attn_bench/
-bash submissions/measure_mem_all.sh --offsets 0 1 5 12 25 50 100 500 1000 2000 3000 --prefixes 50 500 --suffixes 500
-bash submissions/measure_mem_all.sh --offsets 0 1 5 12 25 50 100 500 1000 2000 3000 --prefixes 50 --suffixes 50
-#bash submissions/measure_mem_all.sh --offsets 0 --prefixes 50 100 250 500 750 1000 2000 3000 --suffixes 500
+bash submissions/measure_mem_all.sh --offsets 0 1 5 12 25 50 100 500 1000 2000 3000 --prefixes 50 500 --suffix 500
+bash submissions/measure_mem_all.sh --offsets 0 1 5 12 25 50 100 500 1000 2000 3000 --prefixes 50 --suffix 50
+#bash submissions/measure_mem_all.sh --offsets 0 --prefixes 50 100 250 500 750 1000 2000 3000 --suffix 500
 # to avoid overlapping 
-bash submissions/measure_mem_all.sh --offsets 0 --prefixes 100 250 750 1000 2000 3000 --suffixes 500
+bash submissions/measure_mem_all.sh --offsets 0 --prefixes 100 250 750 1000 2000 3000 --suffix 500
 bash submissions/long_gutenberg_inference_all.sh
 bash submissions/long_fineweb_inference_all.sh
 ```

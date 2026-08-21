@@ -20,12 +20,12 @@ Usage:
         --points 0:500 --suffix-length 500
 
 --dry-run: reports missing reps per suffix boundary, no writes, prints space-separated
-needed offset:prefix pairs to stdout (e.g. measure_mem_all.sh's submit-time check).
-
---dry-run only needs the stdlib -- numpy/numba/PDM (verbatim_eval) are imported lazily,
-only by the real-compute path -- so it can run on the login node's bare, old system
-python3 (no venv, no container) without those packages installed.
+needed offset:prefix pairs to stdout (e.g. measure_mem_all.sh's submit-time check). Needs
+a Python new enough for PDM (verbatim_eval) and numpy/numba -- measure_mem_all.sh points
+this at a personal conda env instead of the login node's old system python3.
 """
+
+from __future__ import annotations
 
 import argparse
 import json
@@ -35,12 +35,17 @@ import sys
 from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Optional
+
+import numpy as np
+from numba import jit
+from verbatim_eval.controlled_expr import Results
+from verbatim_eval.my_rouge import _compute_dp_matrix_2d, compute_rouge_l_2d
 
 from attn_bench.evaluation.inference_common import (find_suffix_dirs,
                                                     parse_points)
 
 SUFFIX_BOUNDARIES = [25, 50, 75, 100, 150, 250, 500, 750, 1000, 1500, 2000, 3000, 4000, 5000, 7000]
+
 
 ### lcs_norm -- local copy of PDM's _find_lcs, keeping the array instead of a running max ###
 # (see PDM/src/verbatim_eval/LCS.py -- its public function discards the array, and a
@@ -48,31 +53,15 @@ SUFFIX_BOUNDARIES = [25, 50, 75, 100, 150, 250, 500, 750, 1000, 1500, 2000, 3000
 # any given suffix boundary before that row finishes. Filling once and reading
 # dp[:k+1,:k+1].max() per boundary afterward is correct and ~2.2x cheaper than refilling
 # per boundary at this boundary list's scale.)
-#
-# Lazy/cached: numba's @jit decorator normally runs at function-definition time (i.e. at
-# import time) -- wrapping it in a function built and cached on first real call keeps
-# numpy/numba out of the module's top-level imports entirely, matching every other
-# lazily-imported real-compute dependency in this file.
-_lcs_dp_matrix_impl = None
-
-
+@jit(nopython=True)
 def _lcs_dp_matrix(s1, s2):
-    global _lcs_dp_matrix_impl
-    if _lcs_dp_matrix_impl is None:
-        import numpy as np
-        from numba import jit
-
-        @jit(nopython=True)
-        def _impl(s1, s2):
-            m, n = len(s1), len(s2)
-            dp = np.zeros((m + 1, n + 1), dtype=np.int32)
-            for i in range(1, m + 1):
-                for j in range(1, n + 1):
-                    if s1[i - 1] == s2[j - 1]:
-                        dp[i, j] = dp[i - 1, j - 1] + 1
-            return dp
-        _lcs_dp_matrix_impl = _impl
-    return _lcs_dp_matrix_impl(s1, s2)
+    m, n = len(s1), len(s2)
+    dp = np.zeros((m + 1, n + 1), dtype=np.int32)
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if s1[i - 1] == s2[j - 1]:
+                dp[i, j] = dp[i - 1, j - 1] + 1
+    return dp
 
 
 ### (n, p)-discoverable extraction, derived from p_z on demand (Hayes et al. 2025 Eq. 2) ###
@@ -95,10 +84,6 @@ def text_metrics_at_suffix_boundaries(true_suffix: list, gen_suffix: list, suffi
     """{suffix_boundary: {Rouge-L, lcs_norm, TTR_ref, TTR_gen, token_acc, divergence_point}}
     -- one DP fill per metric regardless of how many suffix boundaries are requested.
     """
-    import numpy as np
-    from verbatim_eval.my_rouge import (_compute_dp_matrix_2d,
-                                        compute_rouge_l_2d)
-
     usable = [b for b in suffix_boundaries if b <= len(true_suffix) and b <= len(gen_suffix)]
     if not usable:
         return {}
@@ -129,8 +114,6 @@ def text_metrics_at_suffix_boundaries(true_suffix: list, gen_suffix: list, suffi
 def nll_p_z_at_suffix_boundaries(ref_nll: list, gen_nll: list, p_z_logprob: list, suffix_boundaries: list) -> dict:
     """{suffix_boundary: {ref_nll_mean, gen_nll_mean, p_z}} from Step 1's stored
     per-position arrays."""
-    import numpy as np
-
     usable = [b for b in suffix_boundaries if b <= len(ref_nll)]
     result = {}
     for suffix_boundary in usable:
@@ -146,8 +129,6 @@ def nll_p_z_at_suffix_boundaries(ref_nll: list, gen_nll: list, p_z_logprob: list
 
 def compute_rep_metrics(records: list, suffix_boundaries: list) -> dict:
     """records: one rep bucket's jsonl records. Returns {suffix_boundary: {metric: {scores, mean, std}}}."""
-    import numpy as np
-
     per_suffix_boundary = defaultdict(lambda: defaultdict(list))
     missing_nll = 0
     for rec in records:
@@ -183,7 +164,7 @@ def compute_rep_metrics(records: list, suffix_boundaries: list) -> dict:
 ### INFERENCE-REP DISCOVERY (reads Step 1's jsonl on disk) ###
 
 def find_inference_reps(expr_dir: Path, offset: int, prefix_length: int,
-                        persistent_expr_dir: Optional[Path] = None) -> dict:
+                        persistent_expr_dir: Path | None = None) -> dict:
     """{rep: (max_suffix_available, rep_dir_path)} across every suffix dir for
     (offset, prefix_length) -- a rep can have data in more than one suffix dir (e.g. after
     an extend), only the largest one matters for how far it reaches.
@@ -233,7 +214,7 @@ def append_metrics_metadata(exp_dir: Path, suffix_boundary: int, offset: int, pr
 ### PKL PATHS + DONE-CHECK ###
 
 def build_pkl_path(storage_path: Path, exp_name: str, offset: int, prefix_length: int, suffix_boundary: int,
-                   policy: str = "greedy", tag: Optional[str] = None) -> Path:
+                   policy: str = "greedy", tag: str | None = None) -> Path:
     suffix_tag = f"_{tag}" if tag else ""
     return storage_path / exp_name / "metrics" / f"offset_{offset}_prefix_{prefix_length}_suffix_{suffix_boundary}_{policy}{suffix_tag}.pkl"
 
@@ -243,11 +224,7 @@ def find_missing_metrics_reps(pkl_paths: list, inference_reps_reaching_suffix_le
     means this suffix boundary is already covered. pkl_paths is checked in order (scratch
     first, then persistent store); the first path that exists is the one read. A pkl built
     from a smaller rep set (e.g. before REPETITIONS grew) is correctly reported as still
-    missing the new reps.
-
-    Unpickling needs PDM's verbatim_eval importable (the pkl is Results-shaped) --
-    PYTHONPATH must include PDM's src/ (measure_mem_all.sh sets this the same way the
-    real container run does)."""
+    missing the new reps."""
     metrics_reps = set()
     existing_path = next((p for p in pkl_paths if p.exists()), None)
     if existing_path is not None:
@@ -256,17 +233,26 @@ def find_missing_metrics_reps(pkl_paths: list, inference_reps_reaching_suffix_le
     return inference_reps_reaching_suffix_length - metrics_reps
 
 
-def print_dry_run_report(exp_name: str, offset: int, prefix_length: int,
-                         missing_metrics_reps_by_suffix_boundary: dict) -> None:
-    done = sorted(b for b, missing in missing_metrics_reps_by_suffix_boundary.items() if not missing)
-    needed = sorted(b for b, missing in missing_metrics_reps_by_suffix_boundary.items() if missing)
-    print(f"{exp_name} offset={offset} prefix={prefix_length}: "
-          f"{len(done)}/{len(missing_metrics_reps_by_suffix_boundary)} suffix boundaries complete",
-          file=sys.stderr)
-    for suffix_boundary in needed:
-        print(f"  needed: suffix_boundary={suffix_boundary}  "
-              f"missing_metrics_reps={sorted(missing_metrics_reps_by_suffix_boundary[suffix_boundary])}",
-              file=sys.stderr)
+def print_dry_run_summary(exp_name: str, suffix_length: int, point_results: dict) -> None:
+    """point_results: {(offset, prefix_length): missing_metrics_reps_by_suffix_boundary or
+    None}. One report per exp_name, status at suffix_length only -- that's the boundary
+    that decides submit/skip, not every intermediate one."""
+    not_ready = sorted(pt for pt, result in point_results.items() if result is None)
+    incomplete = {
+        pt: result[suffix_length]
+        for pt, result in point_results.items()
+        if result is not None and result.get(suffix_length)
+    }
+    done = len(point_results) - len(not_ready) - len(incomplete)
+
+    print(f"{exp_name} @ suffix_length={suffix_length}: "
+          f"{done}/{len(point_results)} points complete", file=sys.stderr)
+    if not_ready:
+        points_str = ", ".join(f"{o}:{p}" for o, p in not_ready)
+        print(f"  missing entirely (no inference yet): {points_str}", file=sys.stderr)
+    if incomplete:
+        parts = [f"{o}:{p} missing reps={sorted(reps)}" for (o, p), reps in sorted(incomplete.items())]
+        print(f"  incomplete (some reps missing): {', '.join(parts)}", file=sys.stderr)
 
 
 ### MAIN LOOP ###
@@ -274,7 +260,7 @@ def print_dry_run_report(exp_name: str, offset: int, prefix_length: int,
 def find_missing_metrics_reps_by_suffix_boundary(
         exp_name: str, offset: int, prefix_length: int,
         inference_reps_reaching_suffix_length: set, target_suffix_boundaries: list,
-        save_path: Path, persistent_save_path: Optional[Path], policy: str, tag: Optional[str]) -> dict:
+        save_path: Path, persistent_save_path: Path | None, policy: str, tag: str | None) -> dict:
     """Check phase only: for each boundary in target_suffix_boundaries, which of
     inference_reps_reaching_suffix_length are missing from the metrics pkl (scratch, then
     persistent_save_path)."""
@@ -294,14 +280,12 @@ def find_missing_metrics_reps_by_suffix_boundary(
 
 def write_suffix_boundary_pkls(exp_name: str, offset: int, prefix_length: int, inference_reps: dict,
                                inference_reps_reaching_suffix_length: set, suffix_boundaries_to_compute: list,
-                               save_path: Path, policy: str, tag: Optional[str]) -> None:
+                               save_path: Path, policy: str, tag: str | None) -> None:
     """Compute+write phase only: one DP fill per qualifying rep, across every suffix
     boundary being computed -- not one fill per boundary. Recomputing a boundary
     regenerates the whole file with the full rep set (not a merge) -- Step 2 is cheap
     enough (CPU-only, no forward pass) that this isn't a real cost concern even across a
     large sweep."""
-    from verbatim_eval.controlled_expr import Results
-
     per_rep_metrics = {}
     for rep in sorted(inference_reps_reaching_suffix_length):
         _, rep_dir = inference_reps[rep]
@@ -330,8 +314,8 @@ def write_suffix_boundary_pkls(exp_name: str, offset: int, prefix_length: int, i
 
 def process_point(exp_name: str, offset: int, prefix_length: int, suffix_length: int,
                   inference_reps: dict, suffix_boundaries: list, save_path: Path,
-                  policy: str = "greedy", tag: Optional[str] = None, force: bool = False,
-                  persistent_save_path: Optional[Path] = None, dry_run: bool = False) -> Optional[dict]:
+                  policy: str = "greedy", tag: str | None = None, force: bool = False,
+                  persistent_save_path: Path | None = None, dry_run: bool = False) -> dict | None:
     """One point's worth of work: computes inference_reps_reaching_suffix_length once (not
     per boundary), then only suffix boundaries <= suffix_length -- never beyond, even if
     some rep reaches further.
@@ -354,8 +338,6 @@ def process_point(exp_name: str, offset: int, prefix_length: int, suffix_length:
                 f"{exp_name} offset={offset} prefix={prefix_length}: no inference rep reaches "
                 f"suffix_length={suffix_length} (reps found: {reached or 'none'})"
             )
-        print(f"{exp_name} offset={offset} prefix={prefix_length}: no inference rep reaches "
-              f"suffix_length={suffix_length} yet -- needs Stage 1 first.", file=sys.stderr)
         return None
 
     target_suffix_boundaries = sorted({b for b in suffix_boundaries if b <= suffix_length} | {suffix_length})
@@ -364,7 +346,6 @@ def process_point(exp_name: str, offset: int, prefix_length: int, suffix_length:
         target_suffix_boundaries, save_path, persistent_save_path, policy, tag)
 
     if dry_run:
-        print_dry_run_report(exp_name, offset, prefix_length, missing_metrics_reps_by_suffix_boundary)
         return missing_metrics_reps_by_suffix_boundary
 
     suffix_boundaries_to_compute = sorted(
@@ -388,20 +369,27 @@ def process_expr(exp_name: str, base_path: Path, save_path: Path, suffix_boundar
     persistent_save_path = Path(args.persistent_storage_path) if args.persistent_storage_path else None
 
     needed_points = []
+    point_results = {}
     for offset, prefix_length in sorted(set(parse_points(args.points))):
         inference_reps = find_inference_reps(expr_dir, offset, prefix_length, persistent_expr_dir)
-        print(f"\n=== {exp_name}  offset={offset} prefix={prefix_length}  "
-              f"inference_reps={sorted(inference_reps)} ===")
+        if not args.dry_run:
+            print(f"\n=== {exp_name}  offset={offset} prefix={prefix_length}  "
+                  f"inference_reps={sorted(inference_reps)} ===", file=sys.stderr)
         missing_metrics_reps_by_suffix_boundary = process_point(
             exp_name, offset, prefix_length, args.suffix_length, inference_reps, suffix_boundaries,
             save_path, tag=args.tag, force=args.force, persistent_save_path=persistent_save_path,
             dry_run=args.dry_run)
         if args.dry_run:
+            point_results[(offset, prefix_length)] = missing_metrics_reps_by_suffix_boundary
             # None = not even evaluable yet (needed); a dict = check the requested boundary.
             needed = (missing_metrics_reps_by_suffix_boundary is None
                      or missing_metrics_reps_by_suffix_boundary.get(args.suffix_length))
             if needed:
                 needed_points.append((offset, prefix_length))
+
+    if args.dry_run:
+        print_dry_run_summary(exp_name, args.suffix_length, point_results)
+
     return needed_points
 
 

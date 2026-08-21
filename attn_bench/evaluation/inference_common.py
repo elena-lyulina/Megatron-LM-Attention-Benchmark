@@ -2,14 +2,14 @@
 model-loading dependencies -- see inference_backend.py for that).
 
 Kept free of verbatim_eval/PDM imports so scripts that only need these don't pull in the
-Rouge/LCS stack, and stdlib-only (no torch, no numpy/numba/PDM, no `from __future__ import
-annotations` or 3.7+-only syntax) so a --dry-run mode built on these can run under an old
-bare login-node python3 with no venv or container.
+Rouge/LCS stack. find_suffix_dirs/parse_points live here rather than in
+prefix_extraction_inference.py because compute_memorization_metrics.py needs them too.
 """
+
+from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import List, Optional
 
 BOS_TOKEN_ID = 128000  # Llama-3 beginning-of-sequence token
 
@@ -33,7 +33,7 @@ def discover_all_offset_prefix_suffix_dirs(experiment_path: Path) -> list:
 
 
 def find_suffix_dirs(experiment_path: Path, offset: int, prefix_length: int,
-                     persistent_storage_path: Optional[Path] = None) -> list:
+                     persistent_storage_path: Path | None = None) -> list:
     """All existing offset_O_prefix_P_suffix_* dirs for this (offset, prefix), as
     (suffix_length, path) pairs. experiment_path first, then persistent_storage_path as a
     fallback for results experiment_path no longer has. On a tied suffix' between the two,
@@ -61,7 +61,7 @@ def parse_points(points: list) -> list:
     return parsed
 
 
-def sample_idx_per_rank(world_size: int, dataset_len: int) -> List[List[int]]:
+def sample_idx_per_rank(world_size: int, dataset_len: int) -> list[list[int]]:
     """Reconstruct which original dataset indices DistributedSampler(shuffle=False) gave
     each rank, matching torch's own algorithm: pad range(dataset_len) up to a multiple of
     world_size by wrapping from the start, then take every world_size-th index starting
@@ -76,7 +76,7 @@ def sample_idx_per_rank(world_size: int, dataset_len: int) -> List[List[int]]:
     return [indices[r::world_size] for r in range(world_size)]
 
 
-def load_records_by_sample_idx(rep_dir: Path, dataset_len: Optional[int] = None) -> dict:
+def load_records_by_sample_idx(rep_dir: Path, dataset_len: int | None = None) -> dict:
     """Read every rank*.jsonl under rep_dir, keyed by sample_idx. Recovers sample_idx on
     the fly for records that predate it (via sample_idx_per_rank), given the dataset
     length that produced them -- required by the caller in that case, since world_size
