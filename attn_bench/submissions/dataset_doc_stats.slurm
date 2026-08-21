@@ -40,7 +40,6 @@ OVERWRITE=${OVERWRITE:-}
 
 export PYTHONPATH=$MEGATRON_DIR:${PYTHONPATH:-}
 cd $MEGATRON_DIR
-source attn_bench/scripts/scratch_to_store.sh
 mkdir -p $SCRATCH_DIR
 
 ### CHECK STORE (only possible when DATASET_DIRS is explicit -- the .py's own
@@ -70,9 +69,5 @@ python3 -u attn_bench/data_processing/dataset_doc_stats.py \
     --out-dir $SCRATCH_DIR
 STATUS=$?
 
-### Copy scratch results to store ###
-
-copy_scratch_to_store $STATUS "$SCRATCH_DIR" "$STORE_DIR"
-
 echo "END TIME: $(date)"
-echo "Done. Length arrays in $STORE_DIR"
+[ $STATUS -eq 0 ] && echo "Done. Length arrays in $SCRATCH_DIR -- sync to $STORE_DIR yourself when you want them there."

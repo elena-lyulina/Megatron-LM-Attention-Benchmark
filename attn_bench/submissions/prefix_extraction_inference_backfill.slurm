@@ -32,7 +32,6 @@ CONTAINER_ENV=nemo_26.04_te2.15
 MEGATRON_LM_DIR=/iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark
 PDM_DIR=/users/$USER/scratch/PDM
 source $MEGATRON_LM_DIR/attn_bench/scripts/llama_checkpoints.sh
-source $MEGATRON_LM_DIR/attn_bench/scripts/scratch_to_store.sh
 
 MODEL=${MODEL:-full-scf8}
 model_config "$MODEL"
@@ -84,6 +83,9 @@ srun \
         $PY $COMMON_ARGS $EXTRA_MEGATRON"
 BACKFILL_STATUS=$?
 
-copy_scratch_to_store $BACKFILL_STATUS "$MEM_DIR" "$STORE_EXP_DIR"
+if [ $BACKFILL_STATUS -eq 0 ]; then
+    echo "Backfilled results are on scratch ($MEM_DIR) -- sync back to store yourself"
+    echo "(e.g. copy_mem_results_to_store.sh $EXP_NAME) once you're happy with them."
+fi
 
 echo "END TIME: $(date)"

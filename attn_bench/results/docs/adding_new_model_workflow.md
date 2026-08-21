@@ -66,18 +66,19 @@ every sweep and puller below — nothing else needs to change.
 
 ## 8. Run the eval sweeps
 
-`measure_mem_all.sh` submits one job per `(offset, prefix, suffix, model)` combination —
-a full cross product of whatever lists you pass. To reproduce the grid plotted in
+`measure_mem_all.sh` submits one job per `(suffix, model)`, covering every requested
+`(offset, prefix)` point in that group (sharing one checkpoint load) — a full cross
+product of whatever lists you pass. To reproduce the grid plotted in
 `notebooks/mem_metrics_2.ipynb` (`OFFSETS = [0, 1, 5, 12, 25, 50, 100, 500, 1000, 2000, 3000]`,
 `PREFIXES = [50, 100, 250, 500, 750, 1000, 2000, 3000]`, `SUFFIXES = [50, 500]`) without
 flooding the queue, run it in 3 passes rather than the full cross product — deliberately
 skipping the `prefix=500 / suffix=50` combo (never plotted, and pulling it in would nearly
 double the job count for nothing): all offsets at `prefix=500, suffix=500`, all offsets at
 `prefix=50, suffix=50`, and `offset=0` alone across the wider prefix range. The sweep skips
-anything already done on store, so the 3rd call's overlap with the 1st (`offset=0,
-prefix∈{50,500}, suffix=500`) is free -- **but only if the 1st call's jobs have already
-finished and landed on store; run the calls sequentially, don't fire all 3 at once, or the
-overlapping jobs won't get deduped.**
+anything already complete (checked on scratch, then store), so the 3rd call's overlap with
+the 1st (`offset=0, prefix∈{50,500}, suffix=500`) is free — **but only if the 1st call's
+jobs have already finished (landed on scratch is enough, no store sync required); run the
+calls sequentially, don't fire all 3 at once, or the overlapping jobs won't get deduped.**
 
 That's `11×2 + 11×1 + 8 = 41` `(offset, prefix, suffix)` combos requested across the 3
 calls, 2 of which duplicate the 1st call — **39 unique combinations**. At the 11 models
@@ -95,9 +96,13 @@ bash submissions/long_gutenberg_inference_all.sh
 bash submissions/long_fineweb_inference_all.sh
 ```
 
-Each sweep iterates `llama_checkpoints.sh`, skips combinations already done on store, and
-writes to scratch before copying to store via the shared `scripts/scratch_to_store.sh`
-helper (never write to capstor from a compute node). Pull results locally:
+Each sweep iterates `llama_checkpoints.sh`, skips combinations already complete, and
+writes to scratch only -- scratch is purged only every ~2 weeks, so there's no rush to
+promote results. Skip-checks look at both scratch and store (`--persistent-storage-path`),
+so results already on store from a previous sync are still found even after scratch has
+been purged. Sync scratch to store yourself when you want it (e.g.
+`scripts/copy_mem_results_to_store.sh <exp1> [exp2 ...]`; don't do this from a compute
+node). Pull results locally:
 
 ```bash
 bash attn_bench/scripts/pull_mem_results.sh

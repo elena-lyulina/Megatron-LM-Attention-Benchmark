@@ -58,8 +58,7 @@ srun \
         --experiment-path $MEM_DIR \
         --data-folder $GUTENBERG_JSONL_DIR \
         --repetitions 0 \
-        --offset 0 \
-        --prefix-length 500 \
+        --points 0:500 \
         --suffix-length 500 \
         --batch-size 20 \
         --max-samples 50 \

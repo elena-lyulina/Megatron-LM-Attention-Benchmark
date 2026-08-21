@@ -12,28 +12,24 @@
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=clariden-jobs-elyulin-aaaauapxybdkdx42ppvef2c2eq@swissai-initiative.slack.com
 
-# Measure memorization for one trained model, one (offset, prefix, suffix) point:
-#   - Run sparse Gutenberg inference directly from torch_dist checkpoint (no HF conversion),
-#     reusing/extending an existing larger-suffix run instead of regenerating if one exists
-#   - Compute Rouge-L/lcs_norm/TTR/token_acc/divergence_point/p_z at every reachable suffix
-#     boundary, not just this job's own suffix point
+# Measure memorization for one trained model, one or more (offset, prefix) points sharing
+# one suffix and one checkpoint load. Step 1: sparse Gutenberg inference from the torch_dist
+# checkpoint, reusing/extending an existing larger-suffix run instead of regenerating. Step 2:
+# Rouge-L/lcs_norm/TTR/token_acc/divergence_point/p_z at every reachable suffix boundary.
 #
 # Env vars:
-#   MODEL              checkpoint to use, see llama_checkpoints.sh (default: full)
-#   CHECKPOINT_BACKEND megatron (default, all attention variants) or hf (already-converted HF
-#                      checkpoint, faster generate(); full/sink/gated/swa only, not GDN -- run
-#                      convert_and_validate_hf.slurm first)
-#   OFFSET         document start offset (default: 0)
-#   PREFIX_LENGTH  prompt length in tokens (default: 500)
-#   SUFFIX_LENGTH  generated/gold length in tokens (default: 500)
-#   REPETITIONS    comma-separated repetition buckets to run (default: 0,1,2,4,8,16,32,64,128,256)
-#   SINK_SCALE     sink/off-by-one only: scale the learned sink logit (megatron backend only)
-#   OVERWRITE      skip the whole job unless set, even if store already has this suffix's pkl
-#   FORCE_METRICS  recompute every reachable boundary's pkl in Step 2, even ones that already
-#                  exist (e.g. after backfill added fields an old pkl predates) -- independent
-#                  of OVERWRITE, which only gates whether Step 1 runs at all
+#   MODEL, CHECKPOINT_BACKEND (megatron/hf), SINK_SCALE  -- see llama_checkpoints.sh / model_config
+#   POINTS         comma-separated offset:prefix_length pairs, e.g. "0:500,50:450" (default: "0:500")
+#   SUFFIX_LENGTH  shared by every point (default: 500)
+#   REPETITIONS    comma-separated rep buckets (default: 0,1,2,4,8,16,32,64,128,256)
+#   FORCE_METRICS  recompute every Step-2 boundary even if it already exists
 #
-# Usage: sbatch --export=MODEL=sink,OFFSET=0,PREFIX_LENGTH=1000 measure_mem.slurm
+# No pre-checkpoint-load "is this already done" check here -- measure_mem_all.sh already
+# decided this job is worth submitting (its own dry-run check, dual-checking scratch+store).
+# Once running, Step 1 and Step 2 each self-skip internally at the same dual-checked,
+# per-point/per-boundary granularity, so nothing here can waste real compute either.
+#
+# Usage: sbatch --export=MODEL=sink,POINTS=0:1000 measure_mem.slurm
 # (normally submitted via measure_mem_all.sh)
 
 echo "START TIME: $(date)"
@@ -44,15 +40,12 @@ CONTAINER_ENV=nemo_26.04_te2.15
 MEGATRON_LM_DIR=/iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark
 PDM_DIR=/users/$USER/scratch/PDM
 source $MEGATRON_LM_DIR/attn_bench/scripts/llama_checkpoints.sh
-source $MEGATRON_LM_DIR/attn_bench/scripts/scratch_to_store.sh
 
-OFFSET=${OFFSET:-0}
-PREFIX_LENGTH=${PREFIX_LENGTH:-500}
+POINTS=${POINTS:-0:500}
 SUFFIX_LENGTH=${SUFFIX_LENGTH:-500}
 REPETITIONS=${REPETITIONS:-0,1,2,4,8,16,32,64,128,256}
 CHECKPOINT_BACKEND=${CHECKPOINT_BACKEND:-megatron}
 SINK_SCALE=${SINK_SCALE:-}
-OVERWRITE=${OVERWRITE:-}
 FORCE_METRICS=${FORCE_METRICS:-}
 
 ### MODEL -> EXP_NAME / MEGATRON_EXTRA / NEEDS_TRITON / IS_SINK_FAMILY / NEEDS_UNFUSED_DECODE ###
@@ -72,8 +65,7 @@ MODEL_DIR=/users/$USER/store/pretrain-results/$CKPT_NAME
 STORE_MEM_BASE=/users/$USER/store/mem-results
 SCRATCH_MEM_BASE=/iopsstor/scratch/cscs/$USER/mem-results
 MEM_DIR=$SCRATCH_MEM_BASE/SparseGutenberg/$EXP_NAME
-SCRATCH_EXP=$SCRATCH_MEM_BASE/SparseGutenberg/$PDM_EXP_NAME
-STORE_EXP=$STORE_MEM_BASE/SparseGutenberg/$PDM_EXP_NAME
+STORE_MEM_DIR=$STORE_MEM_BASE/SparseGutenberg/$EXP_NAME
 GUTENBERG_JSONL_DIR=/users/$USER/store/datasets/tokenized/gutenberg_rep_jsonl
 TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b
 PY=$MEGATRON_LM_DIR/attn_bench/evaluation/prefix_extraction_inference.py
@@ -81,12 +73,8 @@ PY=$MEGATRON_LM_DIR/attn_bench/evaluation/prefix_extraction_inference.py
 export PYTHONPATH=$MEGATRON_LM_DIR:$PDM_DIR:$PDM_DIR/src:${PYTHONPATH:-}
 export CUDA_DEVICE_MAX_CONNECTIONS=1
 
-### CHECK STORE (before doing anything expensive) ###
-STORE_PKL=$STORE_MEM_BASE/SparseGutenberg/$PDM_EXP_NAME/metrics/offset_${OFFSET}_prefix_${PREFIX_LENGTH}_suffix_${SUFFIX_LENGTH}_greedy.pkl
-if [ -z "$OVERWRITE" ] && [ -f "$STORE_PKL" ]; then
-    echo "$STORE_PKL already present in store -- skipping."
-    exit 0
-fi
+# Parsed once here, reused by every step below.
+IFS=',' read -r -a POINTS_ARR <<< "$POINTS"
 
 # HF checkpoint must already exist (produced separately by convert_and_validate_hf.slurm) --
 # this also doubles as the "is this model even HF-convertible" check, since GDN models
@@ -99,16 +87,18 @@ if [ "$CHECKPOINT_BACKEND" = "hf" ]; then
     fi
 fi
 
-echo "RUN: model=$MODEL  exp=$EXP_NAME  backend=$CHECKPOINT_BACKEND  offset=$OFFSET  prefix=$PREFIX_LENGTH  suffix=$SUFFIX_LENGTH${SINK_SCALE:+  sink_scale=$SINK_SCALE}"
+echo "RUN: model=$MODEL  exp=$EXP_NAME  backend=$CHECKPOINT_BACKEND  points=$POINTS  suffix=$SUFFIX_LENGTH${SINK_SCALE:+  sink_scale=$SINK_SCALE}"
 
-# --experiment-path is the scratch working dir; copy_scratch_to_store handles the store side.
+# --experiment-path is the scratch working dir -- results stay there; sync to store manually
+# (e.g. copy_mem_results_to_store.sh) when you want it, scratch is only purged every ~2 weeks.
+# --persistent-storage-path lets the Python skip-checks see results scratch has lost to a purge.
 COMMON_ARGS="--container-env $CONTAINER_ENV \
     --checkpoint-backend $CHECKPOINT_BACKEND \
     --experiment-path $MEM_DIR \
+    --persistent-storage-path $STORE_MEM_DIR \
     --data-folder $GUTENBERG_JSONL_DIR \
     --repetitions $REPETITIONS \
-    --offset $OFFSET \
-    --prefix-length $PREFIX_LENGTH \
+    --points ${POINTS_ARR[*]} \
     --suffix-length $SUFFIX_LENGTH \
     --batch-size 20"
 
@@ -137,13 +127,10 @@ else
 fi
 
 ### STEP 1: sparse Gutenberg inference ###
-# Loads torch_dist checkpoint directly (DCP resharding merges TP shards on the fly).
-# Saves rank*.jsonl to $MEM_DIR/inference/offset_.../rep_*/ (scratch).
+# Loads torch_dist checkpoint directly; saves rank*.jsonl to $MEM_DIR/inference/offset_.../rep_*/.
 #
-# GDN needs a per-rank node-local TRITON_CACHE_DIR: fla kernels autotune on first use and a
-# shared/colliding cache crashes with "stale file handle" (job 2570257). torchrun sets RANK
-# per worker (SLURM_PROCID is 0 for all four under ntasks-per-node=1), so the cache is keyed
-# inside the workers via the --no-python wrapper. Attention variants skip all that.
+# GDN needs a per-rank node-local TRITON_CACHE_DIR (fla autotune + shared cache = "stale file
+# handle", job 2570257) -- keyed inside the workers via the --no-python wrapper below.
 
 if [ "$NEEDS_TRITON" = "1" ]; then
     srun \
@@ -174,21 +161,9 @@ else
 fi
 INFERENCE_STATUS=$?
 
-# Copy inference results (usually expensive) to store -- Step 1 only ever writes its own
-# exact suffix dir, no wildcard needed.
-SUFFIX_DIR="offset_${OFFSET}_prefix_${PREFIX_LENGTH}_suffix_${SUFFIX_LENGTH}"
-copy_scratch_to_store $INFERENCE_STATUS "$SCRATCH_EXP/inference/$SUFFIX_DIR" "$STORE_EXP/inference/$SUFFIX_DIR"
-if [ $INFERENCE_STATUS -eq 0 ] && [ -f "$SCRATCH_EXP/sink_scale_metadata.json" ]; then
-    mkdir -p "$STORE_EXP"
-    cp -a "$SCRATCH_EXP/sink_scale_metadata.json" "$STORE_EXP/"
-fi
-
 ### STEP 2: compute memorization metrics ###
-# Reads inference outputs from scratch, writes one Rouge-L/lcs_norm/TTR/token_acc/
-# divergence_point/p_z summary pkl per suffix boundary to scratch.
-# Auto-discovers every (offset, prefix) pair under $MEM_DIR/inference and every boundary
-# reachable from whatever's landed on scratch, not just this job's own suffix point.
-
+# Writes one Rouge-L/lcs_norm/TTR/token_acc/divergence_point/p_z pkl per reachable suffix
+# boundary (not just this job's own suffix point) to scratch.
 METRIC_STATUS=1
 if [ $INFERENCE_STATUS -eq 0 ]; then
     FORCE_ARG=""
@@ -201,21 +176,16 @@ if [ $INFERENCE_STATUS -eq 0 ]; then
         pip install numba -q
         export PYTHONPATH='${PYTHONPATH}'
         python $MEGATRON_LM_DIR/attn_bench/evaluation/compute_memorization_metrics.py \
-            --exprs $PDM_EXP_NAME \
+            --exp-name $PDM_EXP_NAME \
             --base-path $SCRATCH_MEM_BASE/SparseGutenberg \
             --save-path $SCRATCH_MEM_BASE/SparseGutenberg \
-            --offsets $OFFSET \
-            --prefix-lengths $PREFIX_LENGTH \
+            --persistent-storage-path $STORE_MEM_BASE/SparseGutenberg \
+            --points ${POINTS_ARR[*]} \
+            --suffix-length $SUFFIX_LENGTH \
             $FORCE_ARG"
     METRIC_STATUS=$?
 else
     echo "Inference (step 1) failed with status $INFERENCE_STATUS -- skipping metric computation"
 fi
-
-### Copy metrics to store -- every suffix boundary Step 2 reached for this offset/prefix,
-### not just this job's own suffix point (see Step 2 comment above). ###
-BOUNDARY_PATTERN="offset_${OFFSET}_prefix_${PREFIX_LENGTH}_suffix_*"
-copy_scratch_to_store $METRIC_STATUS "$SCRATCH_EXP/metrics" "$STORE_EXP/metrics" "$BOUNDARY_PATTERN"
-copy_scratch_to_store $METRIC_STATUS "$SCRATCH_EXP/metrics_metadata" "$STORE_EXP/metrics_metadata" "$BOUNDARY_PATTERN"
 
 echo "END TIME: $(date)"

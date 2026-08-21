@@ -62,8 +62,7 @@ srun \
         --experiment-path $MEM_DIR \
         --data-folder $GUTENBERG_JSONL_DIR \
         --repetitions 0,1,2,4,8,16,32,64,128,256 \
-        --offset $OFFSET \
-        --prefix-length $PREFIX_LENGTH \
+        --points $OFFSET:$PREFIX_LENGTH \
         --suffix-length 50 \
         --batch-size 20 \
         --capture-attention \

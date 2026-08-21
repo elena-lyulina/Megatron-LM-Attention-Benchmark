@@ -14,6 +14,7 @@ import argparse
 import json
 import os
 import random
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Callable
@@ -225,14 +226,22 @@ def individual_path(output_dir: Path, key: str) -> Path:
     return output_dir / f"{key}_individual.jsonl"
 
 
-def result_done(output_dir: Path, key: str, log_state_norm: bool, store_individual: bool = False) -> bool:
+def file_exists_in_locations(locations, file: str) -> bool:
+    """True if location/file exists under any of the given locations (None entries skipped)."""
+    return any(location is not None and (location / file).exists() for location in locations)
+
+
+def result_done(output_dir: Path, key: str, log_state_norm: bool, store_individual: bool = False,
+                persistent_output_dir: Path | None = None) -> bool:
     # Done when the NLL file exists -- and, when logging state norms / individual records,
     # those files too (so turning either flag on for a finished model re-runs to fill it in).
-    if not npz_path(output_dir, key).exists():
+    # persistent_output_dir is checked as a fallback for results output_dir no longer has.
+    locations = (output_dir, persistent_output_dir)
+    if not file_exists_in_locations(locations, f"{key}.npz"):
         return False
-    if log_state_norm and not state_npz_path(output_dir, key).exists():
+    if log_state_norm and not file_exists_in_locations(locations, f"{key}_state.npz"):
         return False
-    if store_individual and not individual_path(output_dir, key).exists():
+    if store_individual and not file_exists_in_locations(locations, f"{key}_individual.jsonl"):
         return False
     return True
 
@@ -254,6 +263,9 @@ def add_common_args(p: argparse.ArgumentParser, max_samples_default: int | None 
     p.add_argument("--ckpt-dir", required=True, help="torch_dist checkpoint directory")
     p.add_argument("--tokenizer-path", required=True)
     p.add_argument("--experiment-path", required=True, help="Output root")
+    p.add_argument("--persistent-storage-path", default=None,
+                   help="Secondary mirror of --experiment-path, checked as a fallback for the "
+                        "done-check -- e.g. if --experiment-path has since lost them. Never written to.")
     p.add_argument("--max-length", type=int, default=None, help="Cap each sequence to this many tokens.")
     p.add_argument("--max-samples", type=int, default=max_samples_default,
                    help="Randomly subsample to this many sequences (fixed seed, for testing/calibration "
@@ -272,12 +284,28 @@ def add_common_args(p: argparse.ArgumentParser, max_samples_default: int | None 
                         "per sequence. Off by default; the aggregated <key>.npz (mean/std/count) is "
                         "unaffected either way.")
     p.add_argument("--overwrite", action="store_true", help="Recompute even if <key>.npz already exists")
+    p.add_argument("--dry-run", action="store_true",
+                   help="Report which keys are already complete, write nothing, skip checkpoint "
+                        "load entirely.")
     p.add_argument("--container-env", default=None, help="Container/env name, recorded for provenance")
     p.add_argument("--megatron-extra-args", nargs=argparse.REMAINDER, default=None,
                    help="Extra Megatron args forwarded to the checkpoint loader (e.g. --attention-output-gate)")
 
 
 ### MAIN ###
+
+def print_dry_run_report(items: list, status: dict) -> None:
+    """status: {key: bool}, True meaning already complete. Report to stderr, space-separated
+    needed-key list to stdout -- same convention the mem-results scripts use."""
+    done = [key for key, _ in items if status[key]]
+    needed = [key for key, _ in items if not status[key]]
+    print(f"{len(done)}/{len(items)} keys already complete:", file=sys.stderr)
+    for key in done:
+        print(f"  done:   {key}", file=sys.stderr)
+    for key in needed:
+        print(f"  needed: {key}", file=sys.stderr)
+    print(" ".join(needed))
+
 
 def run_main(args, items: list[tuple[str, object]], load_dataset: Callable, metadata_extra: dict) -> None:
     """Shared driver for a long-sequence inference script's main().
@@ -289,10 +317,21 @@ def run_main(args, items: list[tuple[str, object]], load_dataset: Callable, meta
     --store-individual is set (Gutenberg's book_id, fineweb's doc_id).
     """
     output_dir = config_dir(args.experiment_path, args.max_length, args.max_samples)
+    persistent_output_dir = (
+        config_dir(args.persistent_storage_path, args.max_length, args.max_samples)
+        if getattr(args, "persistent_storage_path", None) else None
+    )
 
-    if not args.overwrite and items and all(
-        result_done(output_dir, key, args.log_state_norm, args.store_individual) for key, _ in items
-    ):
+    status = {
+        key: result_done(output_dir, key, args.log_state_norm, args.store_individual, persistent_output_dir)
+        for key, _ in items
+    }
+
+    if args.dry_run:
+        print_dry_run_report(items, status)
+        return
+
+    if not args.overwrite and items and all(status.values()):
         if int(os.environ.get("RANK", "0")) == 0:
             print(f"All requested results already present in {output_dir} -- skipping checkpoint load.")
         return
@@ -322,7 +361,8 @@ def run_main(args, items: list[tuple[str, object]], load_dataset: Callable, meta
     for key, loader_arg in items:
         out_path = npz_path(output_dir, key)
 
-        if result_done(output_dir, key, accum is not None, args.store_individual) and not args.overwrite:
+        if result_done(output_dir, key, accum is not None, args.store_individual,
+                      persistent_output_dir) and not args.overwrite:
             if rank == 0:
                 print(f"Skipping {key} (already done)")
             continue

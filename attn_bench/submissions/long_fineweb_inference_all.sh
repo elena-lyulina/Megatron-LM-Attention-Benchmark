@@ -1,8 +1,8 @@
 #!/bin/bash
 # Submit long-FineWeb-Edu position-loss inference for every model in attn_bench/scripts/llama_checkpoints.sh,
 # on both the seen and unseen partitions. One job per (MODEL, DATA_FILE) pair, each self-parallel
-# across 4 GPUs. A job is skipped when its bucket (<data file stem>.npz) already exists on store;
-# --force submits regardless.
+# across 4 GPUs. A job is skipped when its bucket is already complete (long_fineweb_inference.py
+# --dry-run, dual-checks scratch then store); --force submits regardless.
 #
 # Env passthrough (optional): MAX_LENGTH, MAX_SAMPLES, LOG_STATE_NORM, STATE_CHUNK,
 # STORE_INDIVIDUAL, EXP_SUFFIX. LOG_STATE_NORM is applied only to GDN variants (attention
@@ -21,7 +21,9 @@ SCRIPT_DIR=$(dirname "$0")
 source "$SCRIPT_DIR/../scripts/llama_checkpoints.sh"
 
 RESULTS_BASE=/users/$USER/store/long-fineweb-results
+SCRATCH_RESULTS_BASE=/iopsstor/scratch/cscs/$USER/long-fineweb-results
 STORE_TOKENIZED=/users/$USER/store/datasets/tokenized
+TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b
 LOG_STATE_NORM=${LOG_STATE_NORM:-}   # set to log GDN state norms (applied only to GDN variants)
 STATE_CHUNK=${STATE_CHUNK:-}         # override the state readout stride (default 128)
 STORE_INDIVIDUAL=${STORE_INDIVIDUAL:-}   # set to also write raw per-sequence records
@@ -68,22 +70,32 @@ for DATA_FOLDER in "${DATA_FOLDERS[@]}"; do
 
         # All models run the same way now: TP=1, no length cap, default walltime.
         VAR_MAXLEN=${MAX_LENGTH:-}
-        # Config folder (must match config_name() in long_inference.py): unset MAX_SAMPLES falls
-        # back to long_fineweb_inference.py's own DEFAULT_MAX_SAMPLES (660), not "all" -- the
-        # python script itself defaults --max-samples to 660, unlike the Gutenberg script.
-        CONFIG="${MAX_SAMPLES:-660}_samples_${VAR_MAXLEN:-full}_tokens"
 
         # State norms are only logged for GDN variants (NEEDS_TRITON is 1 only for the GDN mixer).
         WANT_STATE=0
         [[ -n "$LOG_STATE_NORM" && "$NEEDS_TRITON" == "1" ]] && WANT_STATE=1
 
-        RESULTS_DIR=$RESULTS_BASE/$EXP_NAME/${DATA_FOLDER_NAME}_long/$CONFIG
-        DONE=1
-        [[ ! -f "$RESULTS_DIR/$KEY.npz" ]] && DONE=0
-        [[ $WANT_STATE -eq 1 && ! -f "$RESULTS_DIR/${KEY}_state.npz" ]] && DONE=0
-        [[ -n "$STORE_INDIVIDUAL" && ! -f "$RESULTS_DIR/${KEY}_individual.jsonl" ]] && DONE=0
-        if [[ $FORCE -eq 0 && $DONE -eq 1 ]]; then
+        # "Done" checked via the .py's own --dry-run (dual-checks scratch then store), the
+        # same logic the real run uses internally, instead of a separate hand-rolled bash check.
+        if [[ $FORCE -eq 1 ]]; then
+            NEEDED="force"
+        else
+            DRY_RUN_ARGS=()
+            [[ -n "${MAX_SAMPLES:-}" ]] && DRY_RUN_ARGS+=(--max-samples "$MAX_SAMPLES")
+            [[ -n "$VAR_MAXLEN" ]] && DRY_RUN_ARGS+=(--max-length "$VAR_MAXLEN")
+            [[ $WANT_STATE -eq 1 ]] && DRY_RUN_ARGS+=(--log-state-norm)
+            [[ -n "$STORE_INDIVIDUAL" ]] && DRY_RUN_ARGS+=(--store-individual)
+            NEEDED=$(python3 "$SCRIPT_DIR/../evaluation/long_fineweb_inference.py" --dry-run \
+                --ckpt-dir "/users/$USER/store/pretrain-results/$CKPT_NAME/checkpoints" \
+                --tokenizer-path "$TOKENIZER_PATH" \
+                --experiment-path "$SCRATCH_RESULTS_BASE/$EXP_NAME/${DATA_FOLDER_NAME}_long" \
+                --persistent-storage-path "$RESULTS_BASE/$EXP_NAME/${DATA_FOLDER_NAME}_long" \
+                --data-file "$DATA_FILE" \
+                "${DRY_RUN_ARGS[@]}")
+        fi
+        if [[ -z "$NEEDED" ]]; then
             SKIPPED_COUNT=$((SKIPPED_COUNT + 1))
+            echo "$KEY already complete for $EXP_NAME partition=$TAG -- nothing to submit."
             continue
         fi
 

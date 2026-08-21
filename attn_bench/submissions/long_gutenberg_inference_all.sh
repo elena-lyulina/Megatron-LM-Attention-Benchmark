@@ -1,7 +1,8 @@
 #!/bin/bash
 # Submit long-Gutenberg position-loss inference for every model in attn_bench/scripts/llama_checkpoints.sh.
 # One job per MODEL, each self-parallel across 4 GPUs. A model is skipped when all requested
-# buckets (rep_{R}.npz) already exist on store; --force submits regardless.
+# buckets are already complete (long_gutenberg_inference.py --dry-run, dual-checks scratch
+# then store); --force submits regardless.
 #
 # Env passthrough (optional): REPETITIONS, MAX_LENGTH, MAX_SAMPLES, LOG_STATE_NORM, STATE_CHUNK,
 # STORE_INDIVIDUAL. LOG_STATE_NORM is applied only to GDN variants (attention models have no
@@ -18,6 +19,9 @@ SCRIPT_DIR=$(dirname "$0")
 source "$SCRIPT_DIR/../scripts/llama_checkpoints.sh"
 
 RESULTS_BASE=/users/$USER/store/long-gutenberg-results
+SCRATCH_RESULTS_BASE=/iopsstor/scratch/cscs/$USER/long-gutenberg-results
+GUTENBERG_LONG_JSONL_DIR=/users/$USER/store/datasets/tokenized/gutenberg_rep_jsonl_long
+TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b
 REPETITIONS=${REPETITIONS:-0,1,2,4,8,16,32,64,128,256}
 LOG_STATE_NORM=${LOG_STATE_NORM:-}   # set to log GDN state norms (applied only to GDN variants)
 STATE_CHUNK=${STATE_CHUNK:-}         # override the state readout stride (default 128)
@@ -33,8 +37,6 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-IFS=',' read -ra REPS <<< "$REPETITIONS"
-
 SKIPPED_COUNT=0
 SUBMITTED_COUNT=0
 
@@ -43,30 +45,35 @@ for MODEL in "${MODELS[@]}"; do
 
     # All models run at full length now -- MAX_LENGTH (if set) still caps every model.
     VAR_MAXLEN=${MAX_LENGTH:-}
-    # Config folder (must match config_name() in long_gutenberg_inference.py): unset caps -> "all"/"full".
-    CONFIG="${MAX_SAMPLES:-all}_samples_${VAR_MAXLEN:-full}_tokens"
 
     # State norms are only logged for GDN variants (NEEDS_TRITON is 1 only for the GDN mixer).
     WANT_STATE=0
     [[ -n "$LOG_STATE_NORM" && "$NEEDS_TRITON" == "1" ]] && WANT_STATE=1
 
-    # "Done" = every requested bucket's rep_{R}.npz is present (plus rep_{R}_state.npz when
-    # state norms are requested, and rep_{R}_individual.jsonl when individual records are
-    # requested) for this config.
-    DONE=1
-    for R in "${REPS[@]}"; do
-        if [[ ! -f "$RESULTS_BASE/$EXP_NAME/$CONFIG/rep_${R}.npz" ]]; then
-            DONE=0; break
-        fi
-        if [[ $WANT_STATE -eq 1 && ! -f "$RESULTS_BASE/$EXP_NAME/$CONFIG/rep_${R}_state.npz" ]]; then
-            DONE=0; break
-        fi
-        if [[ -n "$STORE_INDIVIDUAL" && ! -f "$RESULTS_BASE/$EXP_NAME/$CONFIG/rep_${R}_individual.jsonl" ]]; then
-            DONE=0; break
-        fi
-    done
-    if [[ $FORCE -eq 0 && $DONE -eq 1 ]]; then
+    # "Done" = every requested bucket's rep_{R}.npz is present (plus rep_{R}_state.npz/
+    # rep_{R}_individual.jsonl when requested) -- checked via the .py's own --dry-run (dual-
+    # checks scratch then store), the same logic the real run uses internally, instead of a
+    # separate hand-rolled bash loop.
+    if [[ $FORCE -eq 1 ]]; then
+        NEEDED="force"
+    else
+        DRY_RUN_ARGS=()
+        [[ -n "${MAX_SAMPLES:-}" ]] && DRY_RUN_ARGS+=(--max-samples "$MAX_SAMPLES")
+        [[ -n "$VAR_MAXLEN" ]] && DRY_RUN_ARGS+=(--max-length "$VAR_MAXLEN")
+        [[ $WANT_STATE -eq 1 ]] && DRY_RUN_ARGS+=(--log-state-norm)
+        [[ -n "$STORE_INDIVIDUAL" ]] && DRY_RUN_ARGS+=(--store-individual)
+        NEEDED=$(python3 "$SCRIPT_DIR/../evaluation/long_gutenberg_inference.py" --dry-run \
+            --ckpt-dir "/users/$USER/store/pretrain-results/$CKPT_NAME/checkpoints" \
+            --tokenizer-path "$TOKENIZER_PATH" \
+            --experiment-path "$SCRATCH_RESULTS_BASE/$EXP_NAME" \
+            --persistent-storage-path "$RESULTS_BASE/$EXP_NAME" \
+            --data-folder "$GUTENBERG_LONG_JSONL_DIR" \
+            --repetitions "$REPETITIONS" \
+            "${DRY_RUN_ARGS[@]}")
+    fi
+    if [[ -z "$NEEDED" ]]; then
         SKIPPED_COUNT=$((SKIPPED_COUNT + 1))
+        echo "All requested buckets already complete for $EXP_NAME -- nothing to submit."
         continue
     fi
 

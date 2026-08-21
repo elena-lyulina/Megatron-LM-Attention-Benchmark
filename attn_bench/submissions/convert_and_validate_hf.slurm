@@ -36,7 +36,6 @@ CONTAINER_ENV=nemo_26.04_te2.15
 MEGATRON_LM_DIR=/iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark
 PDM_DIR=/users/$USER/scratch/PDM
 source $MEGATRON_LM_DIR/attn_bench/scripts/llama_checkpoints.sh
-source $MEGATRON_LM_DIR/attn_bench/scripts/scratch_to_store.sh
 
 MODEL=${MODEL:-full-scf1}
 OVERWRITE=${OVERWRITE:-}
@@ -169,6 +168,12 @@ print(f'rope factor = {factor} (expected $EXPECTED_ROPE_FACTOR) -- OK')
 CONVERT_STATUS=$?
 
 ### Copy only the HF output to store (not the deletable intermediate torch/ format) ###
-copy_scratch_to_store $CONVERT_STATUS "$SCRATCH_CONVERT_DIR/HF" "$STORE_HF_DIR"
+# Synchronous, unlike the other scripts' xfer-queued copy: downstream jobs look up the HF
+# checkpoint in store only (no scratch fallback), so it needs to be there the moment this
+# job exits. Low-frequency (one conversion per model), so inline store I/O here is fine.
+if [ $CONVERT_STATUS -eq 0 ] && [ -d "$SCRATCH_CONVERT_DIR/HF" ]; then
+    mkdir -p "$STORE_HF_DIR"
+    cp -a "$SCRATCH_CONVERT_DIR/HF/." "$STORE_HF_DIR/"
+fi
 
 echo "END TIME: $(date)"

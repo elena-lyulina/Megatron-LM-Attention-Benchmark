@@ -50,7 +50,6 @@ OVERWRITE=${OVERWRITE:-}
 
 export PYTHONPATH=$MEGATRON_DIR:${PYTHONPATH:-}
 cd $MEGATRON_DIR
-source attn_bench/scripts/scratch_to_store.sh
 mkdir -p $SCRATCH_DIR
 
 ### COMPUTE (one dataset at a time, on scratch) ###
@@ -70,10 +69,7 @@ for DATASET_DIR in $DATASET_DIRS; do
         --seq-len $SEQ_LEN \
         --seed $SEED \
         --out-dir $SCRATCH_DIR
-    STATUS=$?
-
-    copy_scratch_to_store $STATUS "$SCRATCH_DIR" "$STORE_DIR"
 done
 
 echo "END TIME: $(date)"
-echo "Done. Results in $STORE_DIR/"
+echo "Done. Results in $SCRATCH_DIR/ -- sync to $STORE_DIR/ yourself when you want them there."

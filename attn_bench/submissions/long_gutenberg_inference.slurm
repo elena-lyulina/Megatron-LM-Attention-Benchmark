@@ -50,7 +50,6 @@ STORE_INDIVIDUAL=${STORE_INDIVIDUAL:-}
 
 ### MODEL -> EXP_NAME + non-restored flags (registry shared with every other eval script) ###
 source $MEGATRON_LM_DIR/attn_bench/scripts/llama_checkpoints.sh
-source $MEGATRON_LM_DIR/attn_bench/scripts/scratch_to_store.sh
 MODEL=${MODEL:-full-scf8}
 model_config "$MODEL"
 # All models (including sink/off-by-one) run the same way, full length by default -- see
@@ -64,32 +63,19 @@ PY=$MEGATRON_LM_DIR/attn_bench/evaluation/long_gutenberg_inference.py
 export PYTHONPATH=$MEGATRON_LM_DIR:${PYTHONPATH:-}
 export CUDA_DEVICE_MAX_CONNECTIONS=1
 
-### CHECK STORE (before doing anything expensive) ###
-# CONFIG must match config_name() in long_inference.py.
-CONFIG="${MAX_SAMPLES:-all}_samples_${MAX_LENGTH:-full}_tokens"
-ALL_DONE=1
-IFS=',' read -ra REPS <<< "$REPETITIONS"
-for R in "${REPS[@]}"; do
-    [ ! -f "$RESULTS_DIR/$CONFIG/rep_${R}.npz" ] && ALL_DONE=0 && break
-    if [ -n "$LOG_STATE_NORM" ] && [ ! -f "$RESULTS_DIR/$CONFIG/rep_${R}_state.npz" ]; then
-        ALL_DONE=0
-        break
-    fi
-    if [ -n "$STORE_INDIVIDUAL" ] && [ ! -f "$RESULTS_DIR/$CONFIG/rep_${R}_individual.jsonl" ]; then
-        ALL_DONE=0
-        break
-    fi
-done
-if [ -z "$OVERWRITE" ] && [ $ALL_DONE -eq 1 ]; then
-    echo "All requested buckets already present in $RESULTS_DIR/$CONFIG -- skipping."
-    exit 0
-fi
+# No pre-checkpoint-load "is this already done" check here -- long_gutenberg_inference_all.sh
+# already decided this job is worth submitting (its own --dry-run check, dual-checking
+# scratch+store). Once running, the .py's own pre-checkpoint-load check (same dual-checked
+# logic) self-skips if everything requested turns out already complete.
 
-# --experiment-path is the scratch working dir; copy_scratch_to_store handles the store side.
+# --experiment-path is the scratch working dir -- results stay there; sync to store manually
+# when you want it, scratch is only purged every ~2 weeks.
+# --persistent-storage-path lets the done-check see results scratch has lost to a purge.
 COMMON_ARGS="--container-env $CONTAINER_ENV \
     --ckpt-dir $MODEL_DIR/checkpoints \
     --tokenizer-path $TOKENIZER_PATH \
     --experiment-path $SCRATCH_RESULTS_DIR \
+    --persistent-storage-path $RESULTS_DIR \
     --data-folder $GUTENBERG_LONG_JSONL_DIR \
     --repetitions $REPETITIONS"
 [ -n "$MAX_LENGTH" ] && COMMON_ARGS="$COMMON_ARGS --max-length $MAX_LENGTH"
@@ -133,9 +119,5 @@ else
         torchrun --nproc_per_node=4 \
             $PY $COMMON_ARGS $EXTRA_MEGATRON"
 fi
-SRUN_STATUS=$?
-
-### Copy scratch results to store ###
-copy_scratch_to_store $SRUN_STATUS "$SCRATCH_RESULTS_DIR" "$RESULTS_DIR"
 
 echo "END TIME: $(date)"

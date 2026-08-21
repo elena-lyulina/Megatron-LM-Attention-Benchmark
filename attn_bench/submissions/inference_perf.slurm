@@ -23,7 +23,6 @@ CONTAINER_ENV=nemo_26.04_te2.15
 ### PATHS ###
 MEGATRON_LM_DIR=/iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark
 source $MEGATRON_LM_DIR/attn_bench/scripts/llama_checkpoints.sh
-source $MEGATRON_LM_DIR/attn_bench/scripts/scratch_to_store.sh
 
 ### MODEL -> EXP_NAME / MEGATRON_EXTRA / NEEDS_TRITON / NEEDS_UNFUSED_DECODE ###
 MODEL=${MODEL:-full-scf8}
@@ -92,12 +91,11 @@ fi
 RUN_STATUS=$?
 [ $RUN_STATUS -ne 0 ] && echo "srun exited $RUN_STATUS -- checking scratch for whatever finished anyway"
 
-### Copy whatever units actually finished, regardless of the srun exit status
-### (a walltime kill still leaves completed units on scratch worth keeping) --
-### force status 0 so copy_scratch_to_store always copies.
+### Check whatever units actually finished, regardless of the srun exit status
+### (a walltime kill still leaves completed units on scratch worth keeping).
 python3 "$CHECK_DONE_PY" --dir "$SCRATCH_DIR"
 ALL_DONE=$?
-copy_scratch_to_store 0 "$SCRATCH_DIR" "$STORE_DIR"
 [ $ALL_DONE -ne 0 ] && echo "Some units still incomplete -- resubmit to pick up where this left off"
+echo "Results in $SCRATCH_DIR -- sync to $STORE_DIR yourself when you want them there."
 
 echo "END TIME: $(date)"

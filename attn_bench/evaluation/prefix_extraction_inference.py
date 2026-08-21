@@ -1,14 +1,15 @@
 """
 Sparse Gutenberg inference for memorization measurement (Step 1): greedy-generate a suffix
 from a prefix at increasing repetition counts and score it. Backend-agnostic via
-InferenceBackend (inference_backend.py) -- Megatron or an already-converted HF checkpoint.
-GPU-dependent work only (generation, NLL, p_z -- Hayes et al. 2025); text metrics live in
-compute_memorization_metrics.py.
+InferenceBackend -- Megatron or an already-converted HF checkpoint. GPU-dependent work only
+(generation, NLL, p_z); text metrics live in compute_memorization_metrics.py.
 
 Writes one rank{N}.jsonl per GPU under offset_O_prefix_P_suffix_S/rep_R_greedy/. Reuses a
-sibling suffix' >= the request, or extends a smaller one via teacher-forced prefill instead
-of regenerating -- smaller suffix dirs are kept as a check that extending reproduces a
-fresh run's tokens.
+sibling suffix' >= the request, or extends a smaller one via teacher-forced prefill.
+
+--points takes one or more offset:prefix_length pairs sharing a single checkpoint load, e.g.
+--points 0:500 50:450 -- a single pair behaves exactly like the old --offset/--prefix-length.
+--suffix-length is a single value shared by every point in the run.
 
 Usage (via torchrun):
     torchrun --nproc_per_node=4 attn_bench/evaluation/prefix_extraction_inference.py \
@@ -18,16 +19,13 @@ Usage (via torchrun):
         --experiment-path $MEM_DIR \
         --data-folder $GUTENBERG_JSONL_DIR \
         --repetitions 0,1,2,4,8,16,32,64,128,256 \
-        --offset 0 \
-        --prefix-length 500 \
+        --points 0:500 \
         --suffix-length 500 \
         --batch-size 20
 
     # or, against an already HF-converted checkpoint (faster generate(), full-attention only):
-    torchrun --nproc_per_node=4 attn_bench/evaluation/prefix_extraction_inference.py \
-        --checkpoint-backend hf --hf-dir $HF_DIR \
-        --experiment-path $MEM_DIR --data-folder $GUTENBERG_JSONL_DIR \
-        --repetitions 0,1,2,4,8,16,32,64,128,256 --offset 0 --prefix-length 500 --suffix-length 500 --batch-size 20
+    # swap --checkpoint-backend megatron --ckpt-dir ... --tokenizer-path ... for
+    # --checkpoint-backend hf --hf-dir $HF_DIR, everything else unchanged.
 """
 
 from __future__ import annotations
@@ -36,6 +34,7 @@ import argparse
 import json
 import os
 import subprocess
+import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -119,32 +118,54 @@ def compute_nll_pz_stats(backend: InferenceBackend, true_full_sequence: torch.Te
     return ref_nll, gen_nll, p_z, ref_mean, ref_std, ref_ppl, gen_mean, gen_std, gen_ppl
 
 
+### MULTI-LOCATION LOOKUP ###
+
+def file_exists_in_locations(locations, file: str, require_nonempty: bool = False) -> bool:
+    """True if location/file exists under any of the given locations, checked in order
+    (None entries skipped). require_nonempty also checks size > 0, for markers a crashed
+    write can leave present but empty."""
+    for location in locations:
+        if location is None:
+            continue
+        p = location / file
+        if p.exists() and (not require_nonempty or p.stat().st_size > 0):
+            return True
+    return False
+
+
 ### CROSS-SUFFIX LOOKUP ###
 
-def find_suffix_dirs(experiment_path: Path, offset: int, prefix_length: int) -> list:
+def find_suffix_dirs(experiment_path: Path, offset: int, prefix_length: int,
+                     persistent_storage_path: Path | None = None) -> list:
     """All existing offset_O_prefix_P_suffix_* dirs for this (offset, prefix), as
-    (suffix_length, path) pairs."""
+    (suffix_length, path) pairs. experiment_path first, then persistent_storage_path as a
+    fallback for results experiment_path no longer has. On a tied suffix' between the two,
+    experiment_path wins (find_rep_source's min/max keeps the first-seen entry on ties)."""
     prefix_str = f"offset_{offset}_prefix_{prefix_length}_suffix_"
     found = []
-    for d in discover_all_offset_prefix_suffix_dirs(experiment_path):
-        if d.name.startswith(prefix_str):
-            try:
-                found.append((int(d.name[len(prefix_str):]), d))
-            except ValueError:
-                continue
+    for base in (experiment_path, persistent_storage_path):
+        if base is None:
+            continue
+        for d in discover_all_offset_prefix_suffix_dirs(base):
+            if d.name.startswith(prefix_str):
+                try:
+                    found.append((int(d.name[len(prefix_str):]), d))
+                except ValueError:
+                    continue
     return found
 
 
 def find_rep_source(experiment_path: Path, offset: int, prefix_length: int,
-                    suffix_length: int, rep: int):
-    """Among existing suffix dirs for (offset, prefix), find one whose rep_{rep}_greedy
-    is complete: the smallest suffix' >= suffix_length if any (nothing to compute), else
-    the largest suffix' < suffix_length (extend from here). None if nothing usable exists.
+                    suffix_length: int, rep: int, persistent_storage_path: Path | None = None):
+    """Among existing suffix dirs for (offset, prefix) -- experiment_path and, if given,
+    persistent_storage_path -- find one whose rep_{rep}_greedy is complete: the smallest suffix' >=
+    suffix_length if any (nothing to compute), else the largest suffix' < suffix_length
+    (extend from here). None if nothing usable exists.
 
     Returns (suffix', rep_dir_path) or None.
     """
     usable = []
-    for suffix_prime, d in find_suffix_dirs(experiment_path, offset, prefix_length):
+    for suffix_prime, d in find_suffix_dirs(experiment_path, offset, prefix_length, persistent_storage_path):
         rank0 = d / f"rep_{rep}_greedy" / "rank0.jsonl"
         if rank0.exists() and rank0.stat().st_size > 0:
             usable.append((suffix_prime, d / f"rep_{rep}_greedy"))
@@ -210,12 +231,10 @@ def run_bucket(backend: InferenceBackend, dataset, prefix_length, suffix_length,
             B = batch_tensor.shape[0]
 
             if needs_bos:
-                # offset > 0: excerpt starts mid-document, prepend BOS so model sees proper start
                 bos = torch.full((B, 1), BOS_TOKEN_ID, dtype=torch.long, device=device)
                 seq = torch.cat([bos, batch_tensor], dim=1)  # [B, 1+prefix+suffix]
                 prompt_end = 1 + prefix_length
             else:
-                # offset == 0: BOS is already token 0 of every excerpt
                 seq = batch_tensor   # [B, prefix+suffix]
                 prompt_end = prefix_length
 
@@ -306,10 +325,16 @@ def parse_args():
     parser.add_argument("--hf-dir", default=None,
                         help="Output of checkpoint_conversion/convert_megatron_to_hf.py (hf backend)")
     parser.add_argument("--experiment-path", required=True, help="Output root (MEM_DIR)")
+    parser.add_argument("--persistent-storage-path", default=None,
+                        help="Secondary mirror of --experiment-path, checked as a fallback "
+                             "wherever existing results are looked up -- e.g. if "
+                             "--experiment-path has since lost them. Never written to.")
     parser.add_argument("--data-folder", required=True, help="Directory of rep_*_token.jsonl files")
     parser.add_argument("--repetitions", required=True, help="Comma-separated, e.g. 0,1,2,4,8,16,32,64,128,256")
-    parser.add_argument("--offset", type=int, default=0)
-    parser.add_argument("--prefix-length", type=int, default=500)
+    parser.add_argument("--points", nargs="+", required=True,
+                        help="One or more offset:prefix_length pairs sharing one checkpoint "
+                             "load, e.g. --points 0:500 50:450 100:400. A single pair behaves "
+                             "exactly like the old single-point --offset/--prefix-length.")
     parser.add_argument("--suffix-length", type=int, default=500)
     parser.add_argument("--batch-size", type=int, default=20)
     parser.add_argument("--max-samples", type=int, default=None,
@@ -334,7 +359,19 @@ def parse_args():
                              "gating_scores_rank{N}.npz at the run-level inference dir. "
                              "Requires prefix+suffix <= 600 (maps are O((prefix+suffix)^2) per layer/head). "
                              "Always regenerates from scratch, ignoring any reusable smaller-suffix run.")
+    parser.add_argument("--dry-run", action="store_true",
+                        help="Report which points are already complete, write nothing, skip "
+                             "checkpoint load entirely.")
     return parser.parse_args()
+
+
+def parse_points(points: list) -> list:
+    """Parse ['offset:prefix_length', ...] CLI strings into [(offset, prefix_length), ...] int pairs."""
+    parsed = []
+    for p in points:
+        offset_str, prefix_str = p.split(":")
+        parsed.append((int(offset_str), int(prefix_str)))
+    return parsed
 
 
 def build_backend(args) -> InferenceBackend:
@@ -415,17 +452,23 @@ def write_run_metadata(output_path: Path, args, backend: InferenceBackend, world
 
 
 def _process_rep(backend: InferenceBackend, args, experiment_path: Path, output_path: Path,
-                 path: Path, rank: int, world_size: int, needs_bos: bool, capture):
+                 path: Path, rank: int, world_size: int, offset: int, prefix_length: int,
+                 needs_bos: bool, capture, persistent_storage_path: Path | None = None):
     """Runs (or skips, or extends) one repetition bucket. Returns None if skipped,
     else (extend_from_suffix_or_None, generation_time)."""
     rep = int(path.stem.split("_")[1])
     inference_dir = output_path / f"rep_{rep}_greedy"
 
-    rank0_file = inference_dir / "rank0.jsonl"
-    jsonl_done = rank0_file.exists() and rank0_file.stat().st_size > 0
+    persistent_inference_dir = (
+        persistent_storage_path / "inference" /
+        f"offset_{offset}_prefix_{prefix_length}_suffix_{args.suffix_length}" / f"rep_{rep}_greedy"
+        if persistent_storage_path is not None else None
+    )
+    jsonl_done = file_exists_in_locations([inference_dir, persistent_inference_dir],
+                                          "rank0.jsonl", require_nonempty=True)
 
     source = None if capture is not None else find_rep_source(
-        experiment_path, args.offset, args.prefix_length, args.suffix_length, rep,
+        experiment_path, offset, prefix_length, args.suffix_length, rep, persistent_storage_path,
     )
 
     if (jsonl_done or (source is not None and source[0] >= args.suffix_length)) and capture is None:
@@ -436,7 +479,7 @@ def _process_rep(backend: InferenceBackend, args, experiment_path: Path, output_
     if rank == 0:
         print(f"\nProcessing rep={rep}")
 
-    dataset = load_rep_bucket(path, args.offset, args.prefix_length, args.suffix_length,
+    dataset = load_rep_bucket(path, offset, prefix_length, args.suffix_length,
                                max_samples=args.max_samples)
 
     if rank == 0:
@@ -452,7 +495,7 @@ def _process_rep(backend: InferenceBackend, args, experiment_path: Path, output_
 
     generation_time = run_bucket(
         backend, dataset,
-        args.prefix_length, args.suffix_length,
+        prefix_length, args.suffix_length,
         args.batch_size, inference_dir,
         rank, world_size,
         needs_bos=needs_bos,
@@ -494,17 +537,18 @@ def _write_run_summary(output_path: Path, args, backend: InferenceBackend, world
     print(f"\nAll repetitions done. Results in: {output_path}")
 
 
-def run_inference(backend: InferenceBackend, args, rank: int, world_size: int) -> None:
+def run_inference(backend: InferenceBackend, args, rank: int, world_size: int,
+                  offset: int, prefix_length: int, persistent_storage_path: Path | None = None) -> None:
     experiment_path = Path(args.experiment_path)
     output_path = (
         experiment_path
         / "inference"
-        / f"offset_{args.offset}_prefix_{args.prefix_length}_suffix_{args.suffix_length}"
+        / f"offset_{offset}_prefix_{prefix_length}_suffix_{args.suffix_length}"
     )
     output_path.mkdir(parents=True, exist_ok=True)
 
     paths = find_rep_paths(Path(args.data_folder), {int(r) for r in args.repetitions.split(",")})
-    needs_bos = args.offset > 0  # offset==0: BOS already at token 0; offset>0: must prepend
+    needs_bos = offset > 0  # offset==0: BOS already at token 0; offset>0: must prepend
     capture = backend.setup_attention_capture(args, output_path, rank, needs_bos) if args.capture_attention else None
 
     did_generate = False
@@ -514,7 +558,8 @@ def run_inference(backend: InferenceBackend, args, rank: int, world_size: int) -
 
     for path in paths:
         result = _process_rep(backend, args, experiment_path, output_path, path,
-                              rank, world_size, needs_bos, capture)
+                              rank, world_size, offset, prefix_length, needs_bos, capture,
+                              persistent_storage_path)
         if result is None:
             continue
         extend_from_suffix, generation_time = result
@@ -530,18 +575,20 @@ def run_inference(backend: InferenceBackend, args, rank: int, world_size: int) -
                        did_generate, did_extend, extended_from_suffixes, total_generation_time)
 
 
-def results_already_complete(args, world_size: int) -> bool:
-    """True if every requested rep already has a suffix' >= args.suffix_length on disk (and,
-    when capturing, every rank's capture file too) -- nothing left to compute. Checked before
-    the expensive checkpoint load, from env (WORLD_SIZE) not torch.distributed, so it can run
-    before the process group is initialized -- no barrier to deadlock on an early exit."""
+def results_already_complete(args, world_size: int, offset: int, prefix_length: int,
+                             persistent_storage_path: Path | None = None) -> bool:
+    """True if every requested rep already has a suffix' >= args.suffix_length (checked on
+    args.experiment_path, then persistent_storage_path; capture mode also needs every
+    rank's capture file). Uses env WORLD_SIZE, not torch.distributed, so it can run -- and
+    exit early -- before the process group is initialized, with no barrier to deadlock on."""
     from attn_bench.evaluation.attn_capture import N_BUCKETS, bucket_label
 
     experiment_path = Path(args.experiment_path)
-    output_path = (
-        experiment_path
-        / "inference"
-        / f"offset_{args.offset}_prefix_{args.prefix_length}_suffix_{args.suffix_length}"
+    suffix_dir_name = f"offset_{offset}_prefix_{prefix_length}_suffix_{args.suffix_length}"
+    output_path = experiment_path / "inference" / suffix_dir_name
+    persistent_output_path = (
+        persistent_storage_path / "inference" / suffix_dir_name
+        if persistent_storage_path is not None else None
     )
 
     paths = find_rep_paths(Path(args.data_folder), {int(r) for r in args.repetitions.split(",")})
@@ -549,51 +596,91 @@ def results_already_complete(args, world_size: int) -> bool:
         return False  # no input data found — let the normal path no-op/report
 
     if args.capture_attention:
-        # Capture always regenerates every rep (the maps need the forward passes), so
-        # cross-suffix reuse never applies here -- fall back to the exact-match check.
+        # Capture always regenerates (see run_bucket) -- exact-match check only, no reuse.
         for path in paths:
             rep = int(path.stem.split("_")[1])
-            rank0_file = output_path / f"rep_{rep}_greedy" / "rank0.jsonl"
-            if not (rank0_file.exists() and rank0_file.stat().st_size > 0):
+            if not file_exists_in_locations([output_path, persistent_output_path],
+                                            f"rep_{rep}_greedy/rank0.jsonl", require_nonempty=True):
                 return False
         last_bucket = bucket_label(N_BUCKETS - 1)
         for r in range(world_size):
-            if not (output_path / f"attn_scores_rouge_l_{last_bucket}_rank{r}.npz").exists():
+            if not file_exists_in_locations([output_path, persistent_output_path],
+                                            f"attn_scores_rouge_l_{last_bucket}_rank{r}.npz"):
                 return False
         return True
 
     for path in paths:
         rep = int(path.stem.split("_")[1])
-        source = find_rep_source(experiment_path, args.offset, args.prefix_length, args.suffix_length, rep)
+        source = find_rep_source(experiment_path, offset, prefix_length, args.suffix_length, rep,
+                                 persistent_storage_path)
         if source is None or source[0] < args.suffix_length:
             return False
 
     return True
 
 
+def print_dry_run_report(points: list, status: dict) -> None:
+    """status: {(offset, prefix): bool}, True meaning already complete. Report to stderr,
+    space-separated offset:prefix needed-list to stdout -- same convention Stage 2 uses."""
+    done = [pt for pt in points if status[pt]]
+    needed = [pt for pt in points if not status[pt]]
+    print(f"{len(done)}/{len(points)} points already complete:", file=sys.stderr)
+    for offset, prefix_length in done:
+        print(f"  done:   offset={offset} prefix={prefix_length}", file=sys.stderr)
+    for offset, prefix_length in needed:
+        print(f"  needed: offset={offset} prefix={prefix_length}", file=sys.stderr)
+    print(" ".join(f"{o}:{p}" for o, p in needed))
+
+
 def main():
     args = parse_args()
+    points = parse_points(args.points)
 
-    if args.capture_attention and (args.prefix_length + args.suffix_length) > 600:
-        raise ValueError(
-            f"--capture-attention requires prefix+suffix <= 600 (full attention maps are "
-            f"O((prefix+suffix)^2) per layer/head); got "
-            f"{args.prefix_length}+{args.suffix_length}={args.prefix_length + args.suffix_length}."
-        )
+    if args.capture_attention and len(points) > 1:
+        # Capture always regenerates (see run_bucket), so multi-point sharing gains
+        # nothing here. TODO: fix capture's skip-check to look at existing output per rep,
+        # then this restriction can go away.
+        if int(os.environ.get("RANK", "0")) == 0:
+            print(
+                "--capture-attention doesn't support multi-point runs yet -- turning it off "
+                "for this run. Pass a single --points pair to actually capture attention maps."
+            )
+        args.capture_attention = False
+
+    if args.capture_attention:
+        offset, prefix_length = points[0]
+        if (prefix_length + args.suffix_length) > 600:
+            raise ValueError(
+                f"--capture-attention requires prefix+suffix <= 600 (full attention maps are "
+                f"O((prefix+suffix)^2) per layer/head); got "
+                f"{prefix_length}+{args.suffix_length}={prefix_length + args.suffix_length}."
+            )
 
     backend = build_backend(args)
     args.experiment_path = args.experiment_path.rstrip('/') + backend.experiment_path_suffix()
+    persistent_storage_path = None
+    if args.persistent_storage_path:
+        persistent_storage_path = Path(
+            args.persistent_storage_path.rstrip('/') + backend.experiment_path_suffix()
+        )
 
-    # Check results before loading the checkpoint: loading the model is the
-    # expensive part, so if everything is already on disk we skip it entirely.
-    # (run_inference still does a finer per-rep skip for the partially-done case.)
+    # Skip checkpoint load entirely if EVERY point is already done; run_inference does a
+    # finer per-rep skip for points only partially done.
     world_size = int(os.environ.get("WORLD_SIZE", "1"))
-    if results_already_complete(args, world_size):
+    status = {(o, p): results_already_complete(args, world_size, o, p, persistent_storage_path)
+             for o, p in points}
+
+    if args.dry_run:
+        print_dry_run_report(points, status)
+        return
+
+    remaining = [pt for pt in points if not status[pt]]
+    if not remaining:
         if int(os.environ.get("RANK", "0")) == 0:
             print(
-                f"All results already present for offset={args.offset} "
-                f"prefix={args.prefix_length} suffix={args.suffix_length} "
-                f"(capture={args.capture_attention}) — skipping checkpoint load."
+                f"All results already present for every requested point "
+                f"(suffix={args.suffix_length}, capture={args.capture_attention}) "
+                f"— skipping checkpoint load."
             )
         return
 
@@ -610,7 +697,10 @@ def main():
 
     rank = dist.get_rank()
     world_size = dist.get_world_size()
-    run_inference(backend, args, rank, world_size)
+    for offset, prefix_length in remaining:
+        if rank == 0:
+            print(f"\n=== POINT offset={offset} prefix={prefix_length} suffix={args.suffix_length} ===")
+        run_inference(backend, args, rank, world_size, offset, prefix_length, persistent_storage_path)
 
 
 if __name__ == "__main__":
