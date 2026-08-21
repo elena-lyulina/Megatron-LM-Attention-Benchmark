@@ -182,14 +182,22 @@ for MODEL in "${MODELS[@]}"; do
     fi
     POINTS_CSV=$(IFS=,; echo "${GROUP_POINTS[*]}")
 
-    EXPORTS="MODEL=$MODEL,POINTS=$POINTS_CSV,SUFFIX_LENGTH=$SUFFIX_LENGTH,CHECKPOINT_BACKEND=$BACKEND"
+    # POINTS (and REPETITIONS, if overridden) contain commas -- sbatch --export=ALL,"KEY=val"
+    # parses its argument as a comma-separated list of KEY=VALUE pairs itself, so a
+    # comma-containing value gets silently shredded at the first comma (same issue
+    # long_gutenberg_inference_all.sh already documents for REPETITIONS). Export them as
+    # real shell variables instead and let --export=ALL propagate them directly, bypassing
+    # that parsing entirely; only comma-free values go into the KEY=VALUE string below.
+    export POINTS="$POINTS_CSV"
+    [[ -n "$REPETITIONS" ]] && export REPETITIONS
+
+    EXPORTS="MODEL=$MODEL,SUFFIX_LENGTH=$SUFFIX_LENGTH,CHECKPOINT_BACKEND=$BACKEND"
     [[ $FORCE_METRICS -eq 1 ]] && EXPORTS="$EXPORTS,FORCE_METRICS=1"
-    [[ -n "$REPETITIONS" ]] && EXPORTS="$EXPORTS,REPETITIONS=$REPETITIONS"
     TIME_ARG=()
     [[ -n "$JOB_TIME" ]] && TIME_ARG=(--time="$JOB_TIME")
 
     if [[ $DRY_RUN -eq 1 ]]; then
-        echo "[dry-run] sbatch ${TIME_ARG[*]} --export=ALL,\"$EXPORTS\" $SCRIPT_DIR/measure_mem.slurm"
+        echo "[dry-run] POINTS=$POINTS_CSV${REPETITIONS:+ REPETITIONS=$REPETITIONS} sbatch ${TIME_ARG[*]} --export=ALL,\"$EXPORTS\" $SCRIPT_DIR/measure_mem.slurm"
         SUBMITTED_COUNT=$((SUBMITTED_COUNT + ${#GROUP_POINTS[@]}))
         JOBS_SUBMITTED=$((JOBS_SUBMITTED + 1))
         continue

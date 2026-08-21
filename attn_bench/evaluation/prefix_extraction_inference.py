@@ -478,7 +478,8 @@ def _process_rep(backend: InferenceBackend, args, experiment_path: Path, output_
     )
 
     if rank == 0:
-        print(f"  Done rep={rep} (generation: {generation_time:.1f}s)")
+        print(f"  Done rep={rep} offset={offset} prefix={prefix_length} suffix={args.suffix_length} "
+              f"(generation: {generation_time:.1f}s)")
     torch.cuda.empty_cache()
 
     return extend_from_suffix, generation_time
