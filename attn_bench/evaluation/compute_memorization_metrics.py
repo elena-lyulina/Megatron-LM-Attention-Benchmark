@@ -2,13 +2,11 @@
 Step 2: Rouge-L/lcs_norm/TTR/token_acc/divergence_point/p_z per suffix boundary, computed
 purely from Step 1's jsonl (CPU-only, no model).
 
-For one --exp-name, processes every --points pair at --suffix-length: only reps that reach
---suffix-length count, and a point with none of those errors (real run) or is reported as
-needed (--dry-run). Writes one PDM-Results-shaped .pkl per suffix boundary <=
---suffix-length under exp_dir/metrics/, named offset_O_prefix_P_suffix_S_policy.pkl.
-Skip-if-done compares an existing pkl's reps against the reps reaching --suffix-length
-(scratch, then --persistent-storage-path), so a pkl built before REPETITIONS grew gets
-recomputed.
+For one --exp-name, processes every --points pair at --suffix-length, writing one
+PDM-Results-shaped .pkl per suffix boundary <= --suffix-length under exp_dir/metrics/.
+Skip-if-done compares an existing pkl's reps against what Stage 1 has on disk (scratch,
+then --persistent-storage-path); --repetitions widens that to also catch reps that were
+requested but never generated at Stage 1 at all (see process_point).
 
 Needs Phase A (prefix_extraction_inference_backfill.py) for NLL/p_z on older results; text
 metrics work on un-backfilled records too.
@@ -20,9 +18,7 @@ Usage:
         --points 0:500 --suffix-length 500
 
 --dry-run: reports missing reps per suffix boundary, no writes, prints space-separated
-needed offset:prefix pairs to stdout (e.g. measure_mem_all.sh's submit-time check). Needs
-a Python new enough for PDM (verbatim_eval) and numpy/numba -- measure_mem_all.sh points
-this at a personal conda env instead of the login node's old system python3.
+needed offset:prefix pairs to stdout (e.g. measure_mem_all.sh's submit-time check).
 """
 
 from __future__ import annotations
@@ -48,11 +44,8 @@ SUFFIX_BOUNDARIES = [25, 50, 75, 100, 150, 250, 500, 750, 1000, 1500, 2000, 3000
 
 
 ### lcs_norm -- local copy of PDM's _find_lcs, keeping the array instead of a running max ###
-# (see PDM/src/verbatim_eval/LCS.py -- its public function discards the array, and a
-# mid-fill running-max snapshot is wrong here since the fill order touches columns beyond
-# any given suffix boundary before that row finishes. Filling once and reading
-# dp[:k+1,:k+1].max() per boundary afterward is correct and ~2.2x cheaper than refilling
-# per boundary at this boundary list's scale.)
+# (PDM/src/verbatim_eval/LCS.py's public function discards it; filling once and reading
+# dp[:k+1,:k+1].max() per boundary is correct and ~2.2x cheaper than refilling per boundary.)
 @jit(nopython=True)
 def _lcs_dp_matrix(s1, s2):
     m, n = len(s1), len(s2)
@@ -166,9 +159,7 @@ def compute_rep_metrics(records: list, suffix_boundaries: list) -> dict:
 def find_inference_reps(expr_dir: Path, offset: int, prefix_length: int,
                         persistent_expr_dir: Path | None = None) -> dict:
     """{rep: (max_suffix_available, rep_dir_path)} across every suffix dir for
-    (offset, prefix_length) -- a rep can have data in more than one suffix dir (e.g. after
-    an extend), only the largest one matters for how far it reaches.
-    persistent_expr_dir is checked as a fallback for reps expr_dir no longer has."""
+    (offset, prefix_length); persistent_expr_dir is a fallback for reps expr_dir lacks."""
     result = {}
     for suffix_prime, d in find_suffix_dirs(expr_dir, offset, prefix_length, persistent_expr_dir):
         for rep_dir in d.iterdir():
@@ -193,9 +184,8 @@ def load_inference_rep_records(rep_dir: Path) -> list:
 ### METADATA ###
 
 def append_metrics_metadata(exp_dir: Path, suffix_boundary: int, offset: int, prefix_length: int, reps: list) -> None:
-    """One file per call under metrics_metadata/, instead of one shared growing list --
-    separate (offset, prefix) jobs for the same experiment run concurrently and would
-    otherwise race on a single read-modify-write file."""
+    """One file per call under metrics_metadata/ -- avoids a race between concurrent jobs
+    on a single shared read-modify-write file."""
     meta_dir = exp_dir / "metrics_metadata"
     meta_dir.mkdir(parents=True, exist_ok=True)
     timestamp = datetime.now(timezone.utc)
@@ -219,18 +209,15 @@ def build_pkl_path(storage_path: Path, exp_name: str, offset: int, prefix_length
     return storage_path / exp_name / "metrics" / f"offset_{offset}_prefix_{prefix_length}_suffix_{suffix_boundary}_{policy}{suffix_tag}.pkl"
 
 
-def find_missing_metrics_reps(pkl_paths: list, inference_reps_reaching_suffix_length: set, exp_name: str) -> set:
-    """inference_reps_reaching_suffix_length not yet recorded in the metrics pkl -- empty
-    means this suffix boundary is already covered. pkl_paths is checked in order (scratch
-    first, then persistent store); the first path that exists is the one read. A pkl built
-    from a smaller rep set (e.g. before REPETITIONS grew) is correctly reported as still
-    missing the new reps."""
+def find_missing_metrics_reps(pkl_paths: list, target_reps: set, exp_name: str) -> set:
+    """target_reps not yet recorded in the metrics pkl. pkl_paths is checked in order
+    (scratch first, then persistent store); the first existing one is read."""
     metrics_reps = set()
     existing_path = next((p for p in pkl_paths if p.exists()), None)
     if existing_path is not None:
         with open(existing_path, "rb") as f:
             metrics_reps = set(pickle.load(f).get(exp_name, {}).keys())
-    return inference_reps_reaching_suffix_length - metrics_reps
+    return target_reps - metrics_reps
 
 
 def print_dry_run_summary(exp_name: str, suffix_length: int, point_results: dict) -> None:
@@ -260,10 +247,12 @@ def print_dry_run_summary(exp_name: str, suffix_length: int, point_results: dict
 def find_missing_metrics_reps_by_suffix_boundary(
         exp_name: str, offset: int, prefix_length: int,
         inference_reps_reaching_suffix_length: set, target_suffix_boundaries: list,
-        save_path: Path, persistent_save_path: Path | None, policy: str, tag: str | None) -> dict:
-    """Check phase only: for each boundary in target_suffix_boundaries, which of
-    inference_reps_reaching_suffix_length are missing from the metrics pkl (scratch, then
-    persistent_save_path)."""
+        save_path: Path, persistent_save_path: Path | None, policy: str, tag: str | None,
+        requested_reps: set | None = None) -> dict:
+    """Check phase only: per boundary, which reps (union of what's on disk and
+    requested_reps) are missing from the metrics pkl."""
+    target_reps = inference_reps_reaching_suffix_length | (requested_reps or set())
+
     def pkl_candidates(suffix_boundary: int) -> list:
         paths = [build_pkl_path(save_path, exp_name, offset, prefix_length, suffix_boundary, policy, tag)]
         if persistent_save_path is not None:
@@ -272,8 +261,7 @@ def find_missing_metrics_reps_by_suffix_boundary(
         return paths
 
     return {
-        suffix_boundary: find_missing_metrics_reps(
-            pkl_candidates(suffix_boundary), inference_reps_reaching_suffix_length, exp_name)
+        suffix_boundary: find_missing_metrics_reps(pkl_candidates(suffix_boundary), target_reps, exp_name)
         for suffix_boundary in target_suffix_boundaries
     }
 
@@ -281,11 +269,9 @@ def find_missing_metrics_reps_by_suffix_boundary(
 def write_suffix_boundary_pkls(exp_name: str, offset: int, prefix_length: int, inference_reps: dict,
                                inference_reps_reaching_suffix_length: set, suffix_boundaries_to_compute: list,
                                save_path: Path, policy: str, tag: str | None) -> None:
-    """Compute+write phase only: one DP fill per qualifying rep, across every suffix
-    boundary being computed -- not one fill per boundary. Recomputing a boundary
-    regenerates the whole file with the full rep set (not a merge) -- Step 2 is cheap
-    enough (CPU-only, no forward pass) that this isn't a real cost concern even across a
-    large sweep."""
+    """Compute+write phase only: one DP fill per rep across every boundary being computed.
+    Recomputing a boundary regenerates the whole file (not a merge) -- cheap enough (CPU-only)
+    not to matter."""
     per_rep_metrics = {}
     for rep in sorted(inference_reps_reaching_suffix_length):
         _, rep_dir = inference_reps[rep]
@@ -315,18 +301,17 @@ def write_suffix_boundary_pkls(exp_name: str, offset: int, prefix_length: int, i
 def process_point(exp_name: str, offset: int, prefix_length: int, suffix_length: int,
                   inference_reps: dict, suffix_boundaries: list, save_path: Path,
                   policy: str = "greedy", tag: str | None = None, force: bool = False,
-                  persistent_save_path: Path | None = None, dry_run: bool = False) -> dict | None:
-    """One point's worth of work: computes inference_reps_reaching_suffix_length once (not
-    per boundary), then only suffix boundaries <= suffix_length -- never beyond, even if
-    some rep reaches further.
+                  persistent_save_path: Path | None = None, dry_run: bool = False,
+                  requested_reps: set | None = None) -> dict | None:
+    """One point's worth of work, for suffix boundaries <= suffix_length.
 
-    If none reach suffix_length: raises ValueError on a real run (Stage 1 just ran on this
-    same point, so that's a real bug), or returns None on --dry-run (not ready yet --
-    distinct from an empty missing-set, which means "evaluated, nothing missing").
+    If no rep reaches suffix_length: raises on a real run, returns None on --dry-run.
+    requested_reps (--repetitions): on --dry-run, widens the missing-reps check to reps not
+    yet on disk at all, so a point needing fresh Stage 1 generation is reported as needed;
+    on a real run, raises if a requested rep still isn't available (Stage 1 should have
+    produced it in the same job).
 
-    Otherwise returns {suffix_boundary: missing_metrics_reps}, dry-run or real -- one
-    source of truth for both the report and the recompute decision.
-    """
+    Otherwise returns {suffix_boundary: missing_metrics_reps}."""
     inference_reps_reaching_suffix_length = {
         rep for rep, (max_suffix, _) in inference_reps.items() if max_suffix >= suffix_length
     }
@@ -340,10 +325,21 @@ def process_point(exp_name: str, offset: int, prefix_length: int, suffix_length:
             )
         return None
 
+    if not dry_run and requested_reps:
+        missing_requested = requested_reps - inference_reps_reaching_suffix_length
+        if missing_requested:
+            raise ValueError(
+                f"{exp_name} offset={offset} prefix={prefix_length}: requested rep(s) "
+                f"{sorted(missing_requested)} don't reach suffix_length={suffix_length} "
+                f"(reps available: {sorted(inference_reps_reaching_suffix_length)}) -- Stage 1 "
+                "should have generated them in this same job; check its logs."
+            )
+
     target_suffix_boundaries = sorted({b for b in suffix_boundaries if b <= suffix_length} | {suffix_length})
     missing_metrics_reps_by_suffix_boundary = find_missing_metrics_reps_by_suffix_boundary(
         exp_name, offset, prefix_length, inference_reps_reaching_suffix_length,
-        target_suffix_boundaries, save_path, persistent_save_path, policy, tag)
+        target_suffix_boundaries, save_path, persistent_save_path, policy, tag,
+        requested_reps=requested_reps)
 
     if dry_run:
         return missing_metrics_reps_by_suffix_boundary
@@ -360,15 +356,18 @@ def process_point(exp_name: str, offset: int, prefix_length: int, suffix_length:
     return missing_metrics_reps_by_suffix_boundary
 
 
-def process_expr(exp_name: str, base_path: Path, save_path: Path, suffix_boundaries: list, args) -> list:
-    """Runs every point in args.points for one experiment. Returns the (offset, prefix)
-    points still needing work at args.suffix_length -- only meaningful when args.dry_run;
-    a real run's return value is unused."""
+def process_expr(exp_name: str, base_path: Path, save_path: Path, suffix_boundaries: list, args) -> tuple:
+    """Runs every point in args.points for one experiment. Returns (needed_points,
+    missing_point_reps) -- the (offset, prefix) points still needing work at
+    args.suffix_length, and the total count of missing (offset, prefix, rep) units across
+    them -- only meaningful when args.dry_run; a real run's return value is unused."""
     expr_dir = base_path / exp_name
     persistent_expr_dir = Path(args.persistent_storage_path) / exp_name if args.persistent_storage_path else None
     persistent_save_path = Path(args.persistent_storage_path) if args.persistent_storage_path else None
+    requested_reps = {int(r) for r in args.repetitions.split(",")} if args.repetitions else None
 
     needed_points = []
+    missing_point_reps = 0
     point_results = {}
     for offset, prefix_length in sorted(set(parse_points(args.points))):
         inference_reps = find_inference_reps(expr_dir, offset, prefix_length, persistent_expr_dir)
@@ -378,28 +377,30 @@ def process_expr(exp_name: str, base_path: Path, save_path: Path, suffix_boundar
         missing_metrics_reps_by_suffix_boundary = process_point(
             exp_name, offset, prefix_length, args.suffix_length, inference_reps, suffix_boundaries,
             save_path, tag=args.tag, force=args.force, persistent_save_path=persistent_save_path,
-            dry_run=args.dry_run)
+            dry_run=args.dry_run, requested_reps=requested_reps)
         if args.dry_run:
             point_results[(offset, prefix_length)] = missing_metrics_reps_by_suffix_boundary
-            # None = not even evaluable yet (needed); a dict = check the requested boundary.
-            needed = (missing_metrics_reps_by_suffix_boundary is None
-                     or missing_metrics_reps_by_suffix_boundary.get(args.suffix_length))
-            if needed:
+            if missing_metrics_reps_by_suffix_boundary is None:
+                # Not evaluable yet (no inference at all) -- every requested rep counts as missing.
                 needed_points.append((offset, prefix_length))
+                missing_point_reps += len(requested_reps) if requested_reps else 1
+            else:
+                missing = missing_metrics_reps_by_suffix_boundary.get(args.suffix_length)
+                if missing:
+                    needed_points.append((offset, prefix_length))
+                    missing_point_reps += len(missing)
 
     if args.dry_run:
         print_dry_run_summary(exp_name, args.suffix_length, point_results)
 
-    return needed_points
+    return needed_points, missing_point_reps
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Compute Rouge-L/lcs_norm/TTR/token_acc/divergence_point/p_z per suffix boundary")
     parser.add_argument("--exp-name", type=str, required=True,
-                        help="Experiment identifier, e.g. llama3-1b-full-attn-scf8-fineweb40B-gutenberg3B "
-                             "(matches EXP_NAME/PDM_EXP_NAME in the .slurm scripts) -- always one "
-                             "model/variant per invocation, never a list.")
+                        help="Experiment identifier, matching EXP_NAME/PDM_EXP_NAME in the .slurm scripts.")
     parser.add_argument("--base-path", type=str, required=True, help="e.g. $MEM_BASE/SparseGutenberg")
     parser.add_argument("--save-path", type=str, required=True, help="Where to write per-suffix .pkl files")
     parser.add_argument("--persistent-storage-path", type=str, default=None,
@@ -408,9 +409,8 @@ if __name__ == "__main__":
     parser.add_argument("--points", nargs="+", required=True,
                         help="offset:prefix pairs to process, matching Step 1's --points format")
     parser.add_argument("--suffix-length", type=int, required=True,
-                        help="Target suffix length -- every point's reps must reach at least this "
-                             "far (error otherwise). Computes this suffix boundary plus every "
-                             "intermediate one, never beyond it even if a rep's data reaches further.")
+                        help="Target suffix length -- computes this boundary plus every intermediate "
+                             "one, never beyond it.")
     parser.add_argument("--tag", type=str, default=None,
                         help="Appended after policy in the pkl filename (e.g. --tag opt -> "
                              "..._greedy_opt.pkl), so a validation run never overwrites the "
@@ -418,13 +418,18 @@ if __name__ == "__main__":
     parser.add_argument("--force", action="store_true", help="Recompute even if the pkl already exists")
     parser.add_argument("--dry-run", action="store_true",
                         help="Report what's missing, write nothing, no GPU/model involved.")
+    parser.add_argument("--repetitions", type=str, default=None,
+                        help="Comma-separated reps a point is expected to cover, matching Stage 1's "
+                             "--repetitions. See process_point for --dry-run vs. real-run behavior.")
     args = parser.parse_args()
 
-    needed_points = sorted(set(process_expr(args.exp_name, Path(args.base_path), Path(args.save_path),
-                                            SUFFIX_BOUNDARIES, args)))
+    needed_points, missing_point_reps = process_expr(args.exp_name, Path(args.base_path),
+                                                     Path(args.save_path), SUFFIX_BOUNDARIES, args)
+    needed_points = sorted(set(needed_points))
 
     if args.dry_run:
         if not needed_points:
             print(f"All requested points already complete at suffix_length={args.suffix_length} "
                   "-- nothing will run.", file=sys.stderr)
         print(" ".join(f"{o}:{p}" for o, p in needed_points))
+        print(missing_point_reps)

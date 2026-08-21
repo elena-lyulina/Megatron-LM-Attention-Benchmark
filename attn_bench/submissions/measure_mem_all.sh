@@ -161,9 +161,14 @@ for MODEL in "${MODELS[@]}"; do
 
     # Points still needing work for this model -- calls Stage 2's own --dry-run (dual-checks
     # scratch then store, rep-aware -- catches a pkl left stale by a REPETITIONS increase,
-    # not just "file exists") instead of a separate coarse checker.
+    # not just "file exists") instead of a separate coarse checker. --repetitions widens
+    # that check to also catch reps that aren't on disk at Stage 1 at all yet, so a point
+    # needing purely fresh generation (not just a metrics recompute) is reported as needed too.
+    # MISSING_POINT_REPS counts (offset, prefix, rep) units, not distinct points -- a point
+    # missing 2 of 10 requested reps contributes 2, not 1.
     if [[ $FORCE -eq 1 || $FORCE_METRICS -eq 1 ]]; then
         GROUP_POINTS=("${PAIRS[@]}")
+        MISSING_POINT_REPS=$((${#PAIRS[@]} * REP_COUNT))
     else
         NEEDED=$("$PYTHON_BIN" "$SCRIPT_DIR/../evaluation/compute_memorization_metrics.py" \
             --dry-run \
@@ -171,10 +176,12 @@ for MODEL in "${MODELS[@]}"; do
             --base-path "$SCRATCH_MEM_BASE/SparseGutenberg" \
             --save-path "$SCRATCH_MEM_BASE/SparseGutenberg" \
             --persistent-storage-path "$STORE_MEM_BASE/SparseGutenberg" \
-            --points "${PAIRS[@]}" --suffix-length "$SUFFIX_LENGTH")
-        IFS=' ' read -r -a GROUP_POINTS <<< "$NEEDED"
+            --points "${PAIRS[@]}" --suffix-length "$SUFFIX_LENGTH" \
+            --repetitions "${REPETITIONS:-0,1,2,4,8,16,32,64,128,256}")
+        IFS=' ' read -r -a GROUP_POINTS <<< "${NEEDED%%$'\n'*}"
+        MISSING_POINT_REPS="${NEEDED##*$'\n'}"
     fi
-    SKIPPED_COUNT=$((SKIPPED_COUNT + ${#PAIRS[@]} - ${#GROUP_POINTS[@]}))
+    SKIPPED_COUNT=$((SKIPPED_COUNT + ${#PAIRS[@]} * REP_COUNT - MISSING_POINT_REPS))
 
     if [[ ${#GROUP_POINTS[@]} -eq 0 ]]; then
         echo "All ${#PAIRS[@]} point(s) already complete for (model=$MODEL suffix=$SUFFIX_LENGTH reps=$REP_COUNT) -- nothing to submit."
@@ -198,18 +205,18 @@ for MODEL in "${MODELS[@]}"; do
 
     if [[ $DRY_RUN -eq 1 ]]; then
         echo "[dry-run] POINTS=$POINTS_CSV${REPETITIONS:+ REPETITIONS=$REPETITIONS} sbatch ${TIME_ARG[*]} --export=ALL,\"$EXPORTS\" $SCRIPT_DIR/measure_mem.slurm"
-        SUBMITTED_COUNT=$((SUBMITTED_COUNT + ${#GROUP_POINTS[@]}))
+        SUBMITTED_COUNT=$((SUBMITTED_COUNT + MISSING_POINT_REPS))
         JOBS_SUBMITTED=$((JOBS_SUBMITTED + 1))
         continue
     fi
 
-    echo "Submitting measure_mem.slurm (model=$MODEL exp=$EXP_NAME backend=$BACKEND) points=$POINTS_CSV suffix_length=$SUFFIX_LENGTH (${#GROUP_POINTS[@]} points x $REP_COUNT repetitions, 1 job)"
+    echo "Submitting measure_mem.slurm (model=$MODEL exp=$EXP_NAME backend=$BACKEND) points=$POINTS_CSV suffix_length=$SUFFIX_LENGTH (${#GROUP_POINTS[@]} distinct points, $MISSING_POINT_REPS point-reps missing, 1 job)"
     # ALL = propagate the full submission env (USER, PATH, …) so the scripts'
     # $USER-based paths resolve, then layer our per-job vars on top.
     sbatch "${TIME_ARG[@]}" --export=ALL,"$EXPORTS" "$SCRIPT_DIR/measure_mem.slurm"
-    SUBMITTED_COUNT=$((SUBMITTED_COUNT + ${#GROUP_POINTS[@]}))
+    SUBMITTED_COUNT=$((SUBMITTED_COUNT + MISSING_POINT_REPS))
     JOBS_SUBMITTED=$((JOBS_SUBMITTED + 1))
 done
 
-echo "Skipped: $SKIPPED_COUNT"
-echo "Submitted: $SUBMITTED_COUNT points x $REP_COUNT repetitions across $JOBS_SUBMITTED job(s)"
+echo "Skipped: $SKIPPED_COUNT point-reps"
+echo "Submitted: $SUBMITTED_COUNT point-reps across $JOBS_SUBMITTED job(s)"

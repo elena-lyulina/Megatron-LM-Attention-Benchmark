@@ -182,6 +182,7 @@ if [ $INFERENCE_STATUS -eq 0 ]; then
             --persistent-storage-path $STORE_MEM_BASE/SparseGutenberg \
             --points ${POINTS_ARR[*]} \
             --suffix-length $SUFFIX_LENGTH \
+            --repetitions $REPETITIONS \
             $FORCE_ARG"
     METRIC_STATUS=$?
 else
