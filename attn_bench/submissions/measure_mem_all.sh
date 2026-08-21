@@ -23,8 +23,6 @@ source "$SCRIPT_DIR/../scripts/llama_checkpoints.sh"
 # --dry-run) -- its presence means both inference and metric aggregation finished.
 STORE_MEM_BASE=/users/$USER/store/mem-results
 SCRATCH_MEM_BASE=/iopsstor/scratch/cscs/$USER/mem-results
-GUTENBERG_JSONL_DIR=/users/$USER/store/datasets/tokenized/gutenberg_rep_jsonl
-TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b
 
 OFFSETS=()
 PREFIXES=()
@@ -173,27 +171,6 @@ for SUFFIX in "${SUFFIXES[@]}"; do
             continue
         fi
         POINTS_CSV=$(IFS=,; echo "${GROUP_POINTS[*]}")
-
-        # Logging only -- Stage 1's own --dry-run, purely to show how many of the still-
-        # needed points already have inference done (only Stage 2/metrics will actually run
-        # for those) vs need fresh generation. Never affects the submit decision above.
-        if [[ "$BACKEND" = "hf" ]]; then
-            CKPT_ARGS=(--hf-dir "/users/$USER/store/hf-checkpoints/$EXP_NAME")
-        else
-            CKPT_ARGS=(--ckpt-dir "/users/$USER/store/pretrain-results/$CKPT_NAME/checkpoints"
-                      --tokenizer-path "$TOKENIZER_PATH")
-        fi
-        INFERENCE_NEEDED=$(python3 "$SCRIPT_DIR/../evaluation/prefix_extraction_inference.py" \
-            --dry-run \
-            --checkpoint-backend "$BACKEND" \
-            "${CKPT_ARGS[@]}" \
-            --experiment-path "$SCRATCH_MEM_BASE/SparseGutenberg/$EXP_NAME" \
-            --persistent-storage-path "$STORE_MEM_BASE/SparseGutenberg/$EXP_NAME" \
-            --data-folder "$GUTENBERG_JSONL_DIR" \
-            --repetitions "${REPETITIONS:-0,1,2,4,8,16,32,64,128,256}" \
-            --points "${GROUP_POINTS[@]}" --suffix-length "$SUFFIX")
-        IFS=' ' read -r -a INFERENCE_NEEDED_ARR <<< "$INFERENCE_NEEDED"
-        echo "  of ${#GROUP_POINTS[@]} needed point(s): $((${#GROUP_POINTS[@]} - ${#INFERENCE_NEEDED_ARR[@]})) already have inference done (metrics-only), ${#INFERENCE_NEEDED_ARR[@]} need fresh generation"
 
         EXPORTS="MODEL=$MODEL,POINTS=$POINTS_CSV,SUFFIX_LENGTH=$SUFFIX,CHECKPOINT_BACKEND=$BACKEND"
         [[ $FORCE_METRICS -eq 1 ]] && EXPORTS="$EXPORTS,FORCE_METRICS=1"

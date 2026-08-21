@@ -21,9 +21,11 @@ Usage:
 
 --dry-run: reports missing reps per suffix boundary, no writes, prints space-separated
 needed offset:prefix pairs to stdout (e.g. measure_mem_all.sh's submit-time check).
-"""
 
-from __future__ import annotations
+--dry-run only needs the stdlib -- numpy/numba/PDM (verbatim_eval) are imported lazily,
+only by the real-compute path -- so it can run on the login node's bare, old system
+python3 (no venv, no container) without those packages installed.
+"""
 
 import argparse
 import json
@@ -33,17 +35,12 @@ import sys
 from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
-
-import numpy as np
-from numba import jit
-from verbatim_eval.controlled_expr import Results
-from verbatim_eval.my_rouge import _compute_dp_matrix_2d, compute_rouge_l_2d
+from typing import Optional
 
 from attn_bench.evaluation.prefix_extraction_inference import (
     find_suffix_dirs, parse_points)
 
 SUFFIX_BOUNDARIES = [25, 50, 75, 100, 150, 250, 500, 750, 1000, 1500, 2000, 3000, 4000, 5000, 7000]
-
 
 ### lcs_norm -- local copy of PDM's _find_lcs, keeping the array instead of a running max ###
 # (see PDM/src/verbatim_eval/LCS.py -- its public function discards the array, and a
@@ -51,15 +48,31 @@ SUFFIX_BOUNDARIES = [25, 50, 75, 100, 150, 250, 500, 750, 1000, 1500, 2000, 3000
 # any given suffix boundary before that row finishes. Filling once and reading
 # dp[:k+1,:k+1].max() per boundary afterward is correct and ~2.2x cheaper than refilling
 # per boundary at this boundary list's scale.)
-@jit(nopython=True)
+#
+# Lazy/cached: numba's @jit decorator normally runs at function-definition time (i.e. at
+# import time) -- wrapping it in a function built and cached on first real call keeps
+# numpy/numba out of the module's top-level imports entirely, matching every other
+# lazily-imported real-compute dependency in this file.
+_lcs_dp_matrix_impl = None
+
+
 def _lcs_dp_matrix(s1, s2):
-    m, n = len(s1), len(s2)
-    dp = np.zeros((m + 1, n + 1), dtype=np.int32)
-    for i in range(1, m + 1):
-        for j in range(1, n + 1):
-            if s1[i - 1] == s2[j - 1]:
-                dp[i, j] = dp[i - 1, j - 1] + 1
-    return dp
+    global _lcs_dp_matrix_impl
+    if _lcs_dp_matrix_impl is None:
+        import numpy as np
+        from numba import jit
+
+        @jit(nopython=True)
+        def _impl(s1, s2):
+            m, n = len(s1), len(s2)
+            dp = np.zeros((m + 1, n + 1), dtype=np.int32)
+            for i in range(1, m + 1):
+                for j in range(1, n + 1):
+                    if s1[i - 1] == s2[j - 1]:
+                        dp[i, j] = dp[i - 1, j - 1] + 1
+            return dp
+        _lcs_dp_matrix_impl = _impl
+    return _lcs_dp_matrix_impl(s1, s2)
 
 
 ### (n, p)-discoverable extraction, derived from p_z on demand (Hayes et al. 2025 Eq. 2) ###
@@ -82,6 +95,10 @@ def text_metrics_at_suffix_boundaries(true_suffix: list, gen_suffix: list, suffi
     """{suffix_boundary: {Rouge-L, lcs_norm, TTR_ref, TTR_gen, token_acc, divergence_point}}
     -- one DP fill per metric regardless of how many suffix boundaries are requested.
     """
+    import numpy as np
+    from verbatim_eval.my_rouge import (_compute_dp_matrix_2d,
+                                        compute_rouge_l_2d)
+
     usable = [b for b in suffix_boundaries if b <= len(true_suffix) and b <= len(gen_suffix)]
     if not usable:
         return {}
@@ -112,6 +129,8 @@ def text_metrics_at_suffix_boundaries(true_suffix: list, gen_suffix: list, suffi
 def nll_p_z_at_suffix_boundaries(ref_nll: list, gen_nll: list, p_z_logprob: list, suffix_boundaries: list) -> dict:
     """{suffix_boundary: {ref_nll_mean, gen_nll_mean, p_z}} from Step 1's stored
     per-position arrays."""
+    import numpy as np
+
     usable = [b for b in suffix_boundaries if b <= len(ref_nll)]
     result = {}
     for suffix_boundary in usable:
@@ -127,6 +146,8 @@ def nll_p_z_at_suffix_boundaries(ref_nll: list, gen_nll: list, p_z_logprob: list
 
 def compute_rep_metrics(records: list, suffix_boundaries: list) -> dict:
     """records: one rep bucket's jsonl records. Returns {suffix_boundary: {metric: {scores, mean, std}}}."""
+    import numpy as np
+
     per_suffix_boundary = defaultdict(lambda: defaultdict(list))
     missing_nll = 0
     for rec in records:
@@ -162,7 +183,7 @@ def compute_rep_metrics(records: list, suffix_boundaries: list) -> dict:
 ### INFERENCE-REP DISCOVERY (reads Step 1's jsonl on disk) ###
 
 def find_inference_reps(expr_dir: Path, offset: int, prefix_length: int,
-                        persistent_expr_dir: Path | None = None) -> dict:
+                        persistent_expr_dir: Optional[Path] = None) -> dict:
     """{rep: (max_suffix_available, rep_dir_path)} across every suffix dir for
     (offset, prefix_length) -- a rep can have data in more than one suffix dir (e.g. after
     an extend), only the largest one matters for how far it reaches.
@@ -212,7 +233,7 @@ def append_metrics_metadata(exp_dir: Path, suffix_boundary: int, offset: int, pr
 ### PKL PATHS + DONE-CHECK ###
 
 def build_pkl_path(storage_path: Path, exp_name: str, offset: int, prefix_length: int, suffix_boundary: int,
-                   policy: str = "greedy", tag: str | None = None) -> Path:
+                   policy: str = "greedy", tag: Optional[str] = None) -> Path:
     suffix_tag = f"_{tag}" if tag else ""
     return storage_path / exp_name / "metrics" / f"offset_{offset}_prefix_{prefix_length}_suffix_{suffix_boundary}_{policy}{suffix_tag}.pkl"
 
@@ -249,7 +270,7 @@ def print_dry_run_report(exp_name: str, offset: int, prefix_length: int,
 def find_missing_metrics_reps_by_suffix_boundary(
         exp_name: str, offset: int, prefix_length: int,
         inference_reps_reaching_suffix_length: set, target_suffix_boundaries: list,
-        save_path: Path, persistent_save_path: Path | None, policy: str, tag: str | None) -> dict:
+        save_path: Path, persistent_save_path: Optional[Path], policy: str, tag: Optional[str]) -> dict:
     """Check phase only: for each boundary in target_suffix_boundaries, which of
     inference_reps_reaching_suffix_length are missing from the metrics pkl (scratch, then
     persistent_save_path)."""
@@ -269,12 +290,14 @@ def find_missing_metrics_reps_by_suffix_boundary(
 
 def write_suffix_boundary_pkls(exp_name: str, offset: int, prefix_length: int, inference_reps: dict,
                                inference_reps_reaching_suffix_length: set, suffix_boundaries_to_compute: list,
-                               save_path: Path, policy: str, tag: str | None) -> None:
+                               save_path: Path, policy: str, tag: Optional[str]) -> None:
     """Compute+write phase only: one DP fill per qualifying rep, across every suffix
     boundary being computed -- not one fill per boundary. Recomputing a boundary
     regenerates the whole file with the full rep set (not a merge) -- Step 2 is cheap
     enough (CPU-only, no forward pass) that this isn't a real cost concern even across a
     large sweep."""
+    from verbatim_eval.controlled_expr import Results
+
     per_rep_metrics = {}
     for rep in sorted(inference_reps_reaching_suffix_length):
         _, rep_dir = inference_reps[rep]
@@ -303,8 +326,8 @@ def write_suffix_boundary_pkls(exp_name: str, offset: int, prefix_length: int, i
 
 def process_point(exp_name: str, offset: int, prefix_length: int, suffix_length: int,
                   inference_reps: dict, suffix_boundaries: list, save_path: Path,
-                  policy: str = "greedy", tag: str | None = None, force: bool = False,
-                  persistent_save_path: Path | None = None, dry_run: bool = False) -> dict | None:
+                  policy: str = "greedy", tag: Optional[str] = None, force: bool = False,
+                  persistent_save_path: Optional[Path] = None, dry_run: bool = False) -> Optional[dict]:
     """One point's worth of work: computes inference_reps_reaching_suffix_length once (not
     per boundary), then only suffix boundaries <= suffix_length -- never beyond, even if
     some rep reaches further.
