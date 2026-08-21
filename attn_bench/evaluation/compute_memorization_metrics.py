@@ -243,7 +243,11 @@ def find_missing_metrics_reps(pkl_paths: list, inference_reps_reaching_suffix_le
     means this suffix boundary is already covered. pkl_paths is checked in order (scratch
     first, then persistent store); the first path that exists is the one read. A pkl built
     from a smaller rep set (e.g. before REPETITIONS grew) is correctly reported as still
-    missing the new reps."""
+    missing the new reps.
+
+    Unpickling needs PDM's verbatim_eval importable (the pkl is Results-shaped) --
+    PYTHONPATH must include PDM's src/ (measure_mem_all.sh sets this the same way the
+    real container run does)."""
     metrics_reps = set()
     existing_path = next((p for p in pkl_paths if p.exists()), None)
     if existing_path is not None:
