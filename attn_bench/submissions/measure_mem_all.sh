@@ -16,6 +16,9 @@
 #   --time HH:MM:SS                 override measure_mem.slurm's default time limit
 #   --backend hf                    use each model's already-converted HF checkpoint
 #   --repetitions r1,r2,...         restrict which reps each job generates (default: all 10)
+#   --max-doc-length N               drops any point where offset+prefix+suffix > N (the
+#                                    source documents' real length, e.g. 8192). Omit for no
+#                                    filtering.
 
 set -e
 
@@ -49,6 +52,7 @@ DRY_RUN=0
 JOB_TIME=""
 BACKEND="megatron"
 REPETITIONS=""
+MAX_DOC_LENGTH=""
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -79,6 +83,9 @@ while [[ $# -gt 0 ]]; do
             ;;
         --suffix)
             SUFFIX_LENGTH="$2"; shift 2
+            ;;
+        --max-doc-length)
+            MAX_DOC_LENGTH="$2"; shift 2
             ;;
         --offsets)
             shift
@@ -141,6 +148,25 @@ else
     done
 fi
 
+# Drop points that can't fit alongside the suffix -- printed up front, since they're not
+# "already done", they're simply not runnable. No filtering when --max-doc-length is omitted.
+if [[ -n "$MAX_DOC_LENGTH" ]]; then
+    MAX_SUM=$((MAX_DOC_LENGTH - SUFFIX_LENGTH))
+    FILTERED_PAIRS=(); OVERSIZED=()
+    for PAIR in "${PAIRS[@]}"; do
+        OFFSET="${PAIR%%:*}"; PREFIX="${PAIR##*:}"
+        if [[ $((OFFSET + PREFIX)) -le $MAX_SUM ]]; then
+            FILTERED_PAIRS+=("$PAIR")
+        else
+            OVERSIZED+=("$PAIR")
+        fi
+    done
+    if [[ ${#OVERSIZED[@]} -gt 0 ]]; then
+        echo "${#OVERSIZED[@]} point(s) don't fit in $MAX_DOC_LENGTH tokens at suffix=$SUFFIX_LENGTH (offset+prefix+suffix > $MAX_DOC_LENGTH), skipping: ${OVERSIZED[*]}"
+    fi
+    PAIRS=("${FILTERED_PAIRS[@]}")
+fi
+
 # For display only -- matches measure_mem.slurm's own default when REPETITIONS isn't set.
 IFS=',' read -r -a REP_ARR <<< "${REPETITIONS:-0,1,2,4,8,16,32,64,128,256}"
 REP_COUNT=${#REP_ARR[@]}
@@ -200,6 +226,9 @@ for MODEL in "${MODELS[@]}"; do
 
     EXPORTS="MODEL=$MODEL,SUFFIX_LENGTH=$SUFFIX_LENGTH,CHECKPOINT_BACKEND=$BACKEND"
     [[ $FORCE_METRICS -eq 1 ]] && EXPORTS="$EXPORTS,FORCE_METRICS=1"
+    # Same threshold this script just filtered PAIRS with -- Stage 1 gets its own copy so it
+    # still skips (rather than crashes on) a point reached via a direct/manual invocation.
+    [[ -n "$MAX_DOC_LENGTH" ]] && EXPORTS="$EXPORTS,MAX_DOC_LENGTH=$MAX_DOC_LENGTH"
     TIME_ARG=()
     [[ -n "$JOB_TIME" ]] && TIME_ARG=(--time="$JOB_TIME")
 

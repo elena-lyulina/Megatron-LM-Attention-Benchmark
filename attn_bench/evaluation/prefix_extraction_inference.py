@@ -48,6 +48,7 @@ from attn_bench.evaluation.inference_backend import (HFBackend,
                                                      InferenceBackend,
                                                      MegatronBackend)
 from attn_bench.evaluation.inference_common import (BOS_TOKEN_ID,
+                                                    filter_points_by_doc_length,
                                                     find_rep_paths,
                                                     find_suffix_dirs,
                                                     load_records_by_sample_idx,
@@ -318,6 +319,9 @@ def parse_args():
                              "load, e.g. --points 0:500 50:450 100:400. A single pair behaves "
                              "exactly like the old single-point --offset/--prefix-length.")
     parser.add_argument("--suffix-length", type=int, default=500)
+    parser.add_argument("--max-doc-length", type=int, default=None,
+                        help="Skip a point where offset+prefix_length+suffix_length exceeds this. "
+                             "Omit for no filtering.")
     parser.add_argument("--batch-size", type=int, default=20)
     parser.add_argument("--max-samples", type=int, default=None,
                         help="Cap sequences per repetition bucket (for testing)")
@@ -609,6 +613,11 @@ def print_dry_run_report(points: list, status: dict) -> None:
 def main():
     args = parse_args()
     points = parse_points(args.points)
+    points = filter_points_by_doc_length(points, args.suffix_length, args.max_doc_length)
+    if not points:
+        if int(os.environ.get("RANK", "0")) == 0:
+            print("Every requested point exceeds max_doc_length -- nothing to do.")
+        return
 
     if args.capture_attention and len(points) > 1:
         # Capture always regenerates (see run_bucket), so multi-point sharing gains
@@ -648,8 +657,8 @@ def main():
         print_dry_run_report(points, status)
         return
 
-    remaining = [pt for pt in points if not status[pt]]
-    if not remaining:
+    remaining_points = [pt for pt in points if not status[pt]]
+    if not remaining_points:
         if int(os.environ.get("RANK", "0")) == 0:
             print(
                 f"All results already present for every requested point "
@@ -671,9 +680,10 @@ def main():
 
     rank = dist.get_rank()
     world_size = dist.get_world_size()
-    for offset, prefix_length in remaining:
+    for i, (offset, prefix_length) in enumerate(remaining_points, 1):
         if rank == 0:
-            print(f"\n=== POINT offset={offset} prefix={prefix_length} suffix={args.suffix_length} ===")
+            print(f"\n=== POINT [{i}/{len(remaining_points)}] offset={offset} prefix={prefix_length} "
+                  f"suffix={args.suffix_length} ===")
         run_inference(backend, args, rank, world_size, offset, prefix_length, persistent_storage_path)
 
 

@@ -30,14 +30,16 @@ done
 [ ${#TARGETS[@]} -eq 0 ] && TARGETS=("${MODELS[@]}")
 
 ### BUILD INCLUDE FILTERS ###
-# Pull each experiment dir's metrics/*_greedy.pkl summaries only, not the raw per-sample jsonls.
+# Pull each experiment dir's metrics/*_greedy.pkl summaries and metrics_metadata/*.json
+# (which job/reps/timestamp wrote each pkl) only, not the raw per-sample jsonls.
 INC=()
 for MODEL in "${TARGETS[@]}"; do
     model_config "$MODEL"
     # Mirrors measure_mem.slurm's own PDM_EXP_NAME suffixing -- keep in sync.
     PDM_EXP_NAME="$EXP_NAME"
     [[ "$BACKEND" = "hf" ]] && PDM_EXP_NAME="${EXP_NAME}_hf"
-    INC+=(--include="$PDM_EXP_NAME/" --include="$PDM_EXP_NAME/metrics/" --include="$PDM_EXP_NAME/metrics/*_greedy.pkl")
+    INC+=(--include="$PDM_EXP_NAME/" --include="$PDM_EXP_NAME/metrics/" --include="$PDM_EXP_NAME/metrics/*_greedy.pkl"
+          --include="$PDM_EXP_NAME/metrics_metadata/" --include="$PDM_EXP_NAME/metrics_metadata/*.json")
 done
 
 ### PULL ###

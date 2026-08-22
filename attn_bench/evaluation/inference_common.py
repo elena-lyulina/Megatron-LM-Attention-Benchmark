@@ -9,6 +9,7 @@ prefix_extraction_inference.py because compute_memorization_metrics.py needs the
 from __future__ import annotations
 
 import json
+import os
 from functools import lru_cache
 from pathlib import Path
 
@@ -66,6 +67,21 @@ def parse_points(points: list) -> list:
         offset_str, prefix_str = p.split(":")
         parsed.append((int(offset_str), int(prefix_str)))
     return parsed
+
+
+def filter_points_by_doc_length(points: list, suffix_length: int, max_doc_length: int | None) -> list:
+    """Drops points where offset+prefix_length+suffix_length exceeds max_doc_length, printing
+    one line per drop from rank 0. None: no filtering."""
+    if max_doc_length is None:
+        return points
+    fits = lambda o, p: o + p + suffix_length <= max_doc_length
+    oversized = [(o, p) for o, p in points if not fits(o, p)]
+    if oversized and int(os.environ.get("RANK", "0")) == 0:
+        for o, p in oversized:
+            total = o + p + suffix_length
+            print(f"Skipping offset={o} prefix={p}: offset+prefix+suffix={total} "
+                  f"> max_doc_length={max_doc_length}")
+    return [pt for pt in points if fits(*pt)]
 
 
 def sample_idx_per_rank(world_size: int, dataset_len: int) -> list[list[int]]:

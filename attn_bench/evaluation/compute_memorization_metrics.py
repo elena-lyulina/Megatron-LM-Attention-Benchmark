@@ -37,7 +37,8 @@ from numba import jit
 from verbatim_eval.controlled_expr import Results
 from verbatim_eval.my_rouge import _compute_dp_matrix_2d, compute_rouge_l_2d
 
-from attn_bench.evaluation.inference_common import (find_suffix_dirs,
+from attn_bench.evaluation.inference_common import (filter_points_by_doc_length,
+                                                    find_suffix_dirs,
                                                     parse_points)
 
 SUFFIX_BOUNDARIES = [25, 50, 75, 100, 150, 250, 500, 750, 1000, 1500, 2000, 3000, 4000, 5000, 7000]
@@ -366,13 +367,15 @@ def process_expr(exp_name: str, base_path: Path, save_path: Path, suffix_boundar
     persistent_save_path = Path(args.persistent_storage_path) if args.persistent_storage_path else None
     requested_reps = {int(r) for r in args.repetitions.split(",")} if args.repetitions else None
 
+    all_points = sorted(set(parse_points(args.points)))
+    all_points = filter_points_by_doc_length(all_points, args.suffix_length, args.max_doc_length)
     needed_points = []
     missing_point_reps = 0
     point_results = {}
-    for offset, prefix_length in sorted(set(parse_points(args.points))):
+    for i, (offset, prefix_length) in enumerate(all_points, 1):
         inference_reps = find_inference_reps(expr_dir, offset, prefix_length, persistent_expr_dir)
         if not args.dry_run:
-            print(f"\n=== {exp_name}  offset={offset} prefix={prefix_length}  "
+            print(f"\n=== [{i}/{len(all_points)}] {exp_name}  offset={offset} prefix={prefix_length}  "
                   f"inference_reps={sorted(inference_reps)} ===", file=sys.stderr)
         missing_metrics_reps_by_suffix_boundary = process_point(
             exp_name, offset, prefix_length, args.suffix_length, inference_reps, suffix_boundaries,
@@ -411,6 +414,9 @@ if __name__ == "__main__":
     parser.add_argument("--suffix-length", type=int, required=True,
                         help="Target suffix length -- computes this boundary plus every intermediate "
                              "one, never beyond it.")
+    parser.add_argument("--max-doc-length", type=int, default=None,
+                        help="Skip a point where offset+prefix+suffix exceeds this (same check as "
+                             "Stage 1's --max-doc-length). Omit for no filtering.")
     parser.add_argument("--tag", type=str, default=None,
                         help="Appended after policy in the pkl filename (e.g. --tag opt -> "
                              "..._greedy_opt.pkl), so a validation run never overwrites the "

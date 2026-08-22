@@ -23,6 +23,7 @@
 #   SUFFIX_LENGTH  shared by every point (default: 500)
 #   REPETITIONS    comma-separated rep buckets (default: 0,1,2,4,8,16,32,64,128,256)
 #   FORCE_METRICS  recompute every Step-2 boundary even if it already exists
+#   MAX_DOC_LENGTH Stage 1 and Stage 2 both skip a point where offset+prefix+suffix exceeds this (default: unset, no filtering)
 #
 # No pre-checkpoint-load "is this already done" check here -- measure_mem_all.sh already
 # decided this job is worth submitting (its own dry-run check, dual-checking scratch+store).
@@ -47,6 +48,7 @@ REPETITIONS=${REPETITIONS:-0,1,2,4,8,16,32,64,128,256}
 CHECKPOINT_BACKEND=${CHECKPOINT_BACKEND:-megatron}
 SINK_SCALE=${SINK_SCALE:-}
 FORCE_METRICS=${FORCE_METRICS:-}
+MAX_DOC_LENGTH=${MAX_DOC_LENGTH:-}
 
 ### MODEL -> EXP_NAME / MEGATRON_EXTRA / NEEDS_TRITON / IS_SINK_FAMILY / NEEDS_UNFUSED_DECODE ###
 MODEL=${MODEL:-full-scf8}
@@ -101,6 +103,7 @@ COMMON_ARGS="--container-env $CONTAINER_ENV \
     --points ${POINTS_ARR[*]} \
     --suffix-length $SUFFIX_LENGTH \
     --batch-size 20"
+[ -n "$MAX_DOC_LENGTH" ] && COMMON_ARGS="$COMMON_ARGS --max-doc-length $MAX_DOC_LENGTH"
 
 EXTRA_MEGATRON=""
 EXTRA_ENV=""
@@ -168,6 +171,8 @@ METRIC_STATUS=1
 if [ $INFERENCE_STATUS -eq 0 ]; then
     FORCE_ARG=""
     [ -n "$FORCE_METRICS" ] && FORCE_ARG="--force"
+    MAX_DOC_LENGTH_ARG=""
+    [ -n "$MAX_DOC_LENGTH" ] && MAX_DOC_LENGTH_ARG="--max-doc-length $MAX_DOC_LENGTH"
     srun \
         --cpus-per-task $SLURM_CPUS_PER_TASK \
         --environment=$CONTAINER_ENV \
@@ -183,6 +188,7 @@ if [ $INFERENCE_STATUS -eq 0 ]; then
             --points ${POINTS_ARR[*]} \
             --suffix-length $SUFFIX_LENGTH \
             --repetitions $REPETITIONS \
+            $MAX_DOC_LENGTH_ARG \
             $FORCE_ARG"
     METRIC_STATUS=$?
 else
