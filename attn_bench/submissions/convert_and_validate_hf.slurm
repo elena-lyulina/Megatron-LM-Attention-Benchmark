@@ -19,7 +19,7 @@
 # latter is the only one that exercises this project's own KV-cache decode loop.
 # Step 2 auto-detects the checkpoint's attention family from its own restored args and picks
 # the matching attn_families/ module (see checkpoint_conversion/attn_families/registry.py) --
-# families without one yet (GDN) fail there with a clear NotImplementedError.
+# families without one yet fail there with a clear NotImplementedError.
 #
 # Env vars:
 #   MODEL checkpoint to use, see llama_checkpoints.sh (default: full-scf1)
@@ -82,6 +82,15 @@ fi
 
 echo "RUN: model=$MODEL  exp=$EXP_NAME"
 
+# TRITON_CACHE_DIR: per-rank node-local cache for GDN's fla kernels -- a shared-FS cache
+# crashes with "OSError: [Errno 116] Stale file handle" when fla autotunes/compiles on first
+# use (see pretrain_llama3_1b_gdn_fineweb40B_gutenberg3B.slurm). Single-rank here, but the
+# default ~/.triton is still a shared filesystem path, so the fix still applies.
+TRITON_ENV=""
+if [ "$NEEDS_TRITON" = "1" ]; then
+    TRITON_ENV="export TRITON_CACHE_DIR=/tmp/triton_${USER}_\${SLURM_JOB_ID}_\$SLURM_PROCID; mkdir -p \$TRITON_CACHE_DIR;"
+fi
+
 srun \
     --cpus-per-task $SLURM_CPUS_PER_TASK \
     --environment=$CONTAINER_ENV \
@@ -89,6 +98,7 @@ srun \
     bash -c "
     export PYTHONPATH='${PYTHONPATH}'
     export CUDA_DEVICE_MAX_CONNECTIONS=1
+    $TRITON_ENV
 
     echo '### STEP 1: torch_dist -> torch ###'
     # Rope scaling isn't restored from checkpoint, so \$MEGATRON_EXTRA supplies it.

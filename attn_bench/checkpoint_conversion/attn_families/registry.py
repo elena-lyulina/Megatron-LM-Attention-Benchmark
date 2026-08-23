@@ -7,7 +7,7 @@ from typing import Any
 
 from attn_bench.checkpoint_conversion.attn_families import full, swa
 
-ATTN_FAMILIES = ("full", "sink", "gated", "swa")
+ATTN_FAMILIES = ("full", "sink", "gated", "swa", "gdn")
 
 
 def detect_attn_family(args: Any) -> str:
@@ -41,6 +41,10 @@ def get_attn_family_module(args: Any):
         # flash-attention-cute-workflow.md).
         from attn_bench.checkpoint_conversion.attn_families import sink
         return sink
+    if attn_family == "gdn":
+        # lazy: pulls in modeling_gdn_llama.py, which needs fla (flash-linear-attention).
+        from attn_bench.checkpoint_conversion.attn_families import gdn
+        return gdn
     raise NotImplementedError(
         f"HF conversion for the '{attn_family}' attention family isn't implemented yet "
         f"(only {sorted(ATTN_FAMILIES)} are). See attn_bench/checkpoint_conversion/attn_families/."
