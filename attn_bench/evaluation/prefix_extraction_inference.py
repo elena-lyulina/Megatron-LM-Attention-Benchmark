@@ -47,12 +47,9 @@ from torch.utils.data import DataLoader, DistributedSampler
 from attn_bench.evaluation.inference_backend import (HFBackend,
                                                      InferenceBackend,
                                                      MegatronBackend)
-from attn_bench.evaluation.inference_common import (BOS_TOKEN_ID,
-                                                    filter_points_by_doc_length,
-                                                    find_rep_paths,
-                                                    find_suffix_dirs,
-                                                    load_records_by_sample_idx,
-                                                    parse_points)
+from attn_bench.evaluation.inference_common import (
+    BOS_TOKEN_ID, count_rep_records, filter_points_by_doc_length,
+    find_rep_paths, find_suffix_dirs, load_records_by_sample_idx, parse_points)
 
 P_Z_TOP_K = 40
 P_Z_TEMPERATURE = 1.0
@@ -139,19 +136,23 @@ def file_exists_in_locations(locations, file: str, require_nonempty: bool = Fals
 ### CROSS-SUFFIX LOOKUP ###
 
 def find_rep_source(experiment_path: Path, offset: int, prefix_length: int,
-                    suffix_length: int, rep: int, persistent_storage_path: Path | None = None):
+                    suffix_length: int, rep: int, expected_count: int,
+                    persistent_storage_path: Path | None = None):
     """Among existing suffix dirs for (offset, prefix) -- experiment_path and, if given,
     persistent_storage_path -- find one whose rep_{rep}_greedy is complete: the smallest suffix' >=
     suffix_length if any (nothing to compute), else the largest suffix' < suffix_length
     (extend from here). None if nothing usable exists.
 
+    "Complete" means at least expected_count records across its rank*.jsonl -- a rep dir
+    truncated by a killed job doesn't count.
+
     Returns (suffix', rep_dir_path) or None.
     """
     usable = []
     for suffix_prime, d in find_suffix_dirs(experiment_path, offset, prefix_length, persistent_storage_path):
-        rank0 = d / f"rep_{rep}_greedy" / "rank0.jsonl"
-        if rank0.exists() and rank0.stat().st_size > 0:
-            usable.append((suffix_prime, d / f"rep_{rep}_greedy"))
+        rep_dir = d / f"rep_{rep}_greedy"
+        if count_rep_records(rep_dir) >= expected_count:
+            usable.append((suffix_prime, rep_dir))
     if not usable:
         return None
     at_least = [c for c in usable if c[0] >= suffix_length]
@@ -436,16 +437,21 @@ def _process_rep(backend: InferenceBackend, args, experiment_path: Path, output_
     rep = int(path.stem.split("_")[1])
     inference_dir = output_path / f"rep_{rep}_greedy"
 
+    dataset = load_rep_bucket(path, offset, prefix_length, args.suffix_length,
+                               max_samples=args.max_samples)
+    expected_count = len(dataset)
+
     persistent_inference_dir = (
         persistent_storage_path / "inference" /
         f"offset_{offset}_prefix_{prefix_length}_suffix_{args.suffix_length}" / f"rep_{rep}_greedy"
         if persistent_storage_path is not None else None
     )
-    jsonl_done = file_exists_in_locations([inference_dir, persistent_inference_dir],
-                                          "rank0.jsonl", require_nonempty=True)
+    jsonl_done = count_rep_records(inference_dir) >= expected_count or (
+        persistent_inference_dir is not None and count_rep_records(persistent_inference_dir) >= expected_count
+    )
 
     source = None if capture is not None else find_rep_source(
-        experiment_path, offset, prefix_length, args.suffix_length, rep, persistent_storage_path,
+        experiment_path, offset, prefix_length, args.suffix_length, rep, expected_count, persistent_storage_path,
     )
 
     if (jsonl_done or (source is not None and source[0] >= args.suffix_length)) and capture is None:
@@ -455,11 +461,6 @@ def _process_rep(backend: InferenceBackend, args, experiment_path: Path, output_
 
     if rank == 0:
         print(f"\nProcessing rep={rep}")
-
-    dataset = load_rep_bucket(path, offset, prefix_length, args.suffix_length,
-                               max_samples=args.max_samples)
-
-    if rank == 0:
         print(f"  {len(dataset)} sequences")
 
     extend_records = None
@@ -589,8 +590,10 @@ def results_already_complete(args, world_size: int, offset: int, prefix_length: 
 
     for path in paths:
         rep = int(path.stem.split("_")[1])
+        expected_count = len(load_rep_bucket(path, offset, prefix_length, args.suffix_length,
+                                             max_samples=args.max_samples))
         source = find_rep_source(experiment_path, offset, prefix_length, args.suffix_length, rep,
-                                 persistent_storage_path)
+                                 expected_count, persistent_storage_path)
         if source is None or source[0] < args.suffix_length:
             return False
 

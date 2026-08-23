@@ -37,9 +37,9 @@ from numba import jit
 from verbatim_eval.controlled_expr import Results
 from verbatim_eval.my_rouge import _compute_dp_matrix_2d, compute_rouge_l_2d
 
-from attn_bench.evaluation.inference_common import (filter_points_by_doc_length,
-                                                    find_suffix_dirs,
-                                                    parse_points)
+from attn_bench.evaluation.inference_common import (
+    count_rep_records, filter_points_by_doc_length, find_suffix_dirs,
+    parse_points)
 
 SUFFIX_BOUNDARIES = [25, 50, 75, 100, 150, 250, 500, 750, 1000, 1500, 2000, 3000, 4000, 5000, 7000]
 
@@ -157,16 +157,21 @@ def compute_rep_metrics(records: list, suffix_boundaries: list) -> dict:
 
 ### INFERENCE-REP DISCOVERY (reads Step 1's jsonl on disk) ###
 
-def find_inference_reps(expr_dir: Path, offset: int, prefix_length: int,
+def find_inference_reps(expr_dir: Path, offset: int, prefix_length: int, expected_count: int,
                         persistent_expr_dir: Path | None = None) -> dict:
     """{rep: (max_suffix_available, rep_dir_path)} across every suffix dir for
-    (offset, prefix_length); persistent_expr_dir is a fallback for reps expr_dir lacks."""
+    (offset, prefix_length); persistent_expr_dir is a fallback for reps expr_dir lacks.
+    A rep dir with fewer than expected_count records (truncated by a killed job) is
+    treated as not present, the same as if Stage 1 hadn't generated it yet."""
     result = {}
     for suffix_prime, d in find_suffix_dirs(expr_dir, offset, prefix_length, persistent_expr_dir):
         for rep_dir in d.iterdir():
             if not rep_dir.is_dir() or not rep_dir.name.startswith("rep_"):
                 continue
-            if not any(rep_dir.glob("rank*.jsonl")):
+            count = count_rep_records(rep_dir)
+            if count < expected_count:
+                print(f"  {rep_dir}: {count}/{expected_count} records -- treating as not present",
+                     file=sys.stderr)
                 continue
             rep = int(rep_dir.name.split("_")[1])
             if rep not in result or suffix_prime > result[rep][0]:
@@ -373,14 +378,20 @@ def process_expr(exp_name: str, base_path: Path, save_path: Path, suffix_boundar
     missing_point_reps = 0
     point_results = {}
     for i, (offset, prefix_length) in enumerate(all_points, 1):
-        inference_reps = find_inference_reps(expr_dir, offset, prefix_length, persistent_expr_dir)
+        inference_reps = find_inference_reps(expr_dir, offset, prefix_length, args.expected_count,
+                                             persistent_expr_dir)
         if not args.dry_run:
             print(f"\n=== [{i}/{len(all_points)}] {exp_name}  offset={offset} prefix={prefix_length}  "
                   f"inference_reps={sorted(inference_reps)} ===", file=sys.stderr)
-        missing_metrics_reps_by_suffix_boundary = process_point(
-            exp_name, offset, prefix_length, args.suffix_length, inference_reps, suffix_boundaries,
-            save_path, tag=args.tag, force=args.force, persistent_save_path=persistent_save_path,
-            dry_run=args.dry_run, requested_reps=requested_reps)
+        try:
+            missing_metrics_reps_by_suffix_boundary = process_point(
+                exp_name, offset, prefix_length, args.suffix_length, inference_reps, suffix_boundaries,
+                save_path, tag=args.tag, force=args.force, persistent_save_path=persistent_save_path,
+                dry_run=args.dry_run, requested_reps=requested_reps)
+        except ValueError as e:
+            print(f"  Skipping offset={offset} prefix={prefix_length}: {e}", file=sys.stderr)
+            continue
+
         if args.dry_run:
             point_results[(offset, prefix_length)] = missing_metrics_reps_by_suffix_boundary
             if missing_metrics_reps_by_suffix_boundary is None:
@@ -427,6 +438,9 @@ if __name__ == "__main__":
     parser.add_argument("--repetitions", type=str, default=None,
                         help="Comma-separated reps a point is expected to cover, matching Stage 1's "
                              "--repetitions. See process_point for --dry-run vs. real-run behavior.")
+    parser.add_argument("--expected-count", type=int, default=660,
+                        help="Records a rep dir must have (summed across rank*.jsonl) to count as "
+                             "present -- catches a rep truncated by a killed Stage 1 job.")
     args = parser.parse_args()
 
     needed_points, missing_point_reps = process_expr(args.exp_name, Path(args.base_path),

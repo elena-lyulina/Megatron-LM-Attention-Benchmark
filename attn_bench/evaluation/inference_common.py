@@ -60,6 +60,16 @@ def find_suffix_dirs(experiment_path: Path, offset: int, prefix_length: int,
     return found
 
 
+def count_rep_records(rep_dir: Path) -> int:
+    """Total records across every rank*.jsonl under rep_dir, 0 if none exist or the dir
+    is missing -- used to tell a fully-written rep from one truncated by a killed job."""
+    total = 0
+    for rank_file in rep_dir.glob("rank*.jsonl"):
+        with open(rank_file) as f:
+            total += sum(1 for line in f if line.strip())
+    return total
+
+
 def parse_points(points: list) -> list:
     """Parse ['offset:prefix_length', ...] CLI strings into [(offset, prefix_length), ...] int pairs."""
     parsed = []

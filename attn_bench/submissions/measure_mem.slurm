@@ -24,6 +24,7 @@
 #   REPETITIONS    comma-separated rep buckets (default: 0,1,2,4,8,16,32,64,128,256)
 #   FORCE_METRICS  recompute every Step-2 boundary even if it already exists
 #   MAX_DOC_LENGTH Stage 1 and Stage 2 both skip a point where offset+prefix+suffix exceeds this (default: unset, no filtering)
+#   EXPECTED_COUNT records a rep dir needs to count as present, for Stage 2's completeness check (default: 660)
 #
 # No pre-checkpoint-load "is this already done" check here -- measure_mem_all.sh already
 # decided this job is worth submitting (its own dry-run check, dual-checking scratch+store).
@@ -46,6 +47,7 @@ POINTS=${POINTS:-0:500}
 SUFFIX_LENGTH=${SUFFIX_LENGTH:-500}
 REPETITIONS=${REPETITIONS:-0,1,2,4,8,16,32,64,128,256}
 CHECKPOINT_BACKEND=${CHECKPOINT_BACKEND:-megatron}
+EXPECTED_COUNT=${EXPECTED_COUNT:-660}
 SINK_SCALE=${SINK_SCALE:-}
 FORCE_METRICS=${FORCE_METRICS:-}
 MAX_DOC_LENGTH=${MAX_DOC_LENGTH:-}
@@ -188,6 +190,7 @@ if [ $INFERENCE_STATUS -eq 0 ]; then
             --points ${POINTS_ARR[*]} \
             --suffix-length $SUFFIX_LENGTH \
             --repetitions $REPETITIONS \
+            --expected-count $EXPECTED_COUNT \
             $MAX_DOC_LENGTH_ARG \
             $FORCE_ARG"
     METRIC_STATUS=$?
