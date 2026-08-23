@@ -59,10 +59,11 @@ if [ "$IS_SINK_FAMILY" = "1" ]; then
     SINK_ENV="export FLASH_ATTN_SRC_DIR=/users/$USER/scratch/flash-attention; pip install --quiet 'nvidia-cutlass-dsl==4.6.2';"
 fi
 
-# Step 3: flash_attn.cute (sink's kernel) only supports fp16/bf16, not the fp32 the logits
-# comparison defaults to for precision.
+# Step 3: fused kernels (sink's flash_attn.cute, GDN's fla) only support fp16/bf16, not the
+# fp32 the logits comparison defaults to for precision. Step 3 casts both backends' models to
+# this dtype -- GDN's fla kernels run on the Megatron side too, so this isn't HF-specific.
 DTYPE_ARG=""
-[ "$IS_SINK_FAMILY" = "1" ] && DTYPE_ARG="--dtype bfloat16"
+{ [ "$IS_SINK_FAMILY" = "1" ] || [ "$NEEDS_TRITON" = "1" ]; } && DTYPE_ARG="--dtype bfloat16"
 
 # Step 4: TE 2.15 rejects fused attn in decode mode with a sink token (see llama_checkpoints.sh).
 # Only the decode loop needs this -- step 3 is a single forward pass, no decode.
@@ -132,8 +133,9 @@ srun \
     STEP2_STATUS=\$?
     if [ \$STEP2_STATUS -ne 0 ]; then echo 'Step 2 failed'; exit \$STEP2_STATUS; fi
 
-    echo '### Sanity check: rope factor before the GPU-heavy steps 3/4 ###'
-    python -c \"
+    if [ "$HAS_ROPE" = "1" ]; then
+        echo '### Sanity check: rope factor before the GPU-heavy steps 3/4 ###'
+        python -c \"
 import json
 cfg = json.load(open('$SCRATCH_CONVERT_DIR/HF/config.json'))
 # This transformers version stores rope scaling under 'rope_parameters', not 'rope_scaling'.
@@ -142,8 +144,11 @@ factor = rope_cfg.get('factor')
 assert factor == $EXPECTED_ROPE_FACTOR, f'expected rope factor == $EXPECTED_ROPE_FACTOR, got {factor!r} -- conversion likely dropped it silently'
 print(f'rope factor = {factor} (expected $EXPECTED_ROPE_FACTOR) -- OK')
 \"
-    CFG_CHECK_STATUS=\$?
-    if [ \$CFG_CHECK_STATUS -ne 0 ]; then echo 'Config sanity check failed'; exit \$CFG_CHECK_STATUS; fi
+        CFG_CHECK_STATUS=\$?
+        if [ \$CFG_CHECK_STATUS -ne 0 ]; then echo 'Config sanity check failed'; exit \$CFG_CHECK_STATUS; fi
+    else
+        echo '### Sanity check: skipped -- HAS_ROPE=0 for this model (GDN has no rotary embeddings) ###'
+    fi
 
     echo '### STEP 3: compare logits (random tokens, single forward pass) ###'
     # batch-size 1 (default 4 OOMs: fp32 SDPA has no flash kernel, so it materializes the full
