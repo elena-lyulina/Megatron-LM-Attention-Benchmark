@@ -161,6 +161,35 @@ training jobs already exercise this path successfully on GH200 — the only issu
 a stale shared Triton cache (job 2570257), fixed with a per-rank/per-job cache dir, not
 an architecture-support problem.
 
+**HF-conversion validation (2026-08-24).** `convert_and_validate_hf.slurm`'s Step 3 (random
+tokens, bf16) showed 96.84% argmax agreement at `--seq-length 8192` (job 3169101) — short of
+the 99% threshold, same shape as sink's shortfall above. Debugged with two additions to
+`compare_megatron_hf_logits.py`, now reusable for any family: a near-tie diagnostic (per-backend
+top-K consecutive-rank logit gaps, symmetric rank lookup, disagreement rate by sequence
+position, per-disagreement token dump) and a `--self-comparison` mode (forwards each backend
+twice against itself, isolating within-kernel run-to-run nondeterminism from cross-implementation
+rounding differences) — both wired into `debug_bf16_inference_backends.slurm`
+(`SELF_COMPARISON=1`).
+
+At `--seq-length 128` (jobs 3172802 `gdn` / 3172803 `sink-scf1`, run side by side for
+comparison): cross-backend agreement 93.75% (gdn, 8/128 disagree) / 96.88% (sink-scf1, 4/128) —
+same near-tie signature as sink's original finding above (median top1-top2 gap ~12x smaller at
+disagreeing positions than agreeing ones; several disagreements land on an *exact* 0.0000 gap,
+where `torch.max`/`torch.topk` break the tie differently on the same tensor). The per-token
+top-10 dumps make this visible directly, not just in aggregate: at a disagreeing position, the
+two backends' top-10 token-id lists are near-identical, usually the same tokens in the same
+order except the top one or two are flipped (`ref_pick`/`new_pick` swap ranks 1 and 2, everything
+below matches) — the two backends agree on the candidate set almost every time, they just tip
+differently on which of the top two wins. Self-comparison
+(same backend, same input, forwarded twice) showed **0/128 disagreements** for both Megatron and
+HF, both models — no measurable within-kernel nondeterminism at this scale, ruling out "the FLA
+kernel is just randomly different across calls" as the explanation. Net: the cross-backend gap
+is deterministic-but-different rounding order between Megatron's and HF's independent GDN
+implementations, not a wiring or correctness bug — same conclusion and magnitude as sink, which
+is already used in production via `--backend hf`. Not yet re-checked at production scale
+(`--seq-length 8192`, larger batch) for whether real kernel-level nondeterminism — as opposed to
+cross-implementation rounding — ever manifests there.
+
 ## Net effect on the rebuild question
 
 No container rebuild needed for any of the five families. `sink` was the only one with a
