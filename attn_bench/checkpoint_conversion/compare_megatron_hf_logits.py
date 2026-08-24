@@ -2,6 +2,9 @@
 Validates a Megatron -> HF conversion: compares logits on random tokens (data-agnostic --
 tests only that HF computes the same thing as Megatron, not generation quality).
 
+--self-comparison additionally forwards each backend twice against itself, as a kernel-
+nondeterminism noise floor to compare the cross-backend divergence against.
+
 Adapted from swiss-ai/Megatron-LM's tools/checkpoint/loader_core.py --test-logits and
 tools/checkpoint/saver_swissai_hf.py, but runs both loads and the comparison in one script
 instead of two.
@@ -12,6 +15,9 @@ Usage (see attn_bench/submissions/convert_and_validate_hf.slurm):
         --tokenizer-path $TOKENIZER_PATH \
         --hf-dir $HF_SAVE_DIR \
         --megatron-extra-args --use-rope-scaling --rope-scaling-factor 8
+
+    # + noise-floor baselines (see attn_bench/submissions/debug_bf16_inference_backends.slurm):
+    python attn_bench/checkpoint_conversion/compare_megatron_hf_logits.py --self-comparison ...
 """
 from __future__ import annotations
 
@@ -24,12 +30,105 @@ from attn_bench.evaluation.inference_backend import (HFBackend,
                                                      MegatronBackend)
 
 
+def _report(ref_output: torch.Tensor, output: torch.Tensor, seq_length: int) -> tuple[torch.Tensor, torch.Tensor]:
+    """Diagnostic report for two [B, S, V] logits tensors (cross-backend, or two forward passes
+    of the same backend for self-comparison). Returns (agree_frac, close_frac); self-comparison
+    callers don't assert on these since some kernel-nondeterminism disagreement is expected."""
+    assert output.size() == ref_output.size()
+
+    preds_ref = torch.max(ref_output, dim=-1)[1]
+    preds_new = torch.max(output, dim=-1)[1]
+    disagree_mask = preds_ref != preds_new
+    agree = 1 - torch.sum(disagree_mask) / preds_ref.numel()
+    print(f"Agrees on {100 * agree:.2f}% of predictions")
+
+    # Near-tie diagnostic: is disagreement a close race (bf16 tipping a near-tie) or one pass
+    # confidently preferring a token the other ranks far down its list (a real divergence)?
+    # Purely descriptive -- no external tolerance, each pass is only compared to itself/its own
+    # ranking. Computed before check two flattens ref_output/output below.
+    K = 10
+    if disagree_mask.any():
+        ref_topk_vals, ref_topk_idx = torch.topk(ref_output, K, dim=-1)   # [B, S, K], descending
+        new_topk_vals, new_topk_idx = torch.topk(output, K, dim=-1)
+
+        # 1. Consecutive-rank gaps within each pass's own top-K: flat (N-way tie) or peaked
+        # (one clear winner), at disagreeing positions vs agreeing ones?
+        for label, vals in [("ref", ref_topk_vals), ("new", new_topk_vals)]:
+            gaps = vals[..., :-1] - vals[..., 1:]  # [B, S, K-1], rank_i - rank_{i+1}
+            print(f"{label} consecutive top-{K} logit gaps (median), disagree vs agree:")
+            for i in range(K - 1):
+                d = gaps[..., i][disagree_mask]
+                a = gaps[..., i][~disagree_mask]
+                d_str = f"{d.median():.4f}" if d.numel() > 0 else "n/a"
+                a_str = f"{a.median():.4f}" if a.numel() > 0 else "n/a"
+                print(f"  rank{i + 1}->{i + 2}: disagree={d_str}  agree={a_str}")
+
+        # 2. Where does the other pass's pick fall in this pass's own top-K ranking?
+        # (rank-resolved, not just "is it #2"; -1 = outside top-K entirely.)
+        def rank_in_topk(topk_idx: torch.Tensor, pick: torch.Tensor) -> torch.Tensor:
+            match = topk_idx == pick.unsqueeze(-1)          # [B, S, K]
+            found = match.any(-1)
+            rank = match.float().argmax(-1)
+            return torch.where(found, rank, torch.full_like(rank, -1))
+
+        new_rank_in_ref = rank_in_topk(ref_topk_idx, preds_new)   # [B, S] -- full tensor, not masked
+        ref_rank_in_new = rank_in_topk(new_topk_idx, preds_ref)   # [B, S]
+        hist_new_in_ref = torch.bincount((new_rank_in_ref[disagree_mask] + 1).clamp(min=0), minlength=K + 1)
+        hist_ref_in_new = torch.bincount((ref_rank_in_new[disagree_mask] + 1).clamp(min=0), minlength=K + 1)
+        print(f"new's pick, rank in ref's top-{K} (disagreements) [idx0=outside top-{K}, idx i=rank i]: "
+              f"{hist_new_in_ref.tolist()}")
+        print(f"ref's pick, rank in new's top-{K} (disagreements) [idx0=outside top-{K}, idx i=rank i]: "
+              f"{hist_ref_in_new.tolist()}")
+
+        # 3. Disagreement rate by absolute sequence position -- rising = accumulating error
+        # (e.g. recurrent-state drift), flat = position-independent noise.
+        n_buckets = min(16, seq_length)
+        edges = torch.linspace(0, seq_length, n_buckets + 1).long()
+        print(f"Disagreement rate by sequence position (0..{seq_length - 1}, {n_buckets} buckets):")
+        for i in range(n_buckets):
+            lo, hi = edges[i].item(), edges[i + 1].item()
+            bucket = disagree_mask[:, lo:hi]
+            print(f"  pos [{lo:5d},{hi:5d}): disagree={100 * bucket.float().mean():.2f}%  (n={bucket.numel()})")
+
+        # 4. Per-disagreement dump, parseable from the log (grep 'DISAGREE_TOKEN') for post-hoc
+        # analysis. s = absolute sequence position (no windowing here, single forward pass).
+        ref_gaps_full = ref_topk_vals[..., :-1] - ref_topk_vals[..., 1:]
+        new_gaps_full = new_topk_vals[..., :-1] - new_topk_vals[..., 1:]
+        for b, s in disagree_mask.nonzero(as_tuple=False).tolist():
+            ref_gap_str = ",".join(f"{g:.4f}" for g in ref_gaps_full[b, s].tolist())
+            new_gap_str = ",".join(f"{g:.4f}" for g in new_gaps_full[b, s].tolist())
+            print(f"DISAGREE_TOKEN b={b} s={s} "
+                  f"ref_pick={preds_ref[b, s].item()} new_pick={preds_new[b, s].item()} "
+                  f"new_rank_in_ref={new_rank_in_ref[b, s].item()} ref_rank_in_new={ref_rank_in_new[b, s].item()} "
+                  f"ref_gaps={ref_gap_str} new_gaps={new_gap_str}")
+
+    # Check two: atol and rtol on all logits.
+    atol = 1e-05
+    rtol = 0.016
+    output = torch.flatten(output).cpu()
+    ref_output = torch.flatten(ref_output).cpu()
+    abs_diff = torch.abs(output - ref_output)
+    rel_diff = abs_diff / torch.abs(ref_output)
+    rel_diff_inf_mask = torch.isinf(rel_diff)
+    rel_diff_no_inf = rel_diff[~rel_diff_inf_mask]
+    close_mask = abs_diff <= atol + rtol * torch.abs(ref_output)
+    close = torch.sum(close_mask) / output.numel()
+    print(f"Logits are close on {100 * close:.2f}% of values")
+    print(f"Max absolute difference: {torch.max(abs_diff)}")
+    print(f"Mean absolute difference: {torch.mean(abs_diff)}")
+    print(f"Max relative difference: {torch.max(rel_diff)}")
+    print(f"Mean relative difference (no inf): {torch.mean(rel_diff_no_inf)}")
+    print(f"Relative difference inf proportion: {torch.mean(rel_diff_inf_mask.float())}")
+
+    return agree, close
+
+
 def compare_logits(ref_backend: InferenceBackend, new_backend: InferenceBackend, vocab_size: int,
                    seq_length: int, batch_size: int = 4, device: str = "cuda",
                    dtype: torch.dtype = torch.float32):
-    """Forward both backends on the same random tokens and diff the logits. dtype defaults to
-    fp32 for precision, but fused kernels like flash_attn.cute (sink) only support fp16/bf16
-    -- pass bfloat16 for those."""
+    """Forward two backends on the same random tokens, diff the logits, assert on the
+    thresholds below. dtype defaults to fp32; pass bfloat16 for fused kernels (e.g. sink,
+    GDN) that don't support fp32."""
     tokens = torch.randint(0, vocab_size, (batch_size, seq_length), device=device)
     position_ids = torch.arange(seq_length, device=device).unsqueeze(0).expand(batch_size, -1)
 
@@ -45,57 +144,31 @@ def compare_logits(ref_backend: InferenceBackend, new_backend: InferenceBackend,
     del new_backend
     torch.cuda.empty_cache()
 
-    assert output.size() == ref_output.size()
-
-    # Check one: both models agree on next-token predictions in "most cases".
     argmax_threshold = 0.99
-    preds_ref = torch.max(ref_output, dim=-1)[1]
-    preds_new = torch.max(output, dim=-1)[1]
-    disagree_mask = preds_ref != preds_new
-    agree = 1 - torch.sum(disagree_mask) / preds_ref.numel()
-    print(f"Converted model agrees on {100 * agree:.2f}% of predictions")
-
-    # Near-tie diagnostic: is disagreement concentrated where ref's top-1/top-2 logits were
-    # nearly tied (bf16-rounding-sensitive, expected) or does HF pick something far down ref's
-    # ranking (would point at a real bug, not precision noise)? Computed on ref_output's own
-    # [B, S, V] shape, before it gets flattened for check two below.
-    if disagree_mask.any():
-        top2_vals, top2_idx = torch.topk(ref_output, 2, dim=-1)
-        top1_minus_top2 = top2_vals[..., 0] - top2_vals[..., 1]
-        disagree_gap = top1_minus_top2[disagree_mask]
-        agree_gap = top1_minus_top2[~disagree_mask]
-        is_second_choice = preds_new[disagree_mask] == top2_idx[..., 1][disagree_mask]
-        print(f"Top1-Top2 logit gap (ref) at disagreeing positions: "
-              f"mean={disagree_gap.mean():.4f} median={disagree_gap.median():.4f}")
-        if agree_gap.numel() > 0:
-            print(f"Top1-Top2 logit gap (ref) at agreeing positions:    "
-                  f"mean={agree_gap.mean():.4f} median={agree_gap.median():.4f}")
-        print(f"Fraction of disagreements where HF picked ref's #2 choice: "
-              f"{100 * is_second_choice.float().mean():.2f}%")
-
-    # Check two: atol and rtol on all logits.
     close_threshold = 0.95
-    atol = 1e-05
-    rtol = 0.016
-    output = torch.flatten(output).cpu()
-    ref_output = torch.flatten(ref_output).cpu()
-    abs_diff = torch.abs(output - ref_output)
-    rel_diff = abs_diff / torch.abs(ref_output)
-    rel_diff_inf_mask = torch.isinf(rel_diff)
-    rel_diff_no_inf = rel_diff[~rel_diff_inf_mask]
-    close_mask = abs_diff <= atol + rtol * torch.abs(ref_output)
-    close = torch.sum(close_mask) / output.numel()
-    print(f"Converted logits are close on {100 * close:.2f}% of values")
-    print(f"Max absolute difference: {torch.max(abs_diff)}")
-    print(f"Mean absolute difference: {torch.mean(abs_diff)}")
-    print(f"Max relative difference: {torch.max(rel_diff)}")
-    print(f"Mean relative difference (no inf): {torch.mean(rel_diff_no_inf)}")
-    print(f"Relative difference inf proportion: {torch.mean(rel_diff_inf_mask.float())}")
+    agree, close = _report(ref_output, output, seq_length)
 
-    # Both checks' stats are always printed above regardless of pass/fail, so a failure on
-    # either one still leaves the full picture in the log.
+    # Stats are always printed above regardless of pass/fail, so a failure on either one still
+    # leaves the full picture in the log.
     assert agree >= argmax_threshold, f"Only {100 * agree:.2f}% argmax agreement (need >= {100 * argmax_threshold:.0f}%)"
     assert close >= close_threshold, f"Only {100 * close:.2f}% of logits close (need >= {100 * close_threshold:.0f}%)"
+
+
+def self_compare_logits(backend: InferenceBackend, vocab_size: int, seq_length: int,
+                        batch_size: int = 4, device: str = "cuda",
+                        dtype: torch.dtype = torch.bfloat16):
+    """Forward the same backend twice on the same input -- the kernel-nondeterminism noise
+    floor. Dropout is 0 for these checkpoints, so the only source of difference is the
+    kernel's own (non-deterministic) execution. No assertion -- diagnostic, not a gate."""
+    tokens = torch.randint(0, vocab_size, (batch_size, seq_length), device=device)
+    position_ids = torch.arange(seq_length, device=device).unsqueeze(0).expand(batch_size, -1)
+
+    backend.model = backend.model.to(device).to(dtype)
+    with torch.no_grad():
+        ref_output = backend.forward_logits(tokens, position_ids)
+        output = backend.forward_logits(tokens, position_ids)
+
+    _report(ref_output, output, seq_length)
 
 
 def parse_args():
@@ -103,6 +176,9 @@ def parse_args():
     parser.add_argument("--ckpt-dir", required=True, help="Original torch_dist Megatron checkpoint")
     parser.add_argument("--tokenizer-path", required=True)
     parser.add_argument("--hf-dir", required=True, help="Output of convert_megatron_to_hf.py")
+    parser.add_argument("--self-comparison", action="store_true",
+                       help="Also forward each backend twice against itself, as a "
+                            "kernel-nondeterminism noise floor.")
     parser.add_argument("--seq-length", type=int, default=8192)
     parser.add_argument("--batch-size", type=int, default=4)
     parser.add_argument("--dtype", choices=["float32", "bfloat16"], default="float32",
@@ -121,8 +197,16 @@ def main():
     hf_backend.load_model()
     vocab_size = hf_backend.model.config.vocab_size
 
+    print("\n=== cross: megatron vs hf ===")
     compare_logits(megatron_backend, hf_backend, vocab_size, args.seq_length, args.batch_size, dtype=dtype)
     print("Logits check passed.")
+
+    if args.self_comparison:
+        print("\n=== self-comparison: megatron vs itself (kernel-nondeterminism noise floor) ===")
+        self_compare_logits(megatron_backend, megatron_backend.model.vocab_size,
+                            args.seq_length, args.batch_size, dtype=dtype)
+        print("\n=== self-comparison: hf vs itself (kernel-nondeterminism noise floor) ===")
+        self_compare_logits(hf_backend, vocab_size, args.seq_length, args.batch_size, dtype=dtype)
 
 
 if __name__ == "__main__":
