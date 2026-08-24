@@ -1,0 +1,786 @@
+<title>Attention Benchmark: Memorization</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root {
+    --paper: #fafafa;
+    --pane: #ffffff;
+    --pane-alt: #f1f0ee;
+    --ink: #1a1a1a;
+    --muted: #75736d;
+    --grid: #dedcd6;
+    --wall: #b6b3ab;
+    --accent: #5d3e99;
+    --accent-ink: #ffffff;
+    --card-min: 370px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #17181a;
+      --pane: #1f2023;
+      --pane-alt: #26272b;
+      --ink: #e8e6e2;
+      --muted: #96938c;
+      --grid: #313236;
+      --wall: #58565c;
+      --accent: #a78bfa;
+      --accent-ink: #1e1433;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #17181a;
+    --pane: #1f2023;
+    --pane-alt: #26272b;
+    --ink: #e8e6e2;
+    --muted: #96938c;
+    --grid: #313236;
+    --wall: #58565c;
+    --accent: #a78bfa;
+    --accent-ink: #1e1433;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: inherit; }
+
+  /* ---- sticky control bar ---------------------------------------------------- */
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px 24px;
+    padding: 14px 28px;
+    background: var(--pane);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(6px);
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px 28px;
+    flex: 1;
+    justify-content: flex-end;
+  }
+
+  .zoom-control {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex: 1;
+    max-width: 220px;
+  }
+
+  .zoom-slider-wrap {
+    position: relative;
+    flex: 1;
+  }
+
+  .title-block {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .title-block h1 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 650;
+    letter-spacing: -0.01em;
+  }
+
+  .title-block .subtitle {
+    margin: 0;
+    font-size: 12.5px;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .rep-control {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex: 1;
+    max-width: 460px;
+  }
+
+  .rep-label {
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .rep-slider-wrap {
+    position: relative;
+    flex: 1;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--grid);
+    outline: none;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid var(--pane);
+    box-shadow: 0 0 0 1px var(--accent);
+    cursor: pointer;
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid var(--pane);
+    box-shadow: 0 0 0 1px var(--accent);
+    cursor: pointer;
+  }
+
+  input[type="range"]:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .rep-ticks {
+    /* Each span is positioned absolutely by JS (alignTicks), at the exact pixel the thumb's
+       own center stops at for that step -- a thumb's travel range is [thumbWidth/2,
+       trackWidth-thumbWidth/2], not edge to edge, so no static CSS spacing (space-between,
+       fixed padding, ...) lines up with it across different track widths/thumb sizes. */
+    position: relative;
+    height: 14px;
+    margin-top: 6px;
+    font-size: 10.5px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .rep-ticks span {
+    position: absolute;
+    top: 0;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    transition: color 0.1s ease, font-weight 0.1s ease;
+  }
+
+  .rep-ticks span.active {
+    color: var(--accent);
+    font-weight: 650;
+  }
+
+  .toggle-control {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    white-space: nowrap;
+  }
+
+  .toggle-control label {
+    font-size: 12.5px;
+    color: var(--ink);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .switch {
+    position: relative;
+    width: 34px;
+    height: 20px;
+    flex: none;
+  }
+
+  .switch input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    margin: 0;
+    cursor: pointer;
+  }
+
+  .switch .track {
+    position: absolute;
+    inset: 0;
+    background: var(--grid);
+    border-radius: 100px;
+    transition: background 0.15s ease;
+    pointer-events: none;
+  }
+
+  .switch .thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--pane);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+    transition: transform 0.15s ease;
+  }
+
+  .switch input:checked + .track {
+    background: var(--accent);
+  }
+
+  .switch input:checked + .track .thumb {
+    transform: translateX(14px);
+  }
+
+  .switch input:focus-visible + .track {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* ---- page body -------------------------------------------------------------- */
+
+  .page-body {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  main {
+    flex: 1;
+    min-width: 0;
+    padding: 28px;
+  }
+
+  .legend {
+    flex: none;
+    width: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin: 28px 28px 0 0;
+    padding: 16px 10px;
+    background: var(--pane);
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    /* Sticks to the same viewport offset for as long as .page-body (i.e. the whole card
+       grid) keeps scrolling past it -- --topbar-h is measured in JS since the topbar's
+       height isn't fixed (it wraps to two rows on narrow viewports). */
+    position: sticky;
+    top: calc(var(--topbar-h, 72px) + 20px);
+  }
+
+  .legend-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+  }
+
+  .legend-scale {
+    display: flex;
+    gap: 6px;
+    height: 340px;
+  }
+
+  .legend-bar {
+    width: 14px;
+    border-radius: 7px;
+    /* Same 12-stop thermal ramp as THERMAL in the script below and COLORSCALE in the
+       notebook -- bottom-to-top so low-to-high reads low-to-high, matching Plotly's own
+       default vertical colorbar orientation. */
+    background: linear-gradient(to top,
+      rgb(3, 35, 51), rgb(13, 48, 100), rgb(53, 50, 155), rgb(93, 62, 153),
+      rgb(126, 77, 143), rgb(158, 89, 135), rgb(193, 100, 121), rgb(225, 113, 97),
+      rgb(246, 139, 69), rgb(251, 173, 60), rgb(246, 211, 70), rgb(231, 250, 90));
+  }
+
+  .legend-ticks {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 10px;
+    margin: 0 0 20px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .pill {
+    padding: 3px 10px;
+    border-radius: 100px;
+    background: var(--pane-alt);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(var(--card-min), 1fr));
+    gap: 20px;
+  }
+
+  .card {
+    background: var(--pane);
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 18px 12px;
+  }
+
+  .card-header h2 {
+    margin: 0;
+    font-size: 14.5px;
+    font-weight: 650;
+    letter-spacing: -0.005em;
+  }
+
+  .card-header .n-points {
+    font-size: 11.5px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .panels {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: var(--pane);
+  }
+
+  .panel {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    background-color: var(--pane-alt);
+    background-image:
+      repeating-linear-gradient(
+        135deg,
+        transparent, transparent 7px,
+        rgba(127, 127, 127, 0.09) 7px, rgba(127, 127, 127, 0.09) 8px
+      );
+  }
+
+  .plot-target {
+    width: 100%;
+    height: 100%;
+  }
+
+  .panel-3d {
+    transition: opacity 0.1s ease;
+  }
+
+  .grid.hide-3d .panel-3d {
+    display: none;
+  }
+
+  footer {
+    margin: 32px 4px 8px;
+    font-size: 11.5px;
+    color: var(--muted);
+  }
+</style>
+
+<div class="topbar">
+  <div class="title-block">
+    <h1>Attention Benchmark: Memorization</h1>
+    <p class="subtitle">Rouge&#8209;L over prefix &times; offset &middot; suffix = 250</p>
+  </div>
+
+  <div class="controls">
+    <div class="rep-control">
+      <span class="rep-label">Repetitions</span>
+      <div class="rep-slider-wrap">
+        <input type="range" id="rep" min="0" max="5" value="2" step="1" list="rep-marks" />
+        <datalist id="rep-marks">
+          <option value="0"></option>
+          <option value="1"></option>
+          <option value="2"></option>
+          <option value="3"></option>
+          <option value="4"></option>
+          <option value="5"></option>
+        </datalist>
+        <div class="rep-ticks" id="rep-ticks">
+          <span>1</span><span>16</span><span>32</span><span>64</span><span>128</span><span>256</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="zoom-control">
+      <span class="rep-label">Columns</span>
+      <div class="zoom-slider-wrap">
+        <input type="range" id="zoom" min="0" max="5" value="2" step="1" />
+        <div class="rep-ticks" id="zoom-ticks">
+          <span>6</span><span>5</span><span>4</span><span>3</span><span>2</span><span>1</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="toggle-control">
+      <span class="switch">
+        <input type="checkbox" id="show-3d" checked />
+        <span class="track"><span class="thumb"></span></span>
+      </span>
+      <label for="show-3d">Show 3D</label>
+    </div>
+  </div>
+</div>
+
+<div class="page-body">
+  <main>
+    <div class="meta-row">
+      <span class="pill">6 models</span>
+      <span class="pill">metric: Rouge&#8209;L</span>
+      <span class="pill">document boundary: 8192 tokens</span>
+      <span class="pill">backend: hf &rarr; megatron</span>
+    </div>
+
+    <div class="grid" id="model-grid"></div>
+
+    <footer>Data: attn_bench/dashboard/export_data.py &middot; feasible candidate grid, griddata-interpolated.</footer>
+  </main>
+
+  <aside class="legend" aria-label="Rouge-L color scale">
+    <span class="legend-title">Rouge&#8209;L</span>
+    <div class="legend-scale">
+      <div class="legend-bar"></div>
+      <div class="legend-ticks"><span>1</span><span>0.5</span><span>0</span></div>
+    </div>
+  </aside>
+</div>
+
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js" charset="utf-8"></script>
+<script>
+  const REP_VALUES = [1, 16, 32, 64, 128, 256];
+  const MODELS = ['full-scf1', 'sink-scf1', 'gated-scf1', 'swa-w256-scf1', 'swa-w1024-scf1', 'swa-w4096-scf1'];
+  const METRIC = 'Rouge-L';
+  const FLOOR = -0.2;  // z-axis floor for the 3D surface + its shadow, matches export_data.py's source
+  const SANS = "-apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif";
+
+  // Same 12-stop thermal ramp as the notebook's COLORSCALE (px.colors.sequential.thermal) --
+  // plotly.js has no built-in 'thermal' name, so the exact stops are inlined here to match.
+  const THERMAL = [
+    [0, 'rgb(3, 35, 51)'], [1 / 11, 'rgb(13, 48, 100)'], [2 / 11, 'rgb(53, 50, 155)'],
+    [3 / 11, 'rgb(93, 62, 153)'], [4 / 11, 'rgb(126, 77, 143)'], [5 / 11, 'rgb(158, 89, 135)'],
+    [6 / 11, 'rgb(193, 100, 121)'], [7 / 11, 'rgb(225, 113, 97)'], [8 / 11, 'rgb(246, 139, 69)'],
+    [9 / 11, 'rgb(251, 173, 60)'], [10 / 11, 'rgb(246, 211, 70)'], [1, 'rgb(231, 250, 90)'],
+  ];
+
+  // Reads the page's own CSS custom properties so every chart recolors with the current
+  // theme instead of carrying separate hardcoded light/dark palettes.
+  function theme() {
+    const s = getComputedStyle(document.documentElement);
+    const v = (name) => s.getPropertyValue(name).trim();
+    return {
+      ink: v('--ink'), muted: v('--muted'), grid: v('--grid'),
+      wall: v('--wall'), pane: v('--pane'), paneAlt: v('--pane-alt'),
+    };
+  }
+
+  function contourFigure(data, rep, T) {
+    const r = data.reps[rep];
+    const fb = data.feasible_bound;
+    const ringColors = r.points.z.map((z) => (z > 0.5 ? T.ink : T.grid));
+    const axisStyle = {
+      gridcolor: T.grid, zerolinecolor: T.grid, showline: true, linecolor: T.grid,
+      range: [0, data.max_doc_length], tickfont: { size: 9, color: T.muted, family: SANS },
+    };
+    const traces = [
+      {
+        type: 'contour', x: r.grid_offset, y: r.grid_prefix, z: r.z_grid, colorscale: THERMAL,
+        zmin: 0, zmax: 1, showscale: false, connectgaps: false,
+        contours: { coloring: 'fill', showlines: false, start: 0, end: 1, size: 0.01 },
+        hovertemplate: `offset: %{x}<br>prefix: %{y}<br>${METRIC}: %{z:.3f}<extra></extra>`,
+      },
+      {
+        type: 'scatter', mode: 'markers', x: r.points.offset, y: r.points.prefix, customdata: r.points.z,
+        marker: {
+          size: 5, color: r.points.z, colorscale: THERMAL, cmin: 0, cmax: 1,
+          line: { width: 0.5, color: ringColors },
+        },
+        hovertemplate: `offset: %{x}<br>prefix: %{y}<br>${METRIC}: %{customdata:.3f}<extra></extra>`,
+        showlegend: false,
+      },
+      {
+        type: 'scatter', mode: 'lines', x: [0, fb], y: [fb, 0],
+        line: { color: T.wall, width: 1.5, dash: 'dot' }, showlegend: false, hoverinfo: 'skip',
+      },
+    ];
+    const layout = {
+      showlegend: false,
+      margin: { l: 46, r: 10, t: 10, b: 36 },
+      paper_bgcolor: T.pane, plot_bgcolor: T.paneAlt,
+      xaxis: { title: { text: 'offset', font: { size: 10, color: T.muted, family: SANS } }, ...axisStyle },
+      yaxis: {
+        title: { text: 'prefix', font: { size: 10, color: T.muted, family: SANS } },
+        scaleanchor: 'x', scaleratio: 1, ...axisStyle,
+      },
+      annotations: [{
+        x: fb / 2, y: fb / 2, text: 'document boundary', textangle: 45, showarrow: false,
+        yshift: 8, font: { size: 9, color: T.muted, family: SANS },
+      }],
+      hoverlabel: { bgcolor: T.pane, bordercolor: T.grid, font: { size: 9, color: T.muted, family: SANS } },
+      font: { family: SANS },
+    };
+    return { traces, layout };
+  }
+
+  function surfaceFigure(data, rep, T) {
+    const r = data.reps[rep];
+    const fb = data.feasible_bound;
+    const gridRes = r.grid_offset.length;
+    const floorZ = r.z_grid.map((row) => row.map((v) => (v === null ? null : FLOOR)));
+    const wallOffset = Array.from({ length: gridRes }, (_, i) => (fb * i) / (gridRes - 1));
+    const wallPrefix = wallOffset.map((o) => fb - o);
+    const axisKwargs = (title, extra) => ({
+      title: { text: title, font: { size: 10, color: T.muted, family: SANS } },
+      tickfont: { size: 8, color: T.muted, family: SANS },
+      gridcolor: T.grid, showbackground: true, backgroundcolor: T.paneAlt,
+      zerolinecolor: T.grid, showspikes: false, ...extra,
+    });
+    const hoverTemplate = `offset: %{x}<br>prefix: %{y}<br>${METRIC}: %{z:.3f}<extra></extra>`;
+    const traces = [
+      {
+        type: 'surface', x: r.grid_offset, y: r.grid_prefix, z: floorZ, surfacecolor: r.z_grid,
+        colorscale: THERMAL, cmin: 0, cmax: 1, opacity: 0.45, showscale: false, hoverinfo: 'skip',
+      },
+      {
+        type: 'surface', x: r.grid_offset, y: r.grid_prefix, z: r.z_grid, colorscale: THERMAL,
+        cmin: 0, cmax: 1, opacity: 0.96, showscale: false, hovertemplate: hoverTemplate,
+        lighting: { ambient: 0.7, diffuse: 0.5, specular: 0.15, roughness: 0.6, fresnel: 0.05 },
+        lightposition: { x: 100, y: 200, z: 300 },
+      },
+      {
+        type: 'scatter3d', mode: 'markers', x: r.points.offset, y: r.points.prefix, z: r.points.z,
+        marker: {
+          size: 3, color: r.points.z, colorscale: THERMAL, cmin: 0, cmax: 1,
+          line: { width: 0.6, color: T.ink },
+        },
+        hovertemplate: hoverTemplate,
+      },
+      {
+        type: 'surface', x: [wallOffset, wallOffset], y: [wallPrefix, wallPrefix],
+        z: [wallOffset.map(() => FLOOR), wallOffset.map(() => 1)],
+        showscale: false, opacity: 0.14, colorscale: [[0, T.wall], [1, T.wall]], hoverinfo: 'skip',
+      },
+      {
+        type: 'scatter3d', mode: 'text', x: [wallOffset[Math.floor(gridRes / 2)]],
+        y: [wallPrefix[Math.floor(gridRes / 2)]], z: [0.98],
+        text: [`document boundary: ${data.max_doc_length} tokens`], textposition: 'top center',
+        textfont: { size: 10, color: T.muted, family: SANS }, showlegend: false, hoverinfo: 'skip',
+      },
+    ];
+    const layout = {
+      showlegend: false,
+      margin: { l: 0, r: 0, t: 0, b: 0 },
+      paper_bgcolor: T.pane,
+      scene: {
+        domain: { x: [0, 1], y: [0, 1] },
+        xaxis: axisKwargs('offset'), yaxis: axisKwargs('prefix'),
+        zaxis: axisKwargs(METRIC, { range: [FLOOR, 1], showbackground: false }),
+        camera: { eye: { x: 1.5, y: 1.5, z: 0.9 } },
+      },
+      hoverlabel: { bgcolor: T.pane, bordercolor: T.grid, font: { size: 9, color: T.muted, family: SANS } },
+      font: { family: SANS },
+    };
+    return { traces, layout };
+  }
+
+  const grid = document.getElementById('model-grid');
+  grid.innerHTML = MODELS.map((m) => `
+    <div class="card">
+      <div class="card-header">
+        <h2>${m}</h2>
+        <span class="n-points" id="n-points-${m}">&mdash; points</span>
+      </div>
+      <div class="panels">
+        <div class="panel"><div class="plot-target" id="panel-2d-${m}"></div></div>
+        <div class="panel panel-3d"><div class="plot-target" id="panel-3d-${m}"></div></div>
+      </div>
+    </div>
+  `).join('');
+
+  const PLOT_CONFIG = { responsive: true, displaylogo: false };
+  const dataByModel = {};
+  let currentRepIdx = 2;  // matches the slider's initial value="2" -> rep=32
+
+  function renderModel(model, rep, T) {
+    const data = dataByModel[model];
+    if (!data) return;
+    const cf = contourFigure(data, rep, T);
+    const sf = surfaceFigure(data, rep, T);
+    Plotly.react(`panel-2d-${model}`, cf.traces, cf.layout, PLOT_CONFIG);
+    Plotly.react(`panel-3d-${model}`, sf.traces, sf.layout, PLOT_CONFIG);
+    document.getElementById(`n-points-${model}`).textContent = `${data.reps[rep].n_points} points`;
+  }
+
+  function renderAll(rep) {
+    const T = theme();
+    MODELS.forEach((m) => renderModel(m, rep, T));
+  }
+
+  Promise.all(MODELS.map((m) => fetch(`data/${m}.json`).then((res) => res.json())))
+    .then((results) => {
+      MODELS.forEach((m, i) => { dataByModel[m] = results[i]; });
+      renderAll(REP_VALUES[currentRepIdx]);
+      // Right after the grid's `innerHTML` swap, the browser hasn't necessarily finished the
+      // CSS grid/aspect-ratio layout pass yet, so the panel divs' measured clientWidth at
+      // the moment renderAll ran can be stale -- one more explicit resize a couple frames
+      // later, once layout has genuinely settled, corrects that without waiting on a
+      // user-triggered resize/zoom.
+      requestAnimationFrame(() => requestAnimationFrame(resizeAllPlots));
+    })
+    .catch((err) => {
+      grid.innerHTML = `<p style="color:var(--muted)">Failed to load chart data (${err.message}) --
+        run <code>python3 attn_bench/dashboard/export_data.py</code> and serve this page over
+        http(s), e.g. <code>python3 -m http.server</code> from attn_bench/dashboard/.</p>`;
+    });
+
+  // Positions each tick span at the exact pixel the slider's own thumb center stops at for
+  // that step -- a native thumb's travel range is [thumbWidth/2, trackWidth-thumbWidth/2],
+  // not edge to edge, so this has to be measured against the slider's real rendered width
+  // rather than assumed from a fixed CSS padding (which drifted, see prior attempt).
+  const THUMB_WIDTH = 16;  // matches ::-webkit-slider-thumb width above
+  function alignTicks(slider, ticksEl) {
+    const trackWidth = slider.getBoundingClientRect().width;
+    if (!trackWidth) return;  // hidden/unlaid-out (e.g. flex-wrap hasn't settled yet)
+    const spans = [...ticksEl.children];
+    const span = trackWidth - THUMB_WIDTH;
+    spans.forEach((el, i) => {
+      const frac = spans.length > 1 ? i / (spans.length - 1) : 0;
+      el.style.left = `${THUMB_WIDTH / 2 + frac * span}px`;
+    });
+  }
+
+  // Shared wiring for both sliders: highlight the active tick (no separate readout -- the
+  // tick row itself shows the current value) and keep it aligned across layout changes.
+  function wireDiscreteSlider(slider, ticksEl, onChange) {
+    const spans = [...ticksEl.children];
+    const setActive = () => {
+      const idx = Number(slider.value);
+      spans.forEach((el, i) => el.classList.toggle('active', i === idx));
+    };
+    setActive();
+    alignTicks(slider, ticksEl);
+    slider.addEventListener('input', () => {
+      setActive();
+      onChange(Number(slider.value));
+    });
+    return () => alignTicks(slider, ticksEl);
+  }
+
+  // config.responsive:true already tracks each panel's own ResizeObserver, but that can lag
+  // a fast CSS-driven size change (worst on the WebGL 3D panels) -- an explicit resize call
+  // keeps every chart's canvas matched to its container instead of trailing behind it.
+  function resizeAllPlots() {
+    if (Object.keys(dataByModel).length < MODELS.length) return;  // charts not built yet
+    MODELS.forEach((m) => {
+      Plotly.Plots.resize(`panel-2d-${m}`);
+      Plotly.Plots.resize(`panel-3d-${m}`);
+    });
+  }
+
+  // rAF-throttles a callback so a fast drag (many 'input' events per frame) runs it at most
+  // once per frame instead of once per pixel of pointer movement -- without this, dragging
+  // the repetitions slider was re-rendering all 12 Plotly charts (5 WebGL traces each on the
+  // 3D panels) synchronously per step crossed, which blocked the main thread badly enough
+  // that the native slider itself appeared to stop tracking the pointer.
+  function rafThrottle(fn) {
+    let pending = false;
+    return (...args) => {
+      if (pending) return;
+      pending = true;
+      requestAnimationFrame(() => {
+        pending = false;
+        fn(...args);
+      });
+    };
+  }
+
+  const slider = document.getElementById('rep');
+  const rerenderCharts = rafThrottle((idx) => {
+    currentRepIdx = idx;
+    slider.title = `rep = ${REP_VALUES[idx]}`;
+    renderAll(REP_VALUES[idx]);
+  });
+  const realignRepTicks = wireDiscreteSlider(slider, document.getElementById('rep-ticks'), rerenderCharts);
+  slider.title = `rep = ${REP_VALUES[currentRepIdx]}`;
+
+  const zoom = document.getElementById('zoom');
+  const COLS = [6, 5, 4, 3, 2, 1];  // left = compact/many columns, right = spacious/few
+
+  function updateColumns() {
+    const cols = COLS[Number(zoom.value)];
+    const styles = getComputedStyle(grid);
+    const gap = parseFloat(styles.columnGap) || 0;
+    const cardMin = (grid.clientWidth - gap * (cols - 1)) / cols;
+    document.documentElement.style.setProperty('--card-min', `${Math.max(160, Math.floor(cardMin))}px`);
+  }
+
+  const applyColumns = rafThrottle(() => {
+    updateColumns();
+    resizeAllPlots();
+  });
+  const realignZoomTicks = wireDiscreteSlider(zoom, document.getElementById('zoom-ticks'), applyColumns);
+  updateColumns();  // set the initial --card-min before any charts render, avoids a layout jump
+
+  // Column count is computed off the grid's actual clientWidth, and tick positions off each
+  // slider's actual rendered width -- both need to stay live across anything that changes
+  // the grid's box, not just the two sliders. A ResizeObserver on the grid itself catches
+  // that directly (window resize, sure, but also the topbar wrapping to two rows, fonts
+  // loading late, etc.) instead of only reacting to the one event window resize fires.
+  const onLayoutChange = rafThrottle(() => {
+    updateColumns();
+    resizeAllPlots();
+    realignRepTicks();
+    realignZoomTicks();
+  });
+  new ResizeObserver(onLayoutChange).observe(grid);
+
+  // .topbar can wrap to two rows on a narrow viewport, so its height isn't a fixed constant
+  // the legend's sticky offset can hardcode -- measured and kept live the same way.
+  const topbar = document.querySelector('.topbar');
+  const setTopbarHeight = () => {
+    document.documentElement.style.setProperty('--topbar-h', `${topbar.offsetHeight}px`);
+  };
+  setTopbarHeight();
+  new ResizeObserver(rafThrottle(setTopbarHeight)).observe(topbar);
+
+  const show3d = document.getElementById('show-3d');
+  show3d.addEventListener('change', () => {
+    grid.classList.toggle('hide-3d', !show3d.checked);
+    if (show3d.checked) resizeAllPlots();
+  });
+</script>
