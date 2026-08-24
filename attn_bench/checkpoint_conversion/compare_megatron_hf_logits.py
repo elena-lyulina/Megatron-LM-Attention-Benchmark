@@ -39,8 +39,11 @@ def _report(ref_output: torch.Tensor, output: torch.Tensor, seq_length: int) -> 
     preds_ref = torch.max(ref_output, dim=-1)[1]
     preds_new = torch.max(output, dim=-1)[1]
     disagree_mask = preds_ref != preds_new
-    agree = 1 - torch.sum(disagree_mask) / preds_ref.numel()
-    print(f"Agrees on {100 * agree:.2f}% of predictions")
+    n_disagree = int(torch.sum(disagree_mask))
+    n_total = preds_ref.numel()
+    agree = 1 - n_disagree / n_total
+    print(f"Agrees on {100 * agree:.2f}% of predictions "
+          f"({n_total - n_disagree}/{n_total} positions agree, {n_disagree} disagree)")
 
     # Near-tie diagnostic: is disagreement a close race (bf16 tipping a near-tie) or one pass
     # confidently preferring a token the other ranks far down its list (a real divergence)?
@@ -51,20 +54,27 @@ def _report(ref_output: torch.Tensor, output: torch.Tensor, seq_length: int) -> 
         ref_topk_vals, ref_topk_idx = torch.topk(ref_output, K, dim=-1)   # [B, S, K], descending
         new_topk_vals, new_topk_idx = torch.topk(output, K, dim=-1)
 
-        # 1. Consecutive-rank gaps within each pass's own top-K: flat (N-way tie) or peaked
-        # (one clear winner), at disagreeing positions vs agreeing ones?
+        # 1. Consecutive-rank gaps within each pass's own top-K, at the SAME agree/disagree
+        # split as above: rank i->i+1 is the gap between that pass's own i-th and (i+1)-th
+        # ranked logit at a position -- large = confident, small = near-tie (bf16-flippable).
+        # Flat across ranks = an N-way tie; peaked at rank1->2 only = a clean two-way near-tie.
+        print(f"Median gap between consecutive top-{K} ranks (own ranking, own logits), "
+              f"disagreeing positions (n={n_disagree}) vs agreeing (n={n_total - n_disagree}):")
+        gaps = {}
         for label, vals in [("ref", ref_topk_vals), ("new", new_topk_vals)]:
-            gaps = vals[..., :-1] - vals[..., 1:]  # [B, S, K-1], rank_i - rank_{i+1}
-            print(f"{label} consecutive top-{K} logit gaps (median), disagree vs agree:")
-            for i in range(K - 1):
-                d = gaps[..., i][disagree_mask]
-                a = gaps[..., i][~disagree_mask]
-                d_str = f"{d.median():.4f}" if d.numel() > 0 else "n/a"
-                a_str = f"{a.median():.4f}" if a.numel() > 0 else "n/a"
-                print(f"  rank{i + 1}->{i + 2}: disagree={d_str}  agree={a_str}")
+            gaps[label] = vals[..., :-1] - vals[..., 1:]  # [B, S, K-1], rank_i - rank_{i+1}
+        header = f"  {'rank pair':<10}{'ref disagree':>13}{'ref agree':>13}{'new disagree':>13}{'new agree':>13}"
+        print(header)
+        for i in range(K - 1):
+            row = [f"  {f'{i + 1}->{i + 2}':<10}"]
+            for label in ("ref", "new"):
+                for mask in (disagree_mask, ~disagree_mask):
+                    vals = gaps[label][..., i][mask]
+                    row.append(f"{vals.median():>13.4f}" if vals.numel() > 0 else f"{'n/a':>13}")
+            print("".join(row))
 
-        # 2. Where does the other pass's pick fall in this pass's own top-K ranking?
-        # (rank-resolved, not just "is it #2"; -1 = outside top-K entirely.)
+        # 2. Where does the other pass's pick fall in this pass's own top-K ranking, at
+        # disagreeing positions? Rank-resolved (not just "is it #2"); "outside" = neither.
         def rank_in_topk(topk_idx: torch.Tensor, pick: torch.Tensor) -> torch.Tensor:
             match = topk_idx == pick.unsqueeze(-1)          # [B, S, K]
             found = match.any(-1)
@@ -75,10 +85,13 @@ def _report(ref_output: torch.Tensor, output: torch.Tensor, seq_length: int) -> 
         ref_rank_in_new = rank_in_topk(new_topk_idx, preds_ref)   # [B, S]
         hist_new_in_ref = torch.bincount((new_rank_in_ref[disagree_mask] + 1).clamp(min=0), minlength=K + 1)
         hist_ref_in_new = torch.bincount((ref_rank_in_new[disagree_mask] + 1).clamp(min=0), minlength=K + 1)
-        print(f"new's pick, rank in ref's top-{K} (disagreements) [idx0=outside top-{K}, idx i=rank i]: "
-              f"{hist_new_in_ref.tolist()}")
-        print(f"ref's pick, rank in new's top-{K} (disagreements) [idx0=outside top-{K}, idx i=rank i]: "
-              f"{hist_ref_in_new.tolist()}")
+        rank_cols = "  ".join(f"rank{i + 1}={hist_new_in_ref[i + 1].item()}" for i in range(K))
+        print(f"Where the OTHER backend's pick lands in THIS backend's own top-{K} ranking "
+              f"(disagreements only; a 'rank1' hit can also mean an exact tie at the top -- "
+              f"see the note below the DISAGREE_TOKEN dump):")
+        print(f"  new's pick in ref's ranking: outside_top{K}={hist_new_in_ref[0].item()}  {rank_cols}")
+        rank_cols = "  ".join(f"rank{i + 1}={hist_ref_in_new[i + 1].item()}" for i in range(K))
+        print(f"  ref's pick in new's ranking: outside_top{K}={hist_ref_in_new[0].item()}  {rank_cols}")
 
         # 3. Disagreement rate by absolute sequence position -- rising = accumulating error
         # (e.g. recurrent-state drift), flat = position-independent noise.
@@ -90,17 +103,28 @@ def _report(ref_output: torch.Tensor, output: torch.Tensor, seq_length: int) -> 
             bucket = disagree_mask[:, lo:hi]
             print(f"  pos [{lo:5d},{hi:5d}): disagree={100 * bucket.float().mean():.2f}%  (n={bucket.numel()})")
 
-        # 4. Per-disagreement dump, parseable from the log (grep 'DISAGREE_TOKEN') for post-hoc
-        # analysis. s = absolute sequence position (no windowing here, single forward pass).
+        # 4. Per-disagreement dump. Header line ("DISAGREE_TOKEN batch=.. pos=..", greppable)
+        # plus tab-indented detail lines: each backend's own top-K token ids, with a '*' marking
+        # where the OTHER backend's pick actually sits in that ranking (no '*' at all = outside
+        # the top-K entirely), and the logit gap after each rank.
+        print(f"Per-disagreement detail ({n_disagree} tokens):")
         ref_gaps_full = ref_topk_vals[..., :-1] - ref_topk_vals[..., 1:]
         new_gaps_full = new_topk_vals[..., :-1] - new_topk_vals[..., 1:]
         for b, s in disagree_mask.nonzero(as_tuple=False).tolist():
-            ref_gap_str = ",".join(f"{g:.4f}" for g in ref_gaps_full[b, s].tolist())
-            new_gap_str = ",".join(f"{g:.4f}" for g in new_gaps_full[b, s].tolist())
-            print(f"DISAGREE_TOKEN b={b} s={s} "
-                  f"ref_pick={preds_ref[b, s].item()} new_pick={preds_new[b, s].item()} "
-                  f"new_rank_in_ref={new_rank_in_ref[b, s].item()} ref_rank_in_new={ref_rank_in_new[b, s].item()} "
-                  f"ref_gaps={ref_gap_str} new_gaps={new_gap_str}")
+            r_pick, n_pick = preds_ref[b, s].item(), preds_new[b, s].item()
+            ref_ids_str = ", ".join(f"{t}*" if t == n_pick else str(t) for t in ref_topk_idx[b, s].tolist())
+            new_ids_str = ", ".join(f"{t}*" if t == r_pick else str(t) for t in new_topk_idx[b, s].tolist())
+            ref_gap_str = ", ".join(f"{g:.4f}" for g in ref_gaps_full[b, s].tolist())
+            new_gap_str = ", ".join(f"{g:.4f}" for g in new_gaps_full[b, s].tolist())
+            print(f"DISAGREE_TOKEN batch={b} pos={s}")
+            print(f"\tref_pick_token_id={r_pick}\tnew_pick_token_id={n_pick}")
+            print(f"\tref_top{K}_token_ids (*=where new's pick sits): {ref_ids_str}")
+            print(f"\tref_top{K}_gaps_to_next_rank:                   {ref_gap_str}")
+            print(f"\tnew_top{K}_token_ids (*=where ref's pick sits): {new_ids_str}")
+            print(f"\tnew_top{K}_gaps_to_next_rank:                   {new_gap_str}")
+        print("Note: a '*' at rank1 (first id in the list) whose gap-to-next-rank is 0.0000 "
+              "means torch.max/torch.topk broke an exact tie differently, not that the other "
+              "backend picked its confident #1.")
 
     # Check two: atol and rtol on all logits.
     atol = 1e-05
@@ -198,8 +222,13 @@ def main():
     vocab_size = hf_backend.model.config.vocab_size
 
     print("\n=== cross: megatron vs hf ===")
-    compare_logits(megatron_backend, hf_backend, vocab_size, args.seq_length, args.batch_size, dtype=dtype)
-    print("Logits check passed.")
+    try:
+        compare_logits(megatron_backend, hf_backend, vocab_size, args.seq_length, args.batch_size, dtype=dtype)
+        print("Logits check passed.")
+        cross_failed = False
+    except AssertionError as e:
+        print(f"Logits check FAILED: {e}")
+        cross_failed = True
 
     if args.self_comparison:
         print("\n=== self-comparison: megatron vs itself (kernel-nondeterminism noise floor) ===")
@@ -207,6 +236,9 @@ def main():
                             args.seq_length, args.batch_size, dtype=dtype)
         print("\n=== self-comparison: hf vs itself (kernel-nondeterminism noise floor) ===")
         self_compare_logits(hf_backend, vocab_size, args.seq_length, args.batch_size, dtype=dtype)
+
+    if cross_failed:
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":

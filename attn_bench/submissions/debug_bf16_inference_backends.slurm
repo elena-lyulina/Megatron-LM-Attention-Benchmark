@@ -66,6 +66,11 @@ if [ "$NEEDS_TRITON" = "1" ]; then
     TRITON_ENV="export TRITON_CACHE_DIR=/tmp/triton_${USER}_\${SLURM_JOB_ID}_\$SLURM_PROCID; mkdir -p \$TRITON_CACHE_DIR;"
 fi
 
+SINK_ENV=""
+if [ "$IS_SINK_FAMILY" = "1" ]; then
+    SINK_ENV="export FLASH_ATTN_SRC_DIR=/users/$USER/scratch/flash-attention; pip install --quiet 'nvidia-cutlass-dsl==4.6.2';"
+fi
+
 echo "RUN: model=$MODEL  exp=$EXP_NAME  seq_length=$SEQ_LENGTH  self_comparison=$SELF_COMPARISON"
 
 srun \
@@ -76,6 +81,7 @@ srun \
     export PYTHONPATH='${PYTHONPATH}'
     export CUDA_DEVICE_MAX_CONNECTIONS=1
     $TRITON_ENV
+    $SINK_ENV
 
     echo '### compare_megatron_hf_logits.py (standalone, short seq_length) ###'
     torchrun --nproc_per_node=1 $CONV_DIR/compare_megatron_hf_logits.py \
