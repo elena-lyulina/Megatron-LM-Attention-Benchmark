@@ -32,8 +32,11 @@ class InferenceBackend(ABC):
         """prompt: [B, prompt_len] -> generated: [B, suffix_length]."""
 
     @abstractmethod
-    def forward_logits(self, inputs: torch.Tensor, position_ids: torch.Tensor) -> torch.Tensor:
-        """One forward pass, no cache. Returns raw logits [B, S, V]."""
+    def forward_logits(self, inputs: torch.Tensor, position_ids: torch.Tensor,
+                       fp32_output: bool = True) -> torch.Tensor:
+        """One forward pass, no cache. Returns raw logits [B, S, V]. fp32_output=False keeps
+        the output in the model's compute dtype (e.g. bf16) instead of upcasting -- callers
+        that only need a slice of a long sequence should slice first, then cast."""
 
     def experiment_path_suffix(self) -> str:
         """Appended to --experiment-path so this backend/configuration's results never
@@ -171,8 +174,8 @@ class MegatronBackend(InferenceBackend):
 
         return torch.cat(generated, dim=1)
 
-    def forward_logits(self, inputs, position_ids):
-        return self.model(inputs, position_ids, attention_mask=None)
+    def forward_logits(self, inputs, position_ids, fp32_output=True):
+        return self.model(inputs, position_ids, attention_mask=None, fp32_output=fp32_output)
 
     def experiment_path_suffix(self) -> str:
         return f"_sscale{self.sink_scale:g}" if self.sink_scale is not None else ""
@@ -272,7 +275,8 @@ class HFBackend(InferenceBackend):
         )
         return output[:, prompt.shape[1]:]
 
-    def forward_logits(self, inputs, position_ids):
+    def forward_logits(self, inputs, position_ids, fp32_output=True):
+        # HF never auto-upcasts logits -- fp32_output is a no-op here, kept for interface parity.
         return self.model(input_ids=inputs, position_ids=position_ids, use_cache=False).logits
 
     def experiment_path_suffix(self) -> str:

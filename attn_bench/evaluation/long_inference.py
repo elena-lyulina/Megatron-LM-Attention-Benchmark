@@ -65,7 +65,7 @@ def per_position_nll(backend: MegatronBackend, seq_ids: torch.Tensor, softmax_ch
     device = seq_ids.device
     pos = torch.arange(S1, dtype=torch.long, device=device).unsqueeze(0)
 
-    logits = backend.forward_logits(inputs, pos)  # [1, S1, V] (bf16)
+    logits = backend.forward_logits(inputs, pos, fp32_output=False)  # [1, S1, V] (bf16)
 
     nll = torch.empty(S1, dtype=torch.float32, device=device)
     argmax_token = torch.empty(S1, dtype=torch.long, device=device) if store_individual else None

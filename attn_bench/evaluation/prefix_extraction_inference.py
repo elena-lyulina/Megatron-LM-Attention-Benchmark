@@ -71,10 +71,11 @@ def compute_nll(backend: InferenceBackend, input_ids: torch.Tensor, suffix_lengt
     labels = input_ids[:, 1:]
     position_ids = torch.arange(S - 1, dtype=torch.long, device=device).unsqueeze(0).expand(B, -1)
 
-    logits = backend.forward_logits(inputs, position_ids)  # [B, S-1, V]
-
-    # Slice to suffix_length first -- log_softmax in fp32 over the full prefix+suffix span
-    # wasted memory that grew with prefix length for no benefit (OOM'd at prefix>=5000, job 3036124).
+    # fp32_output=False: the megatron backend's Float16Module otherwise upcasts the full,
+    # unsliced [B, S-1, V] output to fp32 before we ever get to slice it below -- doubles the
+    # memory for no benefit and OOM'd at prefix>=5000 (job 3036124) / prefix>=5942 (job 3169304,
+    # GDN). Slice to suffix_length first, then cast just that slice to fp32 for log_softmax.
+    logits = backend.forward_logits(inputs, position_ids, fp32_output=False)  # [B, S-1, V]
     suffix_logits = logits[:, -suffix_length:, :].float()
     suffix_labels = labels[:, -suffix_length:]
     del logits
