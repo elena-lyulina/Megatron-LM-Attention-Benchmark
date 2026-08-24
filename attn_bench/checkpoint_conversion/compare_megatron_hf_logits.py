@@ -232,8 +232,10 @@ def main():
 
     if args.self_comparison:
         print("\n=== self-comparison: megatron vs itself (kernel-nondeterminism noise floor) ===")
-        self_compare_logits(megatron_backend, megatron_backend.model.vocab_size,
-                            args.seq_length, args.batch_size, dtype=dtype)
+        # megatron_backend.model is a Float16Module wrapper, not the raw GPTModel, so it has no
+        # .vocab_size of its own -- reuse the HF vocab_size (same tokenizer/padded vocab as the
+        # megatron checkpoint it was converted from).
+        self_compare_logits(megatron_backend, vocab_size, args.seq_length, args.batch_size, dtype=dtype)
         print("\n=== self-comparison: hf vs itself (kernel-nondeterminism noise floor) ===")
         self_compare_logits(hf_backend, vocab_size, args.seq_length, args.batch_size, dtype=dtype)
 
