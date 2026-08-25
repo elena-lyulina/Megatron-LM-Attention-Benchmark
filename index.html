@@ -71,10 +71,12 @@
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    /* Row gap (stacked wrap) stays modest; column gap (between control groups) is
-       deliberately much larger than any control's own internal label-to-input gap (10-14px),
-       so groups read as visually separate at a glance even before they wrap to new rows. */
-    gap: 18px 36px;
+    /* Row gap (stacked wrap) stays modest; column gap (between control groups) shrinks with
+       available width (clamp floor keeps it clearly bigger than any control's own internal
+       label-to-input gap of 10-14px, so groups still read as visually separate even when
+       tight) instead of eating fixed space that the controls themselves need to not get
+       crushed before wrapping. */
+    gap: 18px clamp(14px, 3vw, 36px);
     flex: 1;
     justify-content: flex-end;
   }
@@ -239,10 +241,20 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    white-space: nowrap;
-    max-width: 220px;
+    min-width: 90px;
+    max-width: clamp(90px, 16vw, 220px);
+  }
+
+  /* Truncation lives on the label specifically, not the button -- putting
+     overflow/ellipsis on .dropdown-btn itself let the ellipsis swallow the caret
+     (::after) along with the overflowing text, so a long metric name could hide the
+     triangle entirely. min-width:0 is what actually lets a flex child shrink/ellipsize
+     below its content's natural width. */
+  .dropdown-btn-label {
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
   }
 
   /* CSS-drawn caret instead of a Unicode arrow glyph -- renders identically everywhere
@@ -562,14 +574,13 @@
 <div class="topbar">
   <div class="title-block">
     <h1>Attention Benchmark: Memorization</h1>
-    <p class="subtitle" id="subtitle">Rouge&#8209;L over prefix &times; offset &middot; suffix = 250</p>
   </div>
 
   <div class="controls">
     <div class="metric-control">
       <span class="rep-label">Metric</span>
       <div class="dropdown">
-        <button type="button" id="metric-dropdown-btn" class="select-control dropdown-btn"></button>
+        <button type="button" id="metric-dropdown-btn" class="select-control dropdown-btn"><span class="dropdown-btn-label"></span></button>
         <div class="dropdown-panel" id="metric-dropdown-panel" hidden></div>
       </div>
     </div>
@@ -577,7 +588,7 @@
     <div class="model-control">
       <span class="rep-label">Models</span>
       <div class="dropdown">
-        <button type="button" id="model-dropdown-btn" class="select-control dropdown-btn"></button>
+        <button type="button" id="model-dropdown-btn" class="select-control dropdown-btn"><span class="dropdown-btn-label"></span></button>
         <div class="dropdown-panel" id="model-dropdown-panel" hidden>
           <div class="model-dropdown-actions">
             <button type="button" id="select-all-btn">Select all</button>
@@ -590,7 +601,7 @@
     <div class="rep-control slider-control">
       <span class="rep-label">Repetitions</span>
       <div class="rep-slider-wrap">
-        <input type="range" id="rep" min="0" max="5" value="2" step="1" list="rep-marks" />
+        <input type="range" id="rep" min="0" max="6" value="3" step="1" list="rep-marks" />
         <datalist id="rep-marks">
           <option value="0"></option>
           <option value="1"></option>
@@ -598,9 +609,10 @@
           <option value="3"></option>
           <option value="4"></option>
           <option value="5"></option>
+          <option value="6"></option>
         </datalist>
         <div class="rep-ticks" id="rep-ticks">
-          <span>1</span><span>16</span><span>32</span><span>64</span><span>128</span><span>256</span>
+          <span>0</span><span>1</span><span>16</span><span>32</span><span>64</span><span>128</span><span>256</span>
         </div>
       </div>
     </div>
@@ -618,7 +630,7 @@
     <div class="toggle-control">
       <label for="show-3d">Show 3D</label>
       <span class="switch">
-        <input type="checkbox" id="show-3d" checked />
+        <input type="checkbox" id="show-3d" />
         <span class="track"><span class="thumb"></span></span>
       </span>
     </div>
@@ -630,11 +642,11 @@
     <div class="meta-row">
       <span class="pill" id="model-count-pill">10 of 10 models</span>
       <span class="pill" id="metric-pill">metric: Rouge&#8209;L</span>
+      <span class="pill">suffix: 250 tokens</span>
       <span class="pill">document boundary: 8192 tokens</span>
-      <span class="pill">backend: hf &rarr; megatron</span>
     </div>
 
-    <div class="grid" id="model-grid"></div>
+    <div class="grid hide-3d" id="model-grid"></div>
 
     <footer>Data: attn_bench/dashboard/export_data.py &middot; feasible candidate grid, griddata-interpolated.</footer>
   </main>
@@ -643,16 +655,18 @@
     <span class="legend-title" id="legend-title">Rouge&#8209;L</span>
     <div class="legend-scale">
       <div class="legend-bar"></div>
-      <div class="legend-ticks" id="legend-ticks"><span>1</span><span>0.5</span><span>0</span></div>
+      <div class="legend-ticks" id="legend-ticks">
+        <span>1</span><span>0.75</span><span>0.5</span><span>0.25</span><span>0</span>
+      </div>
     </div>
   </aside>
 </div>
 
 <script src="https://cdn.plot.ly/plotly-2.32.0.min.js" charset="utf-8"></script>
 <script>
-  const REP_VALUES = [1, 16, 32, 64, 128, 256];
+  const REP_VALUES = [0, 1, 16, 32, 64, 128, 256];
   const MODELS = ['full-scf1', 'swa-w4096-scf1', 'swa-w1024-scf1', 'swa-w256-scf1',
-                  'gdn', 'gdn-xdl', 'gdn-xdl-xsl-0.5', 'gdn-xdl-xsl', 'gated-scf1', 'sink-scf1'];
+                  'sink-scf1', 'gated-scf1', 'gdn', 'gdn-xdl', 'gdn-xdl-xsl-0.5', 'gdn-xdl-xsl'];
   const DISPLAY_NAMES = {
     'full-scf1': 'Full Attention',
     'swa-w4096-scf1': 'Sliding Window (w=4096)',
@@ -869,9 +883,27 @@
   }
   rebuildGrid();  // initial skeleton, before data has loaded
 
+  // A fixed 2-line CSS min-height (see .card-header h2) works until a title actually needs
+  // more than that -- at high column counts (narrow cards) some titles wrap to 3-4 lines
+  // while their row-mates stay at 2, so the chart panels below start at different heights
+  // per card. This measures each row's tallest header (grouping strictly by index/cols,
+  // matching the grid's row-major fill order) and stretches every header in that row to
+  // match, so panels always start level -- takes `cols` as a parameter rather than reading
+  // the columns slider directly, since this needs to run once before that slider is wired up.
+  function equalizeCardHeaderHeights(cols) {
+    const headers = [...document.querySelectorAll('.card-header')];
+    if (!headers.length || !cols) return;
+    headers.forEach((h) => { h.style.minHeight = ''; });  // reset to the CSS floor first
+    for (let start = 0; start < headers.length; start += cols) {
+      const row = headers.slice(start, start + cols);
+      const maxH = Math.max(...row.map((h) => h.getBoundingClientRect().height));
+      row.forEach((h) => { h.style.minHeight = `${maxH}px`; });
+    }
+  }
+
   const PLOT_CONFIG = { responsive: true, displaylogo: false };
   const dataByModel = {};
-  let currentRepIdx = 2;  // matches the slider's initial value="2" -> rep=32
+  let currentRepIdx = 3;  // matches the slider's initial value="3" -> rep=32
   let currentMetric = 'rouge_l';
 
   function renderModel(model, rep, metricKey, T) {
@@ -898,11 +930,12 @@
     const spec = METRICS_BY_KEY[metricKey];
     document.getElementById('legend-title').textContent = spec.label;
     const ticks = [...document.querySelectorAll('#legend-ticks span')];
-    ticks[0].textContent = fmtTick(spec.vmax, spec);
-    ticks[1].textContent = fmtTick((spec.vmin + spec.vmax) / 2, spec);
-    ticks[2].textContent = fmtTick(spec.vmin, spec);
+    // ticks[0] is the top of the bar (vmax) down to ticks[N-1] at the bottom (vmin).
+    const fracs = [1, 0.75, 0.5, 0.25, 0];
+    fracs.forEach((f, i) => {
+      ticks[i].textContent = fmtTick(spec.vmin + f * (spec.vmax - spec.vmin), spec);
+    });
     document.getElementById('metric-pill').textContent = `metric: ${spec.label}`;
-    document.getElementById('subtitle').textContent = `${spec.label} over prefix × offset · suffix = 250`;
   }
 
   function rerenderAll() {
@@ -950,7 +983,7 @@
 
   function updateMetricButton() {
     const spec = METRICS_BY_KEY[currentMetric];
-    metricDropdownBtn.textContent = spec.label;
+    metricDropdownBtn.querySelector('.dropdown-btn-label').textContent = spec.label;
     metricOptions.forEach((el) => el.classList.toggle('active', el.dataset.key === currentMetric));
   }
   updateMetricButton();
@@ -961,6 +994,12 @@
     metricPanel.hidden = true;
     updateLegend(currentMetric);
     rerenderAll();
+    // The metric button's own label length changes with the selection, which can reflow
+    // the whole topbar (wrapping earlier/later) -- both sliders' tick positions are measured
+    // off their actual rendered track width, so they need realigning here too, not just on
+    // window resize.
+    realignRepTicks();
+    realignZoomTicks();
   }));
   metricDropdownBtn.addEventListener('click', () => toggleDropdown(metricDropdownBtn, metricPanel));
 
@@ -977,7 +1016,7 @@
   const modelDropdownBtn = document.getElementById('model-dropdown-btn');
 
   function updateModelButtonLabel() {
-    modelDropdownBtn.textContent = `${selectedModels.length} of ${MODELS.length} models`;
+    modelDropdownBtn.querySelector('.dropdown-btn-label').textContent = `${selectedModels.length} of ${MODELS.length} models`;
   }
   updateModelButtonLabel();
 
@@ -986,6 +1025,7 @@
     selectedModels = MODELS.filter((m) => checked.has(m));  // fixed canonical order, not click order
     updateModelButtonLabel();
     rebuildGrid();
+    equalizeCardHeaderHeights(COLS[Number(zoom.value)]);
     rerenderAll();
   }
   modelCheckboxes.forEach((cb) => cb.addEventListener('change', onModelSelectionChange));
@@ -1090,16 +1130,21 @@
 
   const applyColumns = rafThrottle(() => {
     applyColumnsCount();
+    equalizeCardHeaderHeights(COLS[Number(zoom.value)]);
     resizeAllPlots();
   });
   const realignZoomTicks = wireDiscreteSlider(zoom, document.getElementById('zoom-ticks'), applyColumns, 24);
   applyColumnsCount();  // set the initial --cols before any charts render, avoids a layout jump
+  equalizeCardHeaderHeights(COLS[Number(zoom.value)]);  // fix up the pre-init skeleton now that cols is known
 
   // Tick positions depend on each slider's actual rendered width, which changes with anything
   // that reflows the topbar (window resize, wrapping to two rows, fonts loading late, ...) --
   // a ResizeObserver on the grid catches that directly instead of only reacting to window
   // resize. Plot resizing is included too, as a safety net for responsive:true's own observer.
   const onLayoutChange = rafThrottle(() => {
+    // Column *count* staying fixed doesn't mean card *width* did -- a window resize can
+    // change how many lines a title wraps to without touching the columns slider at all.
+    equalizeCardHeaderHeights(COLS[Number(zoom.value)]);
     resizeAllPlots();
     realignRepTicks();
     realignZoomTicks();
