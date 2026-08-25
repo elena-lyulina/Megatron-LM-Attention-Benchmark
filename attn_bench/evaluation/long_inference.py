@@ -25,11 +25,12 @@ import torch.distributed as dist
 import torch.nn.functional as F
 from tqdm import tqdm
 
-from attn_bench.evaluation.gdn_state_norm import install_state_norm_hooks
 from attn_bench.evaluation.inference_backend import (HFBackend,
                                                      InferenceBackend,
                                                      MegatronBackend)
-from megatron.core import parallel_state as mpu
+
+# gdn_state_norm/megatron.core.parallel_state pull in triton et al. -- imported lazily below so
+# --dry-run doesn't need them.
 
 SEQ_LEN = 8192  # training sequence length; suffix (position >= sample_len) is the extrapolation region
 SAMPLE_SEED = 42  # fixed seed for --max-samples subsampling, so calibration runs are reproducible
@@ -117,6 +118,7 @@ class IndividualCollector:
         # Gathers onto the DP group's source rank (== global rank 0 for the TP=1 jobs this
         # is used with). Merges every rank's records and sorts by idx for a deterministic
         # file regardless of how the shard striding split the work.
+        from megatron.core import parallel_state as mpu
         dst = mpu.get_data_parallel_src_rank()
         world = dist.get_world_size(dp_group)
         gathered = [None] * world if dist.get_rank() == dst else None
@@ -146,6 +148,7 @@ def run_inference(backend: InferenceBackend, dataset, maxpos, rank, softmax_chun
 
     dataset holds (tokens, seq_id) pairs -- seq_id is only used when individual is set.
     """
+    from megatron.core import parallel_state as mpu
     dp_rank = mpu.get_data_parallel_rank()
     dp_size = mpu.get_data_parallel_world_size()
     dp_group = mpu.get_data_parallel_group()
@@ -365,6 +368,8 @@ def run_main(args, items: list[tuple[str, object]], load_dataset: Callable, meta
 
     accum = None
     if args.log_state_norm:
+        from attn_bench.evaluation.gdn_state_norm import \
+            install_state_norm_hooks
         accum = install_state_norm_hooks(backend.model, args.state_chunk, device)
         if accum is None and rank == 0:
             print("--log-state-norm set but model has no GatedDeltaNet layers; skipping state norms.")

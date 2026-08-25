@@ -22,17 +22,9 @@ set -e
 SCRIPT_DIR=$(dirname "$0")
 source "$SCRIPT_DIR/../scripts/llama_checkpoints.sh"
 
-# The login node's system python3 is too old (3.6, predates e.g. `from __future__ import
-# annotations`) for the dry-run checks below -- prefer a personal conda env's python3 if one
-# exists (per CSCS's own Clariden setup docs), falling back to system python3 otherwise. Same
-# convention as measure_mem_all.sh.
+# System python3 is too old for --dry-run below; prefer a personal conda env's, same as measure_mem_all.sh.
 PYTHON_BIN=python3
 [ -x "$HOME/miniconda3/bin/python3" ] && PYTHON_BIN="$HOME/miniconda3/bin/python3"
-
-# So the dry-run checks below can `import torch`/`megatron.core` (long_inference.py imports
-# both at module load, even though --dry-run itself never touches the GPU) and `import
-# attn_bench` -- same PYTHONPATH shape long_fineweb_inference.slurm exports inside the
-# container, minus the container.
 export PYTHONPATH="$SCRIPT_DIR/../..:${PYTHONPATH:-}"
 
 RESULTS_BASE=/users/$USER/store/long-fineweb-results
@@ -91,10 +83,7 @@ for DATA_FOLDER in "${DATA_FOLDERS[@]}"; do
     for MODEL in "${MODELS[@]}"; do
         model_config "$MODEL"
 
-        # hf backend needs the checkpoint already converted -- HFBackend's constructor raises
-        # if the dir is missing, which would otherwise abort this whole loop (set -e) on the
-        # first unconverted model instead of just skipping it. Computed pre-EXP_SUFFIX, same
-        # as MODEL_DIR/CKPT_NAME, since the HF conversion isn't keyed by the results suffix.
+        # Computed pre-EXP_SUFFIX: HF conversion isn't keyed by the results suffix.
         HF_DIR="$STORE_HF_BASE/$EXP_NAME"
         EXP_NAME="${EXP_NAME}${EXP_SUFFIX}"
         if [[ "$BACKEND" == "hf" && ! -f "$HF_DIR/config.json" ]]; then

@@ -18,10 +18,8 @@
 #
 # Env vars:
 #   MODEL          checkpoint to use, see llama_checkpoints.sh (default: full)
-#   CHECKPOINT_BACKEND   megatron (default) or hf -- hf loads /users/$USER/store/hf-checkpoints/
-#                  $EXP_NAME (pre-EXP_SUFFIX, see convert_and_validate_hf.slurm) instead of the
-#                  torch_dist checkpoint; results land in a separate <experiment-path>_hf dir
-#                  so they never collide with the megatron-backend run for the same model
+#   CHECKPOINT_BACKEND   megatron (default) or hf -- hf needs the model already converted
+#                  via convert_and_validate_hf.slurm
 #   DATA_FILE      required; jsonl produced by extract_long_docs.py
 #   MAX_LENGTH     cap sequence length (default: uncapped)
 #   MAX_SAMPLES    cap docs processed (default: 660)
@@ -82,9 +80,6 @@ export CUDA_DEVICE_MAX_CONNECTIONS=1
 # --persistent-storage-path lets the done-check see results scratch has lost to a purge.
 EXTRA_ENV=""
 if [ "$CHECKPOINT_BACKEND" = "hf" ]; then
-    # HF checkpoint must already exist (produced separately by convert_and_validate_hf.slurm) --
-    # this also doubles as the "is this model even HF-convertible" check, since GDN models
-    # never get one.
     if [ ! -f "$HF_DIR/config.json" ]; then
         echo "CHECKPOINT_BACKEND=hf requested but $HF_DIR/config.json not found -- run convert_and_validate_hf.slurm (MODEL=$MODEL) first."
         exit 1
@@ -92,9 +87,7 @@ if [ "$CHECKPOINT_BACKEND" = "hf" ]; then
     BACKEND_ARGS="--checkpoint-backend hf --hf-dir $HF_DIR"
     EXTRA_MEGATRON=""
     if [ "$IS_SINK_FAMILY" = "1" ]; then
-        # sink's HF architecture (SinkLlamaForCausalLM) needs a patched flash-attn checkout
-        # for its fused kernel -- see flash-attention-cute-workflow.md. Only sink pays this
-        # cost: full/gated/swa's HF path never imports flash_attn.cute at all.
+        # sink's HF arch needs a patched flash-attn checkout -- see flash-attention-cute-workflow.md
         EXTRA_ENV="export FLASH_ATTN_SRC_DIR=/users/$USER/scratch/flash-attention; pip install --quiet 'nvidia-cutlass-dsl==4.6.2';"
     fi
 else
