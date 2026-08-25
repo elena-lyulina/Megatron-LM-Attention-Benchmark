@@ -12,8 +12,10 @@
 # To add a newly trained model to this sweep: add it to attn_bench/scripts/llama_checkpoints.sh, not here.
 #
 # Usage: bash attn_bench/submissions/long_fineweb_inference_all.sh   # full sweep, all models x 2 partitions
-# Add --dry-run to print the sbatch commands that would run without submitting anything.
-# Add --models full-scf8,full-long-scf8 to restrict to a subset (default: every model in the registry).
+#   --dry-run                print the sbatch commands that would run without submitting anything
+#   --models m1,m2            restrict models (default: every model in the registry)
+#   --backend hf              use each model's already-converted HF checkpoint (see
+#                             convert_and_validate_hf.slurm; results land in a separate *_hf dir)
 
 set -e
 
@@ -24,6 +26,7 @@ RESULTS_BASE=/users/$USER/store/long-fineweb-results
 SCRATCH_RESULTS_BASE=/iopsstor/scratch/cscs/$USER/long-fineweb-results
 STORE_TOKENIZED=/users/$USER/store/datasets/tokenized
 TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b
+STORE_HF_BASE=/users/$USER/store/hf-checkpoints
 LOG_STATE_NORM=${LOG_STATE_NORM:-}   # set to log GDN state norms (applied only to GDN variants)
 STATE_CHUNK=${STATE_CHUNK:-}         # override the state readout stride (default 128)
 STORE_INDIVIDUAL=${STORE_INDIVIDUAL:-}   # set to also write raw per-sequence records
@@ -43,12 +46,20 @@ DATA_FOLDERS=(
 
 FORCE=0
 DRY_RUN=0
+BACKEND="megatron"
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --force) FORCE=1; shift ;;
         --dry-run) DRY_RUN=1; shift ;;
         --models) IFS=',' read -r -a MODELS <<< "$2"; shift 2 ;;
-        *) echo "Unknown argument: $1"; echo "Usage: $0 [--force] [--dry-run] [--models m1,m2]  (set MAX_LENGTH/MAX_SAMPLES via env)"; exit 1 ;;
+        --backend)
+            BACKEND="$2"; shift 2
+            if [[ "$BACKEND" != "megatron" && "$BACKEND" != "hf" ]]; then
+                echo "--backend must be 'megatron' or 'hf', got '$BACKEND'."
+                exit 1
+            fi
+            ;;
+        *) echo "Unknown argument: $1"; echo "Usage: $0 [--force] [--dry-run] [--models m1,m2] [--backend hf]  (set MAX_LENGTH/MAX_SAMPLES via env)"; exit 1 ;;
     esac
 done
 
@@ -66,7 +77,25 @@ for DATA_FOLDER in "${DATA_FOLDERS[@]}"; do
 
     for MODEL in "${MODELS[@]}"; do
         model_config "$MODEL"
+
+        # hf backend needs the checkpoint already converted -- HFBackend's constructor raises
+        # if the dir is missing, which would otherwise abort this whole loop (set -e) on the
+        # first unconverted model instead of just skipping it. Computed pre-EXP_SUFFIX, same
+        # as MODEL_DIR/CKPT_NAME, since the HF conversion isn't keyed by the results suffix.
+        HF_DIR="$STORE_HF_BASE/$EXP_NAME"
         EXP_NAME="${EXP_NAME}${EXP_SUFFIX}"
+        if [[ "$BACKEND" == "hf" && ! -f "$HF_DIR/config.json" ]]; then
+            SKIPPED_COUNT=$((SKIPPED_COUNT + 1))
+            echo "Skipping $EXP_NAME: no HF checkpoint at $HF_DIR (run convert_and_validate_hf.slurm first)."
+            continue
+        fi
+        if [[ "$BACKEND" == "hf" ]]; then
+            BACKEND_ARGS=(--checkpoint-backend hf --hf-dir "$HF_DIR")
+        else
+            BACKEND_ARGS=(--checkpoint-backend megatron \
+                --ckpt-dir "/users/$USER/store/pretrain-results/$CKPT_NAME/checkpoints" \
+                --tokenizer-path "$TOKENIZER_PATH")
+        fi
 
         # All models run the same way now: TP=1, no length cap, default walltime.
         VAR_MAXLEN=${MAX_LENGTH:-}
@@ -86,8 +115,7 @@ for DATA_FOLDER in "${DATA_FOLDERS[@]}"; do
             [[ $WANT_STATE -eq 1 ]] && DRY_RUN_ARGS+=(--log-state-norm)
             [[ -n "$STORE_INDIVIDUAL" ]] && DRY_RUN_ARGS+=(--store-individual)
             NEEDED=$(python3 "$SCRIPT_DIR/../evaluation/long_fineweb_inference.py" --dry-run \
-                --ckpt-dir "/users/$USER/store/pretrain-results/$CKPT_NAME/checkpoints" \
-                --tokenizer-path "$TOKENIZER_PATH" \
+                "${BACKEND_ARGS[@]}" \
                 --experiment-path "$SCRATCH_RESULTS_BASE/$EXP_NAME/${DATA_FOLDER_NAME}_long" \
                 --persistent-storage-path "$RESULTS_BASE/$EXP_NAME/${DATA_FOLDER_NAME}_long" \
                 --data-file "$DATA_FILE" \
@@ -99,7 +127,7 @@ for DATA_FOLDER in "${DATA_FOLDERS[@]}"; do
             continue
         fi
 
-        EXPORTS="MODEL=$MODEL,DATA_FILE=$DATA_FILE"
+        EXPORTS="MODEL=$MODEL,DATA_FILE=$DATA_FILE,CHECKPOINT_BACKEND=$BACKEND"
         [[ -n "$VAR_MAXLEN" ]] && EXPORTS="$EXPORTS,MAX_LENGTH=$VAR_MAXLEN"
         [[ -n "${MAX_SAMPLES:-}" ]] && EXPORTS="$EXPORTS,MAX_SAMPLES=$MAX_SAMPLES"
         [[ $WANT_STATE -eq 1 ]] && EXPORTS="$EXPORTS,LOG_STATE_NORM=1"
@@ -115,7 +143,7 @@ for DATA_FOLDER in "${DATA_FOLDERS[@]}"; do
             continue
         fi
 
-        echo "Submitting MODEL=$MODEL ($EXP_NAME) partition=$TAG state_norm=$WANT_STATE individual=${STORE_INDIVIDUAL:-0}"
+        echo "Submitting MODEL=$MODEL ($EXP_NAME) backend=$BACKEND partition=$TAG state_norm=$WANT_STATE individual=${STORE_INDIVIDUAL:-0}"
         # ALL propagates the submission env (USER, PATH, ...) so $USER-based paths resolve.
         sbatch --export=ALL,"$EXPORTS" "$SCRIPT_DIR/long_fineweb_inference.slurm"
         SUBMITTED_COUNT=$((SUBMITTED_COUNT + 1))

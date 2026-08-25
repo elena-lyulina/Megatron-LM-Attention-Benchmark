@@ -26,7 +26,9 @@ import torch.nn.functional as F
 from tqdm import tqdm
 
 from attn_bench.evaluation.gdn_state_norm import install_state_norm_hooks
-from attn_bench.evaluation.inference_backend import MegatronBackend
+from attn_bench.evaluation.inference_backend import (HFBackend,
+                                                     InferenceBackend,
+                                                     MegatronBackend)
 from megatron.core import parallel_state as mpu
 
 SEQ_LEN = 8192  # training sequence length; suffix (position >= sample_len) is the extrapolation region
@@ -48,7 +50,7 @@ def sample_lines(path: Path, max_samples: int | None) -> list[str]:
 ### FORWARD ###
 
 @torch.no_grad()
-def per_position_nll(backend: MegatronBackend, seq_ids: torch.Tensor, softmax_chunk: int,
+def per_position_nll(backend: InferenceBackend, seq_ids: torch.Tensor, softmax_chunk: int,
                      store_individual: bool = False):
     """One forward over the whole sequence; return per-position NLL [S-1] (float32), plus,
     when store_individual, the argmax predicted token and the true token's rank in the
@@ -134,7 +136,7 @@ class IndividualCollector:
 
 ### RUN ###
 
-def run_inference(backend: MegatronBackend, dataset, maxpos, rank, softmax_chunk, device, desc="",
+def run_inference(backend: InferenceBackend, dataset, maxpos, rank, softmax_chunk, device, desc="",
                   accum=None, individual=None):
     """Accumulate per-position NLL sum / sqsum / count over this rank's shard.
 
@@ -260,8 +262,14 @@ def write_run_metadata(output_dir: Path, extra: dict) -> None:
 
 def add_common_args(p: argparse.ArgumentParser, max_samples_default: int | None = None) -> None:
     """Flags shared by every long-sequence inference script (dataset selection is caller-specific)."""
-    p.add_argument("--ckpt-dir", required=True, help="torch_dist checkpoint directory")
-    p.add_argument("--tokenizer-path", required=True)
+    p.add_argument("--checkpoint-backend", choices=["megatron", "hf"], default="megatron",
+                   help="megatron: load the torch_dist checkpoint directly (--ckpt-dir/"
+                        "--tokenizer-path, all attention variants). hf: load an already-"
+                        "converted HF checkpoint (--hf-dir).")
+    p.add_argument("--ckpt-dir", default=None, help="torch_dist checkpoint directory (megatron backend)")
+    p.add_argument("--tokenizer-path", default=None, help="(megatron backend)")
+    p.add_argument("--hf-dir", default=None,
+                   help="Output of checkpoint_conversion/convert_megatron_to_hf.py (hf backend)")
     p.add_argument("--experiment-path", required=True, help="Output root")
     p.add_argument("--persistent-storage-path", default=None,
                    help="Secondary mirror of --experiment-path, checked as a fallback for the "
@@ -294,6 +302,14 @@ def add_common_args(p: argparse.ArgumentParser, max_samples_default: int | None 
 
 ### MAIN ###
 
+def build_backend(args) -> InferenceBackend:
+    """Constructs the requested backend (raises if required args are missing/invalid). Cheap --
+    no checkpoint/GPU work happens until backend.load_model()."""
+    if args.checkpoint_backend == "hf":
+        return HFBackend(args.hf_dir)
+    return MegatronBackend(args.ckpt_dir, args.tokenizer_path, args.megatron_extra_args)
+
+
 def print_dry_run_report(items: list, status: dict) -> None:
     """status: {key: bool}, True meaning already complete. Report to stderr, space-separated
     needed-key list to stdout -- same convention the mem-results scripts use."""
@@ -316,6 +332,13 @@ def run_main(args, items: list[tuple[str, object]], load_dataset: Callable, meta
     -> list[tuple[list[int], str]]` -- (tokens, seq_id) pairs; seq_id is only used when
     --store-individual is set (Gutenberg's book_id, fineweb's doc_id).
     """
+    backend = build_backend(args)
+    args.experiment_path = args.experiment_path.rstrip('/') + backend.experiment_path_suffix()
+    if getattr(args, "persistent_storage_path", None):
+        args.persistent_storage_path = (
+            args.persistent_storage_path.rstrip('/') + backend.experiment_path_suffix()
+        )
+
     output_dir = config_dir(args.experiment_path, args.max_length, args.max_samples)
     persistent_output_dir = (
         config_dir(args.persistent_storage_path, args.max_length, args.max_samples)
@@ -336,7 +359,6 @@ def run_main(args, items: list[tuple[str, object]], load_dataset: Callable, meta
             print(f"All requested results already present in {output_dir} -- skipping checkpoint load.")
         return
 
-    backend = MegatronBackend(args.ckpt_dir, args.tokenizer_path, args.megatron_extra_args)
     backend.load_model()
     rank = dist.get_rank()
     device = backend.device
@@ -352,7 +374,9 @@ def run_main(args, items: list[tuple[str, object]], load_dataset: Callable, meta
     if rank == 0:
         write_run_metadata(output_dir, {
             "container_env": args.container_env,
+            "checkpoint_backend": args.checkpoint_backend,
             "ckpt_dir": args.ckpt_dir,
+            "hf_dir": args.hf_dir,
             "max_length": args.max_length,
             "max_samples": args.max_samples,
             **metadata_extra,

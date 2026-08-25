@@ -19,6 +19,10 @@
 #
 # Env vars:
 #   MODEL          checkpoint to use, see llama_checkpoints.sh (default: full)
+#   CHECKPOINT_BACKEND   megatron (default) or hf -- hf loads /users/$USER/store/hf-checkpoints/
+#                  $EXP_NAME (see convert_and_validate_hf.slurm) instead of the torch_dist
+#                  checkpoint; results land in a separate <experiment-path>_hf dir so they
+#                  never collide with the megatron-backend run for the same model
 #   REPETITIONS    comma-separated rep buckets (default: 0,1,2,4,8,16,32,64,128,256)
 #   MAX_LENGTH     cap sequence length (default: uncapped, up to 4L)
 #   MAX_SAMPLES    cap docs processed (default: all)
@@ -27,6 +31,7 @@
 #   STORE_INDIVIDUAL   also write raw per-sequence records to <key>_individual.jsonl
 #
 # Usage: sbatch --export=MODEL=full-scf8 long_gutenberg_inference.slurm
+#        sbatch --export=MODEL=full-scf1,CHECKPOINT_BACKEND=hf long_gutenberg_inference.slurm
 # (normally submitted via long_gutenberg_inference_all.sh)
 
 echo "START TIME: $(date)"
@@ -39,6 +44,7 @@ RESULTS_BASE=/users/$USER/store/long-gutenberg-results
 SCRATCH_RESULTS_BASE=/iopsstor/scratch/cscs/$USER/long-gutenberg-results
 GUTENBERG_LONG_JSONL_DIR=/users/$USER/store/datasets/tokenized/gutenberg_rep_jsonl_long
 TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b
+STORE_HF_BASE=/users/$USER/store/hf-checkpoints
 
 REPETITIONS=${REPETITIONS:-0,1,2,4,8,16,32,64,128,256}
 MAX_LENGTH=${MAX_LENGTH:-}
@@ -47,6 +53,7 @@ OVERWRITE=${OVERWRITE:-}
 LOG_STATE_NORM=${LOG_STATE_NORM:-}
 STATE_CHUNK=${STATE_CHUNK:-}
 STORE_INDIVIDUAL=${STORE_INDIVIDUAL:-}
+CHECKPOINT_BACKEND=${CHECKPOINT_BACKEND:-megatron}
 
 ### MODEL -> EXP_NAME + non-restored flags (registry shared with every other eval script) ###
 source $MEGATRON_LM_DIR/attn_bench/scripts/llama_checkpoints.sh
@@ -71,9 +78,32 @@ export CUDA_DEVICE_MAX_CONNECTIONS=1
 # --experiment-path is the scratch working dir -- results stay there; sync to store manually
 # when you want it, scratch is only purged every ~2 weeks.
 # --persistent-storage-path lets the done-check see results scratch has lost to a purge.
+HF_DIR=$STORE_HF_BASE/$EXP_NAME
+EXTRA_ENV=""
+if [ "$CHECKPOINT_BACKEND" = "hf" ]; then
+    # HF checkpoint must already exist (produced separately by convert_and_validate_hf.slurm) --
+    # this also doubles as the "is this model even HF-convertible" check, since GDN models
+    # never get one.
+    if [ ! -f "$HF_DIR/config.json" ]; then
+        echo "CHECKPOINT_BACKEND=hf requested but $HF_DIR/config.json not found -- run convert_and_validate_hf.slurm (MODEL=$MODEL) first."
+        exit 1
+    fi
+    BACKEND_ARGS="--checkpoint-backend hf --hf-dir $HF_DIR"
+    EXTRA_MEGATRON=""
+    if [ "$IS_SINK_FAMILY" = "1" ]; then
+        # sink's HF architecture (SinkLlamaForCausalLM) needs a patched flash-attn checkout
+        # for its fused kernel -- see flash-attention-cute-workflow.md. Only sink pays this
+        # cost: full/gated/swa's HF path never imports flash_attn.cute at all.
+        EXTRA_ENV="export FLASH_ATTN_SRC_DIR=/users/$USER/scratch/flash-attention; pip install --quiet 'nvidia-cutlass-dsl==4.6.2';"
+    fi
+else
+    BACKEND_ARGS="--checkpoint-backend megatron --ckpt-dir $MODEL_DIR/checkpoints --tokenizer-path $TOKENIZER_PATH"
+    EXTRA_MEGATRON=""
+    [ -n "$MEGATRON_EXTRA" ] && EXTRA_MEGATRON="--megatron-extra-args $MEGATRON_EXTRA"
+fi
+
 COMMON_ARGS="--container-env $CONTAINER_ENV \
-    --ckpt-dir $MODEL_DIR/checkpoints \
-    --tokenizer-path $TOKENIZER_PATH \
+    $BACKEND_ARGS \
     --experiment-path $SCRATCH_RESULTS_DIR \
     --persistent-storage-path $RESULTS_DIR \
     --data-folder $GUTENBERG_LONG_JSONL_DIR \
@@ -84,10 +114,8 @@ COMMON_ARGS="--container-env $CONTAINER_ENV \
 [ -n "$LOG_STATE_NORM" ] && COMMON_ARGS="$COMMON_ARGS --log-state-norm"
 [ -n "$STATE_CHUNK" ] && COMMON_ARGS="$COMMON_ARGS --state-chunk $STATE_CHUNK"
 [ -n "$STORE_INDIVIDUAL" ] && COMMON_ARGS="$COMMON_ARGS --store-individual"
-EXTRA_MEGATRON=""
-[ -n "$MEGATRON_EXTRA" ] && EXTRA_MEGATRON="--megatron-extra-args $MEGATRON_EXTRA"
 
-echo "RUN: model=$MODEL  exp=$EXP_NAME  reps=$REPETITIONS  max_length=${MAX_LENGTH:-none}  max_samples=${MAX_SAMPLES:-all}  triton=$NEEDS_TRITON  state_norm=${LOG_STATE_NORM:+on}  individual=${STORE_INDIVIDUAL:+on}"
+echo "RUN: model=$MODEL  exp=$EXP_NAME  backend=$CHECKPOINT_BACKEND  reps=$REPETITIONS  max_length=${MAX_LENGTH:-none}  max_samples=${MAX_SAMPLES:-all}  triton=$NEEDS_TRITON  state_norm=${LOG_STATE_NORM:+on}  individual=${STORE_INDIVIDUAL:+on}"
 
 ### Position-wise loss inference ###
 # GDN needs a per-rank node-local TRITON_CACHE_DIR: fla kernels autotune on first use and
@@ -115,6 +143,7 @@ else
         bash -c "
         export PYTHONPATH='${PYTHONPATH}'
         export CUDA_DEVICE_MAX_CONNECTIONS=1
+        $EXTRA_ENV
         RANK=\$SLURM_PROCID LOCAL_RANK=\$SLURM_LOCALID \
         torchrun --nproc_per_node=4 \
             $PY $COMMON_ARGS $EXTRA_MEGATRON"

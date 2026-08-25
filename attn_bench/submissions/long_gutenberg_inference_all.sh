@@ -11,7 +11,10 @@
 # To add a newly trained model to this sweep: add it to attn_bench/scripts/llama_checkpoints.sh, not here.
 #
 # Usage: bash attn_bench/submissions/long_gutenberg_inference_all.sh   # full sweep, all models
-# Add --dry-run to print the sbatch commands that would run without submitting anything.
+#   --dry-run                print the sbatch commands that would run without submitting anything
+#   --models m1,m2            restrict models (default: every model in the registry)
+#   --backend hf              use each model's already-converted HF checkpoint (see
+#                             convert_and_validate_hf.slurm; results land in a separate *_hf dir)
 
 set -e
 
@@ -22,6 +25,7 @@ RESULTS_BASE=/users/$USER/store/long-gutenberg-results
 SCRATCH_RESULTS_BASE=/iopsstor/scratch/cscs/$USER/long-gutenberg-results
 GUTENBERG_LONG_JSONL_DIR=/users/$USER/store/datasets/tokenized/gutenberg_rep_jsonl_long
 TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b
+STORE_HF_BASE=/users/$USER/store/hf-checkpoints
 REPETITIONS=${REPETITIONS:-0,1,2,4,8,16,32,64,128,256}
 LOG_STATE_NORM=${LOG_STATE_NORM:-}   # set to log GDN state norms (applied only to GDN variants)
 STATE_CHUNK=${STATE_CHUNK:-}         # override the state readout stride (default 128)
@@ -29,11 +33,20 @@ STORE_INDIVIDUAL=${STORE_INDIVIDUAL:-}   # set to also write raw per-sequence re
 
 FORCE=0
 DRY_RUN=0
+BACKEND="megatron"
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --force) FORCE=1; shift ;;
         --dry-run) DRY_RUN=1; shift ;;
-        *) echo "Unknown argument: $1"; echo "Usage: $0 [--force] [--dry-run]  (set REPETITIONS/MAX_LENGTH/MAX_SAMPLES via env)"; exit 1 ;;
+        --models) IFS=',' read -r -a MODELS <<< "$2"; shift 2 ;;
+        --backend)
+            BACKEND="$2"; shift 2
+            if [[ "$BACKEND" != "megatron" && "$BACKEND" != "hf" ]]; then
+                echo "--backend must be 'megatron' or 'hf', got '$BACKEND'."
+                exit 1
+            fi
+            ;;
+        *) echo "Unknown argument: $1"; echo "Usage: $0 [--force] [--dry-run] [--models m1,m2] [--backend hf]  (set REPETITIONS/MAX_LENGTH/MAX_SAMPLES via env)"; exit 1 ;;
     esac
 done
 
@@ -50,6 +63,23 @@ for MODEL in "${MODELS[@]}"; do
     WANT_STATE=0
     [[ -n "$LOG_STATE_NORM" && "$NEEDS_TRITON" == "1" ]] && WANT_STATE=1
 
+    # hf backend needs the checkpoint already converted -- HFBackend's constructor raises if
+    # the dir is missing, which would otherwise abort this whole loop (set -e) on the first
+    # unconverted model instead of just skipping it.
+    HF_DIR="$STORE_HF_BASE/$EXP_NAME"
+    if [[ "$BACKEND" == "hf" && ! -f "$HF_DIR/config.json" ]]; then
+        SKIPPED_COUNT=$((SKIPPED_COUNT + 1))
+        echo "Skipping $EXP_NAME: no HF checkpoint at $HF_DIR (run convert_and_validate_hf.slurm first)."
+        continue
+    fi
+    if [[ "$BACKEND" == "hf" ]]; then
+        BACKEND_ARGS=(--checkpoint-backend hf --hf-dir "$HF_DIR")
+    else
+        BACKEND_ARGS=(--checkpoint-backend megatron \
+            --ckpt-dir "/users/$USER/store/pretrain-results/$CKPT_NAME/checkpoints" \
+            --tokenizer-path "$TOKENIZER_PATH")
+    fi
+
     # "Done" = every requested bucket's rep_{R}.npz is present (plus rep_{R}_state.npz/
     # rep_{R}_individual.jsonl when requested) -- checked via the .py's own --dry-run (dual-
     # checks scratch then store), the same logic the real run uses internally, instead of a
@@ -63,8 +93,7 @@ for MODEL in "${MODELS[@]}"; do
         [[ $WANT_STATE -eq 1 ]] && DRY_RUN_ARGS+=(--log-state-norm)
         [[ -n "$STORE_INDIVIDUAL" ]] && DRY_RUN_ARGS+=(--store-individual)
         NEEDED=$(python3 "$SCRIPT_DIR/../evaluation/long_gutenberg_inference.py" --dry-run \
-            --ckpt-dir "/users/$USER/store/pretrain-results/$CKPT_NAME/checkpoints" \
-            --tokenizer-path "$TOKENIZER_PATH" \
+            "${BACKEND_ARGS[@]}" \
             --experiment-path "$SCRATCH_RESULTS_BASE/$EXP_NAME" \
             --persistent-storage-path "$RESULTS_BASE/$EXP_NAME" \
             --data-folder "$GUTENBERG_LONG_JSONL_DIR" \
@@ -80,7 +109,7 @@ for MODEL in "${MODELS[@]}"; do
     # REPETITIONS is NOT passed here: sbatch --export=NAME=VALUE splits VALUE on commas, which would
     # truncate the list to the first bucket. The slurm hardcodes the default list; an override set in
     # the environment (e.g. REPETITIONS=0 bash ...) rides to the job via --export=ALL instead.
-    EXPORTS="MODEL=$MODEL"
+    EXPORTS="MODEL=$MODEL,CHECKPOINT_BACKEND=$BACKEND"
     [[ -n "$VAR_MAXLEN" ]] && EXPORTS="$EXPORTS,MAX_LENGTH=$VAR_MAXLEN"
     [[ -n "${MAX_SAMPLES:-}" ]] && EXPORTS="$EXPORTS,MAX_SAMPLES=$MAX_SAMPLES"
     [[ $WANT_STATE -eq 1 ]] && EXPORTS="$EXPORTS,LOG_STATE_NORM=1"
@@ -95,7 +124,7 @@ for MODEL in "${MODELS[@]}"; do
         continue
     fi
 
-    echo "Submitting MODEL=$MODEL ($EXP_NAME) reps=$REPETITIONS state_norm=$WANT_STATE individual=${STORE_INDIVIDUAL:-0}"
+    echo "Submitting MODEL=$MODEL ($EXP_NAME) backend=$BACKEND reps=$REPETITIONS state_norm=$WANT_STATE individual=${STORE_INDIVIDUAL:-0}"
     # ALL propagates the submission env (USER, PATH, ...) so $USER-based paths resolve.
     sbatch --export=ALL,"$EXPORTS" "$SCRIPT_DIR/long_gutenberg_inference.slurm"
     SUBMITTED_COUNT=$((SUBMITTED_COUNT + 1))

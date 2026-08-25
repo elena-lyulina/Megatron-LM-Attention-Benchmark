@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --account=infra01
-#SBATCH --time=00:30:00
+#SBATCH --time=1:00:00
 #SBATCH --job-name=long-fineweb-inf
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
@@ -18,6 +18,10 @@
 #
 # Env vars:
 #   MODEL          checkpoint to use, see llama_checkpoints.sh (default: full)
+#   CHECKPOINT_BACKEND   megatron (default) or hf -- hf loads /users/$USER/store/hf-checkpoints/
+#                  $EXP_NAME (pre-EXP_SUFFIX, see convert_and_validate_hf.slurm) instead of the
+#                  torch_dist checkpoint; results land in a separate <experiment-path>_hf dir
+#                  so they never collide with the megatron-backend run for the same model
 #   DATA_FILE      required; jsonl produced by extract_long_docs.py
 #   MAX_LENGTH     cap sequence length (default: uncapped)
 #   MAX_SAMPLES    cap docs processed (default: 660)
@@ -25,9 +29,10 @@
 #   LOG_STATE_NORM / STATE_CHUNK   GDN state-norm logging (no-op for attention models)
 #   STORE_INDIVIDUAL   also write raw per-sequence records to <key>_individual.jsonl
 #   EXP_SUFFIX     appended to EXP_NAME for the results path only, e.g. EXP_SUFFIX=-scf-8;
-#                  checkpoint lookup (CKPT_NAME) is captured before the suffix is applied
+#                  checkpoint lookup (CKPT_NAME/HF_DIR) is captured before the suffix is applied
 #
 # Usage: sbatch --export=MODEL=full-scf8,DATA_FILE=/path/to/long_24576_32768.jsonl long_fineweb_inference.slurm
+#        sbatch --export=MODEL=full-scf1,CHECKPOINT_BACKEND=hf,DATA_FILE=/path/to/long_24576_32768.jsonl long_fineweb_inference.slurm
 # (normally submitted via long_fineweb_inference_all.sh)
 
 echo "START TIME: $(date)"
@@ -39,6 +44,7 @@ MEGATRON_LM_DIR=/iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark
 RESULTS_BASE=/users/$USER/store/long-fineweb-results
 SCRATCH_RESULTS_BASE=/iopsstor/scratch/cscs/$USER/long-fineweb-results
 TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b
+STORE_HF_BASE=/users/$USER/store/hf-checkpoints
 
 DATA_FILE=${DATA_FILE:?ERROR: DATA_FILE must be set to a jsonl produced by extract_long_docs.py}
 MAX_LENGTH=${MAX_LENGTH:-}
@@ -48,6 +54,7 @@ LOG_STATE_NORM=${LOG_STATE_NORM:-}
 STATE_CHUNK=${STATE_CHUNK:-}
 STORE_INDIVIDUAL=${STORE_INDIVIDUAL:-}
 EXP_SUFFIX=${EXP_SUFFIX:-}
+CHECKPOINT_BACKEND=${CHECKPOINT_BACKEND:-megatron}
 
 ### MODEL -> EXP_NAME + non-restored flags (registry shared with every other eval script) ###
 source $MEGATRON_LM_DIR/attn_bench/scripts/llama_checkpoints.sh
@@ -55,6 +62,7 @@ MODEL=${MODEL:-full-scf8}
 model_config "$MODEL"
 
 MODEL_DIR=/users/$USER/store/pretrain-results/$CKPT_NAME
+HF_DIR=$STORE_HF_BASE/$EXP_NAME
 EXP_NAME="${EXP_NAME}${EXP_SUFFIX}"
 PARTITION_DIR=$(basename "$(dirname "$DATA_FILE")")
 RESULTS_DIR=$RESULTS_BASE/$EXP_NAME/$PARTITION_DIR
@@ -72,9 +80,31 @@ export CUDA_DEVICE_MAX_CONNECTIONS=1
 # --experiment-path is the scratch working dir -- results stay there; sync to store manually
 # when you want it, scratch is only purged every ~2 weeks.
 # --persistent-storage-path lets the done-check see results scratch has lost to a purge.
+EXTRA_ENV=""
+if [ "$CHECKPOINT_BACKEND" = "hf" ]; then
+    # HF checkpoint must already exist (produced separately by convert_and_validate_hf.slurm) --
+    # this also doubles as the "is this model even HF-convertible" check, since GDN models
+    # never get one.
+    if [ ! -f "$HF_DIR/config.json" ]; then
+        echo "CHECKPOINT_BACKEND=hf requested but $HF_DIR/config.json not found -- run convert_and_validate_hf.slurm (MODEL=$MODEL) first."
+        exit 1
+    fi
+    BACKEND_ARGS="--checkpoint-backend hf --hf-dir $HF_DIR"
+    EXTRA_MEGATRON=""
+    if [ "$IS_SINK_FAMILY" = "1" ]; then
+        # sink's HF architecture (SinkLlamaForCausalLM) needs a patched flash-attn checkout
+        # for its fused kernel -- see flash-attention-cute-workflow.md. Only sink pays this
+        # cost: full/gated/swa's HF path never imports flash_attn.cute at all.
+        EXTRA_ENV="export FLASH_ATTN_SRC_DIR=/users/$USER/scratch/flash-attention; pip install --quiet 'nvidia-cutlass-dsl==4.6.2';"
+    fi
+else
+    BACKEND_ARGS="--checkpoint-backend megatron --ckpt-dir $MODEL_DIR/checkpoints --tokenizer-path $TOKENIZER_PATH"
+    EXTRA_MEGATRON=""
+    [ -n "$MEGATRON_EXTRA" ] && EXTRA_MEGATRON="--megatron-extra-args $MEGATRON_EXTRA"
+fi
+
 COMMON_ARGS="--container-env $CONTAINER_ENV \
-    --ckpt-dir $MODEL_DIR/checkpoints \
-    --tokenizer-path $TOKENIZER_PATH \
+    $BACKEND_ARGS \
     --experiment-path $SCRATCH_RESULTS_DIR \
     --persistent-storage-path $RESULTS_DIR \
     --data-file $DATA_FILE"
@@ -84,10 +114,8 @@ COMMON_ARGS="--container-env $CONTAINER_ENV \
 [ -n "$LOG_STATE_NORM" ] && COMMON_ARGS="$COMMON_ARGS --log-state-norm"
 [ -n "$STATE_CHUNK" ] && COMMON_ARGS="$COMMON_ARGS --state-chunk $STATE_CHUNK"
 [ -n "$STORE_INDIVIDUAL" ] && COMMON_ARGS="$COMMON_ARGS --store-individual"
-EXTRA_MEGATRON=""
-[ -n "$MEGATRON_EXTRA" ] && EXTRA_MEGATRON="--megatron-extra-args $MEGATRON_EXTRA"
 
-echo "RUN: model=$MODEL  exp=$EXP_NAME  data_file=$DATA_FILE  max_length=${MAX_LENGTH:-none}  max_samples=${MAX_SAMPLES:-660 (default)}  triton=$NEEDS_TRITON  state_norm=${LOG_STATE_NORM:+on}  individual=${STORE_INDIVIDUAL:+on}"
+echo "RUN: model=$MODEL  exp=$EXP_NAME  backend=$CHECKPOINT_BACKEND  data_file=$DATA_FILE  max_length=${MAX_LENGTH:-none}  max_samples=${MAX_SAMPLES:-660 (default)}  triton=$NEEDS_TRITON  state_norm=${LOG_STATE_NORM:+on}  individual=${STORE_INDIVIDUAL:+on}"
 
 ### Position-wise loss inference ###
 # GDN needs a per-rank node-local TRITON_CACHE_DIR: fla kernels autotune on first use and
@@ -115,6 +143,7 @@ else
         bash -c "
         export PYTHONPATH='${PYTHONPATH}'
         export CUDA_DEVICE_MAX_CONNECTIONS=1
+        $EXTRA_ENV
         RANK=\$SLURM_PROCID LOCAL_RANK=\$SLURM_LOCALID \
         torchrun --nproc_per_node=4 \
             $PY $COMMON_ARGS $EXTRA_MEGATRON"
