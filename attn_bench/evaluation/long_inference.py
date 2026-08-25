@@ -29,8 +29,7 @@ from attn_bench.evaluation.inference_backend import (HFBackend,
                                                      InferenceBackend,
                                                      MegatronBackend)
 
-# gdn_state_norm/megatron.core.parallel_state pull in triton et al. -- imported lazily below so
-# --dry-run doesn't need them.
+# gdn_state_norm pulls in triton et al. -- imported lazily below so --dry-run doesn't need it.
 
 SEQ_LEN = 8192  # training sequence length; suffix (position >= sample_len) is the extrapolation region
 SAMPLE_SEED = 42  # fixed seed for --max-samples subsampling, so calibration runs are reproducible
@@ -115,11 +114,9 @@ class IndividualCollector:
         })
 
     def gather(self, dp_group):
-        # Gathers onto the DP group's source rank (== global rank 0 for the TP=1 jobs this
-        # is used with). Merges every rank's records and sorts by idx for a deterministic
-        # file regardless of how the shard striding split the work.
-        from megatron.core import parallel_state as mpu
-        dst = mpu.get_data_parallel_src_rank()
+        # Gathers onto global rank 0. Merges every rank's records and sorts by idx for a
+        # deterministic file regardless of how the shard striding split the work.
+        dst = 0
         world = dist.get_world_size(dp_group)
         gathered = [None] * world if dist.get_rank() == dst else None
         dist.gather_object(self.records, gathered, dst=dst, group=dp_group)
@@ -148,10 +145,9 @@ def run_inference(backend: InferenceBackend, dataset, maxpos, rank, softmax_chun
 
     dataset holds (tokens, seq_id) pairs -- seq_id is only used when individual is set.
     """
-    from megatron.core import parallel_state as mpu
-    dp_rank = mpu.get_data_parallel_rank()
-    dp_size = mpu.get_data_parallel_world_size()
-    dp_group = mpu.get_data_parallel_group()
+    dp_rank = dist.get_rank()
+    dp_size = dist.get_world_size()
+    dp_group = None
 
     pos_sum = torch.zeros(maxpos, dtype=torch.float64, device=device)
     pos_sqsum = torch.zeros(maxpos, dtype=torch.float64, device=device)
