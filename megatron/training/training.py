@@ -720,8 +720,11 @@ def num_floating_point_operations(
             num_linear_attention_layers = sum(linear_attention_pattern)
             num_standard_attention_layers = num_layers - num_linear_attention_layers
 
-            if args.experimental_attention_variant == "gated_delta_net":
+            if args.experimental_attention_variant in ("gated_delta_net", "kimi_delta_attention"):
                 # Calculate the FLOPs for the gated delta net attention.
+                # KDA (kimi_delta_attention) reuses this estimate: same linear-attention structure
+                # (projections + conv1d + delta-rule recurrence + out proj); close enough for the
+                # throughput-logging FLOP count.
                 qk_head_dim = args.linear_key_head_dim
                 v_head_dim = args.linear_value_head_dim
                 num_qk_heads = args.linear_num_key_heads
