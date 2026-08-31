@@ -4,17 +4,20 @@
 #SBATCH --job-name=test-pretrain-llama1B-mla-fineweb40B-gutenberg3B
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
-#SBATCH --nodes=8
+#SBATCH --nodes=12
 #SBATCH --ntasks-per-node=4
 #SBATCH --cpus-per-task=72
 #SBATCH --no-requeue
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=clariden-jobs-elyulin-aaaauapxybdkdx42ppvef2c2eq@swissai-initiative.slack.com
 
-# SMOKE TEST for pretrain_llama3_1b_mla_fineweb40B_gutenberg3B.slurm.
-# Runs the xdoc_mask / xdoc_loss / xdoc_position_ids suites (attn_bench/tests/test_xdoc_attention.py)
-# against the REAL MLA config -- same 8 nodes, same FineWeb+Gutenberg data, same MBS=3/GBS=288/TP=1,
-# same MLA block + explicit plain-RoPE flags + ffn 7680 + --use-packed-seq-params.
+# NODE-SCALING TEST: FAITHFUL V2-Lite MLA + packed-seq (THD), at 12 nodes instead of 8.
+# Story: MLA + THD isolation is ~2.4x slow (~3.0 s/iter @ 8 nodes, job 3244440). The mask-based
+# alternative is fast but TE ignores the mask -> real cross-doc leakage (job 3245069). So THD is
+# the only correct isolation with TE, and we absorb the cost with more nodes instead.
+# MBS=3 / GBS=288 fixed. GAS = 288 / (3 * nodes*4): 8 nodes -> GAS 3; 12 nodes -> GAS 2 (this run);
+# 24 nodes -> GAS 1. (16 nodes gives GAS 1.5 -> invalid.) Expect ~ (2/3)*3000 ~= 2000 ms/iter at 12.
+# xdoc suites should PASS (same as job 3244440). Read `elapsed time per iteration (ms)` to see the scaling.
 # Entry point is pretrain_gpt_native.py, a drop-in superset of pretrain_gpt.py that injects --tests on
 # the first forward step (Summary block prints immediately), then falls through to real training.
 # TRAINING_STEPS is left at the usual value; the 00:15:00 limit simply times the run out -- that's fine,
@@ -113,7 +116,8 @@ NETWORK_SIZE_ARGS=(
     --disable-bias-linear
 )
 
-# MLA block = DeepSeek-V2-Lite verbatim; explicit plain RoPE (see main script header for the full rationale).
+# FAITHFUL V2-Lite MLA block (perf levers were dropped -- they didn't help). Only the isolation
+# mechanism changes here, in DATA_ARGS.
 ATTENTION_ARGS=(
     --multi-latent-attention
     --num-attention-heads 16
@@ -121,7 +125,7 @@ ATTENTION_ARGS=(
     --qk-head-dim 128
     --qk-pos-emb-head-dim 64
     --v-head-dim 128
-    --qk-layernorm
+    --qk-layernorm                      # DeepSeek kv_a_layernorm: RMSNorm(kv_lora_rank) between down/up proj
     --position-embedding-type rope
     --rope-type rope                    # EXPLICIT: MLA default is "yarn"; force plain RotaryEmbedding
     --no-rope-fusion                    # REQUIRED with rope_type=rope (fused MLA-RoPE is yarn-only)

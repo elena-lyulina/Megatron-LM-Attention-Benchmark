@@ -4,20 +4,20 @@
 #SBATCH --job-name=test-pretrain-llama1B-kda-fineweb40B-gutenberg3B
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
-#SBATCH --nodes=8
+#SBATCH --nodes=12
 #SBATCH --ntasks-per-node=4
 #SBATCH --cpus-per-task=72
 #SBATCH --no-requeue
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=clariden-jobs-elyulin-aaaauapxybdkdx42ppvef2c2eq@swissai-initiative.slack.com
 
-# SMOKE TEST for pretrain_llama3_1b_kda_fineweb40B_gutenberg3B.slurm.
-# Runs the xdoc_mask / xdoc_loss / xdoc_position_ids suites (attn_bench/tests/test_xdoc_attention.py)
-# against the REAL KDA config -- same 8 nodes, same FineWeb+Gutenberg data, same MBS=3/GBS=288/TP=1,
-# same KDA block + ffn 6272 + --use-packed-seq-params.
-# This is where the KDA THD (packed-seq) support gets verified: xdoc checks per-document isolation,
-# which is exactly what kimi_delta_attention.py's new cu_seqlens plumbing must get right. It also
-# confirms chunk_kda accepts key_head_dim=192 / value_head_dim=384 (the shipped unit test only covers 128/128).
+# SMOKE TEST for pretrain_llama3_1b_kda_fineweb40B_gutenberg3B.slurm -- matches the main config exactly.
+# History: 192/384 head dims -> chunk_kda NaN (job 3244703); 8h/128/128 -> NaN cleared, xdoc PASS,
+# no OOM at MBS=2/nodes=12 (job 3245161). This run bumps to the MAIN geometry -- 16 heads, ffn 6976
+# (param-matched, kda_1B_args_16heads_128_128_ffn6976.txt) -- to confirm 16 heads (2x the 8h mixer)
+# still fits at MBS=2 and xdoc still passes. If it OOMs, add --recompute-granularity selective.
+# Read the "Summary" block (xdoc) AND whether it OOMs.
+# Runs xdoc_mask/xdoc_loss/xdoc_position_ids -- read the "Summary" block in the .out.
 # Entry point is pretrain_gpt_native.py, a drop-in superset of pretrain_gpt.py that injects --tests on
 # the first forward step (Summary block prints immediately), then falls through to real training.
 # TRAINING_STEPS is left at the usual value; the 00:15:00 limit simply times the run out -- that's fine,
@@ -55,7 +55,7 @@ TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b
 ### TRAINING ###
 
 SEQ_LEN=8192
-MBS=3
+MBS=2
 GBS=288
 # 40,038,865,413 (fineweb 40B) + 2,762,833,920 (gutenberg 3B) = 42,801,699,333 tokens
 TARGET_TOKENS=42801699333
@@ -91,6 +91,8 @@ export HF_HUB_OFFLINE=1
 export TORCH_NCCL_AVOID_RECORD_STREAMS=1
 export TORCH_NCCL_ASYNC_ERROR_HANDLING=1
 export CUDA_DEVICE_MAX_CONNECTIONS=1
+# chunk_kda intermediates fragment the allocator -> OOM at MBS=3 (jobs 3244703/3244890/3244987).
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 
 export TRITON_HOME=$TRITON_HOME_DIR
@@ -110,21 +112,21 @@ TRANSFORMER_ENGINE_ARGS=(
 NETWORK_SIZE_ARGS=(
     --num-layers 16
     --hidden-size 2048
-    --ffn-hidden-size 6272  # shrunk from 8192 to absorb the wider KDA mixer and match Llama-1B param count
+    --ffn-hidden-size 6976  # param-matched (kda_1B_args_16heads_128_128_ffn6976.txt) -- matches the main script
     --normalization RMSNorm
     --norm-epsilon 1e-5
     --swiglu
     --disable-bias-linear
 )
 
-# From kda_1B_args_8heads_ffn6272.txt; GDN-mirrored head geometry.
+# 16 heads x 128/128 (symmetric) -- matches the main script. NOT the GDN-mirrored 192/384 (chunk_kda NaN).
 ATTENTION_ARGS=(
     --experimental-attention-variant kimi_delta_attention
     --linear-attention-freq [1]*16
-    --linear-num-key-heads 8
-    --linear-num-value-heads 8
-    --linear-key-head-dim 192
-    --linear-value-head-dim 384
+    --linear-num-key-heads 16
+    --linear-num-value-heads 16
+    --linear-key-head-dim 128      # qk_dim = 16*128 = 2048
+    --linear-value-head-dim 128    # v_dim = 16*128 = 2048
     --linear-conv-kernel-dim 4
     --num-attention-heads 32       # required to build the model but is not used for KDA
     --position-embedding-type none

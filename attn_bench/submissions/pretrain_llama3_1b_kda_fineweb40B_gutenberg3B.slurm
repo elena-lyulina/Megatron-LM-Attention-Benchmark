@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --account=infra01
-#SBATCH --time=10:00:00
+#SBATCH --time=05:15:00
 #SBATCH --job-name=pretrain-llama1B-kda-fineweb40B-gutenberg3B
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
-#SBATCH --nodes=8
+#SBATCH --nodes=12
 #SBATCH --ntasks-per-node=4
 #SBATCH --cpus-per-task=72
 #SBATCH --no-requeue
@@ -13,14 +13,20 @@
 
 # Train a LLaMA 3.2 1B backbone with a Kimi Delta Attention (KDA) mixer on the
 # FineWeb-Edu 40B + Gutenberg 3B blend (~42.8B tokens), param-matched to the softmax-attention baseline.
-#   - Mixer:  KDA, 8 K/V heads, key_head_dim 192 / value_head_dim 384 -- mirrors the GDN config so
-#             KDA-vs-GDN isolates the gating mechanism (KDA adds a fine-grained per-key-channel forget gate).
-#   - FFN:    --ffn-hidden-size 6272 (shrunk from 8192 to absorb the wider KDA mixer; ~1.235B params)
-#   - Config: attn_bench/configs/param_count_configs/kda_1B_args_8heads_ffn6272.txt
-#   - Data / dist / LR / regularization: taken from the full-attn baseline (nodes=8, MBS=3, GBS=288,
-#     TP=1, wd 0.1, warmup 500, 18141 steps) -- KDA is compared to that softmax baseline too.
+#   - Mixer:  KDA, 16 K/V heads, key_head_dim 128 / value_head_dim 128 (symmetric). NOT the GDN-mirrored
+#             192/384 -- fla's chunk_kda NaNs on those (jobs 3244703 etc.); 128 works. 16*128 = 2048 =
+#             same total width as the softmax baseline's 32*64 attention. KDA adds a fine-grained
+#             per-key-channel forget gate vs GDN's scalar decay.
+#   - FFN:    --ffn-hidden-size 6976 (shrunk from 8192 to absorb the KDA mixer; ~1.235B params)
+#   - Config: attn_bench/configs/param_count_configs/kda_1B_args_16heads_128_128_ffn6976.txt
+#   - Data / LR / regularization: from the full-attn baseline (GBS=288, TP=1, wd 0.1, warmup 500,
+#     18141 steps). Dist: MBS=2 / nodes=12 (GAS=3) -- MBS=3 OOMs on chunk_kda intermediates; MBS=2
+#     halves per-GPU activation memory, nodes=12 keeps GBS=288 with an integer GAS.
 #   - --use-packed-seq-params (DATA_ARGS) resets the KDA recurrent state + conv at every document
 #     boundary via cu_seqlens (kimi_delta_attention.py THD path).
+#   - Reservation slice: --time 05:15:00 + --exit-duration-in-mins 300 -> Megatron saves a checkpoint
+#     and exits cleanly at 5h, 15 min before the walltime kill. Resubmit this same script to resume
+#     (--load $CKPT_DIR). Keep node count at 12 for every slice.
 # NOTE: KDA requires flash-linear-attention exposing fla.ops.kda.chunk_kda and
 # fla.modules.convolution.causal_conv1d; both ship in the te2.15 container.
 #
@@ -67,10 +73,10 @@ TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b  # Assumes t
 
 SEQ_LEN=8192
 
-MBS=3
-# same as the full-attn baseline: tp=1/mbs=3 is the most compute-efficient config from attn_training_perf_bench
-# seq_length * MBS * DP * GAS = 8192 * 3 * 32 * 3 = 2.36 M tokens/step  (TP=1 -> DP=32)
-# GBS = MBS * DP * GAS = 3 * 32 * 3 = 288
+MBS=2
+# MBS=2 (not the full-attn baseline's 3): chunk_kda intermediates OOM at MBS=3 (jobs 3244703/3244987).
+# nodes=12 -> DP=48, GAS = GBS/(MBS*DP) = 288/96 = 3. GBS unchanged so step count matches `full`.
+# (MBS=2 + 8 nodes -> GAS 4.5, non-integer; 12 nodes is the smallest that keeps GBS=288 integer.)
 GBS=288
 # 40,038,865,413 (fineweb 40B) + 2,762,833,920 (gutenberg 3B) = 42,801,699,333 tokens
 TARGET_TOKENS=42801699333
@@ -121,6 +127,10 @@ export HF_HUB_OFFLINE=1
 export TORCH_NCCL_AVOID_RECORD_STREAMS=1
 export TORCH_NCCL_ASYNC_ERROR_HANDLING=1
 export CUDA_DEVICE_MAX_CONNECTIONS=1
+# chunk_kda's many differently-sized intermediates fragment the allocator -> OOM at MBS=3 even though
+# the KDA mixer is small (jobs 3244703/3244890/3244987). expandable_segments recovers the reserved-
+# but-unallocated pool. If it still OOMs, add --recompute-granularity selective to TRAINING_ARGS.
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 
 export TRITON_HOME=$TRITON_HOME_DIR
@@ -142,11 +152,11 @@ TRANSFORMER_ENGINE_ARGS=(
 )
 
 # ~1.235B, param-matched to the Llama-3.2-1B softmax baseline (1,235,814,400)
-# backbone follows Llama-3.2-1B; KDA mixer + shrunk FFN from kda_1B_args_8heads_ffn6272.txt
+# backbone follows Llama-3.2-1B; KDA mixer + shrunk FFN from kda_1B_args_16heads_128_128_ffn6976.txt
 NETWORK_SIZE_ARGS=(
     --num-layers 16 # "num_hidden_layers": 16 -- following Llama-3.2-1B config
     --hidden-size 2048 # "hidden_size": 2048  -- following Llama-3.2-1B config
-    --ffn-hidden-size 6272  # shrunk from 8192 (mult of 64) to absorb the wider KDA mixer and match Llama-1B param count
+    --ffn-hidden-size 6976  # shrunk from 8192 (mult of 64) to absorb the KDA mixer and match Llama-1B param count
     --normalization RMSNorm
     --norm-epsilon 1e-5 # "rms_norm_eps": 1e-05  -- following Llama-3.2-1B config
     --swiglu # "hidden_act": "silu"  -- following Llama-3.2-1B config + gating
@@ -162,10 +172,10 @@ NETWORK_SIZE_ARGS=(
 ATTENTION_ARGS=(
     --experimental-attention-variant kimi_delta_attention
     --linear-attention-freq [1]*16
-    --linear-num-key-heads 8       # KDA's K/Q heads
-    --linear-num-value-heads 8     # KDA's V heads, must be a multiple of linear_num_key_heads
-    --linear-key-head-dim 192      # qk_dim = 8*192 = 1536 ; also the fine-grained gate_dim = key_head_dim * num_value_heads
-    --linear-value-head-dim 384    # v_dim = 8*384 = 3072 ; also the low-rank gate bottleneck dim
+    --linear-num-key-heads 16      # KDA's K/Q heads
+    --linear-num-value-heads 16    # KDA's V heads, must be a multiple of linear_num_key_heads
+    --linear-key-head-dim 128      # qk_dim = 16*128 = 2048 ; also the fine-grained gate_dim = key_head_dim * num_value_heads
+    --linear-value-head-dim 128    # v_dim = 16*128 = 2048 ; also the low-rank gate bottleneck dim (gate_low_rank_dim = value_head_dim)
     --linear-conv-kernel-dim 4
     --num-attention-heads 32       # required to build the model but is not used for KDA
     --position-embedding-type none # KDA ignores positions (decay handles it); 'none' = no positional params at all
@@ -205,6 +215,7 @@ TRAINING_ARGS=(
     --manual-gc
     --manual-gc-interval 500
     --exit-signal-handler # listen for SIGTERM/SIGINT and do a clean checkpoint save before exiting
+    --exit-duration-in-mins 300  # 5h00m: proactive clean save + exit, 15 min before the 05:15:00 walltime kill (reservation slice). Resubmit the same script to resume from $CKPT_DIR. All resume slices must use the SAME node count (12) -- distrib-optim checkpoint padding is DP-count-specific.
     --eval-interval 100000000000  # must match or be a multiple of checkpoint interval, must be set to avoid TypeError even when EVAL_ITERS=0
     --eval-iters 0                # no validation split for pretraining (--split 100,0,0)
 )
