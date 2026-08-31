@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --account=infra01
-#SBATCH --time=10:00:00
+#SBATCH --time=05:30:00
 #SBATCH --job-name=pretrain-llama1B-mla-fineweb40B-gutenberg3B
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
-#SBATCH --nodes=8
+#SBATCH --nodes=12
 #SBATCH --ntasks-per-node=4
 #SBATCH --cpus-per-task=72
 #SBATCH --no-requeue
@@ -18,6 +18,11 @@
 #   - FFN:    --ffn-hidden-size 7680 (shrunk from 8192 to absorb the heavier MLA mixer; ~1.238B params)
 #   - Config: attn_bench/configs/param_count_configs/mla_llama_1B_args_ffn7680.txt
 #   - Data:   FineWeb-Edu-Dedup 40B + Gutenberg 3B blend (same as the attention baselines)
+#   - Throughput: MLA + packed-seq (THD) is ~1.8x slower than the softmax baselines even here (the THD
+#             path, not MLA itself -- see job 3245069). Absorbed with 12 nodes: ~2240 ms/iter, GAS=2,
+#             ~11.3 h for the full 18141 steps. This slurm runs a 5.5 h reservation slice:
+#             --exit-duration-in-mins 315 saves a checkpoint + exits cleanly at 5h15m (15 min before
+#             the walltime kill). Resubmit the SAME script later -- --load $CKPT_DIR auto-resumes.
 #   - RoPE:   explicit PLAIN rope (--rope-type rope). MLA's config default is "yarn"; YaRN is a
 #             context-extension scheme and does nothing for a from-scratch run at native 8192 ctx.
 #             --no-rope-fusion is REQUIRED (fused MLA-RoPE is yarn-only; MLA + non-yarn + fusion errors).
@@ -210,6 +215,7 @@ TRAINING_ARGS=(
     --manual-gc
     --manual-gc-interval 500
     --exit-signal-handler # listen for SIGTERM/SIGINT and do a clean checkpoint save before exiting
+    --exit-duration-in-mins 315  # 5h15m: proactive clean save + exit, 15 min before the 05:30:00 walltime kill (reservation slice). Resubmit to resume.
     --eval-interval 100000000000  # must match or be a multiple of checkpoint interval, must be set to avoid TypeError even when EVAL_ITERS=0
     --eval-iters 0                # no validation split for pretraining (--split 100,0,0)
 )
