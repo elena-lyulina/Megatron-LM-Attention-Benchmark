@@ -1,0 +1,42 @@
+############ MLA 1B CONFIG (param-matched to Llama-3.2-1B) #################
+# Same as mla_llama_1B_args.txt but --ffn-hidden-size 8192 -> 7680 to absorb the heavier MLA mixer.
+# Target: Llama-3.2-1B = 1,235,814,400 params. This config: ~1,237,919,744 (+0.17%); run the
+# counter to lock the exact total. (7616 would land -0.34% under.)
+# MLA block = DeepSeek-V2-Lite verbatim (see mla_llama_1B_args.txt header for the full rationale).
+# args names taken from: megatron/core/transformer/transformer_config.py + megatron/training/arguments.py (_add_mla_args)
+
+### Embeddings / input-output:
+--make-vocab-size-divisible-by 128      # sizes the model's input / output embedding matrix (vocab x hidden / hidden x vocab)
+# Llama-3.2-1B config: "vocab_size": 128256 -- derived from the tokenizer
+# Llama-3.2-1B config: "tie_word_embeddings": true -- embeddings tied by default; need --untie-embeddings-and-output-weights to disable
+
+### Global / model-wide
+# not changed, same as Llama 1B config
+--hidden-size 2048                      # representing 1 token
+--num-layers 16                         # how many blocks
+--normalization RMSNorm                 # used before the blocks (both attn and mlp) throughout the model
+--norm-epsilon 1e-5                     # "rms_norm_eps"
+--disable-bias-linear                   # "mlp_bias": false, "attention_bias": false  -- following Llama-3.2-1B config
+--transformer-impl transformer_engine
+--seq-length 8192                       # runtime, doesn't affect the model's size but required to build a model
+
+### MLP
+--ffn-hidden-size 7680                  # shrunk from 8192 (mult of 64) to absorb the heavier MLA mixer and match Llama-3.2-1B param count
+--swiglu                                # "hidden_act": "silu"  -- following Llama-3.2-1B config + gating
+
+### Token mixer -- MLA (all values from DeepSeek-V2-Lite)
+--multi-latent-attention               # route through MLASelfAttention instead of GQA
+--num-attention-heads 16               # V2-Lite native; NOT the baseline's 32 (see header)
+# --group-query-attention is mutually exclusive with MLA -- omitted
+# --q-lora-rank omitted -> None: V2-Lite does not compress Q (q proj is hidden x heads*q_head_dim direct)
+--kv-lora-rank 512                     # KV squeezed through a shared 512 latent -- the point of MLA (small KV cache)
+--qk-head-dim 128                      # qk_nope_head_dim; q_head_dim = qk_head_dim + qk_pos_emb_head_dim = 192
+--qk-pos-emb-head-dim 64               # qk_rope_head_dim -- the decoupled-RoPE slice
+--v-head-dim 128                       # per-head V dim; o_proj is (heads*v_head_dim) x hidden
+--qk-layernorm                         # DeepSeek's kv_a_layernorm: RMSNorm(kv_lora_rank) between down/up proj -- unconditional in modeling_deepseek.py, not a config field there. (q_a_layernorm not built since q_lora_rank is None.)
+--position-embedding-type rope         # pure MLA needs real positions (NoPE only works in a KDA/MLA hybrid)
+--rotary-base 500000                   # kept at the benchmark's Llama value, not V2-Lite's 10000, for cross-run consistency
+--max-position-embeddings 8192
+# RoPE-scaling / YaRN specifics (--rope-scaling-factor, --mscale, --use-rope-scaling) don't affect
+# param count -- decide those in the pretrain script. Param count only moves with:
+# --kv-lora-rank, --qk-head-dim, --qk-pos-emb-head-dim, --v-head-dim, --num-attention-heads, --q-lora-rank.
