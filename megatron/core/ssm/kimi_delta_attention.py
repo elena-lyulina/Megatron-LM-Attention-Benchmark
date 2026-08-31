@@ -318,6 +318,20 @@ class KimiDeltaAttention(MegatronModule):
             inv_dt = dt + torch.log(-torch.expm1(-dt))
             self.dt_bias.data.copy_(inv_dt)
 
+    def _resolve_cu_seqlens(self, cu_seqlens_padded, cu_seqlens_actual, total_seq_len, name):
+        """Pick padded over actual cu_seqlens and check it spans the whole packed sequence.
+
+        Mirrors ``GatedDeltaNet._resolve_cu_seqlens`` (minus the cp_size check, KDA is cp=1).
+        """
+        cu_seqlens = cu_seqlens_padded if cu_seqlens_padded is not None else cu_seqlens_actual
+        total_cu = cu_seqlens[-1].cpu().item()
+        if total_cu != total_seq_len:
+            raise ValueError(
+                f"KDA: {name}[-1]={total_cu} does not match total_sequence_length={total_seq_len} "
+                f"({cu_seqlens_padded=}, {cu_seqlens_actual=})."
+            )
+        return cu_seqlens
+
     def forward(
         self,
         hidden_states: Tensor,
@@ -335,7 +349,9 @@ class KimiDeltaAttention(MegatronModule):
             hidden_states (Tensor): Input of shape ``[s, b, h]`` (already input-layernormed).
             attention_mask (Tensor): Unused (KDA is causal by construction).
             inference_context (Optional[BaseInferenceContext]): KV-cache context (unsupported).
-            packed_seq_params (Optional[PackedSeqParams]): THD packing params (unsupported).
+            packed_seq_params (Optional[PackedSeqParams]): THD packing params. Supported: the
+                per-document ``cu_seqlens`` are passed to the conv and the recurrence so state
+                is reset at every document boundary.
             sequence_len_offset (Optional[int]): Inference CUDA-graph offset (unsupported).
 
         Returns:
@@ -344,10 +360,6 @@ class KimiDeltaAttention(MegatronModule):
         inference_context = deprecate_inference_params(inference_context, inference_params)
         if inference_context is not None:
             raise NotImplementedError("KimiDeltaAttention does not support inference yet.")
-        if packed_seq_params is not None:
-            raise NotImplementedError(
-                "KimiDeltaAttention does not support packed (THD) sequences yet."
-            )
 
         _, batch, _ = hidden_states.shape
 
@@ -365,6 +377,21 @@ class KimiDeltaAttention(MegatronModule):
         q, k, v, beta, g_raw, z = (t.transpose(0, 1) for t in (q, k, v, beta, g_raw, z))
         seq_len = q.shape[1]
 
+        # Packed (THD) sequences: the microbatch is flattened to [T, 1, x] and cu_seqlens marks
+        # the document boundaries. Passing it to the conv + recurrence resets state per document.
+        if packed_seq_params is not None and packed_seq_params.qkv_format == 'thd':
+            assert batch == 1, "KDA packed (THD) expects batch dim 1"
+            assert not self.config.deterministic_mode, \
+                "KDA packed sequence does not support deterministic mode"
+            cu_seqlens = self._resolve_cu_seqlens(
+                packed_seq_params.cu_seqlens_q_padded,
+                packed_seq_params.cu_seqlens_q,
+                seq_len,
+                "cu_seqlens_q",
+            )
+        else:
+            cu_seqlens = None
+
         # Depthwise short conv (with silu) over concatenated q/k/v.
         nvtx_range_push(suffix="conv1d")
         qkv = torch.cat([q, k, v], dim=-1)
@@ -375,7 +402,7 @@ class KimiDeltaAttention(MegatronModule):
             activation=self.activation,
             initial_state=None,
             output_final_state=False,
-            cu_seqlens=None,
+            cu_seqlens=cu_seqlens,
         )
         q, k, v = torch.split(
             qkv, [self.qk_dim_local_tp, self.qk_dim_local_tp, self.v_dim_local_tp], dim=-1
@@ -409,7 +436,7 @@ class KimiDeltaAttention(MegatronModule):
             use_qk_l2norm_in_kernel=True,
             use_gate_in_kernel=True,
             use_beta_sigmoid_in_kernel=True,
-            cu_seqlens=None,
+            cu_seqlens=cu_seqlens,
         )
         nvtx_range_pop(suffix="chunk_kda")
 
