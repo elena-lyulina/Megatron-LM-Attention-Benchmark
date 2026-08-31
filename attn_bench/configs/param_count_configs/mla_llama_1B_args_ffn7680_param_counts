@@ -1,0 +1,22 @@
+=== Parameter count: mla_llama_1B_args_ffn7680 ===
+(embeddings tied with output head)
+
+TOTAL                                                                  1,237,919,744
+
+By category:
+embeddings + output head                                                 262,668,288
+mlp / ffn                                                                755,007,488
+mixer (rest)                                                             220,243,968
+
+By param (layer index collapsed):
+decoder.final_layernorm.weight                                                 2,048
+decoder.layers.*.input_layernorm.weight                                       32,768
+decoder.layers.*.mlp.linear_fc1.layer_norm_weight                             32,768
+decoder.layers.*.mlp.linear_fc1.weight                                   503,316,480
+decoder.layers.*.mlp.linear_fc2.weight                                   251,658,240
+decoder.layers.*.self_attention.linear_kv_down_proj.weight                18,874,368
+decoder.layers.*.self_attention.linear_kv_up_proj.layer_norm_weight            8,192
+decoder.layers.*.self_attention.linear_kv_up_proj.weight                  33,554,432
+decoder.layers.*.self_attention.linear_proj.weight                        67,108,864
+decoder.layers.*.self_attention.linear_q_proj.weight                     100,663,296
+embedding.word_embeddings.weight                                         262,668,288
