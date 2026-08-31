@@ -236,9 +236,10 @@ use prefix 50 / suffix 50. Capturing **regenerates** every rep (the maps need th
 forward passes), so `rank*.jsonl` is rewritten; a run-level marker
 (`attn_scores_rouge_l_09-10_rank{N}.npz`) decides resume.
 
-Plotting helpers: `evaluation/plot_attention_patterns.py`
-(`load_maps`, `load_all_maps`, `plot_map`, `plot_full_grid`,
-`plot_gating_distribution`).
+Plotting helpers: `plotting/attention_patterns.py`
+(`plot_map`, `plot_bucket_maps`, `plot_full_attn_maps_panel`,
+`plot_gating_distribution`); loaders in `plotting/data_loading.py`
+(`load_attention_patterns`, `load_attention_gating`).
 
 ## Generation-quality metrics (PDM-derived, separate jobs)
 

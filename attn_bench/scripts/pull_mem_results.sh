@@ -6,7 +6,7 @@ source "$SCRIPT_DIR/llama_checkpoints.sh"   # provides MODELS + model_config -> 
 
 ### CONFIG ###
 REMOTE_SRC="elyulina@clariden:/users/elyulina/store/mem-results/SparseGutenberg/"
-LOCAL_DST="/Users/Elena.Lyulina/PycharmProjects/swiss-ai/Megatron-LM-Attention-Benchmark/attn_bench/results/mem-results/SparseGutenberg2/"
+LOCAL_DST="/Users/Elena.Lyulina/PycharmProjects/swiss-ai/Megatron-LM-Attention-Benchmark/attn_bench/results/mem-results/SparseGutenberg/"
 
 ### MODELS TO PULL ###
 # Positional args restrict which models to pull (default: all). --backend hf pulls the

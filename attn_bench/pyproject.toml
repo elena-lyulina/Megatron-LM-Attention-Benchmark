@@ -2,14 +2,18 @@
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools]
-packages = []
+[tool.setuptools.packages.find]
+where = [".."]
+include = ["attn_bench*"]
 
 [project]
 name = "attn-bench"
 version = "0.1.0"
 requires-python = ">=3.10"
-dependencies = []
+dependencies = [
+    "ipykernel>=7.3.0",
+    "ipywidgets",
+]
 
 [project.optional-dependencies]
 data = [
@@ -31,4 +35,16 @@ data = [
 ]
 kernels = [
     "flash-attn",
+]
+analysis = [
+    "numpy",
+    "pandas",
+    "matplotlib",
+    "scipy",
+    "seaborn",
+    "numba",
+    "evaluate",
+    "transformers",
+    "datasets",
+    "tqdm",
 ]

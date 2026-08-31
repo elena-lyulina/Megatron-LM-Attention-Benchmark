@@ -22,3 +22,8 @@ results/mem-results/
 results/plots/
 results/inference-perf
 results/long-fineweb-results
+
+# notebook output: generated figures/cache, kept locally only -- notebooks/output/html/ is
+# not listed here, that one holds curated shareable exports and stays tracked
+notebooks/output/figures/
+notebooks/output/iframe_figures/

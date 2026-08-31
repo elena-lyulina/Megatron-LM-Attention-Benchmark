@@ -8,10 +8,12 @@ source "$SCRIPT_DIR/llama_checkpoints.sh"   # provides MODELS + model_config -> 
 # --individual / -i        pull *_individual.jsonl files (skipped by default, see below)
 # --reps R [R ...]         only pull these repetitions' individual files (implies --individual)
 # --models TAG [TAG ...]   only pull these llama_checkpoints.sh model tags (default: all MODELS)
+# --backend megatron|hf    only pull that backend's results (default: both, unfiltered)
 # EXP_SUFFIX (env)         append to EXP_NAME, e.g. EXP_SUFFIX=-scf-8
 PULL_INDIVIDUAL=false
 REPS_FILTER=()
 MODELS_FILTER=()
+BACKEND=""
 while [ $# -gt 0 ]; do
     case "$1" in
         --individual|-i)
@@ -32,6 +34,13 @@ while [ $# -gt 0 ]; do
                 MODELS_FILTER+=("$1")
                 shift
             done
+            ;;
+        --backend)
+            BACKEND="$2"; shift 2
+            if [[ "$BACKEND" != "megatron" && "$BACKEND" != "hf" ]]; then
+                echo "--backend must be 'megatron' or 'hf', got '$BACKEND'." >&2
+                exit 1
+            fi
             ;;
         *)
             echo "Unknown argument: $1" >&2
@@ -60,8 +69,23 @@ FINEWEB_INC=()
 for MODEL in "${MODELS_TO_PULL[@]}"; do
     model_config "$MODEL"
     EXP_NAME="${EXP_NAME}${EXP_SUFFIX}"
-    GUTENBERG_INC+=(--include="$EXP_NAME/***")
-    FINEWEB_INC+=(--include="$EXP_NAME/***")
+    # Gutenberg's HF results live in a separate ${EXP_NAME}_hf dir; FineWeb's HF suffix lands
+    # on the partition subdir instead (${EXP_NAME}/*_hf/), so backend-filtering it needs
+    # include/exclude on that subdir rather than a second top-level pattern.
+    case "$BACKEND" in
+        megatron)
+            GUTENBERG_INC+=(--include="$EXP_NAME/***")
+            FINEWEB_INC+=(--include="$EXP_NAME/" --exclude="$EXP_NAME/*_hf" --include="$EXP_NAME/***")
+            ;;
+        hf)
+            GUTENBERG_INC+=(--include="${EXP_NAME}_hf/***")
+            FINEWEB_INC+=(--include="$EXP_NAME/" --include="$EXP_NAME/*_hf/***" --exclude="$EXP_NAME/*")
+            ;;
+        *)
+            GUTENBERG_INC+=(--include="$EXP_NAME/***" --include="${EXP_NAME}_hf/***")
+            FINEWEB_INC+=(--include="$EXP_NAME/***")
+            ;;
+    esac
 done
 
 ### INDIVIDUAL SAMPLE FILES: skipped by default, --reps narrows to specific repetitions ###
