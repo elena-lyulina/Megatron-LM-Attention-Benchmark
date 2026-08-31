@@ -38,6 +38,7 @@
 --qk-head-dim 128                      # qk_nope_head_dim; q_head_dim = qk_head_dim + qk_pos_emb_head_dim = 192
 --qk-pos-emb-head-dim 64               # qk_rope_head_dim -- the decoupled-RoPE slice
 --v-head-dim 128                       # per-head V dim; o_proj is (heads*v_head_dim) x hidden
+--qk-layernorm                         # DeepSeek's kv_a_layernorm: RMSNorm(kv_lora_rank) between down/up proj -- unconditional in modeling_deepseek.py, not a config field there. (q_a_layernorm not built since q_lora_rank is None.)
 --position-embedding-type rope         # pure MLA needs real positions (NoPE only works in a KDA/MLA hybrid)
 --rotary-base 500000                   # kept at the benchmark's Llama value, not V2-Lite's 10000, for cross-run consistency
 --max-position-embeddings 8192
