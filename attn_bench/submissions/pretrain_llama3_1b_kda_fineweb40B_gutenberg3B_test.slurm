@@ -12,18 +12,21 @@
 #SBATCH --mail-user=clariden-jobs-elyulin-aaaauapxybdkdx42ppvef2c2eq@swissai-initiative.slack.com
 
 # SMOKE TEST for pretrain_llama3_1b_kda_fineweb40B_gutenberg3B.slurm -- matches the main config exactly.
-# History: 192/384 head dims -> chunk_kda NaN (job 3244703); 8h/128/128 -> NaN cleared, xdoc PASS,
-# no OOM at MBS=2/nodes=12 (job 3245161). This run bumps to the MAIN geometry -- 16 heads, ffn 6976
-# (param-matched, kda_1B_args_16heads_128_128_ffn6976.txt) -- to confirm 16 heads (2x the 8h mixer)
-# still fits at MBS=2 and xdoc still passes. If it OOMs, add --recompute-granularity selective.
-# Read the "Summary" block (xdoc) AND whether it OOMs.
-# Runs xdoc_mask/xdoc_loss/xdoc_position_ids -- read the "Summary" block in the .out.
+# All prior KDA runs NaN'd from iteration 1 (grad_norm=nan / params_norm=nan). PR #5769's module needs
+# flash-linear-attention >= 0.5.x, where chunk_kda's in-kernel decay gate + L2-norm are numerically
+# safe; the te2.15 container ships fla 0.4.2, where those paths are the old unbounded form (swiss-ai/
+# pretrain's kda-common.sh says the same: on 0.4.x every KDA lever capability-probes itself off).
+# This run side-installs fla 0.5.2 + fla-core 0.5.2 into $FLA_DIR (pip --target, once, guarded) and
+# prepends it to PYTHONPATH so it shadows the container's 0.4.2 -- the pretrain pattern. No local
+# numerics patch: kimi_delta_attention.py is PR #5769 as cherry-picked (in-kernel gate + THD cu_seqlens).
+# Read `grad norm` at iter 1: finite -> fixed by the fla bump; nan -> escalate (full MoE KDA module).
+# TypeError in chunk_kda -> 0.5.2's signature differs, adapt the call.
+# xdoc suites should all PASS (isolation was never the problem).
 # Entry point is pretrain_gpt_native.py, a drop-in superset of pretrain_gpt.py that injects --tests on
 # the first forward step (Summary block prints immediately), then falls through to real training.
 # TRAINING_STEPS is left at the usual value; the 00:15:00 limit simply times the run out -- that's fine,
 # nothing here is meant to be reused. No checkpointing (no --load / --save).
 # The --tests harness does NOT fail the job -- read the "Summary" block in the .out.
-# NOTE: KDA requires fla.ops.kda.chunk_kda + fla.modules.convolution.causal_conv1d (te2.15 container).
 #
 # Usage:
 #   sbatch attn_bench/submissions/pretrain_llama3_1b_kda_fineweb40B_gutenberg3B_test.slurm
@@ -36,7 +39,13 @@ CONTAINER_ENV=nemo_26.04_te2.15
 # Megatron source (WARNING: must be on iopsstor)
 MEGATRON_LM_DIR=/iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark
 cd $MEGATRON_LM_DIR
-export PYTHONPATH=$MEGATRON_LM_DIR:${PYTHONPATH:-}
+
+# KDA needs flash-linear-attention >= 0.5.x; the container ships 0.4.2. Side-install 0.5.2 into a pip
+# --target dir (see the install srun below) and put it first on PYTHONPATH so it shadows the
+# container's copy. Mirrors swiss-ai/pretrain kda-common.sh. Persisted across jobs, gitignored.
+FLA_VERSION=0.5.2
+FLA_DIR=$MEGATRON_LM_DIR/attn_bench/packages-fla
+export PYTHONPATH=$FLA_DIR:$MEGATRON_LM_DIR:${PYTHONPATH:-}
 
 ### DATA ###
 # no weights — Megatron blends proportionally by sequence count = token count (all seqs are 8192 tokens)
@@ -296,6 +305,21 @@ SEP=$(printf '=%.0s' {1..100})
 ### LAUNCH ###
 
 echo "Test: xdoc suites on KDA prod config  nodes=${SLURM_NNODES}  mbs=${MBS}  gbs=${GBS}  train_iters=${TRAINING_STEPS}  datasets=${#DATA_PATH_LIST[@]}"
+
+# One-shot: ensure flash-linear-attention $FLA_VERSION in $FLA_DIR (shadows the container's 0.4.2 via
+# the PYTHONPATH prepend near the top). Guard skips it once installed. Both packages -- they merge
+# into one fla/ namespace and flash-linear-attention alone ships no __init__.py. --no-deps keeps
+# torch/triton out; --ignore-installed stops pip skipping on the container's 0.4.2.
+echo "[$(date)] Ensuring flash-linear-attention $FLA_VERSION in $FLA_DIR"
+srun --nodes=1 --ntasks=1 --overlap --environment=$CONTAINER_ENV bash -c "
+    set -e
+    if [ ! -f '$FLA_DIR/fla/__init__.py' ]; then
+        pip install --quiet --no-deps --ignore-installed --target='$FLA_DIR' \
+            'flash-linear-attention==$FLA_VERSION' 'fla-core==$FLA_VERSION'
+    fi
+    PYTHONPATH='$FLA_DIR' python3 -c \"import fla; assert fla.__version__.startswith('$FLA_VERSION'), 'got fla '+fla.__version__; print('fla', fla.__version__, 'OK')\"
+"
+
 echo "[$(date)] Launching test..."
 
 # TRITON_CACHE_DIR: per-rank node-local cache. A shared-FS Triton cache crashes fla-kernel runs with

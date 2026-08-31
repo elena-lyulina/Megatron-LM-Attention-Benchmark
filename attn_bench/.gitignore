@@ -9,7 +9,10 @@ _logs/
 _plans/
 
 # backup files
-backup 
+backup
+
+# job-local FLA 0.5.2 side-install (pip --target dir, shadows the container's 0.4.x for KDA)
+packages-fla/
 
 # relevant papers' pdf for local usage
 papers
