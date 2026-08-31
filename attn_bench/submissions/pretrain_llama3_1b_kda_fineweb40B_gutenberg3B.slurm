@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --account=infra01
-#SBATCH --time=05:15:00
+#SBATCH --time=01:30:00
 #SBATCH --job-name=pretrain-llama1B-kda-fineweb40B-gutenberg3B
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
@@ -24,11 +24,13 @@
 #     halves per-GPU activation memory, nodes=12 keeps GBS=288 with an integer GAS.
 #   - --use-packed-seq-params (DATA_ARGS) resets the KDA recurrent state + conv at every document
 #     boundary via cu_seqlens (kimi_delta_attention.py THD path).
-#   - Reservation slice: --time 05:15:00 + --exit-duration-in-mins 300 -> Megatron saves a checkpoint
-#     and exits cleanly at 5h, 15 min before the walltime kill. Resubmit this same script to resume
+#   - Reservation slice: --time 01:30:00 + --exit-duration-in-mins 75 -> Megatron saves a checkpoint
+#     and exits cleanly at 1h15m, 15 min before the walltime kill. Resubmit this same script to resume
 #     (--load $CKPT_DIR). Keep node count at 12 for every slice.
-# NOTE: KDA requires flash-linear-attention exposing fla.ops.kda.chunk_kda and
-# fla.modules.convolution.causal_conv1d; both ship in the te2.15 container.
+# NOTE: KDA needs flash-linear-attention >= 0.5.x. The te2.15 container ships 0.4.2, whose chunk_kda
+# gate + L2-norm are the old unbounded form -> grad_norm=nan from iteration 1. This script side-installs
+# fla 0.5.2 into $FLA_DIR before launch (see the install srun); PR #5769's module runs unpatched on it.
+# Verified: job 3247042 (loss descends, grad norm finite, xdoc all PASS).
 #
 # Usage:
 #   sbatch attn_bench/submissions/pretrain_llama3_1b_kda_fineweb40B_gutenberg3B.slurm
@@ -41,7 +43,13 @@ CONTAINER_ENV=nemo_26.04_te2.15
 # Megatron source (WARNING: must be on iopsstor)
 MEGATRON_LM_DIR=/iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark
 cd $MEGATRON_LM_DIR
-export PYTHONPATH=$MEGATRON_LM_DIR:${PYTHONPATH:-}
+
+# KDA needs flash-linear-attention >= 0.5.x; the container ships 0.4.2. Side-install 0.5.2 into a pip
+# --target dir (see the install srun below) and put it first on PYTHONPATH so it shadows the
+# container's copy. Mirrors swiss-ai/pretrain kda-common.sh. Persisted across jobs, gitignored.
+FLA_VERSION=0.5.2
+FLA_DIR=$MEGATRON_LM_DIR/attn_bench/packages-fla
+export PYTHONPATH=$FLA_DIR:$MEGATRON_LM_DIR:${PYTHONPATH:-}
 
 
 # Set to `true` to continuously submit jobs to Slurm until training is complete.
@@ -215,7 +223,7 @@ TRAINING_ARGS=(
     --manual-gc
     --manual-gc-interval 500
     --exit-signal-handler # listen for SIGTERM/SIGINT and do a clean checkpoint save before exiting
-    --exit-duration-in-mins 300  # 5h00m: proactive clean save + exit, 15 min before the 05:15:00 walltime kill (reservation slice). Resubmit the same script to resume from $CKPT_DIR. All resume slices must use the SAME node count (12) -- distrib-optim checkpoint padding is DP-count-specific.
+    --exit-duration-in-mins 75  # 1h15m: proactive clean save + exit, 15 min before the 01:30:00 walltime kill (reservation slice). Resubmit the same script to resume from $CKPT_DIR. All resume slices must use the SAME node count (12) -- distrib-optim checkpoint padding is DP-count-specific.
     --eval-interval 100000000000  # must match or be a multiple of checkpoint interval, must be set to avoid TypeError even when EVAL_ITERS=0
     --eval-iters 0                # no validation split for pretraining (--split 100,0,0)
 )
@@ -402,6 +410,21 @@ SEP=$(printf '=%.0s' {1..100})
 ### LAUNCH ###
 
 echo "Training: llama3-1b kda fineweb40B+gutenberg3B  nodes=${SLURM_NNODES}  gbs=${GBS}  steps=${TRAINING_STEPS}  datasets=${#DATA_PATH_LIST[@]}"
+
+# One-shot: ensure flash-linear-attention $FLA_VERSION in $FLA_DIR (shadows the container's 0.4.2 via
+# the PYTHONPATH prepend near the top). Guard skips it once installed. Both packages -- they merge
+# into one fla/ namespace and flash-linear-attention alone ships no __init__.py. --no-deps keeps
+# torch/triton out; --ignore-installed stops pip skipping on the container's 0.4.2.
+echo "[$(date)] Ensuring flash-linear-attention $FLA_VERSION in $FLA_DIR"
+srun --nodes=1 --ntasks=1 --overlap --environment=$CONTAINER_ENV bash -c "
+    set -e
+    if [ ! -f '$FLA_DIR/fla/__init__.py' ]; then
+        pip install --quiet --no-deps --ignore-installed --target='$FLA_DIR' \
+            'flash-linear-attention==$FLA_VERSION' 'fla-core==$FLA_VERSION'
+    fi
+    PYTHONPATH='$FLA_DIR' python3 -c \"import fla; assert fla.__version__.startswith('$FLA_VERSION'), 'got fla '+fla.__version__; print('fla', fla.__version__, 'OK')\"
+"
+
 echo "[$(date)] Launching training..."
 
 # TRITON_CACHE_DIR: per-rank node-local cache. A shared-FS Triton cache crashes fla-kernel runs with
