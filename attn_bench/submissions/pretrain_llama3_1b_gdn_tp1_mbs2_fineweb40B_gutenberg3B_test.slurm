@@ -16,7 +16,7 @@
 # committing to the full run.
 #   - Mixer:  GDN, 8 K/V heads, key_head_dim 192 / value_head_dim 384 (paper ratios 0.75/1.5)
 #   - FFN:    --ffn-hidden-size 5824 (shrunk from 8192 to absorb the wider GDN mixer; ~1.239B params)
-#   - Config: attn_bench/data/param_count_configs/gdn_1B_args_8heads_ffn5824.txt
+#   - Config: attn_bench/configs/param_count_configs/gdn_1B_args_8heads_ffn5824.txt
 #   - Data:   FineWeb-Edu-Dedup 40B + Gutenberg 3B blend (same as the attention baselines)
 # Runs against the full token budget but the 00:09:00 time limit cuts it short; --exit-signal-handler
 # saves a checkpoint on SIGTERM so we can confirm checkpointing works.

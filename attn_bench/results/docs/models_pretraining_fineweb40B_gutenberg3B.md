@@ -104,7 +104,7 @@ Logs: `attn_bench/logs/2567002.{out,err}`.
 
 ## Gated Delta Net (GDN) mixer
 
-LLaMA 3.2 1B backbone with the attention layers replaced by a Gated Delta Net (GDN) linear-attention mixer on all 16 layers — a different sequence mixer rather than a softmax variant. Param-matched to the ~1.236B attention baselines (~1.239B): GDN mixer with 8 K/V heads, `key_head_dim 192` / `value_head_dim 384` (paper ratios 0.75 / 1.5), FFN shrunk from 8192 to `--ffn-hidden-size 5824` to absorb the wider mixer. Config: `attn_bench/data/param_count_configs/gdn_1B_args_8heads_ffn5824.txt`. Like the masked `full` baseline, document boundaries are isolated: `--use-packed-seq-params` resets the GDN recurrent state + conv at every document boundary via `cu_seqlens` (kept `--reset-position-ids` + `--eod-mask-loss`).
+LLaMA 3.2 1B backbone with the attention layers replaced by a Gated Delta Net (GDN) linear-attention mixer on all 16 layers — a different sequence mixer rather than a softmax variant. Param-matched to the ~1.236B attention baselines (~1.239B): GDN mixer with 8 K/V heads, `key_head_dim 192` / `value_head_dim 384` (paper ratios 0.75 / 1.5), FFN shrunk from 8192 to `--ffn-hidden-size 5824` to absorb the wider mixer. Config: `attn_bench/configs/param_count_configs/gdn_1B_args_8heads_ffn5824.txt`. Like the masked `full` baseline, document boundaries are isolated: `--use-packed-seq-params` resets the GDN recurrent state + conv at every document boundary via `cu_seqlens` (kept `--reset-position-ids` + `--eod-mask-loss`).
 
 This run completed cleanly via the data-exhaustion fix — it exited with `[exiting program after consuming all available data at iteration 15549]` and saved a valid checkpoint at step 15549 (no `StopIteration` crash, no resume needed).
 

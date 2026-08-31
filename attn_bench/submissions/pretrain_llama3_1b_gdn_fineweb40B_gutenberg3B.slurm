@@ -15,7 +15,7 @@
 # blend (~42.8B tokens), param-matched to the Llama-3.2-1B softmax-attention baseline.
 #   - Mixer:  GDN, 8 K/V heads, key_head_dim 192 / value_head_dim 384 (paper ratios 0.75/1.5)
 #   - FFN:    --ffn-hidden-size 5824 (shrunk from 8192 to absorb the wider GDN mixer; ~1.239B params)
-#   - Config: attn_bench/data/param_count_configs/gdn_1B_args_8heads_ffn5824.txt
+#   - Config: attn_bench/configs/param_count_configs/gdn_1B_args_8heads_ffn5824.txt
 #   - Data:   FineWeb-Edu-Dedup 40B + Gutenberg 3B blend (same as the attention baselines)
 #   - Parallelism: TP=1 / MBS=2 / no sequence-parallel (~18% faster than TP=2/MBS=4 for GDN; GBS unchanged)
 # Full run is ~15550 steps (~5.2 h at ~1.2 s/iter); the 07:00:00 limit leaves comfortable margin.

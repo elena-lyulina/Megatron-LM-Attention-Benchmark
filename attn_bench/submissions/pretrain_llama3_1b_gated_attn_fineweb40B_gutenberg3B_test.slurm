@@ -146,7 +146,7 @@ TRANSFORMER_ENGINE_ARGS=(
 NETWORK_SIZE_ARGS=(
     --num-layers 16 # "num_hidden_layers": 16 -- following Llama-3.2-1B config
     --hidden-size 2048 # "hidden_size": 2048  -- following Llama-3.2-1B config
-    --ffn-hidden-size 7488  # shrunk from 8192 (multiple of 64) to absorb the gate's extra params and match full-attn's param count (see attn_bench/data/param_count_configs/gated_attn_llama_1B_args_ffn7488.txt)
+    --ffn-hidden-size 7488  # shrunk from 8192 (multiple of 64) to absorb the gate's extra params and match full-attn's param count (see attn_bench/configs/param_count_configs/gated_attn_llama_1B_args_ffn7488.txt)
     --normalization RMSNorm
     --norm-epsilon 1e-5 # "rms_norm_eps": 1e-05  -- following Llama-3.2-1B config
     --swiglu # "hidden_act": "silu"  -- following Llama-3.2-1B config + gating

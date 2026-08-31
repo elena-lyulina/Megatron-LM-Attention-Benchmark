@@ -5,7 +5,7 @@ fused-kernel inference speed, not just eager fallback. This records what each fa
 actually needs and whether the current cluster (GH200, `aarch64` host + Hopper/SM90 GPU)
 can support it, so we rebuild the container at most once instead of per-family.
 
-Container snapshot used throughout: `attn_bench/data/nemo_26.04_te2.15_env_info.txt`
+Container snapshot used throughout: `attn_bench/configs/nemo_26.04_te2.15_env_info.txt`
 (`flash_attn 2.7.4.post1+nv26.2`, `transformers 4.57.3`, `torch 2.11.0a0`, CUDA 13.1,
 `nvidia-cutlass-dsl 4.3.4`, no `kernels` package installed).
 

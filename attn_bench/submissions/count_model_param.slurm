@@ -19,7 +19,7 @@
 #
 # Pass just the config file name via the `config` env var (exported by sbatch's
 # default --export=ALL); a positional arg also works. The file is looked up in
-# attn_bench/data/param_count_configs/.
+# attn_bench/configs/param_count_configs/.
 #
 # Usage:
 #   config=args.txt sbatch attn_bench/submissions/count_model_param.slurm
@@ -39,7 +39,7 @@ export CUDA_DEVICE_MAX_CONNECTIONS=1
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 
 ### ARGS ###
-CONFIG_DIR=$MEGATRON_LM_DIR/attn_bench/data/param_count_configs
+CONFIG_DIR=$MEGATRON_LM_DIR/attn_bench/configs/param_count_configs
 CONFIG=${config:-${1:-}}
 if [ -z "$CONFIG" ]; then
     echo "ERROR: no config given. Pass config=<file> or as a positional arg." >&2
