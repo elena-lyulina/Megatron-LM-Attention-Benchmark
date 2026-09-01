@@ -19,6 +19,9 @@
 #   --max-doc-length N               drops any point where offset+prefix+suffix > N (the
 #                                    source documents' real length, e.g. 8192). Omit for no
 #                                    filtering.
+#   --capture-attention             Step 1 also captures attention maps (per-rep / per-Rouge-L
+#                                    .npz). One job per (model, point), no metrics pre-filter
+#                                    (the job checks the .npz itself); needs prefix+suffix <= 600.
 
 set -e
 
@@ -53,6 +56,7 @@ JOB_TIME=""
 BACKEND="megatron"
 REPETITIONS=""
 MAX_DOC_LENGTH=""
+CAPTURE_ATTENTION=0
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -64,6 +68,9 @@ while [[ $# -gt 0 ]]; do
             ;;
         --dry-run)
             DRY_RUN=1; shift
+            ;;
+        --capture-attention)
+            CAPTURE_ATTENTION=1; shift
             ;;
         --time)
             JOB_TIME="$2"; shift 2
@@ -112,6 +119,11 @@ while [[ $# -gt 0 ]]; do
             ;;
     esac
 done
+
+if [[ $CAPTURE_ATTENTION -eq 1 && "$BACKEND" = "hf" ]]; then
+    echo "--capture-attention is megatron-only (the hooks read Megatron internals); drop --backend hf."
+    exit 1
+fi
 
 # Build the (offset, prefix) pairs to sweep -- either the full cartesian product of
 # --offsets x --prefixes, or a fixed-suffix_start diagonal (--diagonal-starts x --prefixes,
@@ -171,6 +183,18 @@ fi
 IFS=',' read -r -a REP_ARR <<< "${REPETITIONS:-0,1,2,4,8,16,32,64,128,256}"
 REP_COUNT=${#REP_ARR[@]}
 
+# Capture builds full [prefix+suffix, prefix+suffix] maps per layer/head -- Stage 1 rejects
+# anything above 600, so fail here rather than after every job has spun up.
+if [[ $CAPTURE_ATTENTION -eq 1 ]]; then
+    for PAIR in "${PAIRS[@]}"; do
+        PREFIX="${PAIR##*:}"
+        if [[ $((PREFIX + SUFFIX_LENGTH)) -gt 600 ]]; then
+            echo "--capture-attention needs prefix+suffix <= 600; $PAIR with suffix=$SUFFIX_LENGTH exceeds it."
+            exit 1
+        fi
+    done
+fi
+
 SKIPPED_COUNT=0
 SUBMITTED_COUNT=0
 JOBS_SUBMITTED=0
@@ -184,6 +208,28 @@ for MODEL in "${MODELS[@]}"; do
     # look there too, not at the megatron-backend path.
     PDM_EXP_NAME="$EXP_NAME"
     [[ "$BACKEND" = "hf" ]] && PDM_EXP_NAME="${EXP_NAME}_hf"
+
+    # Capture mode: one job per (model, point), no metrics pre-filter -- Stage 1's own
+    # capture skip-check (both .npz markers, per rank) decides what actually runs.
+    if [[ $CAPTURE_ATTENTION -eq 1 ]]; then
+        for PAIR in "${PAIRS[@]}"; do
+            export POINTS="$PAIR"
+            [[ -n "$REPETITIONS" ]] && export REPETITIONS
+            EXPORTS="MODEL=$MODEL,SUFFIX_LENGTH=$SUFFIX_LENGTH,CHECKPOINT_BACKEND=$BACKEND,CAPTURE_ATTENTION=1"
+            [[ $FORCE_METRICS -eq 1 ]] && EXPORTS="$EXPORTS,FORCE_METRICS=1"
+            [[ -n "$MAX_DOC_LENGTH" ]] && EXPORTS="$EXPORTS,MAX_DOC_LENGTH=$MAX_DOC_LENGTH"
+            TIME_ARG=()
+            [[ -n "$JOB_TIME" ]] && TIME_ARG=(--time="$JOB_TIME")
+            if [[ $DRY_RUN -eq 1 ]]; then
+                echo "[dry-run] POINTS=$PAIR${REPETITIONS:+ REPETITIONS=$REPETITIONS} sbatch ${TIME_ARG[*]} --export=ALL,\"$EXPORTS\" $SCRIPT_DIR/measure_mem.slurm"
+            else
+                echo "Submitting measure_mem.slurm (capture: model=$MODEL exp=$EXP_NAME point=$PAIR suffix_length=$SUFFIX_LENGTH)"
+                sbatch "${TIME_ARG[@]}" --export=ALL,"$EXPORTS" "$SCRIPT_DIR/measure_mem.slurm"
+            fi
+            JOBS_SUBMITTED=$((JOBS_SUBMITTED + 1))
+        done
+        continue
+    fi
 
     # Points still needing work for this model -- calls Stage 2's own --dry-run (dual-checks
     # scratch then store, rep-aware -- catches a pkl left stale by a REPETITIONS increase,

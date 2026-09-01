@@ -25,6 +25,8 @@
 #   FORCE_METRICS  recompute every Step-2 boundary even if it already exists
 #   MAX_DOC_LENGTH Stage 1 and Stage 2 both skip a point where offset+prefix+suffix exceeds this (default: unset, no filtering)
 #   EXPECTED_COUNT records a rep dir needs to count as present, for Stage 2's completeness check (default: 660)
+#   CAPTURE_ATTENTION  Step 1 also captures attention maps into per-rep / per-Rouge-L .npz
+#                      (megatron backend only; single point per job; prefix+suffix <= 600)
 #
 # No pre-checkpoint-load "is this already done" check here -- measure_mem_all.sh already
 # decided this job is worth submitting (its own dry-run check, dual-checking scratch+store).
@@ -51,6 +53,7 @@ EXPECTED_COUNT=${EXPECTED_COUNT:-660}
 SINK_SCALE=${SINK_SCALE:-}
 FORCE_METRICS=${FORCE_METRICS:-}
 MAX_DOC_LENGTH=${MAX_DOC_LENGTH:-}
+CAPTURE_ATTENTION=${CAPTURE_ATTENTION:-}
 
 ### MODEL -> EXP_NAME / MEGATRON_EXTRA / NEEDS_TRITON / IS_SINK_FAMILY / NEEDS_UNFUSED_DECODE ###
 MODEL=${MODEL:-full-scf8}
@@ -106,6 +109,14 @@ COMMON_ARGS="--container-env $CONTAINER_ENV \
     --suffix-length $SUFFIX_LENGTH \
     --batch-size 20"
 [ -n "$MAX_DOC_LENGTH" ] && COMMON_ARGS="$COMMON_ARGS --max-doc-length $MAX_DOC_LENGTH"
+
+if [ -n "$CAPTURE_ATTENTION" ]; then
+    if [ "$CHECKPOINT_BACKEND" = "hf" ]; then
+        echo "CAPTURE_ATTENTION is megatron-only (hooks read Megatron internals) -- drop CHECKPOINT_BACKEND=hf."
+        exit 1
+    fi
+    COMMON_ARGS="$COMMON_ARGS --capture-attention"
+fi
 
 EXTRA_MEGATRON=""
 EXTRA_ENV=""

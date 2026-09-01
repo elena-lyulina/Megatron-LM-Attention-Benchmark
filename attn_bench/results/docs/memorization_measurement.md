@@ -211,30 +211,37 @@ To measure memorization for a newly trained variant:
    silently never fire. Memorization metrics still work; attention-map capture does
    not apply.
 
-## Attention-score capture — `capture_attn_*.slurm` (`--capture-attention`)
+## Attention-score capture — `measure_mem*.slurm --capture-attention` / `CAPTURE_ATTENTION=1`
 
-Same inference path, but `evaluation/attn_capture.py` registers a forward-pre-hook
-on every `TEDotProductAttention`, **recomputes** the softmax from q/k/v (pure
-observation — model output is unchanged), and averages the full `[L, H, S, S]`
-attention maps into **10 Rouge-L buckets** (`[0,0.1) … [0.9,1.0]`). This lets us
-compare attention flow between memorized (high Rouge-L) and non-memorized samples.
+Same inference path (Stage 1 + Stage 2), but `evaluation/attn_capture.py` registers a
+forward-pre-hook on every `TEDotProductAttention`, **recomputes** the softmax from q/k/v
+(pure observation — model output is unchanged), and assembles the full `[L, H, S, S]` map
+per sample over prefill + decode. Each sample's map is summed into two orthogonal cuts:
+its **Rouge-L bucket** (10 buckets `[0,0.1) … [0.9,1.0]`, pooled over reps) and its
+**repetition bucket** (pooled over Rouge-L). High vs low Rouge-L compares memorized vs
+not; the rep cut compares attention flow across repetition counts.
 
-Three file families are written per rank at the run-level inference dir
-(aggregated across **all** repetition buckets):
+Run it through the normal driver:
+`bash measure_mem_all.sh --capture-attention --models <m1,m2,…> --offsets <o…> --prefixes 50 --suffix 50`
+— megatron backend only, one job per `(model, point)` (multi-point capture is disabled),
+Stage 2 still runs afterwards so per-doc Rouge-L lands in the usual metrics pkl.
+
+Files written per rank at the run-level inference dir (mean map `[L,H,S,S]` + sample count each):
 
 | file | contents |
 |---|---|
-| `attn_scores_rouge_l_{NN-MM}_rank{N}.npz` | mean softmax-weight map `[L,H,S,S]`. Rows **not** renormalized: for sink/off-by-one the row-sum deficit is the virtual-sink mass; BOS attention is column 0. |
-| `norm_attn_rouge_l_{NN-MM}_rank{N}.npz` | Kobayashi norm-based map `n(i,j) = α_ij · ‖v_j ⊙ g_i‖₂` (`g` = sigmoid output gate, 1 for non-gated). |
-| `gating_scores_rank{N}.npz` | per-(bucket, layer, head) gate-value histogram — **gated model only**. |
+| `attn_scores_rouge_l_{NN-MM}_rank{N}.npz` / `attn_scores_rep_{R}_rank{N}.npz` | mean softmax-weight map, by Rouge-L bucket / by repetition bucket. Rows **not** renormalized: for sink/off-by-one the row-sum deficit is the virtual-sink mass; BOS attention is column 0. |
+| `norm_attn_rouge_l_{NN-MM}_rank{N}.npz` / `norm_attn_rep_{R}_rank{N}.npz` | Kobayashi norm-based map `n(i,j) = α_ij · ‖v_j ⊙ g_i‖₂` (`g` = sigmoid output gate, 1 for non-gated), same two cuts. |
+| `gating_scores_rank{N}.npz` / `gating_scores_by_rep_rank{N}.npz` | per-(bucket, layer, head) gate-value histogram, by Rouge-L / by repetition — **gated model only**. |
+| `sink_offsets.json` | learned per-layer/head sink logit `softmax_offset`, plus `exp(offset)` (denominator term) and `sigmoid(offset)` (sink share vs a logit-0 key). Constant across samples, written once — **sink / off-by-one only**. |
 
 Nothing is collapsed at capture time: BOS attention, sink mass, row entropy, etc.
 are all recoverable from the saved maps at whatever granularity you want.
 
 Constraint: `prefix + suffix ≤ 600` (maps are O(S²) per layer/head). Capture runs
 use prefix 50 / suffix 50. Capturing **regenerates** every rep (the maps need the
-forward passes), so `rank*.jsonl` is rewritten; a run-level marker
-(`attn_scores_rouge_l_09-10_rank{N}.npz`) decides resume.
+forward passes), so `rank*.jsonl` is rewritten; two run-level markers per rank
+(`attn_scores_rouge_l_09-10` and `attn_scores_rep_{max rep}`) decide resume.
 
 Plotting helpers: `plotting/attention_patterns.py`
 (`plot_map`, `plot_bucket_maps`, `plot_full_attn_maps_panel`,
@@ -297,9 +304,11 @@ as `attn_bench/utils/PDM_patch.txt` and applied to a fresh clone with `patch -p1
 ├── inference/
 │   └── offset_O_prefix_P_suffix_S/            # one dir per suffix actually generated
 │       ├── rep_R_greedy/rank{0..3}.jsonl         # per-sample fields, run_metadata.json history
-│       ├── attn_scores_rouge_l_{NN-MM}_rank{N}.npz   # capture (run-level)
-│       ├── norm_attn_rouge_l_{NN-MM}_rank{N}.npz
-│       └── gating_scores_rank{N}.npz                 # gated only
+│       ├── attn_scores_rouge_l_{NN-MM}_rank{N}.npz   # capture (run-level): by Rouge-L bucket
+│       ├── attn_scores_rep_{R}_rank{N}.npz           # capture: by repetition bucket
+│       ├── norm_attn_rouge_l_{NN-MM}_rank{N}.npz / norm_attn_rep_{R}_rank{N}.npz
+│       ├── gating_scores_rank{N}.npz / gating_scores_by_rep_rank{N}.npz   # gated only
+│       └── sink_offsets.json                            # sink / off-by-one only
 ├── offset_O_prefix_P_suffix_S_greedy.pkl      # one per reachable boundary, not just S
 ├── metrics_metadata.json                      # Stage 2's own append-only history
 ├── offset_O_prefix_P_suffix_S_greedy_distinct_n.json
@@ -314,12 +323,12 @@ as `attn_bench/utils/PDM_patch.txt` and applied to a fresh clone with `patch -p1
 | `measure_mem.slurm` | one `(offset, prefix)` point for one `MODEL`: inference (Stage 1) + metric computation (Stage 2) |
 | `measure_mem_all.sh` | grid driver: submits all variants (from `scripts/llama_checkpoints.sh`) × offsets × prefixes (skips combos whose pkl exists; `--force` overrides) |
 | `prefix_extraction_inference_backfill.slurm` / `_all.sh` | Phase A: one-time backfill of `sample_idx`/`ref_nll`/`gen_nll`/`p_z_logprob` into existing results, `--models` selectable |
-| `capture_attn_<variant>_*.slurm` | capture `[L,H,S,S]` attention maps bucketed by Rouge-L |
+| `measure_mem*.slurm --capture-attention` | also capture `[L,H,S,S]` attention maps, by Rouge-L bucket and by repetition bucket |
 | `generation_quality.slurm` | distinct-n + reference-model perplexity |
 | `mauve.slurm` | MAUVE score |
 | `cross_doc_attn.slurm` | correctness test of cross-document masking (not a metric) |
 | `evaluation/prefix_extraction_inference.py` | Stage 1: greedy generation + NLL/`p_z`, GPU/model-only |
 | `evaluation/compute_memorization_metrics.py` | Stage 2: Rouge-L/`lcs_norm`/TTR/`token_acc`/`divergence_point`/`p_z` summaries per boundary, CPU-only |
 | `evaluation/prefix_extraction_inference_backfill.py` | Phase A: backfills old results to match current Stage 1 output |
-| `evaluation/attn_capture.py` | attention-map capture into Rouge-L buckets |
-| `evaluation/plot_attention_patterns.py` | plotting the captured maps |
+| `evaluation/attn_capture.py` | attention-map capture into Rouge-L and repetition buckets |
+| `plotting/attention_patterns.py` | plotting the captured maps |

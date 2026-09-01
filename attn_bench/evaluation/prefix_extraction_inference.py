@@ -181,7 +181,7 @@ def _capture_rouge_l(true_suffixes: list, gen_suffixes: list) -> list:
 
 
 def run_bucket(backend: InferenceBackend, dataset, prefix_length, suffix_length, batch_size,
-              inference_dir, rank, world_size, needs_bos: bool, capture=None,
+              inference_dir, rank, world_size, needs_bos: bool, capture=None, rep: int | None = None,
               extend_records: dict | None = None, extend_from_suffix: int | None = None) -> float:
     """Run inference for one repetition bucket.
 
@@ -193,6 +193,7 @@ def run_bucket(backend: InferenceBackend, dataset, prefix_length, suffix_length,
                     extend_from_suffix).
     capture: shared AttentionCapture, or None. Always regenerates from scratch when set
              (extend_records is ignored) -- the maps need real forward passes.
+    rep: this bucket's repetition count, used only to route captured maps (capture mode).
 
     Returns: wall time spent generating (checkpoint load happens before this is called).
     """
@@ -286,7 +287,7 @@ def run_bucket(backend: InferenceBackend, dataset, prefix_length, suffix_length,
                 f.flush()
 
             if capture is not None:
-                capture.flush_batch(_capture_rouge_l(true_suffixes, gen_suffixes))
+                capture.flush_batch(_capture_rouge_l(true_suffixes, gen_suffixes), rep)
 
             del batch_tensor, seq, prompt, generated, gen_full
             del ref_nll, gen_nll, ref_mean, ref_std, ref_ppl, gen_mean, gen_std, gen_ppl
@@ -479,6 +480,7 @@ def _process_rep(backend: InferenceBackend, args, experiment_path: Path, output_
         rank, world_size,
         needs_bos=needs_bos,
         capture=capture,
+        rep=rep,
         extend_records=extend_records,
         extend_from_suffix=extend_from_suffix,
     )
@@ -529,7 +531,9 @@ def run_inference(backend: InferenceBackend, args, rank: int, world_size: int,
 
     paths = find_rep_paths(Path(args.data_folder), {int(r) for r in args.repetitions.split(",")})
     needs_bos = offset > 0  # offset==0: BOS already at token 0; offset>0: must prepend
-    capture = backend.setup_attention_capture(args, output_path, rank, needs_bos) if args.capture_attention else None
+    reps = [int(p.stem.split("_")[1]) for p in paths]
+    capture = (backend.setup_attention_capture(args, output_path, rank, needs_bos, prefix_length, reps)
+               if args.capture_attention else None)
 
     did_generate = False
     did_extend = False
@@ -582,11 +586,15 @@ def results_already_complete(args, world_size: int, offset: int, prefix_length: 
             if not file_exists_in_locations([output_path, persistent_output_path],
                                             f"rep_{rep}_greedy/rank0.jsonl", require_nonempty=True):
                 return False
+        # Two markers per rank: last Rouge-L bucket and highest repetition bucket -- both
+        # must be present so an older capture that only wrote the Rouge-L cut is redone.
         last_bucket = bucket_label(N_BUCKETS - 1)
+        max_rep = max(int(p.stem.split("_")[1]) for p in paths)
         for r in range(world_size):
-            if not file_exists_in_locations([output_path, persistent_output_path],
-                                            f"attn_scores_rouge_l_{last_bucket}_rank{r}.npz"):
-                return False
+            for marker in (f"attn_scores_rouge_l_{last_bucket}_rank{r}.npz",
+                           f"attn_scores_rep_{max_rep}_rank{r}.npz"):
+                if not file_exists_in_locations([output_path, persistent_output_path], marker):
+                    return False
         return True
 
     for path in paths:

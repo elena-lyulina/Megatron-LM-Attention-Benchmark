@@ -50,7 +50,8 @@ class InferenceBackend(ABC):
     def patch_sink_scale(self) -> list:
         raise NotImplementedError(f"{self.name} backend does not implement patch_sink_scale")
 
-    def setup_attention_capture(self, args, output_path: Path, rank: int, needs_bos: bool):
+    def setup_attention_capture(self, args, output_path: Path, rank: int, needs_bos: bool,
+                                prefix_length: int, reps: list):
         raise NotImplementedError(f"{self.name} backend does not implement setup_attention_capture")
 
 
@@ -214,15 +215,19 @@ class MegatronBackend(InferenceBackend):
         print(f"Patched softmax_offset += log({self.sink_scale}) = {log_scale:.4f} in {len(originals)} attention layers")
         return originals
 
-    def setup_attention_capture(self, args, output_path: Path, rank: int, needs_bos: bool):
+    def setup_attention_capture(self, args, output_path: Path, rank: int, needs_bos: bool,
+                                prefix_length: int, reps: list):
         """Called only when --capture-attention is set. Returns None if a previous run
         already completed the capture (jsonl generation still proceeds as needed)."""
         from attn_bench.evaluation.attn_capture import (N_BUCKETS,
                                                         AttentionCapture,
                                                         bucket_label)
 
-        capture_marker = output_path / f"attn_scores_rouge_l_{bucket_label(N_BUCKETS - 1)}_rank{rank}.npz"
-        if capture_marker.exists():
+        markers = (
+            output_path / f"attn_scores_rouge_l_{bucket_label(N_BUCKETS - 1)}_rank{rank}.npz",
+            output_path / f"attn_scores_rep_{max(reps)}_rank{rank}.npz",
+        )
+        if all(m.exists() for m in markers):
             if rank == 0:
                 print("Attention capture already done -- skipping capture (jsonl still processed as needed).")
             return None
@@ -231,9 +236,10 @@ class MegatronBackend(InferenceBackend):
         capture = AttentionCapture(
             n_layers=cfg.num_layers,
             n_heads=cfg.num_attention_heads,
-            prompt_len=args.prefix_length + (1 if needs_bos else 0),
+            prompt_len=prefix_length + (1 if needs_bos else 0),
             suffix_length=args.suffix_length,
             is_gated=getattr(cfg, 'attention_output_gate', False),
+            reps=reps,
         )
         capture.register(self.model)
         return capture
