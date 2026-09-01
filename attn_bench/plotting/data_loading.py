@@ -6,7 +6,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from scipy.interpolate import griddata
+from scipy.interpolate import RegularGridInterpolator, griddata
 
 from attn_bench.plotting import model_registry
 
@@ -131,14 +131,22 @@ def discover_offset_prefix_points(models, suffix, results_base=model_registry.ME
 
 def load_offset_prefix_grid_data(model, rep, suffix, backends=('hf', 'megatron'), metric='Rouge-L',
                                  interp='linear', grid_res=80, max_doc_length=8192, points=None,
-                                 n=None, p=None):
+                                 n=None, p=None, grid_scale='linear', grid_min=30.0, smooth_sigma=0.0):
     """(offset, prefix) -> metric points for one (model, rep, suffix), interpolated onto a
     regular grid over the full document-length domain, masked to the feasible region
     (offset+prefix+suffix<=max_doc_length). Shared by every offset x prefix 2D/3D panel.
 
     points: explicit [(offset, prefix), ...] to load (default: discovered on disk).
-    interp='linear', not 'cubic': cubic overshot past [0,1] in testing (sparse, uneven points).
+    interp: 'linear' / 'cubic' go through scipy.griddata (Delaunay); 'bilinear' interpolates on
+    the candidate (offset x prefix) lattice directly -- smoother than 'linear' (no arbitrary
+    per-quad diagonal crease) while still exact at every sample, and no overshoot like 'cubic'.
+    smooth_sigma>0 additionally runs a NaN-aware Gaussian over the grid (sigma in grid cells);
+    it softens edges but pulls the surface off the sample values, so keep it small or 0.
     metric='hayes': Hayes et al. 2025 (n, p)-discoverable extraction rate, computed on the fly.
+    grid_scale='log' keeps the full linear grid (so a linear-axis view still gets a clean
+    diagonal along the feasible boundary) and adds log-spaced nodes from grid_min up through
+    the low corner -- a plain linear grid's ~100-token first cell hides every sample below it
+    on a log axis.
 
     Returns (offset_vals, prefix_vals, zs, G_OFFSET, G_PREFIX, GZ, feasible_bound).
     """
@@ -169,11 +177,55 @@ def load_offset_prefix_grid_data(model, rep, suffix, backends=('hf', 'megatron')
     offset_vals, prefix_vals, zs = np.array(offset_vals), np.array(prefix_vals), np.array(zs)
 
     feasible_bound = max_doc_length - suffix
-    g_prefix = np.linspace(0, max_doc_length, grid_res)
-    g_offset = np.linspace(0, max_doc_length, grid_res)
+    if grid_scale == 'log':
+        # Geometric spacing in the low decades so the contour fill tracks the (log-dense)
+        # sample points there instead of stretching one wide cell across them, then linear
+        # spacing out to the edge (keeps the boundary diagonal clean in a linear-axis view).
+        # 50 is forced in so the fill reaches exactly to the prefix=50 sample row; the grid
+        # also starts at grid_min (= the dashboard's offset=0 park position). Total ~= grid_res.
+        low = np.geomspace(grid_min, 550.0, 13)
+        high = np.linspace(550.0, max_doc_length, grid_res - low.size)
+        # 0 kept so the fill carries the true offset=0 values (the dashboard parks the offset=0
+        # dots on that column); 50 forced so the fill reaches exactly to the prefix=50 row.
+        axis = np.union1d(np.union1d(low, high), [0.0, 50.0])
+    else:
+        axis = np.linspace(0, max_doc_length, grid_res)
+    g_prefix = axis
+    g_offset = axis
     G_OFFSET, G_PREFIX = np.meshgrid(g_offset, g_prefix)
-    GZ = griddata((offset_vals, prefix_vals), zs, (G_OFFSET, G_PREFIX), method=interp)
+
+    if interp == 'bilinear':
+        # Bilinear on the candidate (offset x prefix) lattice itself. Unlike griddata's
+        # Delaunay 'linear' -- which splits every lattice quad along an arbitrary diagonal and
+        # leaves a visible crease -- this warps each quad as one smooth patch, while still
+        # passing exactly through every sample (so a dot's colour matches the fill under it).
+        ox, py = np.unique(offset_vals), np.unique(prefix_vals)
+        lattice = np.full((ox.size, py.size), np.nan)
+        ix = {v: i for i, v in enumerate(ox)}
+        iy = {v: i for i, v in enumerate(py)}
+        for o, p, zv in zip(offset_vals, prefix_vals, zs):
+            lattice[ix[o], iy[p]] = zv
+        holes = np.isnan(lattice)          # infeasible / never-run (offset, prefix) combos
+        if holes.any():
+            mo, mp = np.meshgrid(ox, py, indexing='ij')
+            lattice[holes] = griddata((offset_vals, prefix_vals), zs, (mo[holes], mp[holes]), method='linear')
+            edge = np.isnan(lattice)
+            if edge.any():
+                lattice[edge] = griddata((offset_vals, prefix_vals), zs, (mo[edge], mp[edge]), method='nearest')
+        rgi = RegularGridInterpolator((ox, py), lattice, method='linear', bounds_error=False, fill_value=None)
+        GZ = rgi(np.stack([G_OFFSET.ravel(), G_PREFIX.ravel()], axis=-1)).reshape(G_OFFSET.shape)
+        # RGI has no convex hull -- restrict to the same region griddata('linear') would cover.
+        GZ[np.isnan(griddata((offset_vals, prefix_vals), zs, (G_OFFSET, G_PREFIX), method='linear'))] = np.nan
+    else:
+        GZ = griddata((offset_vals, prefix_vals), zs, (G_OFFSET, G_PREFIX), method=interp)
     GZ[G_OFFSET + G_PREFIX > feasible_bound] = np.nan
+
+    if smooth_sigma:
+        from scipy.ndimage import gaussian_filter
+        valid = ~np.isnan(GZ)
+        num = gaussian_filter(np.where(valid, GZ, 0.0), smooth_sigma)
+        den = gaussian_filter(valid.astype(float), smooth_sigma)
+        GZ = np.where(valid, num / np.maximum(den, 1e-9), np.nan)
 
     return offset_vals, prefix_vals, zs, G_OFFSET, G_PREFIX, GZ, feasible_bound
 

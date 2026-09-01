@@ -56,12 +56,14 @@
     position: sticky;
     top: 0;
     z-index: 10;
+    /* Title on its own row, then the full controls row underneath -- the controls get the
+       whole width to lay out on, so they stay on one line far longer than when the title
+       was sharing the row with them. */
     display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 12px 20px;
-    padding: 14px 28px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 12px 24px;
     background: var(--pane);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     backdrop-filter: blur(6px);
@@ -71,29 +73,57 @@
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    /* Row gap (stacked wrap) stays modest; column gap (between control groups) shrinks with
-       available width (clamp floor keeps it clearly bigger than any control's own internal
-       label-to-input gap of 10-14px, so groups still read as visually separate even when
-       tight) instead of eating fixed space that the controls themselves need to not get
-       crushed before wrapping. */
-    gap: 18px clamp(14px, 3vw, 36px);
-    flex: 1;
-    justify-content: flex-end;
+    /* Column gap shrinks with available width (clamp floor stays clearly bigger than any
+       control's own label-to-input gap of ~10px, so groups still read as separate when
+       tight); row gap only matters on the narrow-screen wrap. */
+    gap: 14px clamp(12px, 1.8vw, 24px);
+    /* Left-packed; the three sliders (flex:1) stretch to take up the slack, so the row fills
+       its width without space-between scattering the groups apart on a wide screen. */
+    justify-content: flex-start;
   }
 
   .zoom-control {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 4px;
     flex: 1;
-    /* max-width is set in JS (wireDiscreteSlider), sized to its actual tick count instead
-       of a fixed guess that goes stale as models are added/removed. */
+    /* Same cap the "Columns" slider had before the redesign (10 ticks x 24px); it just has no
+       tick strip now -- the column count rides under the thumb (#zoom-value). */
+    max-width: 240px;
+  }
+
+  .zoom-icon {
+    display: inline-flex;
+    align-items: center;
+    flex: none;
+    color: var(--muted);  /* same grey as .rep-label / tick text; svg uses stroke:currentColor */
+  }
+
+  /* Kills the inline-SVG baseline gap that otherwise nudges the glyph up off the track. */
+  .zoom-icon svg {
+    display: block;
+  }
+
+  /* The magnifier's lens sits on the left of its viewBox with the handle trailing right, so
+     the left icon otherwise leaves a visual gap on its slider-facing side -- mirror it so its
+     lens faces the track, same as the right icon. */
+  .zoom-control > .zoom-icon:first-child svg {
+    transform: scaleX(-1);
+  }
+
+  /* Single readout that tracks the thumb; JS sets `left`, this just keeps it sane pre-JS. */
+  #zoom-value {
+    left: 50%;
   }
 
   .zoom-slider-wrap {
     position: relative;
     flex: 1;
-    min-width: 90px;  /* stops the slider shrinking to an unusable sliver before wrapping */
+    min-width: 84px;  /* stops the slider shrinking to an unusable sliver before wrapping */
+    /* Right room for the readout near the "1 col" end; only a little on the left so the
+       magnifier hugs the track (the "10 cols" readout is only at the far-left extreme, where
+       a small overlap with the icon is fine). positionZoomValue measures the padded box. */
+    padding: 0 10px 0 4px;
   }
 
   .title-block {
@@ -122,11 +152,10 @@
   .rep-control {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 8px;
     flex: 1;
-    /* max-width is set in JS (wireDiscreteSlider), sized to its actual tick count -- a
-       shorter track means a shorter distance between ticks on a stepped slider, which reads
-       as snappier than a long continuous-feeling one. */
+    /* max-width is set in JS (wireDiscreteSlider), sized to the tick count -- Repetitions
+       (7 ticks) ends up wider than Suffix (6), matching the pre-redesign track length. */
   }
 
   .rep-label {
@@ -140,7 +169,11 @@
   .rep-slider-wrap {
     position: relative;
     flex: 1;
-    min-width: 110px;  /* stops the slider shrinking to an unusable sliver before wrapping */
+    min-width: 104px;  /* stops the slider shrinking to an unusable sliver before wrapping */
+    /* Right room so the last tick ("256"/"250") stays inside the wrap instead of overlapping
+       the next control; the first tick ("0"/"25") is narrow, so less padding on the left keeps
+       the track closer to its label. alignTicks measures the padded input box either way. */
+    padding: 0 14px 0 4px;
   }
 
   input[type="range"] {
@@ -241,8 +274,8 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    min-width: 90px;
-    max-width: clamp(90px, 16vw, 220px);
+    min-width: 84px;
+    max-width: clamp(84px, 10vw, 128px);
   }
 
   /* Truncation lives on the label specifically, not the button -- putting
@@ -272,9 +305,12 @@
   .dropdown-panel {
     position: absolute;
     top: calc(100% + 6px);
-    right: 0;
+    /* Left-anchored: both pickers now sit at the left end of the controls row, so a
+       right-anchored panel would open off the left edge of the window. */
+    left: 0;
     z-index: 20;
     width: 260px;
+    max-width: min(260px, calc(100vw - 40px));
     max-height: 320px;
     overflow-y: auto;
     background: var(--pane);
@@ -310,6 +346,31 @@
 
   .model-dropdown-actions button:hover {
     background: var(--pane-alt);
+  }
+
+  .model-compare {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 2px 4px 8px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid var(--grid);
+    font-size: 12px;
+    color: var(--ink);
+  }
+
+  .model-compare .switch { flex: none; }
+
+  .model-compare select {
+    flex: 1;
+    min-width: 0;
+    font-size: 11.5px;
+    padding: 3px 4px;
+  }
+
+  .model-compare select:disabled {
+    opacity: 0.45;
+    cursor: default;
   }
 
   .model-checkbox, .metric-option {
@@ -352,6 +413,34 @@
     align-items: center;
     gap: 9px;
     white-space: nowrap;
+  }
+
+  /* "Show 3D" carries a caption in the empty space above it -- absolutely positioned so the
+     label + switch stay on the same baseline as the other toggles. */
+  .toggle-control--stacked {
+    position: relative;
+  }
+
+  .toggle-control--stacked .toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+
+  .toggle-hint {
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    margin-bottom: 4px;
+    font-size: 10px;
+    white-space: nowrap;
+    pointer-events: none;  /* purely a label; never intercept clicks even if it overlaps */
+    color: var(--muted);  /* grey when 3D is off */
+    transition: color 0.15s ease;
+  }
+
+  #show-3d-control.on .toggle-hint {
+    color: var(--accent);  /* purple while 3D is on */
   }
 
   .toggle-control label {
@@ -500,6 +589,13 @@
     gap: 20px;
   }
 
+  /* While a suffix switch is fetching new JSON -- the charts keep showing the previous suffix
+     at full opacity (so the change is easy to see the moment it lands); the only cue is the
+     cursor and the "updating..." pill in the meta row. */
+  .grid.loading {
+    cursor: progress;
+  }
+
   .card {
     background: var(--pane);
     border-radius: 10px;
@@ -594,6 +690,14 @@
             <button type="button" id="select-all-btn">Select all</button>
             <button type="button" id="deselect-all-btn">Deselect all</button>
           </div>
+          <label class="model-compare">
+            <span class="switch">
+              <input type="checkbox" id="compare-toggle" />
+              <span class="track"><span class="thumb"></span></span>
+            </span>
+            <span>Compare vs</span>
+            <select id="compare-ref" class="select-control" disabled></select>
+          </label>
         </div>
       </div>
     </div>
@@ -617,22 +721,50 @@
       </div>
     </div>
 
-    <div class="zoom-control slider-control">
-      <span class="rep-label">Columns</span>
-      <div class="zoom-slider-wrap">
-        <input type="range" id="zoom" min="0" max="9" value="5" step="1" />
-        <div class="rep-ticks" id="zoom-ticks">
-          <span>10</span><span>9</span><span>8</span><span>7</span><span>6</span><span>5</span><span>4</span><span>3</span><span>2</span><span>1</span>
+    <div class="rep-control slider-control">
+      <span class="rep-label">Suffix</span>
+      <div class="rep-slider-wrap">
+        <input type="range" id="suffix" min="0" max="5" value="5" step="1" />
+        <div class="rep-ticks" id="suffix-ticks">
+          <span>25</span><span>50</span><span>75</span><span>100</span><span>150</span><span>250</span>
         </div>
       </div>
     </div>
 
+    <div class="zoom-control slider-control">
+      <span class="zoom-icon" aria-hidden="true">
+        <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+          <circle cx="6.5" cy="6.5" r="4.5" /><line x1="10" y1="10" x2="14" y2="14" /><line x1="4.5" y1="6.5" x2="8.5" y2="6.5" />
+        </svg>
+      </span>
+      <div class="zoom-slider-wrap">
+        <input type="range" id="zoom" min="0" max="9" value="5" step="1" />
+        <div class="rep-ticks" id="zoom-ticks"><span id="zoom-value" class="active">5 cols</span></div>
+      </div>
+      <span class="zoom-icon" aria-hidden="true">
+        <svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+          <circle cx="6.5" cy="6.5" r="4.5" /><line x1="10" y1="10" x2="14" y2="14" /><line x1="4.5" y1="6.5" x2="8.5" y2="6.5" /><line x1="6.5" y1="4.5" x2="6.5" y2="8.5" />
+        </svg>
+      </span>
+    </div>
+
     <div class="toggle-control">
-      <label for="show-3d">Show 3D</label>
+      <label for="log-axes">Log axes</label>
       <span class="switch">
-        <input type="checkbox" id="show-3d" />
+        <input type="checkbox" id="log-axes" checked />
         <span class="track"><span class="thumb"></span></span>
       </span>
+    </div>
+
+    <div class="toggle-control toggle-control--stacked" id="show-3d-control">
+      <span class="toggle-hint">might take time to plot</span>
+      <div class="toggle-row">
+        <label for="show-3d">Show 3D</label>
+        <span class="switch">
+          <input type="checkbox" id="show-3d" />
+          <span class="track"><span class="thumb"></span></span>
+        </span>
+      </div>
     </div>
   </div>
 </div>
@@ -642,8 +774,9 @@
     <div class="meta-row">
       <span class="pill" id="model-count-pill">10 of 10 models</span>
       <span class="pill" id="metric-pill">metric: Rouge&#8209;L</span>
-      <span class="pill">suffix: 250 tokens</span>
+      <span class="pill" id="suffix-pill">suffix: 250 tokens</span>
       <span class="pill">document boundary: 8192 tokens</span>
+      <span class="pill" id="loading-pill" hidden>updating&hellip;</span>
     </div>
 
     <div class="grid hide-3d" id="model-grid"></div>
@@ -665,6 +798,12 @@
 <script src="https://cdn.plot.ly/plotly-2.32.0.min.js" charset="utf-8"></script>
 <script>
   const REP_VALUES = [0, 1, 16, 32, 64, 128, 256];
+  // One exported JSON per suffix (data/{model}__s{suffix}.json). Inference feasibility was
+  // fixed at suffix=250, so every smaller suffix carries the same populated candidate points.
+  const SUFFIX_VALUES = [25, 50, 75, 100, 150, 250];
+  const LOG_FLOOR = 10;  // where offset=0 is parked on a log axis. The grid keeps its real x=0
+                         // column and it renders here too, so the parked dots sit on the fill's
+                         // left edge AND over contour that carries the true offset=0 value.
   const MODELS = ['full-scf1', 'swa-w4096-scf1', 'swa-w1024-scf1', 'swa-w256-scf1',
                   'sink-scf1', 'gated-scf1', 'gdn', 'gdn-xdl', 'gdn-xdl-xsl-0.5', 'gdn-xdl-xsl'];
   const DISPLAY_NAMES = {
@@ -683,19 +822,23 @@
   // vmin/vmax are in "plot space" -- the raw metric's own range for everything except the two
   // log-scale perplexity entries, where plot space is log10(ppl) (see metricArrays) and vmin/
   // vmax are chosen to comfortably cover the actual exported range (~1 to ~55).
+  // diffMax: the symmetric +/-M range for the compare view. Fixed per metric (not fit to data)
+  // so a colour means the same difference across every rep/suffix/model. The [0,1] metrics
+  // can't differ by more than 1; the log-space perplexity entries are compared as a *ratio*
+  // (log10 of it), where +/-2 covers up to a 100x ratio -- more than the ~1..55 range allows.
   const METRICS = [
-    { key: 'rouge_l', label: 'Rouge-L', vmin: 0, vmax: 1 },
-    { key: 'lcs', label: 'Longest Common Subsequence (LCS)', vmin: 0, vmax: 1 },
-    { key: 'ttr_gen', label: 'Type-Token Ratio (TTR), Generated', vmin: 0, vmax: 1 },
-    { key: 'ttr_ref', label: 'Type-Token Ratio (TTR), Reference', vmin: 0, vmax: 1 },
-    { key: 'exact_match', label: 'Exact Match', vmin: 0, vmax: 1 },
-    { key: 'divergence_point', label: 'Divergence Point', vmin: 0, vmax: 1 },
-    { key: 'ppl_gen', label: 'Perplexity (PPL), Generated', vmin: 0, vmax: 2, log: true },
-    { key: 'ppl_ref', label: 'Perplexity (PPL), Reference', vmin: 0, vmax: 2, log: true },
-    { key: 'hayes_n10_p99', label: 'Hayes Extraction (n=10, p=99%)', vmin: 0, vmax: 1 },
-    { key: 'hayes_n10_p75', label: 'Hayes Extraction (n=10, p=75%)', vmin: 0, vmax: 1 },
-    { key: 'hayes_n10_p50', label: 'Hayes Extraction (n=10, p=50%)', vmin: 0, vmax: 1 },
-    { key: 'hayes_n10_p25', label: 'Hayes Extraction (n=10, p=25%)', vmin: 0, vmax: 1 },
+    { key: 'rouge_l', label: 'Rouge-L', vmin: 0, vmax: 1, diffMax: 1 },
+    { key: 'lcs', label: 'Longest Common Subsequence (LCS)', vmin: 0, vmax: 1, diffMax: 1 },
+    { key: 'ttr_gen', label: 'Type-Token Ratio (TTR), Generated', vmin: 0, vmax: 1, diffMax: 1 },
+    { key: 'ttr_ref', label: 'Type-Token Ratio (TTR), Reference', vmin: 0, vmax: 1, diffMax: 1 },
+    { key: 'exact_match', label: 'Exact Match', vmin: 0, vmax: 1, diffMax: 1 },
+    { key: 'divergence_point', label: 'Divergence Point', vmin: 0, vmax: 1, diffMax: 1 },
+    { key: 'ppl_gen', label: 'Perplexity (PPL), Generated', vmin: 0, vmax: 2, log: true, diffMax: 2 },
+    { key: 'ppl_ref', label: 'Perplexity (PPL), Reference', vmin: 0, vmax: 2, log: true, diffMax: 2 },
+    { key: 'hayes_n10_p99', label: 'Hayes Extraction (n=10, p=99%)', vmin: 0, vmax: 1, diffMax: 1 },
+    { key: 'hayes_n10_p75', label: 'Hayes Extraction (n=10, p=75%)', vmin: 0, vmax: 1, diffMax: 1 },
+    { key: 'hayes_n10_p50', label: 'Hayes Extraction (n=10, p=50%)', vmin: 0, vmax: 1, diffMax: 1 },
+    { key: 'hayes_n10_p25', label: 'Hayes Extraction (n=10, p=25%)', vmin: 0, vmax: 1, diffMax: 1 },
   ];
   const METRICS_BY_KEY = Object.fromEntries(METRICS.map((m) => [m.key, m]));
 
@@ -709,6 +852,21 @@
     [6 / 11, 'rgb(193, 100, 121)'], [7 / 11, 'rgb(225, 113, 97)'], [8 / 11, 'rgb(246, 139, 69)'],
     [9 / 11, 'rgb(251, 173, 60)'], [10 / 11, 'rgb(246, 211, 70)'], [1, 'rgb(231, 250, 90)'],
   ];
+
+  // ColorBrewer RdBu (11-class), for the "compare vs reference" view: blue = card memorises
+  // less than the reference, red = more. On ColorBrewer's colourblind-safe list. The middle
+  // stop is replaced with the panel background per theme, so a zero difference fades out and
+  // only real differences carry colour.
+  const RDBU = ['rgb(5,48,97)', 'rgb(33,102,172)', 'rgb(67,147,195)', 'rgb(146,197,222)',
+                'rgb(209,229,240)', null, 'rgb(253,219,199)', 'rgb(244,165,130)',
+                'rgb(214,96,77)', 'rgb(178,24,43)', 'rgb(103,0,31)'];
+  function divergingScale(neutral) {
+    const stops = RDBU.map((c) => c || neutral);
+    return stops.map((c, i) => [i / (stops.length - 1), c]);
+  }
+  function divergingCss(neutral) {
+    return `linear-gradient(to top, ${RDBU.map((c) => c || neutral).join(', ')})`;
+  }
 
   // Reads the page's own CSS custom properties so every chart recolors with the current
   // theme instead of carrying separate hardcoded light/dark palettes.
@@ -739,47 +897,145 @@
     };
   }
 
-  function contourFigure(data, rep, metricKey, T) {
+  // Log mode parks offset=0 at LOG_FLOOR so those points/curve endpoints still plot on a log
+  // axis; the true value is carried in customdata so hover still reads "offset: 0". prefix
+  // never hits 0 (min 50), so only offset needs it.
+  function floorZero(v, log) {
+    return log && v === 0 ? LOG_FLOOR : v;
+  }
+
+  // Log-axis ticks: label only the decade + half-decade (50 / 100 / 500 / 1k / 5k) so a
+  // cramped horizontal axis doesn't crowd, with short unlabelled minor marks at 2/3/4/7 for
+  // the in-between gradation. `zeroAt` (x axis only) adds a "0" label at the offset=0 park
+  // position. (3D scene axes ignore `minor`, so they just get the labels.)
+  function logTicks(lo, hi, zeroAt) {
+    const major = [];
+    const minor = [];
+    for (let e = Math.floor(Math.log10(lo)); e <= Math.ceil(Math.log10(hi)); e++) {
+      const dec = 10 ** e;
+      [1, 5].forEach((m) => { const v = m * dec; if (v >= lo && v <= hi) major.push(v); });
+      [2, 3, 4, 7].forEach((m) => { const v = m * dec; if (v >= lo && v <= hi && v !== zeroAt) minor.push(v); });
+    }
+    const vals = zeroAt ? [zeroAt, ...major] : major;
+    const text = zeroAt ? ['0', ...major.map(fmtLog)] : major.map(fmtLog);
+    return { vals, text, minor };
+  }
+  const fmtLog = (v) => (v >= 1000 ? `${v / 1000}k` : `${v}`);
+  // Compact number: whole for >=10, else up to 2 decimals, no trailing zeros.
+  const trim = (v) => String(Math.abs(v) >= 10 ? Math.round(v) : Math.round(v * 100) / 100);
+
+  // cmp (or null): { refRep, M } -- turns every colour/hover value into (card - reference).
+  function diffFor(r, refRep, metricKey) {
+    const A = metricArrays(r, metricKey);
+    const B = metricArrays(refRep, metricKey);
+    const sub = (x, y) => (x == null || y == null ? null : x - y);
+    const grid = A.gridPlot.map((row, i) => row.map((v, j) => sub(v, B.gridPlot[i][j])));
+    const bIdx = new Map();
+    refRep.points_offset.forEach((o, k) => bIdx.set(`${o},${refRep.points_prefix[k]}`, B.pointsPlot[k]));
+    const po = [], pp = [], pz = [];
+    r.points_offset.forEach((o, k) => {
+      const d = sub(A.pointsPlot[k], bIdx.get(`${o},${r.points_prefix[k]}`));
+      if (d != null) { po.push(o); pp.push(r.points_prefix[k]); pz.push(d); }
+    });
+    return { gridPlot: grid, gridRaw: grid, pointsPlot: pz, pointsRaw: pz, po, pp };
+  }
+
+  function contourFigure(data, rep, metricKey, T, log, cmp) {
     const spec = METRICS_BY_KEY[metricKey];
     const r = data.reps[rep];
     const fb = data.feasible_bound;
-    const { pointsPlot, pointsRaw, gridPlot, gridRaw } = metricArrays(r, metricKey);
-    const mid = (spec.vmin + spec.vmax) / 2;
-    const ringColors = pointsPlot.map((z) => (z !== null && z > mid ? T.ink : T.grid));
-    const axisStyle = {
+    const ratio = !!(cmp && spec.log);  // perplexity compare: colour = log10(ratio), hover = ratio
+    const base = cmp ? diffFor(r, cmp.refRep, metricKey)
+                     : { ...metricArrays(r, metricKey), po: r.points_offset, pp: r.points_prefix };
+    let { pointsPlot, pointsRaw, gridPlot, gridRaw, po, pp } = base;
+    if (ratio) {
+      const pow = (v) => (v == null ? null : 10 ** v);
+      gridRaw = gridPlot.map((row) => row.map(pow));
+      pointsRaw = pointsPlot.map(pow);
+    }
+    const vmin = cmp ? -cmp.M : spec.vmin;
+    const vmax = cmp ? cmp.M : spec.vmax;
+    const scale = cmp ? divergingScale(T.paneAlt) : THERMAL;
+    const mid = cmp ? 0 : (spec.vmin + spec.vmax) / 2;
+    const ringColors = pointsPlot.map((z) => (z !== null && (cmp ? Math.abs(z) > cmp.M * 0.33 : z > mid) ? T.ink : T.grid));
+    const axisBase = {
       gridcolor: T.grid, zerolinecolor: T.grid, showline: true, linecolor: T.grid,
-      range: [0, data.max_doc_length], tickfont: { size: 9, color: T.muted, family: SANS },
+      tickfont: { size: 9, color: T.muted, family: SANS },
     };
-    const hoverValue = `${spec.label}: %{customdata:.3f}`;
+    // Log ranges fit the plotted content: x floored just below the parked offset=0
+    // (LOG_FLOOR=20), y just below the lowest prefix (50), top padded ~4% so the outermost
+    // dots aren't on the edge. Linear: the full domain.
+    const logTop = Math.log10(data.max_doc_length * 1.04);
+    const logAxisCfg = (loExp, zeroAt) => {
+      const t = logTicks(10 ** loExp, data.max_doc_length * 1.04, zeroAt);
+      return {
+        type: 'log', range: [loExp, logTop],
+        tickmode: 'array', tickvals: t.vals, ticktext: t.text,
+        minor: { tickvals: t.minor, ticklen: 3, tickcolor: T.grid },
+      };
+    };
+    const xAxisExtra = log ? logAxisCfg(Math.log10(7), LOG_FLOOR) : { range: [0, data.max_doc_length] };
+    const yAxisExtra = log ? logAxisCfg(Math.log10(44)) : { range: [0, data.max_doc_length] };
+    // Straight 2-point diagonal in linear space; sampled into a polyline so it renders as the
+    // proper curve once the axes go log-log.
+    const nb = 40;
+    const bx = Array.from({ length: nb + 1 }, (_, i) => (fb * i) / nb);
+    // floorZero maps the grid's real x=0 / y=0 line to LOG_FLOOR (< the next grid node, so the
+    // coord array stays monotonic) -- same place the offset=0 dots are parked, so a dot sits
+    // exactly over the contour cell edge that carries the offset=0 value.
+    const gx = r.grid_offset.map((v) => floorZero(v, log));
+    const gy = r.grid_prefix.map((v) => floorZero(v, log));
+    const label = cmp ? (ratio ? 'PPL ratio' : `Δ ${spec.label}`) : spec.label;
+    const vfmt = ratio ? ':.2f}×' : ':.3f}';
     const traces = [
       {
-        type: 'contour', x: r.grid_offset, y: r.grid_prefix, z: gridPlot, customdata: gridRaw,
-        colorscale: THERMAL, zmin: spec.vmin, zmax: spec.vmax, showscale: false, connectgaps: false,
-        contours: { coloring: 'fill', showlines: false, start: spec.vmin, end: spec.vmax, size: (spec.vmax - spec.vmin) / 100 },
-        hovertemplate: `offset: %{x}<br>prefix: %{y}<br>${hoverValue}<extra></extra>`,
+        type: 'contour', x: gx, y: gy, z: gridPlot, customdata: gridRaw,
+        colorscale: scale, zmin: vmin, zmax: vmax, showscale: false, connectgaps: false,
+        contours: { coloring: 'fill', showlines: false, start: vmin, end: vmax, size: (vmax - vmin) / 100 },
+        hovertemplate: `offset: %{x}<br>prefix: %{y}<br>${label}: %{customdata${vfmt}<extra></extra>`,
       },
       {
-        type: 'scatter', mode: 'markers', x: r.points_offset, y: r.points_prefix, customdata: pointsRaw,
+        type: 'scatter', mode: 'markers',
+        x: po.map((o) => floorZero(o, log)), y: pp,
+        customdata: po.map((o, i) => [o, pointsRaw[i]]),
         marker: {
-          size: 5, color: pointsPlot, colorscale: THERMAL, cmin: spec.vmin, cmax: spec.vmax,
+          size: 5, color: pointsPlot, colorscale: scale, cmin: vmin, cmax: vmax,
           line: { width: 0.5, color: ringColors },
         },
-        hovertemplate: `offset: %{x}<br>prefix: %{y}<br>${hoverValue}<extra></extra>`,
+        hovertemplate: `offset: %{customdata[0]}<br>prefix: %{y}<br>${label}: %{customdata[1]${vfmt}<extra></extra>`,
         showlegend: false,
       },
       {
-        type: 'scatter', mode: 'lines', x: [0, fb], y: [fb, 0],
+        type: 'scatter', mode: 'lines',
+        x: bx.map((t) => floorZero(t, log)), y: bx.map((t) => fb - t),
         line: { color: T.wall, width: 1.5, dash: 'dot' }, showlegend: false, hoverinfo: 'skip',
       },
     ];
+    if (cmp && !cmp.isRef) {
+      // One "meaningfully different" outline per side -- the single iso-line at -/+ M/20
+      // (the sensitivity). Inside that band nothing is drawn; the fill is untouched
+      // everywhere. Fixed pale blue for the negative side, pale red for the positive.
+      const s = cmp.M / 20;
+      const bound = (at, color) => ({
+        type: 'contour', x: gx, y: gy, z: gridPlot, connectgaps: false,
+        contours: { start: at, end: at, size: 1, coloring: 'none', showlines: true },
+        line: { color, width: 0.9, smoothing: 1 }, showscale: false, hoverinfo: 'skip',
+      });
+      traces.splice(1, 0,
+        bound(-s, 'rgba(33,102,172,0.6)'),
+        bound(s, 'rgba(178,24,43,0.6)'));
+    }
     const layout = {
       showlegend: false,
       margin: { l: 46, r: 10, t: 10, b: 36 },
       paper_bgcolor: T.pane, plot_bgcolor: T.paneAlt,
-      xaxis: { title: { text: 'offset', font: { size: 10, color: T.muted, family: SANS } }, ...axisStyle },
+      xaxis: { title: { text: 'offset', font: { size: 10, color: T.muted, family: SANS } }, ...axisBase, ...xAxisExtra },
       yaxis: {
         title: { text: 'prefix', font: { size: 10, color: T.muted, family: SANS } },
-        scaleanchor: 'x', scaleratio: 1, ...axisStyle,
+        // Equal-aspect lock only makes sense on the linear domain; on log-log it would force
+        // equal decades and fight the fitted range.
+        ...(log ? {} : { scaleanchor: 'x', scaleratio: 1 }),
+        ...axisBase, ...yAxisExtra,
       },
       annotations: [{
         x: fb / 2, y: fb / 2, text: 'document boundary', textangle: 45, showarrow: false,
@@ -788,49 +1044,84 @@
       hoverlabel: { bgcolor: T.pane, bordercolor: T.grid, font: { size: 9, color: T.muted, family: SANS } },
       font: { family: SANS },
     };
+    if (cmp && cmp.isRef) {
+      layout.annotations.push({
+        x: 0.5, y: 0.96, xref: 'paper', yref: 'paper',
+        text: ratio ? 'reference (ratio = 1×)' : 'reference (Δ = 0)',
+        showarrow: false, font: { size: 10, color: T.muted, family: SANS },
+      });
+    }
     return { traces, layout };
   }
 
-  function surfaceFigure(data, rep, metricKey, T) {
+  function surfaceFigure(data, rep, metricKey, T, log, cmp) {
     const spec = METRICS_BY_KEY[metricKey];
     const r = data.reps[rep];
     const fb = data.feasible_bound;
     const gridRes = r.grid_offset.length;
-    const { pointsPlot, pointsRaw, gridPlot, gridRaw } = metricArrays(r, metricKey);
-    const floor = spec.vmin - (spec.vmax - spec.vmin) * 0.2;
+    const ratio = !!(cmp && spec.log);
+    const base = cmp ? diffFor(r, cmp.refRep, metricKey)
+                     : { ...metricArrays(r, metricKey), po: r.points_offset, pp: r.points_prefix };
+    let { pointsPlot, pointsRaw, gridPlot, gridRaw, po, pp } = base;
+    if (ratio) {
+      const pow = (v) => (v == null ? null : 10 ** v);
+      gridRaw = gridPlot.map((row) => row.map(pow));
+      pointsRaw = pointsPlot.map(pow);
+    }
+    const vmin = cmp ? -cmp.M : spec.vmin;
+    const vmax = cmp ? cmp.M : spec.vmax;
+    const scale = cmp ? divergingScale(T.paneAlt) : THERMAL;
+    const zlabel = cmp ? (ratio ? 'PPL ratio' : `Δ ${spec.label}`) : spec.label;
+    const vfmt = ratio ? ':.2f}×' : ':.3f}';
+    const floor = vmin - (vmax - vmin) * 0.2;
     const floorZ = gridPlot.map((row) => row.map((v) => (v === null ? null : floor)));
-    const wallOffset = Array.from({ length: gridRes }, (_, i) => (fb * i) / (gridRes - 1));
-    const wallPrefix = wallOffset.map((o) => fb - o);
+    // floorZero maps the grid's real x=0 / y=0 line to LOG_FLOOR (see contourFigure).
+    const gx = r.grid_offset.map((v) => floorZero(v, log));
+    const gy = r.grid_prefix.map((v) => floorZero(v, log));
+    const wallOffset = Array.from({ length: gridRes }, (_, i) => floorZero((fb * i) / (gridRes - 1), log));
+    const wallPrefix = Array.from({ length: gridRes }, (_, i) => floorZero(fb - (fb * i) / (gridRes - 1), log));
+    // Same fitted log ranges + tick values as the 2D panel; scene axes ignore `minor`, so
+    // these only carry the labelled ticks.
+    const logTop = Math.log10(data.max_doc_length * 1.04);
+    const sceneLog = (loExp, zeroAt) => {
+      const t = logTicks(10 ** loExp, data.max_doc_length * 1.04, zeroAt);
+      return { type: 'log', range: [loExp, logTop], tickmode: 'array', tickvals: t.vals, ticktext: t.text };
+    };
+    const xLog = log ? sceneLog(Math.log10(7), LOG_FLOOR) : {};
+    const yLog = log ? sceneLog(Math.log10(44)) : {};
     const axisKwargs = (title, extra) => ({
       title: { text: title, font: { size: 10, color: T.muted, family: SANS } },
       tickfont: { size: 8, color: T.muted, family: SANS },
       gridcolor: T.grid, showbackground: true, backgroundcolor: T.paneAlt,
       zerolinecolor: T.grid, showspikes: false, ...extra,
     });
-    const hoverTemplate = `offset: %{x}<br>prefix: %{y}<br>${spec.label}: %{customdata:.3f}<extra></extra>`;
-    const topZ = spec.vmax - (spec.vmax - spec.vmin) * 0.02;
+    const hoverTemplate = `offset: %{x}<br>prefix: %{y}<br>${zlabel}: %{customdata${vfmt}<extra></extra>`;
+    const pointHover = `offset: %{customdata[0]}<br>prefix: %{y}<br>${zlabel}: %{customdata[1]${vfmt}<extra></extra>`;
+    const topZ = vmax - (vmax - vmin) * 0.02;
     const traces = [
       {
-        type: 'surface', x: r.grid_offset, y: r.grid_prefix, z: floorZ, surfacecolor: gridPlot, customdata: gridRaw,
-        colorscale: THERMAL, cmin: spec.vmin, cmax: spec.vmax, opacity: 0.45, showscale: false, hoverinfo: 'skip',
+        type: 'surface', x: gx, y: gy, z: floorZ, surfacecolor: gridPlot, customdata: gridRaw,
+        colorscale: scale, cmin: vmin, cmax: vmax, opacity: 0.45, showscale: false, hoverinfo: 'skip',
       },
       {
-        type: 'surface', x: r.grid_offset, y: r.grid_prefix, z: gridPlot, customdata: gridRaw, colorscale: THERMAL,
-        cmin: spec.vmin, cmax: spec.vmax, opacity: 0.96, showscale: false, hovertemplate: hoverTemplate,
+        type: 'surface', x: gx, y: gy, z: gridPlot, customdata: gridRaw, colorscale: scale,
+        cmin: vmin, cmax: vmax, opacity: 0.96, showscale: false, hovertemplate: hoverTemplate,
         lighting: { ambient: 0.7, diffuse: 0.5, specular: 0.15, roughness: 0.6, fresnel: 0.05 },
         lightposition: { x: 100, y: 200, z: 300 },
       },
       {
-        type: 'scatter3d', mode: 'markers', x: r.points_offset, y: r.points_prefix, z: pointsPlot, customdata: pointsRaw,
+        type: 'scatter3d', mode: 'markers',
+        x: po.map((o) => floorZero(o, log)), y: pp, z: pointsPlot,
+        customdata: po.map((o, i) => [o, pointsRaw[i]]),
         marker: {
-          size: 3, color: pointsPlot, colorscale: THERMAL, cmin: spec.vmin, cmax: spec.vmax,
+          size: 3, color: pointsPlot, colorscale: scale, cmin: vmin, cmax: vmax,
           line: { width: 0.6, color: T.ink },
         },
-        hovertemplate: hoverTemplate,
+        hovertemplate: pointHover,
       },
       {
         type: 'surface', x: [wallOffset, wallOffset], y: [wallPrefix, wallPrefix],
-        z: [wallOffset.map(() => floor), wallOffset.map(() => spec.vmax)],
+        z: [wallOffset.map(() => floor), wallOffset.map(() => vmax)],
         showscale: false, opacity: 0.14, colorscale: [[0, T.wall], [1, T.wall]], hoverinfo: 'skip',
       },
       {
@@ -846,8 +1137,8 @@
       paper_bgcolor: T.pane,
       scene: {
         domain: { x: [0, 1], y: [0, 1] },
-        xaxis: axisKwargs('offset'), yaxis: axisKwargs('prefix'),
-        zaxis: axisKwargs(spec.label, { range: [floor, spec.vmax], showbackground: false }),
+        xaxis: axisKwargs('offset', xLog), yaxis: axisKwargs('prefix', yLog),
+        zaxis: axisKwargs(zlabel, { range: [floor, vmax], showbackground: false }),
         camera: { eye: { x: 1.5, y: 1.5, z: 0.9 } },
       },
       hoverlabel: { bgcolor: T.pane, bordercolor: T.grid, font: { size: 9, color: T.muted, family: SANS } },
@@ -902,23 +1193,47 @@
   }
 
   const PLOT_CONFIG = { responsive: true, displaylogo: false };
-  const dataByModel = {};
+  // `${model}__s${suffix}` -> exported payload. dataByModel is a plain {model: payload} view
+  // onto the currently-selected suffix, rebuilt by loadSuffix -- keeps the render path below
+  // suffix-agnostic.
+  const suffixCache = {};
+  let dataByModel = {};
   let currentRepIdx = 3;  // matches the slider's initial value="3" -> rep=32
+  let currentSuffixIdx = SUFFIX_VALUES.length - 1;  // matches the slider's value="5" -> suffix=250
   let currentMetric = 'rouge_l';
+  let currentLogAxes = true;
+  let compareRef = null;  // model key when "Compare vs" is on -- panels show (model - reference)
+  // The 3D panels are WebGL and ~10x costlier to (re)draw than the 2D contours. They start
+  // hidden, so skip rendering them until "Show 3D" is on; `threeDStale` tracks that they
+  // haven't been drawn for the current rep/metric/suffix/log and need catching up when shown.
+  let threeDShown = false;
+  let threeDStale = true;
 
   function renderModel(model, rep, metricKey, T) {
     const data = dataByModel[model];
     if (!data) return;
-    const cf = contourFigure(data, rep, metricKey, T);
-    const sf = surfaceFigure(data, rep, metricKey, T);
+    const isRef = compareRef === model;
+    // In compare mode every panel goes through the diff path; the reference's own panel diffs
+    // against itself (Delta = 0 everywhere) so it still draws a full chart, just flat neutral.
+    const cmp = compareRef && dataByModel[compareRef]
+      ? { refRep: dataByModel[compareRef].reps[rep], M: METRICS_BY_KEY[metricKey].diffMax, isRef } : null;
+    const cf = contourFigure(data, rep, metricKey, T, currentLogAxes, cmp);
     Plotly.react(`panel-2d-${model}`, cf.traces, cf.layout, PLOT_CONFIG);
-    Plotly.react(`panel-3d-${model}`, sf.traces, sf.layout, PLOT_CONFIG);
-    document.getElementById(`n-points-${model}`).textContent = `${data.reps[rep].metrics[metricKey].n_points} points`;
+    if (threeDShown) {
+      const sf = surfaceFigure(data, rep, metricKey, T, currentLogAxes, cmp);
+      Plotly.react(`panel-3d-${model}`, sf.traces, sf.layout, PLOT_CONFIG);
+    }
+    const nEl = document.getElementById(`n-points-${model}`);
+    nEl.textContent = isRef ? 'reference'
+      : cmp ? 'Δ'
+            : `${data.reps[rep].metrics[metricKey].n_points} points`;
   }
 
   function renderAll(rep, metricKey) {
     const T = theme();
     selectedModels.forEach((m) => renderModel(m, rep, metricKey, T));
+    threeDStale = !threeDShown;  // drew 3D iff it was shown
+    updateLegend(metricKey);     // legend depends on compare state
   }
 
   function fmtTick(v, spec) {
@@ -928,14 +1243,34 @@
 
   function updateLegend(metricKey) {
     const spec = METRICS_BY_KEY[metricKey];
-    document.getElementById('legend-title').textContent = spec.label;
-    const ticks = [...document.querySelectorAll('#legend-ticks span')];
-    // ticks[0] is the top of the bar (vmax) down to ticks[N-1] at the bottom (vmin).
-    const fracs = [1, 0.75, 0.5, 0.25, 0];
-    fracs.forEach((f, i) => {
-      ticks[i].textContent = fmtTick(spec.vmin + f * (spec.vmax - spec.vmin), spec);
-    });
-    document.getElementById('metric-pill').textContent = `metric: ${spec.label}`;
+    const bar = document.querySelector('.legend-bar');
+    const ticks = [...document.querySelectorAll('#legend-ticks span')];  // [0] = top of bar
+    if (compareRef) {
+      const refName = DISPLAY_NAMES[compareRef] || compareRef;
+      const ratio = !!spec.log;  // perplexity: compared as a ratio (log10 of it)
+      const M = spec.diffMax;
+      document.getElementById('legend-title').textContent = ratio ? 'PPL ratio' : `Δ ${spec.label}`;
+      bar.style.background = divergingCss(theme().paneAlt);
+      [1, 0.5, 0, -0.5, -1].forEach((f, i) => {
+        if (ratio) {
+          const r = 10 ** (f * M);
+          ticks[i].textContent = r >= 1 ? `${trim(r)}×` : `÷${trim(1 / r)}`;
+        } else {
+          const v = f * M;
+          ticks[i].textContent = (v > 0 ? '+' : '') + trim(v);
+        }
+      });
+      document.getElementById('metric-pill').textContent = ratio
+        ? `compare: PPL ratio = model ÷ ${refName}`
+        : `compare: Δ ${spec.label} = model − ${refName}`;
+    } else {
+      document.getElementById('legend-title').textContent = spec.label;
+      bar.style.background = '';  // back to the stylesheet's thermal gradient
+      [1, 0.75, 0.5, 0.25, 0].forEach((f, i) => {
+        ticks[i].textContent = fmtTick(spec.vmin + f * (spec.vmax - spec.vmin), spec);
+      });
+      document.getElementById('metric-pill').textContent = `metric: ${spec.label}`;
+    }
   }
 
   function rerenderAll() {
@@ -943,12 +1278,26 @@
     requestAnimationFrame(() => requestAnimationFrame(resizeAllPlots));
   }
 
-  Promise.all(MODELS.map((m) => fetch(`data/${m}.json`).then((res) => res.json())))
-    .then((results) => {
-      MODELS.forEach((m, i) => { dataByModel[m] = results[i]; });
-      updateLegend(currentMetric);
+  // Fetches (and caches) the 10 model files for one suffix, then -- if that suffix is still
+  // the selected one -- swaps them into dataByModel and redraws. A stale resolve (slider moved
+  // on again mid-fetch) is dropped; the later loadSuffix owns the final render.
+  function loadSuffix(suffix) {
+    const need = MODELS.filter((m) => !suffixCache[`${m}__s${suffix}`]);
+    const fetches = need.map((m) => fetch(`data/${m}__s${suffix}.json`)
+      .then((res) => {
+        if (!res.ok) throw new Error(`${m}__s${suffix}.json: ${res.status}`);
+        return res.json();
+      })
+      .then((json) => { suffixCache[`${m}__s${suffix}`] = json; }));
+    return Promise.all(fetches).then(() => {
+      if (SUFFIX_VALUES[currentSuffixIdx] !== suffix) return;
+      dataByModel = Object.fromEntries(MODELS.map((m) => [m, suffixCache[`${m}__s${suffix}`]]));
       rerenderAll();
-    })
+    });
+  }
+
+  updateLegend(currentMetric);
+  loadSuffix(SUFFIX_VALUES[currentSuffixIdx])
     .catch((err) => {
       grid.innerHTML = `<p style="color:var(--muted)">Failed to load chart data (${err.message}) --
         run <code>python3 attn_bench/dashboard/export_data.py</code> and serve this page over
@@ -995,11 +1344,12 @@
     updateLegend(currentMetric);
     rerenderAll();
     // The metric button's own label length changes with the selection, which can reflow
-    // the whole topbar (wrapping earlier/later) -- both sliders' tick positions are measured
-    // off their actual rendered track width, so they need realigning here too, not just on
-    // window resize.
+    // the whole topbar (wrapping earlier/later) -- every slider's tick/readout position is
+    // measured off its actual rendered track width, so they need realigning here too, not
+    // just on window resize.
     realignRepTicks();
-    realignZoomTicks();
+    realignSuffixTicks();
+    positionZoomValue();
   }));
   metricDropdownBtn.addEventListener('click', () => toggleDropdown(metricDropdownBtn, metricPanel));
 
@@ -1039,6 +1389,20 @@
     onModelSelectionChange();
   });
 
+  // ---- compare-vs-reference -----------------------------------------------------
+
+  const compareToggle = document.getElementById('compare-toggle');
+  const compareRefSel = document.getElementById('compare-ref');
+  compareRefSel.innerHTML = MODELS.map((m) => `<option value="${m}">${DISPLAY_NAMES[m] || m}</option>`).join('');
+
+  function onCompareChange() {
+    compareRefSel.disabled = !compareToggle.checked;
+    compareRef = compareToggle.checked ? compareRefSel.value : null;
+    rerenderAll();
+  }
+  compareToggle.addEventListener('change', onCompareChange);
+  compareRefSel.addEventListener('change', onCompareChange);
+
   modelDropdownBtn.addEventListener('click', () => toggleDropdown(modelDropdownBtn, modelPanel));
 
   // ---- tick alignment + throttled resize helpers --------------------------------
@@ -1060,9 +1424,9 @@
   }
 
   // Shared wiring for both sliders: highlight the active tick (no separate readout -- the
-  // tick row itself shows the current value), size the control to fit its own tick count
-  // (a fixed CSS width doesn't track that -- it's what left the columns slider cramped
-  // once it grew from 8 ticks to 10), and keep ticks aligned across layout changes.
+  // tick row itself shows the current value), cap the control's width to its tick count (a
+  // shorter track keeps stepped ticks closer together, which reads as snappier), and keep
+  // ticks aligned across layout changes.
   function wireDiscreteSlider(slider, ticksEl, onChange, pxPerTick) {
     const spans = [...ticksEl.children];
     const controlEl = ticksEl.closest('.slider-control');
@@ -1087,7 +1451,7 @@
     if (Object.keys(dataByModel).length < MODELS.length) return;  // charts not built yet
     selectedModels.forEach((m) => {
       Plotly.Plots.resize(`panel-2d-${m}`);
-      Plotly.Plots.resize(`panel-3d-${m}`);
+      if (threeDShown) Plotly.Plots.resize(`panel-3d-${m}`);  // skip never-drawn 3D divs
     });
   }
 
@@ -1117,15 +1481,54 @@
   const realignRepTicks = wireDiscreteSlider(slider, document.getElementById('rep-ticks'), rerenderCharts, 40);
   slider.title = `rep = ${REP_VALUES[currentRepIdx]}`;
 
+  // Suffix swaps the whole data payload (a different set of JSON files). If that suffix's files
+  // are already cached the swap is instant, so the "updating..." cue only shows when there's an
+  // actual fetch; either way the charts stay fully visible until the new data lands.
+  const suffixSlider = document.getElementById('suffix');
+  const loadingPill = document.getElementById('loading-pill');
+  const reloadForSuffix = rafThrottle((idx) => {
+    currentSuffixIdx = idx;
+    const suffix = SUFFIX_VALUES[idx];
+    suffixSlider.title = `suffix = ${suffix}`;
+    document.getElementById('suffix-pill').textContent = `suffix: ${suffix} tokens`;
+    const needFetch = MODELS.some((m) => !suffixCache[`${m}__s${suffix}`]);
+    if (needFetch) {
+      loadingPill.hidden = false;
+      grid.classList.add('loading');
+    }
+    loadSuffix(suffix).finally(() => {
+      if (currentSuffixIdx === idx) {
+        loadingPill.hidden = true;
+        grid.classList.remove('loading');
+      }
+    });
+  });
+  const realignSuffixTicks = wireDiscreteSlider(suffixSlider, document.getElementById('suffix-ticks'), reloadForSuffix, 40);
+  suffixSlider.title = `suffix = ${SUFFIX_VALUES[currentSuffixIdx]}`;
+
   // Columns is a fixed 1..MODELS.length range regardless of how many models are currently
   // selected -- a plain repeat(N, 1fr) grid means fewer selected cards just leave empty
   // row space instead of stretching to fill it (the old auto-fit/minmax approach forced a
-  // single selected model to fill the whole row).
+  // single selected model to fill the whole row). No tick strip here -- the two magnifier
+  // glyphs carry the meaning and #zoom-readout shows the live count.
   const zoom = document.getElementById('zoom');
+  const zoomValue = document.getElementById('zoom-value');
   const COLS = Array.from({ length: MODELS.length }, (_, i) => MODELS.length - i);  // [N,N-1,...,1]
 
+  // Slide the readout to sit under the thumb, same geometry as alignTicks (thumb centre
+  // travels [THUMB_WIDTH/2, trackWidth-THUMB_WIDTH/2]).
+  function positionZoomValue() {
+    const trackWidth = zoom.getBoundingClientRect().width;
+    if (!trackWidth) return;
+    const frac = Number(zoom.value) / Number(zoom.max);
+    zoomValue.style.left = `${THUMB_WIDTH / 2 + frac * (trackWidth - THUMB_WIDTH)}px`;
+  }
+
   function applyColumnsCount() {
-    document.documentElement.style.setProperty('--cols', COLS[Number(zoom.value)]);
+    const n = COLS[Number(zoom.value)];
+    document.documentElement.style.setProperty('--cols', n);
+    zoomValue.textContent = `${n} col${n === 1 ? '' : 's'}`;
+    positionZoomValue();
   }
 
   const applyColumns = rafThrottle(() => {
@@ -1133,7 +1536,7 @@
     equalizeCardHeaderHeights(COLS[Number(zoom.value)]);
     resizeAllPlots();
   });
-  const realignZoomTicks = wireDiscreteSlider(zoom, document.getElementById('zoom-ticks'), applyColumns, 24);
+  zoom.addEventListener('input', applyColumns);
   applyColumnsCount();  // set the initial --cols before any charts render, avoids a layout jump
   equalizeCardHeaderHeights(COLS[Number(zoom.value)]);  // fix up the pre-init skeleton now that cols is known
 
@@ -1147,7 +1550,8 @@
     equalizeCardHeaderHeights(COLS[Number(zoom.value)]);
     resizeAllPlots();
     realignRepTicks();
-    realignZoomTicks();
+    realignSuffixTicks();
+    positionZoomValue();
   });
   new ResizeObserver(onLayoutChange).observe(grid);
 
@@ -1161,8 +1565,21 @@
   new ResizeObserver(rafThrottle(setTopbarHeight)).observe(topbar);
 
   const show3d = document.getElementById('show-3d');
+  const show3dControl = document.getElementById('show-3d-control');
   show3d.addEventListener('change', () => {
+    threeDShown = show3d.checked;
+    show3dControl.classList.toggle('on', show3d.checked);  // caption goes purple while on
     grid.classList.toggle('hide-3d', !show3d.checked);
-    if (show3d.checked) resizeAllPlots();
+    if (!threeDShown) return;
+    if (threeDStale) rerenderAll();  // draw the 3D panels now that they're visible
+    else resizeAllPlots();
+  });
+
+  // Log axes: offset/prefix -> log10 on every 2D and 3D panel. Pure client-side relayout of
+  // data already loaded -- no re-fetch. See floorZero for how offset=0 is handled.
+  const logAxesToggle = document.getElementById('log-axes');
+  logAxesToggle.addEventListener('change', () => {
+    currentLogAxes = logAxesToggle.checked;
+    rerenderAll();
   });
 </script>

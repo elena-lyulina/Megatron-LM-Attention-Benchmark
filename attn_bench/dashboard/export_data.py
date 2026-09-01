@@ -1,7 +1,8 @@
 """Precompute offset x prefix grid data (raw points + griddata-interpolated surface) for the
-memorization dashboard, one JSON per model, one entry per (repetition, metric). GitHub Pages is
-static -- no scipy in the browser -- so this runs the same interpolation the notebook plots use
-(load_offset_prefix_grid_data) once, ahead of time, instead of shipping the computation client-side.
+memorization dashboard, one JSON per (model, suffix), one entry per (repetition, metric). GitHub
+Pages is static -- no scipy in the browser -- so this runs the same interpolation the notebook
+plots use (load_offset_prefix_grid_data) once, ahead of time, instead of shipping the computation
+client-side. The dashboard's suffix slider swaps in a different {model}__s{suffix}.json.
 
 Run from anywhere: `python3 attn_bench/dashboard/export_data.py`.
 """
@@ -30,9 +31,15 @@ from attn_bench.plotting.data_loading import load_offset_prefix_grid_data
 MODELS = ['full-scf1', 'swa-w4096-scf1', 'swa-w1024-scf1', 'swa-w256-scf1',
           'sink-scf1', 'gated-scf1', 'gdn', 'gdn-xdl', 'gdn-xdl-xsl-0.5', 'gdn-xdl-xsl']
 REPS = [0, 1, 16, 32, 64, 128, 256]
-SUFFIX = 250
+# One JSON per suffix per model -- inference feasibility was defined at suffix=250, so the
+# populated candidate points are the same set at every smaller suffix (a shorter suffix only
+# opens up an unsampled sliver in the far corner). The 250 file preserves the old behaviour.
+SUFFIXES = [25, 50, 75, 100, 150, 250]
 MAX_DOC_LENGTH = 8192
 GRID_RES = 80
+# grid_scale='log' swaps ~6 of the linear grid nodes for explicit low nodes (down to grid_min,
+# plus 50), so the dashboard's log-axis view has resolution in the low corner and the fill
+# reaches exactly to the offset=0 / prefix=50 sample rows, without growing the mesh.
 
 # (key, kwargs passed to load_offset_prefix_grid_data, post-transform on zs/GZ) -- one row per
 # dashboard dropdown entry. post-transform is None or a numpy ufunc-like callable.
@@ -57,8 +64,12 @@ METRICS = [
 # notebook doesn't expose it as an importable constant.
 CANDIDATE_OFFSETS = [0, 50, 150, 250, 500, 1000, 2000, 3971, 5942, 7892]
 CANDIDATE_PREFIXES = [50, 250, 500, 1000, 2000, 3971, 5942, 7892]
-FEASIBLE_BOUND = MAX_DOC_LENGTH - SUFFIX
-POINTS = sorted({(o, p) for o in CANDIDATE_OFFSETS for p in CANDIDATE_PREFIXES if o + p <= FEASIBLE_BOUND})
+
+
+def points_for_suffix(suffix):
+    bound = MAX_DOC_LENGTH - suffix
+    return sorted({(o, p) for o in CANDIDATE_OFFSETS for p in CANDIDATE_PREFIXES if o + p <= bound})
+
 
 OUT_DIR = Path('data')
 
@@ -76,7 +87,9 @@ def _apply(transform, values):
     raise ValueError(f'unknown transform {transform!r}')
 
 
-def export_model(model):
+def export_model(model, suffix):
+    points = points_for_suffix(suffix)
+    feasible_bound = MAX_DOC_LENGTH - suffix
     reps_out = {}
     for rep in REPS:
         # Coordinates are identical across every metric for a given (model, rep) -- computed
@@ -85,7 +98,8 @@ def export_model(model):
         rep_entry = {'metrics': {}}
         for metric_key, kwargs, transform in METRICS:
             offset_vals, prefix_vals, zs, G_OFFSET, G_PREFIX, GZ, _ = load_offset_prefix_grid_data(
-                model, rep, SUFFIX, grid_res=GRID_RES, max_doc_length=MAX_DOC_LENGTH, points=POINTS, **kwargs)
+                model, rep, suffix, grid_res=GRID_RES, max_doc_length=MAX_DOC_LENGTH, points=points,
+                grid_scale='log', grid_min=20.0, interp='bilinear', **kwargs)
             if not coords_set:
                 rep_entry['points_offset'] = [int(v) for v in offset_vals]
                 rep_entry['points_prefix'] = [int(v) for v in prefix_vals]
@@ -102,17 +116,18 @@ def export_model(model):
         reps_out[rep] = rep_entry
     payload = {
         'model': model,
-        'suffix': SUFFIX,
+        'suffix': suffix,
         'max_doc_length': MAX_DOC_LENGTH,
-        'feasible_bound': FEASIBLE_BOUND,
+        'feasible_bound': feasible_bound,
         'reps': reps_out,
     }
-    out_path = OUT_DIR / f'{model}.json'
+    out_path = OUT_DIR / f'{model}__s{suffix}.json'
     out_path.write_text(json.dumps(payload))
-    print(f'{model}: {out_path} ({out_path.stat().st_size / 1024:.0f} KB)')
+    print(f'{model} s{suffix}: {out_path} ({out_path.stat().st_size / 1024:.0f} KB)')
 
 
 if __name__ == '__main__':
     OUT_DIR.mkdir(exist_ok=True)
-    for model in MODELS:
-        export_model(model)
+    for suffix in SUFFIXES:
+        for model in MODELS:
+            export_model(model, suffix)
