@@ -1,0 +1,30 @@
+=== Parameter count: kda_1B_args_16heads_128_128_ffn6976 ===
+(embeddings tied with output head)
+
+TOTAL                                                 1,234,669,824
+
+By category:
+embeddings + output head                                262,668,288
+mlp / ffn                                               685,801,472
+mixer (rest)                                            286,200,064
+
+By param (layer index collapsed):
+decoder.final_layernorm.weight                                2,048
+decoder.layers.*.input_layernorm.weight                      32,768
+decoder.layers.*.mlp.linear_fc1.layer_norm_weight            32,768
+decoder.layers.*.mlp.linear_fc1.weight                  457,179,136
+decoder.layers.*.mlp.linear_fc2.weight                  228,589,568
+decoder.layers.*.self_attention.A_log                           256
+decoder.layers.*.self_attention.b_proj.weight               524,288
+decoder.layers.*.self_attention.conv1d.weight               393,216
+decoder.layers.*.self_attention.dt_bias                      32,768
+decoder.layers.*.self_attention.f_proj_down.weight        4,194,304
+decoder.layers.*.self_attention.f_proj_up.weight          4,194,304
+decoder.layers.*.self_attention.g_proj_down.weight        4,194,304
+decoder.layers.*.self_attention.g_proj_up.weight          4,194,304
+decoder.layers.*.self_attention.k_proj.weight            67,108,864
+decoder.layers.*.self_attention.out_norm.weight               2,048
+decoder.layers.*.self_attention.out_proj.weight          67,108,864
+decoder.layers.*.self_attention.q_proj.weight            67,108,864
+decoder.layers.*.self_attention.v_proj.weight            67,108,864
+embedding.word_embeddings.weight                        262,668,288
