@@ -48,6 +48,59 @@ def _draw_first_token_lines(ax, items, color_for, query_slice, markersize=4):
     return entries
 
 
+_Y_LABEL = "Mean attention to first token (key 0)"
+
+
+def _sink_grid(n, ncols, figsize, cell_w=6.0, cell_h=4.5):
+    """(fig, flat axes list, ncols) for an n-panel sink grid; extra cells are the caller's
+    to switch off."""
+    ncols = min(ncols, n)
+    nrows = int(np.ceil(n / ncols))
+    fig, axes = plt.subplots(nrows, ncols, figsize=figsize or (cell_w * ncols, cell_h * nrows),
+                             sharey=True, squeeze=False)
+    return fig, [axes[r][c] for r in range(nrows) for c in range(ncols)], ncols
+
+
+def _bucket_colorer(buckets, cmap="viridis"):
+    """(ordered bucket list, label -> colour) -- viridis dark=first entry, bright=last."""
+    buckets = list(buckets)
+    pos = {label: i for i, label in enumerate(buckets)}
+    cm = plt.get_cmap(cmap)
+    norm = plt.Normalize(vmin=0, vmax=max(len(buckets) - 1, 1))
+    return buckets, lambda label: cm(norm(pos[label]))
+
+
+def _draw_model_avg_panel(ax, attn_by_model, query_slice):
+    """One first-token-attention-per-layer line per model on ax, each model's buckets pooled
+    into a single weighted-average map; legend sorted by overall sink (highest first).
+    Returns False if no model had data."""
+    items = []
+    for name, buckets in attn_by_model.items():
+        if not buckets:
+            print(f"skip {name}: no attn_scores files found")
+            continue
+        averaged = load_weighted_avg_attention_patterns(buckets)
+        items.append((name, averaged["mean"], averaged["count"]))
+    if not items:
+        return False
+    entries = _draw_first_token_lines(ax, items, lambda label: MODEL_COLORS.get(label, "black"), query_slice)
+    entries.sort(key=lambda e: e[0], reverse=True)
+    handles = [e[1] for e in entries]
+    ax.legend(handles=handles, labels=[h.get_label() for h in handles], fontsize=8)
+    ax.grid(True, alpha=0.3)
+    return True
+
+
+def _draw_bucket_panel(ax, buckets_dict, buckets, color_for, query_slice, series_label):
+    """One first-token-attention-per-layer line per bucket/rep in buckets_dict on ax."""
+    items = [(label, buckets_dict[label]["mean"], int(buckets_dict[label]["count"]))
+             for label in buckets
+             if label in buckets_dict and int(buckets_dict[label]["count"]) > 0]
+    _draw_first_token_lines(ax, items, color_for, query_slice, markersize=3)
+    ax.grid(True, alpha=0.3)
+    ax.legend(fontsize=7, title=series_label)
+
+
 def plot_first_token_attention_avg(attn_by_model, *, query_slice=None, figsize=(8, 5), save_path=None):
     """Mean attention to the first token (key position 0) per layer -- the attention sink.
     Rouge-L mem-buckets are pooled per model, then averaged over heads and query positions.
@@ -58,87 +111,109 @@ def plot_first_token_attention_avg(attn_by_model, *, query_slice=None, figsize=(
     key 0.
     """
     fig, ax = plt.subplots(figsize=figsize)
-    items = []
-    for name, buckets in attn_by_model.items():
-        if not buckets:
-            print(f"skip {name}: no attn_scores files found")
-            continue
-        averaged = load_weighted_avg_attention_patterns(buckets)
-        items.append((name, averaged["mean"], averaged["count"]))
-    if not items:
+    if not _draw_model_avg_panel(ax, attn_by_model, query_slice):
         print("no attn_scores data for any model")
+        plt.close(fig)
         return None
-    entries = _draw_first_token_lines(ax, items, lambda label: MODEL_COLORS.get(label, "black"), query_slice)
-
     ax.set_xlabel("Layer")
-    ax.set_ylabel("Mean attention to first token (key 0)")
+    ax.set_ylabel(_Y_LABEL)
     ax.set_title("Attention sink: first-token attention per layer\n"
                  "(avg over heads, query positions, all samples)")
-    # legend sorted by overall mean (highest sink first)
-    entries.sort(key=lambda e: e[0], reverse=True)
-    handles = [e[1] for e in entries]
-    ax.legend(handles=handles, labels=[h.get_label() for h in handles])
-    ax.grid(True, alpha=0.3)
     plt.tight_layout()
     _save_fig(fig, save_path)
     return fig
 
 
-def plot_first_token_attention_by_bucket(attn_by_model, buckets=None, query_slice=None,
-                                         ncols=2, cmap="viridis", figsize=None, save_path=None):
-    """Same first-token-attention-per-layer view as plot_first_token_attention, but split by
-    Rouge-L mem-bucket instead of pooled -- does the sink change with how memorized the
-    sample is? One panel per model, one line per bucket (dark=low Rouge-L, bright=high).
-
-    attn_by_model: {model_name: load_attention_patterns(..., 'attn_scores', ...)}
-    buckets: subset of ALL_MEM_BUCKETS to plot (default: all 10). Pass fewer (e.g. the two
-    extremes) to compare "barely memorized" vs "memorized" without a crowded legend.
-    query_slice: see plot_first_token_attention.
-    """
-    buckets = list(buckets) if buckets is not None else list(ALL_MEM_BUCKETS)
-    bucket_pos = {label: i for i, label in enumerate(buckets)}
-    cmap = plt.get_cmap(cmap)
-    norm = plt.Normalize(vmin=0, vmax=max(len(buckets) - 1, 1))
-    color_for = lambda label: cmap(norm(bucket_pos[label]))
-
-    names = [n for n, b in attn_by_model.items() if b]
-    n_models = len(names)
-    ncols = min(ncols, n_models)
-    nrows = int(np.ceil(n_models / ncols))
-
-    fig, axes = plt.subplots(nrows, ncols, figsize=figsize or (6 * ncols, 4.5 * nrows),
-                             sharey=True, squeeze=False)
-    for i, name in enumerate(names):
-        ax = axes[i // ncols][i % ncols]
-        model_buckets = attn_by_model[name]
-        items = [(label, model_buckets[label]["mean"], int(model_buckets[label]["count"]))
-                 for label in buckets
-                 if label in model_buckets and int(model_buckets[label]["count"]) > 0]
-        _draw_first_token_lines(ax, items, color_for, query_slice, markersize=3)
-
-        ax.set_title(name, fontsize=11, fontweight="bold")
-        ax.set_xlabel("Layer")
+def plot_first_token_attention_avg_by_offset(attn_by_offset, offsets=None, *, query_slice=None,
+                                             ncols=2, figsize=None, save_path=None):
+    """plot_first_token_attention_avg as one panel per offset -- does the attention sink
+    strengthen with a non-zero run-up offset? attn_by_offset: {offset: {model: buckets}}."""
+    offsets = list(offsets) if offsets is not None else sorted(attn_by_offset)
+    fig, axes, ncols = _sink_grid(len(offsets), ncols, figsize)
+    for i, off in enumerate(offsets):
+        _draw_model_avg_panel(axes[i], attn_by_offset[off], query_slice)
+        axes[i].set_title(f"offset = {off}", fontsize=11, fontweight="bold")
+        axes[i].set_xlabel("Layer")
         if i % ncols == 0:
-            ax.set_ylabel("Mean attention to first token (key 0)")
-        ax.grid(True, alpha=0.3)
-        ax.legend(fontsize=7, title="Rouge-L")
-
-    for j in range(n_models, nrows * ncols):
-        axes[j // ncols][j % ncols].axis("off")
-
-    fig.suptitle("Attention sink by memorization bucket\n(avg over heads, query positions)",
+            axes[i].set_ylabel(_Y_LABEL)
+    for ax in axes[len(offsets):]:
+        ax.axis("off")
+    fig.suptitle("Attention sink by offset\n(buckets pooled; avg over heads, query positions)",
                 fontweight="bold", fontsize=14)
     plt.tight_layout()
     _save_fig(fig, save_path)
     return fig
 
 
-def plot_map(maps, bucket, layer, head, *, figsize=None, vmin=1e-4, vmax=None, save_path=None):
+def plot_first_token_attention_by_bucket(attn_by_model, buckets=None, query_slice=None,
+                                         ncols=2, cmap="viridis", figsize=None, save_path=None,
+                                         series_label="Rouge-L bucket"):
+    """Same first-token-attention-per-layer view as plot_first_token_attention_avg, but split
+    by series instead of pooled -- does the sink change with how memorized the sample is? One
+    panel per model, one line per series entry (dark=first, bright=last).
+
+    attn_by_model: {model_name: load_attention_patterns(...)} keyed by Rouge-L label, or
+    load_attention_patterns(..., split_by="rep") keyed by repetition -- same {mean, count, prompt_len}
+    values either way.
+    buckets: subset of keys to plot, in draw order (default: all 10 Rouge-L labels). Pass the
+    rep list for a by-rep dict, or the two extremes to compare without a crowded legend.
+    series_label: legend title and suptitle axis name (e.g. "repetitions" for a by-rep dict).
+    query_slice: see plot_first_token_attention_avg.
+    """
+    buckets, color_for = _bucket_colorer(buckets if buckets is not None else ALL_MEM_BUCKETS, cmap)
+    names = [n for n, b in attn_by_model.items() if b]
+    fig, axes, ncols = _sink_grid(len(names), ncols, figsize)
+    for i, name in enumerate(names):
+        _draw_bucket_panel(axes[i], attn_by_model[name], buckets, color_for, query_slice, series_label)
+        axes[i].set_title(name, fontsize=11, fontweight="bold")
+        axes[i].set_xlabel("Layer")
+        if i % ncols == 0:
+            axes[i].set_ylabel(_Y_LABEL)
+    for ax in axes[len(names):]:
+        ax.axis("off")
+    fig.suptitle(f"Attention sink by {series_label}\n(avg over heads, query positions)",
+                fontweight="bold", fontsize=14)
+    plt.tight_layout()
+    _save_fig(fig, save_path)
+    return fig
+
+
+def plot_first_token_attention_by_bucket_offsets(attn_by_offset, offsets=None, *, buckets=None,
+                                                 query_slice=None, cmap="viridis", ncols=2,
+                                                 figsize=None, save_path=None,
+                                                 series_label="Rouge-L bucket", model_name=None):
+    """plot_first_token_attention_by_bucket for ONE model, one panel per offset -- does the
+    sink-vs-memorization (or sink-vs-rep) relationship shift with the run-up offset?
+    attn_by_offset: {offset: buckets_dict} for a single model."""
+    buckets, color_for = _bucket_colorer(buckets if buckets is not None else ALL_MEM_BUCKETS, cmap)
+    offsets = list(offsets) if offsets is not None else sorted(attn_by_offset)
+    fig, axes, ncols = _sink_grid(len(offsets), ncols, figsize)
+    for i, off in enumerate(offsets):
+        _draw_bucket_panel(axes[i], attn_by_offset[off], buckets, color_for, query_slice, series_label)
+        axes[i].set_title(f"offset = {off}", fontsize=11, fontweight="bold")
+        axes[i].set_xlabel("Layer")
+        if i % ncols == 0:
+            axes[i].set_ylabel(_Y_LABEL)
+    for ax in axes[len(offsets):]:
+        ax.axis("off")
+    title = f"Attention sink by {series_label} x offset\n(avg over heads, query positions)"
+    if model_name:
+        title += f" model: {model_name}"
+    fig.suptitle(title,
+                fontweight="bold", fontsize=14)
+    plt.tight_layout()
+    _save_fig(fig, save_path)
+    return fig
+
+
+def plot_map(maps, bucket, layer, head, *, figsize=None, vmin=1e-4, vmax=None, save_path=None,
+             series_label="Rouge-L"):
     """Multi-panel heatmap of the (query x key) attention/norm map, one panel per model.
 
     maps: {model_name: load_attention_patterns(...)[bucket_label]} -- all for the same
     kind and bucket.
     bucket: bucket index/label (used only for the title)
+    series_label: title prefix -- "Rouge-L" for a bucket cut, e.g. "rep" for a by-rep cut.
     layer, head: 0-based indices
     """
     model_names = list(maps.keys())
@@ -165,31 +240,33 @@ def plot_map(maps, bucket, layer, head, *, figsize=None, vmin=1e-4, vmax=None, s
             ax.set_ylabel("Query position")
         plt.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
 
-    fig.suptitle(f"Rouge-L {_as_label(bucket)}  layer={layer}  head={head}", fontsize=11)
+    fig.suptitle(f"{series_label} {_as_label(bucket)}  layer={layer}  head={head}", fontsize=11)
     plt.tight_layout()
     _save_fig(fig, save_path)
     return fig
 
 
 def plot_bucket_maps(maps_by_model, bucket, layer, head, **kwargs):
-    """Convenience over plot_map: pick one Rouge-L mem-bucket from the full all-buckets dict
-    (load_attention_patterns output per model) and draw one heatmap panel per model. Run
-    twice with different buckets to compare e.g. high (09-10) vs low (00-01) memorization.
+    """Convenience over plot_map: pick one series entry from the full all-entries dict
+    (load_attention_patterns split_by="rouge"/"rep" output per model) and draw one
+    heatmap panel per model. Run twice to compare e.g. high (09-10) vs low (00-01) Rouge-L,
+    or rep 256 vs rep 0.
 
-    maps_by_model: {model_name: load_attention_patterns(...)}
-    bucket: bucket index 0..9 or label like '09-10'
+    maps_by_model: {model_name: load_attention_patterns(...)} or the by-rep equivalent
+    bucket: Rouge-L bucket index 0..9 or label like '09-10'; for a by-rep dict, the rep key
+    (pass series_label="rep" so the title reads right)
     """
-    label = _as_label(bucket)
-    selected = {name: b[label] for name, b in maps_by_model.items() if label in b}
+    key = bucket if any(bucket in b for b in maps_by_model.values()) else _as_label(bucket)
+    selected = {name: b[key] for name, b in maps_by_model.items() if key in b}
     if not selected:
-        print(f"no maps for bucket {label} in any model")
+        print(f"no maps for {key} in any model")
         return None
-    return plot_map(selected, bucket=label, layer=layer, head=head, **kwargs)
+    return plot_map(selected, bucket=key, layer=layer, head=head, **kwargs)
 
 
 def plot_full_attn_maps_panel(maps, bucket, *, models=(), heads=(), layers=(),
                               cell_w=None, cell_h=None, target_width=14.0,
-                              vmin=1e-4, save_path=None):
+                              vmin=1e-4, save_path=None, series_label="Rouge-L"):
     """Full panel: rows=layers x models, cols=heads (+ always-included head-avg). Each cell
     is a (query x key) heatmap with LogNorm, color scale shared within each (layer, head)
     block so models are directly comparable.
@@ -264,7 +341,7 @@ def plot_full_attn_maps_panel(maps, bucket, *, models=(), heads=(), layers=(),
                     ax.spines["top"].set_color("white")
 
     fig.suptitle(
-        f"Attention maps  Rouge-L {_as_label(bucket)}  |  rows: layer x model  |  cols: head",
+        f"Attention maps  {series_label} {_as_label(bucket)}  |  rows: layer x model  |  cols: head",
         fontsize=12, y=top + (1 - top) * 0.8,
     )
     _save_fig(fig, save_path, dpi=None)
@@ -272,12 +349,17 @@ def plot_full_attn_maps_panel(maps, bucket, *, models=(), heads=(), layers=(),
 
 
 def plot_gating_distribution(gating, *, layer=None, head=None, buckets=None, density=False,
-                             merge_bins=1, figsize=(8, 5), save_path=None):
+                             merge_bins=1, figsize=(8, 5), save_path=None,
+                             series_label="Rouge-L"):
     """Gate-score distribution (Gated Attention paper convention). Gated model only.
-    Aggregates the per-(bucket, layer, head) histogram to the requested granularity; one
-    curve per Rouge-L bucket if `buckets` given, else pooled.
+    Aggregates the per-(series, layer, head) histogram to the requested granularity; one
+    curve per series entry if `buckets` given, else pooled.
 
-    gating: load_attention_gating(...) result. layer/head: restrict to one (default: pooled).
+    gating: load_attention_gating(..., split_by="rouge" or "rep") result. Curve labels come
+    from gating["keys"] (bucket strings or rep ints).
+    buckets: hist axis-0 positions (0..n_keys-1) or key labels to draw.
+    series_label: legend prefix / suptitle axis name (pass "repetitions" for split_by="rep").
+    layer/head: restrict to one (default: pooled).
     density: True = probability density; False (default) = fraction per bin (paper convention).
     merge_bins: combine this many adjacent bins first (must divide the captured count, 100).
     """
@@ -321,15 +403,16 @@ def plot_gating_distribution(gating, *, layer=None, head=None, buckets=None, den
         title_extra = "all buckets pooled"
     else:
         counts = gating.get("count")
+        key_labels = list(gating["keys"])
         cmap = plt.cm.viridis(np.linspace(0, 1, len(buckets)))
         for c, b in zip(cmap, buckets):
-            bi = b if isinstance(b, int) else ALL_MEM_BUCKETS.index(b)
+            bi = b if isinstance(b, (int, np.integer)) else key_labels.index(b)
             dens = _density(_slice(bi))
             if dens is not None:
                 n = f", n={int(counts[bi])}" if counts is not None else ""
-                ax.plot(centers, dens, color=c, lw=1.8, label=f"Rouge-L {_as_label(b)}{n}")
+                ax.plot(centers, dens, color=c, lw=1.8, label=f"{series_label} {key_labels[bi]}{n}")
         ax.legend(fontsize=8)
-        title_extra = "by Rouge-L bucket"
+        title_extra = f"by {series_label}"
 
     loc = []
     if layer is not None:

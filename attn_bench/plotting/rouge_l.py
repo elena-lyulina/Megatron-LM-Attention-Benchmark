@@ -12,14 +12,20 @@ from attn_bench.plotting.model_registry import MODEL_COLORS
 from attn_bench.plotting.utils import suptitle_centered
 
 
-def plot_mem_bucket_counts(attn_by_model, models=None, figsize=None):
-    """Bar chart of sample counts per Rouge-L memorization bucket, one panel per model.
+def plot_mem_bucket_counts(attn_by_model, models=None, figsize=None, keys=None,
+                           x_label='Rouge-L bucket',
+                           title='Rouge-L memorization bucket sizes (pooled across all reps)'):
+    """Bar chart of sample counts per series entry, one panel per model.
 
-    attn_by_model: {model_name: load_attention_patterns(...)} -- the same {bucket_label:
-    {mean, count, prompt_len}} dict passed to plot_first_token_attention / plot_bucket_maps.
-    Counts come straight from the attention capture, already pooled across every rep
-    processed in that job -- this shows the outcome axis (Rouge-L bucket), not the rep axis.
+    attn_by_model: {model_name: load_attention_patterns(...)} keyed by Rouge-L label, or
+    load_attention_patterns(..., split_by="rep") keyed by repetition -- same {mean, count, prompt_len}
+    values. The Rouge-L cut shows the outcome axis; the by-rep cut is a flat sanity check
+    (every rep sees every doc).
+    keys: series entries to bar, in order (default: all 10 Rouge-L labels). Pass the rep list
+    for a by-rep dict.
     """
+    keys = list(keys) if keys is not None else list(ALL_MEM_BUCKETS)
+    xs = [str(k) for k in keys]
     attn_by_model = select_models(attn_by_model, models)
     n_models = len(attn_by_model)
     fig, axes = plt.subplots(1, n_models, figsize=figsize or (4 * n_models, 4), sharey=True)
@@ -27,18 +33,17 @@ def plot_mem_bucket_counts(attn_by_model, models=None, figsize=None):
         axes = [axes]
 
     for ax, (name, buckets) in zip(axes, attn_by_model.items()):
-        counts = [int(buckets[b]['count']) if b in buckets else 0 for b in ALL_MEM_BUCKETS]
+        counts = [int(buckets[k]['count']) if k in buckets else 0 for k in keys]
         color = MODEL_COLORS.get(name, '#888888')
-        ax.bar(ALL_MEM_BUCKETS, counts, color=color, edgecolor='white', linewidth=0.4)
+        ax.bar(xs, counts, color=color, edgecolor='white', linewidth=0.4)
         ax.set_title(f'{name} (n={sum(counts)})', fontsize=11, weight='bold')
-        ax.set_xlabel('Rouge-L bucket', fontsize=10)
+        ax.set_xlabel(x_label, fontsize=10)
         ax.tick_params(axis='x', labelrotation=45, labelsize=8)
         ax.grid(True, alpha=0.2, axis='y')
 
     axes[0].set_ylabel('documents', fontsize=10)
     plt.tight_layout(rect=[0, 0, 1, 0.94])
-    suptitle_centered(fig, axes, 'Rouge-L memorization bucket sizes (pooled across all reps)',
-                      fontsize=14, weight='bold')
+    suptitle_centered(fig, axes, title, fontsize=14, weight='bold')
     plt.show()
 
 

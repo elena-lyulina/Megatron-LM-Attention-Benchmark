@@ -544,21 +544,10 @@ def mem_bucket_label(bi):
 ALL_MEM_BUCKETS = [mem_bucket_label(bi) for bi in range(N_MEM_BUCKETS)]
 
 
-def _load_attention_pattern_mem_bucket(exp_base, model_name, kind, mem_bucket, offset=0, prefix_len=500, suffix_len=50):
-    """One mem-bucket's (Rouge-L score range, not repetition count) average attention map.
-    Each GPU rank only saw some samples during inference. This combines all ranks into one true average.
-
-    `kind`: 'attn_scores' or 'norm_attn'.
+def _merge_map_ranks(rank_files):
+    """Combine per-rank mean maps -- each rank only saw some samples -- into one true
+    average, weighting each rank's mean by its own sample count.
     Returns {mean: [L,H,S,S] float32, count: int, prompt_len: int}."""
-    if kind not in ("attn_scores", "norm_attn"):
-        raise ValueError(f"kind must be 'attn_scores' or 'norm_attn', got {kind!r}")
-    label = mem_bucket if isinstance(mem_bucket, str) else mem_bucket_label(mem_bucket)
-    d = (Path(exp_base) / model_name / "inference"
-         / f"offset_{offset}_prefix_{prefix_len}_suffix_{suffix_len}")
-    rank_files = sorted(d.glob(f"{kind}_rouge_l_{label}_rank*.npz"))
-    if not rank_files:
-        raise FileNotFoundError(f"No {kind}_rouge_l_{label}_rank*.npz in {d}")
-
     weighted_sum = None
     total = 0
     prompt_len = None
@@ -573,31 +562,65 @@ def _load_attention_pattern_mem_bucket(exp_base, model_name, kind, mem_bucket, o
         total += c
 
     if weighted_sum is None or total == 0:
-        ref = np.load(rank_files[0])
-        mean = np.zeros_like(ref["mean"], dtype=np.float32)
+        mean = np.zeros_like(np.load(rank_files[0])["mean"], dtype=np.float32)
     else:
         mean = weighted_sum / total
     return {"mean": mean, "count": total, "prompt_len": prompt_len}
 
 
-def load_attention_patterns(exp_base, model_name, kind, offset=0, prefix_len=500, suffix_len=50):
-    """{label: _load_attention_pattern_mem_bucket(...)} for every one of the ALL_MEM_BUCKETS
-    (Rouge-L score ranges) that has files."""
+def _load_attention_patterns_by(exp_base, model_name, kind, offset, prefix_len, suffix_len,
+                                infix, labels=None):
+    """Shared core for the two orthogonal cuts of the captured maps. For each label,
+    rank-merge `{kind}_{infix}_{label}_rank*.npz` under the point's inference dir; labels
+    with no files are skipped. Returns {label: {mean: [L,H,S,S] float32, count, prompt_len}}.
+
+    infix: 'rouge_l' (labels = the 10 Rouge-L bucket strings) or 'rep' (labels = repetition
+    ints). labels=None discovers the numeric infix values present, low first."""
+    if kind not in ("attn_scores", "norm_attn"):
+        raise ValueError(f"kind must be 'attn_scores' or 'norm_attn', got {kind!r}")
+    d = (Path(exp_base) / model_name / "inference"
+         / f"offset_{offset}_prefix_{prefix_len}_suffix_{suffix_len}")
+    if labels is None:
+        labels = sorted({int(f.name.split(f"_{infix}_")[1].split("_rank")[0])
+                         for f in d.glob(f"{kind}_{infix}_*_rank*.npz")})
     out = {}
-    for label in ALL_MEM_BUCKETS:
-        try:
-            out[label] = _load_attention_pattern_mem_bucket(exp_base, model_name, kind, label,
-                                                             offset, prefix_len, suffix_len)
-        except FileNotFoundError:
-            pass
+    for label in labels:
+        rank_files = sorted(d.glob(f"{kind}_{infix}_{label}_rank*.npz"))
+        if rank_files:
+            out[label] = _merge_map_ranks(rank_files)
     return out
+
+
+def _split_infix(split_by):
+    """Filename infix for the requested cut; also validates split_by.
+    'rouge' -> 'rouge_l' (Rouge-L bucket labels), 'rep' -> 'rep' (repetition ints)."""
+    if split_by not in ("rouge", "rep"):
+        raise ValueError(f"split_by must be 'rouge' or 'rep', got {split_by!r}")
+    return "rouge_l" if split_by == "rouge" else "rep"
+
+
+def load_attention_patterns(exp_base, model_name, kind, offset=0, prefix_len=500, suffix_len=50,
+                            *, split_by="rouge"):
+    """Captured attention maps for one (offset, prefix, suffix) point -- one averaged map per
+    entry along the chosen axis. The two axes are orthogonal cuts of the same samples, each
+    pooled over the other.
+
+    split_by="rouge": {bucket label: {mean: [L,H,S,S] float32, count, prompt_len}} for the 10
+                      Rouge-L score ranges that have files (outcome axis, pooled over reps).
+    split_by="rep":   {repetition int: {...}} for every rep with files, low rep first
+                      (rep-count axis, pooled over Rouge-L).
+    `kind`: 'attn_scores' or 'norm_attn'."""
+    infix = _split_infix(split_by)
+    labels = ALL_MEM_BUCKETS if split_by == "rouge" else None
+    return _load_attention_patterns_by(exp_base, model_name, kind, offset, prefix_len, suffix_len,
+                                       infix, labels)
 
 
 def load_attention_patterns_grid(kind, models=None, exp_base=model_registry.MEM_RESULTS_DIR_OLD,
                                  offset=0, prefix_len=500, suffix_len=50):
-    """Load `load_attention_patterns` for every model in `models` (a list of names
-    from model_registry.MODELS; default/empty -> every model in the registry). Returns
-    {model_name: load_attention_patterns(...)}.
+    """Load `load_attention_patterns` (split_by="rouge") for every model in `models` (a list
+    of names from model_registry.MODELS; default/empty -> every model in the registry).
+    Returns {model_name: load_attention_patterns(...)}.
 
     Attention-pattern captures currently only exist for the 4 base models (full/gated/
     learn-sink/off-by-one) against the older MEM_RESULTS_BASE_OLD data version -- any other
@@ -608,14 +631,22 @@ def load_attention_patterns_grid(kind, models=None, exp_base=model_registry.MEM_
             for m in models}
 
 
-def load_attention_gating(exp_base, model_name, offset=0, prefix_len=500, suffix_len=50):
-    """Sum-merged per-rank gating histograms (gated model only).
-    Returns {hist: [n_buckets,L,H,n_bins] int64, bin_edges: [n_bins+1], count: [n_buckets] int64}."""
+def load_attention_gating(exp_base, model_name, offset=0, prefix_len=500, suffix_len=50,
+                          *, split_by="rouge"):
+    """Sum-merged per-rank gating histograms (gated model only), split along the chosen axis.
+    Returns {hist: [n_keys,L,H,n_bins] int64, bin_edges: [n_bins+1], count: [n_keys] int64,
+    keys: [n_keys]} -- `keys` labels hist axis 0: the 10 Rouge-L bucket strings for
+    split_by="rouge", the repetition list (low first) for split_by="rep".
+
+    For split_by="rep" the rep values are recovered from the sibling attn_scores_rep_*_rank*
+    names (capture writes both cuts in the same ascending-rep order)."""
+    _split_infix(split_by)  # validate
     d = (Path(exp_base) / model_name / "inference"
          / f"offset_{offset}_prefix_{prefix_len}_suffix_{suffix_len}")
-    rank_files = sorted(d.glob("gating_scores_rank*.npz"))
+    glob = "gating_scores_rank*.npz" if split_by == "rouge" else "gating_scores_by_rep_rank*.npz"
+    rank_files = sorted(d.glob(glob))
     if not rank_files:
-        raise FileNotFoundError(f"No gating_scores_rank*.npz in {d}")
+        raise FileNotFoundError(f"No {glob} in {d}")
 
     hist = None
     count = None
@@ -627,11 +658,20 @@ def load_attention_gating(exp_base, model_name, offset=0, prefix_len=500, suffix
         c = npz["count"].astype(np.int64)
         hist = h if hist is None else hist + h
         count = c if count is None else count + c
-    return {"hist": hist, "bin_edges": edges, "count": count}
+
+    if split_by == "rouge":
+        keys = list(ALL_MEM_BUCKETS[:hist.shape[0]])
+    else:
+        keys = sorted({int(f.name.split("_rep_")[1].split("_rank")[0])
+                       for f in d.glob("attn_scores_rep_*_rank*.npz")})
+        if len(keys) != hist.shape[0]:
+            raise ValueError(f"{d}: {hist.shape[0]} rep rows in gating_scores_by_rep but "
+                             f"{len(keys)} attn_scores_rep_* reps ({keys}) -- can't label the axis")
+    return {"hist": hist, "bin_edges": edges, "count": count, "keys": keys}
 
 
 def load_weighted_avg_attention_patterns(mem_buckets):
-    """`load_attention_patterns` gives one average attention map per mem-bucket (10 Rouge-L score ranges).
+    """`load_attention_patterns` (split_by="rouge") gives one average attention map per mem-bucket (10 Rouge-L score ranges).
     This combines all of them into a single average over every sample, weighting each bucket's average by how many samples it had.
 
     Returns {mean: [L,H,S,S] float32, count: int, prompt_len: int}."""
