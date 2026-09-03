@@ -4,46 +4,25 @@
 #SBATCH --job-name=test-pretrain-llama1B-hybrid-qwen-fineweb40B-gutenberg3B
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
-#SBATCH --nodes=8
+#SBATCH --nodes=12
 #SBATCH --ntasks-per-node=4
 #SBATCH --cpus-per-task=72
 #SBATCH --no-requeue
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=clariden-jobs-elyulin-aaaauapxybdkdx42ppvef2c2eq@swissai-initiative.slack.com
 
-# SMOKE TEST for pretrain_llama3_1b_hybrid_qwen_fineweb40B_gutenberg3B.slurm, EXACT prod config
-# (8 nodes / TP=1 / MBS=3 / GBS=288). Entry point is pretrain_gpt_native.py -- a drop-in superset of
-# pretrain_gpt.py that runs the --tests suites on the first forward step (Summary block prints right
-# away), then falls through to real training in the same process. The --tests harness does NOT fail
-# the job -- read the "Summary" block in the .out.
-#   - Suites: xdoc_mask/xdoc_loss/xdoc_position_ids=pass (doc isolation), gdn=pass (12 GDN layers
-#     wired), gated=pass (4 gated-attn layers carry the output gate), sink=fail (no --softmax-type).
-#   - Then it trains until the 00:15:00 walltime times it out. CHECKPOINT_STEPS=50 so a torch_dist
-#     save of the mixed GDN+attn checkpoint actually fires; per-iter throughput is in the log.
-#   - Crucially confirms MBS=3 fits with 12 GDN layers (untested; every prior GDN run used MBS=2).
-#     If it OOMs, apply fallback A or B from the main script's header before the full launch.
-# Differs from the main script only by: no --exit-signal-handler, CHECKPOINT_STEPS 2000 -> 50,
-# test EXP_NAME + fresh CKPT_DIR, and the pretrain_gpt_native.py entry point with --tests.
+# SMOKE TEST for pretrain_llama3_1b_hybrid_qwen_fineweb40B_gutenberg3B.slurm -- must match the prod
+# script's DIST config exactly (12 nodes / TP=1 / MBS=2 / GBS=288, GAS=3; fallback B after MBS=3 at
+# 8 nodes OOM'd in job 3281021). Model geometry + param-match: hybrid_qwen_1B_args_ffn6208.txt.
 #
-# Train a LLaMA 3.2 1B backbone with a QWEN-STYLE HYBRID token mixer on the FineWeb-Edu 40B +
-# Gutenberg 3B blend (~42.8B tokens), param-matched to the softmax-attention scf=1 baselines.
-# Replicates the Qwen3.5 / 3.8 hybrid structure (model_type "qwen3_5", full_attention_interval 4):
-#   - Pattern: --linear-attention-freq 4 -> [1,1,1,0]*4 = 12 GDN + 4 gated-attn layers,
-#              gated-attn at layer indices 3/7/11/15 (int N: SDPA where (i+1)%N==0). Equivalent
-#              explicit form "([1]*3+[0]*1)*4" -- but parens break in the bash launch string, so use 4.
-#   - GDN layers: identical to the pure-GDN baseline -- 8 K/V heads, key_head_dim 192 /
-#                 value_head_dim 384 (paper ratios 0.75/1.5), conv kernel 4.
-#   - Gated-attn layers: identical to the gated-attn scf=1 baseline -- Llama GQA 32/8 +
-#                        --attention-output-gate, full RoPE (rope-scaling-factor 1).
-#   - FFN: --ffn-hidden-size 6208 (shrunk from 8192 to absorb the GDN-heavy mixer; ~1.234B params).
-#   - Config: attn_bench/configs/param_count_configs/hybrid_qwen_1B_args_ffn6208.txt
-#   - Data / LR / regularization: from the scf=1 baselines (GBS=288, TP=1, wd 0.1, warmup 500,
-#     18141 steps). --use-packed-seq-params (DATA_ARGS) resets BOTH the GDN recurrent/conv state
-#     and the softmax attention mask at every document boundary via cu_seqlens.
-#
-# DIST: 8 nodes / TP=1 / MBS=3 / GBS=288 (GAS=3), IDENTICAL to the prod script -- this test exists to
-#   prove that config fits. If it OOMs in the first steps, apply fallback A (--recompute-granularity
-#   selective, keeps MBS=3 / 8 nodes) or B (nodes=12 + MBS=2) from the prod script's header.
+# Entry point is pretrain_gpt_native.py -- pretrain_gpt.py + --tests injected on the first forward
+# step, then it falls through to real training. The --tests harness does NOT fail the job -- read
+# the "Summary" block in the .out. Suites: xdoc_mask/xdoc_loss/xdoc_position_ids=pass (doc isolation),
+# gdn=pass (12 GDN layers wired), gated=pass (4 gated-attn layers gated), sink=fail (no --softmax-type).
+# Then it trains until the 00:15:00 walltime; CHECKPOINT_STEPS=50 exercises a torch_dist save of the
+# mixed GDN+attn checkpoint; per-iter throughput is in the log. Confirms MBS=2 fits and doesn't NaN.
+# Differs from the main script only by: no --exit-signal-handler, CHECKPOINT_STEPS -> 50, test
+# EXP_NAME + fresh CKPT_DIR, and the pretrain_gpt_native.py entry point with --tests.
 #
 # NOTE: the GDN layers need flash-linear-attention (fla) + causal_conv1d -- the te2.15 container
 # ships both (fla 0.4.2 is fine for GDN; only KDA needs the 0.5.2 side-install).
@@ -91,10 +70,10 @@ TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b  # Assumes t
 
 SEQ_LEN=8192
 
-MBS=3
-# most compute-efficient config from attn_training_perf_bench sweep is tp=1/mbs=3;
-# seq_length * MBS * DP * GAS = 8192 * 3 * 32 * 3 = 2.36 M tokens/step
-# GBS = MBS * DP * GAS = 3 * 32 * 3 = 288
+MBS=2
+# MBS=2 / nodes=12 (fallback B): MBS=3 at 8 nodes OOMs at optimizer.step with 12 GDN layers (job 3281021).
+# 12 nodes -> DP=48, GAS = GBS/(MBS*DP) = 288/96 = 3. GBS and the 18141 steps are unchanged.
+# GBS = MBS * DP * GAS = 2 * 48 * 3 = 288
 GBS=288
 # 40,038,865,413 (fineweb 40B) + 2,762,833,920 (gutenberg 3B) = 42,801,699,333 tokens
 TARGET_TOKENS=42801699333
@@ -146,9 +125,8 @@ export HF_HUB_OFFLINE=1
 export TORCH_NCCL_AVOID_RECORD_STREAMS=1
 export TORCH_NCCL_ASYNC_ERROR_HANDLING=1
 export CUDA_DEVICE_MAX_CONNECTIONS=1
-# precautionary: GDN/fla chunked kernels allocate many differently-sized intermediates that fragment
-# the allocator; expandable_segments recovers the reserved-but-unallocated pool (needed for KDA at
-# MBS=3, kept here as insurance for the GDN-heavy hybrid). Harmless if unused.
+# GDN/fla chunked kernels allocate many differently-sized intermediates that fragment the allocator;
+# expandable_segments recovers the reserved-but-unallocated pool (KDA needs it). Harmless if unused.
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 
@@ -244,7 +222,7 @@ TRAINING_ARGS=(
     # no --exit-signal-handler: smoke test, the walltime just times it out; periodic saves at CHECKPOINT_STEPS=50 are enough
     --eval-interval 100000000000  # must match or be a multiple of checkpoint interval, must be set to avoid TypeError even when EVAL_ITERS=0
     --eval-iters 0                # no validation split for pretraining (--split 100,0,0)
-    # if the smoke test OOMs at MBS=3: uncomment to trade compute for activation memory (keeps 8 nodes / MBS=3)
+    # if MBS=2 / 12 nodes still OOMs: uncomment to trade compute for activation memory
     #--recompute-granularity selective
 )
 

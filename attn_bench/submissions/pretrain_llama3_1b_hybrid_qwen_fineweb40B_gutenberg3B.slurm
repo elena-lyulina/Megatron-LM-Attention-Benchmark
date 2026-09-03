@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --account=infra01
-#SBATCH --time=12:00:00
+#SBATCH --time=09:00:00
 #SBATCH --job-name=pretrain-llama1B-hybrid-qwen-fineweb40B-gutenberg3B
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
-#SBATCH --nodes=8
+#SBATCH --nodes=12
 #SBATCH --ntasks-per-node=4
 #SBATCH --cpus-per-task=72
 #SBATCH --no-requeue
@@ -17,12 +17,13 @@
 #   attn_bench/configs/param_count_configs/hybrid_qwen_1B_args_ffn6208.txt
 # Data / LR / regularization from the scf=1 baselines (GBS=288, TP=1, wd 0.1, warmup 500, 18141 steps).
 #
-# DIST: 8 nodes / TP=1 / MBS=3 / GBS=288 (GAS=3), same as the gated/full scf=1 runs. MBS=3 with 12 GDN
-#   layers is untested (every prior GDN run used MBS=2) -- run the _test.slurm smoke first. If it OOMs:
-#     A: --recompute-granularity selective (keeps MBS=3 / 8 nodes)
-#     B: #SBATCH --nodes=12 + MBS=2  (GBS and the 18141 steps unchanged -> no effect on the comparison)
-# TIME: 12h single slot (~9h expected: gated scf=1 took ~8h, GDN ~11% slower). If hard to schedule,
-#   use a --exit-duration-in-mins reservation slice + resubmit-to-resume, node count fixed.
+# DIST: 12 nodes / TP=1 / MBS=2 / GBS=288 (DP=48, GAS=3), same as KDA/MLA. MBS=3 at 8 nodes OOM'd at
+#   optimizer.step with 12 GDN layers (job 3281021); MBS=2 is the known-good GDN config. GBS and the
+#   18141 steps are unchanged, so this matches the scf=1 comparison exactly. If MBS=2 still OOMs:
+#   uncomment --recompute-granularity selective in TRAINING_ARGS.
+# TIME: 9h single slot. KDA scf=1 ran the same 12 nodes / MBS=2 / 18141 steps in 7h06m (~283
+#   TFLOP/s); this hybrid (12 GDN + 4 softmax) should be ~6.5-7.5h, so 9h leaves margin. If hard to
+#   schedule, use a --exit-duration-in-mins slice + resubmit-to-resume, node count fixed across slices.
 #
 # Usage:
 #   sbatch attn_bench/submissions/pretrain_llama3_1b_hybrid_qwen_fineweb40B_gutenberg3B.slurm
@@ -67,10 +68,10 @@ TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b  # Assumes t
 
 SEQ_LEN=8192
 
-MBS=3
-# most compute-efficient config from attn_training_perf_bench sweep is tp=1/mbs=3;
-# seq_length * MBS * DP * GAS = 8192 * 3 * 32 * 3 = 2.36 M tokens/step
-# GBS = MBS * DP * GAS = 3 * 32 * 3 = 288
+MBS=2
+# MBS=2 / nodes=12 (same as KDA/MLA): MBS=3 at 8 nodes OOMs at optimizer.step with 12 GDN layers
+# (job 3281021). 12 nodes -> DP=48, GAS = GBS/(MBS*DP) = 288/96 = 3.
+# GBS = MBS * DP * GAS = 2 * 48 * 3 = 288
 GBS=288
 # 40,038,865,413 (fineweb 40B) + 2,762,833,920 (gutenberg 3B) = 42,801,699,333 tokens
 TARGET_TOKENS=42801699333
@@ -120,9 +121,8 @@ export HF_HUB_OFFLINE=1
 export TORCH_NCCL_AVOID_RECORD_STREAMS=1
 export TORCH_NCCL_ASYNC_ERROR_HANDLING=1
 export CUDA_DEVICE_MAX_CONNECTIONS=1
-# precautionary: GDN/fla chunked kernels allocate many differently-sized intermediates that fragment
-# the allocator; expandable_segments recovers the reserved-but-unallocated pool (needed for KDA at
-# MBS=3, kept here as insurance for the GDN-heavy hybrid). Harmless if unused.
+# GDN/fla chunked kernels allocate many differently-sized intermediates that fragment the allocator;
+# expandable_segments recovers the reserved-but-unallocated pool (KDA needs it). Harmless if unused.
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 
@@ -218,7 +218,7 @@ TRAINING_ARGS=(
     --exit-signal-handler # listen for SIGTERM/SIGINT and do a clean checkpoint save before exiting
     --eval-interval 100000000000  # must match or be a multiple of checkpoint interval, must be set to avoid TypeError even when EVAL_ITERS=0
     --eval-iters 0                # no validation split for pretraining (--split 100,0,0)
-    # if the smoke test OOMs at MBS=3: uncomment to trade compute for activation memory (keeps 8 nodes / MBS=3)
+    # if MBS=2 / 12 nodes still OOMs: uncomment to trade compute for activation memory
     #--recompute-granularity selective
 )
 
