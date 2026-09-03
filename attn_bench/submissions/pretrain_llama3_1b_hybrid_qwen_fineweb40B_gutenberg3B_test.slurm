@@ -96,7 +96,9 @@ TRITON_HOME_DIR=/tmp/.triton
 PYTHON_CACHE_DIR=/tmp/.python_cache
 
 # Logging directories & artifacts
-PROJECT_NAME="fineweb-40B_gutenberg-3B"
+# Test runs go to the "test" W&B project + attn_bench/results/pretrain/test/ -- NOT the real
+# "fineweb-40B_gutenberg-3B" project (same convention as the mla/kda/full/swa _test.slurm scripts).
+PROJECT_NAME="test"
 PROJECT_DIR=$MEGATRON_LM_DIR/attn_bench/results/pretrain/$PROJECT_NAME
 EXP_NAME="test-llama3-1b-hybrid-qwen-scf1-fineweb40B-gutenberg3B"
 EXP_DIR=$PROJECT_DIR/$EXP_NAME
