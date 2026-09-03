@@ -1,0 +1,26 @@
+=== Parameter count: hybrid_qwen_1B_args_ffn6208 ===
+(embeddings tied with output head)
+
+TOTAL                                                           1,234,410,176
+
+By category:
+embeddings + output head                                          262,668,288
+mlp / ffn                                                         610,304,000
+mixer (rest)                                                      361,437,888
+
+By param (layer index collapsed):
+decoder.final_layernorm.weight                                          2,048
+decoder.layers.*.mlp.linear_fc1.layer_norm_weight                      32,768
+decoder.layers.*.mlp.linear_fc1.weight                            406,847,488
+decoder.layers.*.mlp.linear_fc2.weight                            203,423,744
+decoder.layers.*.self_attention.A_log                                      96
+decoder.layers.*.self_attention.conv1d.weight                         294,912
+decoder.layers.*.self_attention.dt_bias                                    96
+decoder.layers.*.self_attention.in_proj.layer_norm_weight              24,576
+decoder.layers.*.self_attention.in_proj.weight                    226,885,632
+decoder.layers.*.self_attention.linear_proj.weight                 16,777,216
+decoder.layers.*.self_attention.linear_qkv.layer_norm_weight            8,192
+decoder.layers.*.self_attention.linear_qkv.weight                  41,943,040
+decoder.layers.*.self_attention.out_norm.weight                         4,608
+decoder.layers.*.self_attention.out_proj.weight                    75,497,472
+embedding.word_embeddings.weight                                  262,668,288

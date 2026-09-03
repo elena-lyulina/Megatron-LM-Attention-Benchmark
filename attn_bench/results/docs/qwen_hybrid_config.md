@@ -144,36 +144,51 @@ the family): non-emb target 973,146,112, hybrid@6208 = 971,741,888 (−0.14 %).
 
 ## 3. Config & training plan (T3a / T3b)
 
-**T3a — param-count config.** ✅ Written:
-`attn_bench/configs/param_count_configs/qwen_hybrid_1B_args_ffn6208.txt` —
-GDN token-mixer block from `gdn_1B_args_8heads_ffn5824.txt` with
+**T3a — param-count config. ✅ DONE.**
+`attn_bench/configs/param_count_configs/hybrid_qwen_1B_args_ffn6208.txt` — GDN
+token-mixer block from `gdn_1B_args_8heads_ffn5824.txt` with
 `--linear-attention-freq 4` (int → SDPA at layers 3/7/11/15), plus the gated
 baseline's SDPA-layer flags (`--group-query-attention --num-query-groups 8
 --attention-output-gate --position-embedding-type rope --rotary-base 500000
 --use-rope-scaling --rope-scaling-factor 1 --max-position-embeddings 8192`), and
-`--ffn-hidden-size 6208`. Verify with
-`config=qwen_hybrid_1B_args_ffn6208.txt sbatch attn_bench/submissions/count_model_param.slurm`
-(expect TOTAL ≈ 1,234,410,176; confirm 12 GDN + 4 gated in the per-param dump).
+`--ffn-hidden-size 6208`. `count_model_param.slurm` ran →
+`hybrid_qwen_1B_args_ffn6208_param_counts`: **TOTAL 1,234,410,176** (matches the
+prediction, −0.114% vs `full`). Per-param dump confirms the split —
+`in_proj.weight` 226,885,632 / (2048×9232) = **12 GDN**;
+`linear_qkv.weight` 41,943,040 / (2048×5120) = **4 gated-attn**; `conv1d`/`A_log`/
+`out_proj` all divide by 12; no positional params. `--group-query-attention` +
+`gated_delta_net` + `rope` pass `validate_args` together (model built).
 
-`--position-embedding-type` is model-wide, so it is set to `rope` (the SDPA layers
-need it; the pure-GDN baseline uses `none`). GDN ignores the rotary tensor
-regardless (conv + decay gate carry order), and RoPE has no learned params, so
-this is a no-op for the 12 GDN layers — confirm no stray positional params in the
-count and no crash in the smoke test.
+`--position-embedding-type rope` is model-wide (the SDPA layers need it; pure-GDN
+uses `none`); GDN ignores the rotary tensor and RoPE has no params, so it is a
+no-op for the 12 GDN layers — confirmed by the count (no stray positional params).
 
-**T3b — pretrain slurm.** Fork `pretrain_llama3_1b_gdn_fineweb40B_gutenberg3B.slurm`
-(GDN is the majority mixer, so its container `nemo_26.04_te2.15`, TRITON per-rank
-cache, MBS/nodes, packed-seq doc isolation, and data-exhaustion handling all
-carry over). Changes: add the gated-attn + RoPE flags above, set
-`--linear-attention-freq 4`, `--ffn-hidden-size 6208`, new `EXP_NAME`
-(`llama3-1b-qwen-hybrid-scf1-fineweb40B-gutenberg3B`), and align dist/LR config
-with the scf=1 runs (8 nodes / TP=1 / MBS=3 / GBS=288, `TRAINING_STEPS=18141`,
-`--weight-decay 0.1`, `--lr-warmup-iters 500`) unless the GDN throughput/OOM
-profile forces MBS=2 like KDA. `--use-packed-seq-params` resets **both** the GDN
-recurrent/conv state and the softmax attention mask at every document boundary.
+**T3b — pretrain slurm. ✅ Written.**
+`attn_bench/submissions/pretrain_llama3_1b_hybrid_qwen_fineweb40B_gutenberg3B.slurm`
+(+ `_test.slurm`). Forked from the **gated-attn scf=1** script (already has
+`--attention-output-gate` + RoPE-scaling + 8 nodes / MBS=3 / GBS=288 / 18141 steps
+/ wd 0.1 / warmup 500 / container `nemo_26.04_te2.15`); grafted in the GDN mixer
+args + `--linear-attention-freq 4` + the per-rank TRITON cache
+(`reference_gdn_triton_cache_crash`), `--ffn-hidden-size 6208`, `EXP_NAME`
+`llama3-1b-hybrid-qwen-scf1-fineweb40B-gutenberg3B`, `--time 12:00:00`.
+`--use-packed-seq-params` resets **both** the GDN recurrent/conv state and the
+softmax attention mask at every document boundary. Container fla 0.4.2 is fine for
+GDN — **no** 0.5.2 side-install (that is KDA-only).
 
-**T3c** — 10-step smoke via a `_test.slurm` fork (mirror
-`pretrain_llama3_1b_gdn_..._test.slurm`) before the full launch.
+Dist risk: MBS=3 with 12 GDN layers is untested (every prior GDN run used MBS=2).
+Fallbacks in the script header: A = `--recompute-granularity selective` (keeps
+8 nodes / MBS=3), B = `--nodes=12` + `MBS=2` (GBS=288 and 18141 steps unchanged →
+no impact on the memorization comparison).
+
+**T3c — smoke test.**
+`pretrain_llama3_1b_hybrid_qwen_fineweb40B_gutenberg3B_test.slurm` — exact prod
+config, `--time 00:15:00`, one srun (KDA/MLA `_test` structure): entry point
+`pretrain_gpt_native.py --tests xdoc_mask/xdoc_loss/xdoc_position_ids/gdn/gated=pass
+sink=fail` runs the wiring suites on the first forward step (Summary block; does
+not fail the job) then falls through to real training until walltime.
+`CHECKPOINTING_ARGS` kept + `CHECKPOINT_STEPS=50` so a `torch_dist` save of the
+mixed GDN+attn checkpoint is exercised; no `--exit-signal-handler`. Run it first —
+it answers the MBS=3 memory question and gives a throughput read.
 
 **T3e (later, the real risk)** — hybrid inference: per-layer KV cache (4 softmax
 layers) and recurrent state (12 GDN layers) must coexist in

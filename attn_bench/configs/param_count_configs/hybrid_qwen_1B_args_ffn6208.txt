@@ -39,9 +39,9 @@
 
 # Linear-attention layers (12 of 16): GDN, identical to gdn_1B_args_8heads_ffn5824.txt
 --experimental-attention-variant gated_delta_net
---linear-attention-freq ([1]*3+[0]*1)*4   # per-layer pattern: 1=GDN, 0=gated softmax attn -> [1,1,1,0]*4
-                                          # = 12 GDN + 4 attn, attn at layers 3/7/11/15 (Qwen full_attention_interval=4)
-                                          # equivalent shorthand: --linear-attention-freq 4
+--linear-attention-freq 4                 # int N: SDPA where (i+1)%N==0 -> [1,1,1,0]*4 (1=GDN, 0=gated softmax attn)
+                                          # = 12 GDN + 4 attn, attn at layers 3/7/11/15 (== Qwen full_attention_interval=4)
+                                          # explicit form "([1]*3+[0]*1)*4" is equivalent, but its parens break the bash launch string, so keep 4
 --linear-num-key-heads 8               # GDN's K/Q heads
 --linear-num-value-heads 8             # GDN's V heads, must be a multiple of linear_num_key_heads
 --linear-key-head-dim 192              # key_dim = 8*192 = 1536 = 0.75*hidden
