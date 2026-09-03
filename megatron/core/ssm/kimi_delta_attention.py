@@ -32,13 +32,15 @@ from megatron.core.transformer.utils import (
 from megatron.core.utils import deprecate_inference_params, nvtx_range_pop, nvtx_range_push
 
 try:
-    from fla.modules.convolution import causal_conv1d
-    from fla.ops.kda import chunk_kda
+    from fla.modules.convolution import causal_conv1d, causal_conv1d_update
+    from fla.ops.kda import chunk_kda, fused_recurrent_kda
 
     HAVE_FLA = True
 except ImportError:
     causal_conv1d = None
+    causal_conv1d_update = None
     chunk_kda = None
+    fused_recurrent_kda = None
 
     HAVE_FLA = False
 
@@ -358,10 +360,30 @@ class KimiDeltaAttention(MegatronModule):
             tuple[Tensor, Optional[Tensor]]: KDA output ``[s, b, h]`` and the output-proj bias.
         """
         inference_context = deprecate_inference_params(inference_context, inference_params)
-        if inference_context is not None:
-            raise NotImplementedError("KimiDeltaAttention does not support inference yet.")
 
         _, batch, _ = hidden_states.shape
+
+        prefill_inference = False
+        if inference_context is not None:
+            assert (
+                inference_context.is_static_batching()
+            ), "KDA does not currently support dynamic inference batching."
+            assert (
+                not self.config.sequence_parallel
+            ), "KDA inference does not currently support sequence parallelism."
+            assert self.cp_size == 1, "KDA inference does not currently support context parallel."
+            assert not self.config.deterministic_mode, (
+                "KDA inference requires the fast (non-deterministic) FLA kernels."
+            )
+            assert self.config.pipeline_model_parallel_size == 1, (
+                "KDA inference is only validated for pipeline_model_parallel_size == 1."
+            )
+            if inference_context.sequence_len_offset > 0:
+                # Decode: one token at a time, served from the cached conv + recurrent state.
+                return self._decode(hidden_states, inference_context)
+            # Prefill: fall through the normal forward, capturing the final conv + recurrent state
+            # into the cache (output_final_state flags + cache write below).
+            prefill_inference = True
 
         # Projections (s b x). q/k/v/beta live on their own column-parallel GEMMs.
         nvtx_range_push(suffix="in_proj")
@@ -395,13 +417,13 @@ class KimiDeltaAttention(MegatronModule):
         # Depthwise short conv (with silu) over concatenated q/k/v.
         nvtx_range_push(suffix="conv1d")
         qkv = torch.cat([q, k, v], dim=-1)
-        qkv, _ = causal_conv1d(
+        qkv, conv_state = causal_conv1d(
             x=qkv,
             weight=self.conv1d.weight.squeeze(1),
             bias=self.conv1d.bias if self.conv_bias else None,
             activation=self.activation,
             initial_state=None,
-            output_final_state=False,
+            output_final_state=prefill_inference,
             cu_seqlens=cu_seqlens,
         )
         q, k, v = torch.split(
@@ -423,7 +445,7 @@ class KimiDeltaAttention(MegatronModule):
         # KDA recurrence. L2-norm(q,k), beta sigmoid and the fine-grained decay
         # g = -exp(A_log) * softplus(g_raw + dt_bias) are all fused inside the kernel.
         nvtx_range_push(suffix="chunk_kda")
-        core_attn_out, _ = chunk_kda(
+        core_attn_out, recurrent_state = chunk_kda(
             q=q,
             k=k,
             v=v,
@@ -432,13 +454,23 @@ class KimiDeltaAttention(MegatronModule):
             A_log=self.A_log,
             dt_bias=self.dt_bias,
             initial_state=None,
-            output_final_state=False,
+            output_final_state=prefill_inference,
             use_qk_l2norm_in_kernel=True,
             use_gate_in_kernel=True,
             use_beta_sigmoid_in_kernel=True,
             cu_seqlens=cu_seqlens,
         )
         nvtx_range_pop(suffix="chunk_kda")
+
+        if prefill_inference:
+            # Stash the prefill's final states; _decode advances them one token at a time. Storing
+            # the kernel outputs directly avoids any pre-allocated shape assumptions. Greedy only:
+            # beam search's swap_key_value_dict assumes attention K/V (batch on dim 1), but these
+            # states have batch on dim 0.
+            inference_context.key_value_memory_dict[self.layer_number] = (
+                conv_state.detach(),
+                recurrent_state.detach(),
+            )
 
         # Gated output RMSNorm: RMSNorm(o) * sigmoid(z), per value-head channel.
         nvtx_range_push(suffix="gated_norm")
@@ -452,6 +484,85 @@ class KimiDeltaAttention(MegatronModule):
         out, out_bias = self.out_proj(norm_out)
         nvtx_range_pop(suffix="out_proj")
 
+        return out, out_bias
+
+    def _decode(self, hidden_states, inference_context):
+        """Single-token incremental decode.
+
+        Advances the cached conv + recurrent state by one token using the FLA single-step kernels.
+        Mirrors the prefill forward but with one token and the cached state as input. Static
+        batching, CP=1, non-deterministic kernels (all asserted in forward before this is reached).
+
+        Args:
+            hidden_states (Tensor): ``[1, b, h]`` — the single new token's hidden state.
+            inference_context (BaseInferenceContext): holds the per-layer (conv_state, recurrent_state).
+
+        Returns:
+            tuple[Tensor, Optional[Tensor]]: KDA output ``[1, b, h]`` and the output-proj bias.
+        """
+        assert self.layer_number in inference_context.key_value_memory_dict, (
+            "KDA _decode called before prefill populated the state cache."
+        )
+        seq_len, batch, _ = hidden_states.shape
+        assert seq_len == 1, "KDA decode processes one token at a time"
+        conv_state, recurrent_state = inference_context.key_value_memory_dict[self.layer_number]
+        assert recurrent_state.shape[0] == batch, "KDA decode batch must match prefill batch."
+
+        # Projections (s b x), then s b x -> b s x (s == 1). CP=1, so no all-to-all.
+        q, _ = self.q_proj(hidden_states)
+        k, _ = self.k_proj(hidden_states)
+        v, _ = self.v_proj(hidden_states)
+        beta, _ = self.b_proj(hidden_states)
+        g_raw, _ = self.f_proj_up(self.f_proj_down(hidden_states)[0])
+        z, _ = self.g_proj_up(self.g_proj_down(hidden_states)[0])
+        q, k, v, beta, g_raw, z = (t.transpose(0, 1) for t in (q, k, v, beta, g_raw, z))
+
+        # Causal conv single step. Updates conv_state in place; same [N, D, W] cache layout the
+        # prefill causal_conv1d(output_final_state=True) produced.
+        qkv = torch.cat([q, k, v], dim=-1)
+        qkv, conv_state = causal_conv1d_update(
+            x=qkv,
+            cache=conv_state,
+            weight=self.conv1d.weight.squeeze(1),  # d, 1, w -> d, w
+            bias=self.conv1d.bias if self.conv_bias else None,
+            activation=self.activation,
+        )
+        q, k, v = torch.split(
+            qkv, [self.qk_dim_local_tp, self.qk_dim_local_tp, self.v_dim_local_tp], dim=-1
+        )
+
+        # Head layout (mirror forward): q/k at key heads, v/g at value heads, beta scalar per head.
+        q = q.reshape(batch, 1, self.num_key_heads_local_tp, self.key_head_dim).contiguous()
+        k = k.reshape(batch, 1, self.num_key_heads_local_tp, self.key_head_dim).contiguous()
+        v = v.reshape(batch, 1, self.num_value_heads_local_tp, self.value_head_dim).contiguous()
+        g_raw = g_raw.reshape(
+            batch, 1, self.num_value_heads_local_tp, self.key_head_dim
+        ).contiguous()
+        beta = beta.reshape(batch, 1, self.num_value_heads_local_tp).contiguous()
+
+        # Recurrent single step. Same raw g/beta + in-kernel decay/sigmoid/L2-norm convention as
+        # chunk_kda, so it is numerically consistent with the prefill; T == 1.
+        core_attn_out, recurrent_state = fused_recurrent_kda(
+            q=q,
+            k=k,
+            v=v,
+            g=g_raw,
+            beta=beta,
+            A_log=self.A_log,
+            dt_bias=self.dt_bias,
+            initial_state=recurrent_state,
+            output_final_state=True,
+            use_qk_l2norm_in_kernel=True,
+            use_gate_in_kernel=True,
+            use_beta_sigmoid_in_kernel=True,
+        )
+        inference_context.key_value_memory_dict[self.layer_number] = (conv_state, recurrent_state)
+
+        # Gated output RMSNorm + output projection. b s x -> s b x (CP=1, so no all-to-all).
+        z = z.reshape(batch, 1, self.num_value_heads_local_tp, self.value_head_dim)
+        norm_out = self._apply_gated_norm(core_attn_out, z)
+        norm_out = norm_out.reshape(batch, 1, -1).transpose(0, 1).contiguous()
+        out, out_bias = self.out_proj(norm_out)
         return out, out_bias
 
     @jit_fuser

@@ -9,6 +9,8 @@ from attn_bench.tests.test_gdn import \
 from attn_bench.tests.test_gdn_inference import \
     register as _register_gdn_inference
 from attn_bench.tests.test_goldfish_loss import register as _register_goldfish
+from attn_bench.tests.test_kda_inference import \
+    register as _register_kda_inference
 from attn_bench.tests.test_sink_attention import register as _register_sink
 from attn_bench.tests.test_sliding_window_attention import \
     register as _register_swa
@@ -34,6 +36,7 @@ TEST_REGISTRY = {
     "gdn_carry_effect": _register_gdn_carry_effect,
     "gdn_carry_mechanism": _register_gdn_carry_mechanism,
     "goldfish": _register_goldfish,
+    "kda_inference": _register_kda_inference,
 }
 
 
