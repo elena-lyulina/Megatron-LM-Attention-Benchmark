@@ -6,11 +6,14 @@
 # model_config() below. Nothing else needs to change.
 #
 # Usage: source this file, call `model_config <tag>`. Sets (resets each call): EXP_NAME,
-# CKPT_NAME, MEGATRON_EXTRA, NEEDS_TRITON, IS_SINK_FAMILY, NEEDS_UNFUSED_DECODE, HAS_ROPE.
+# CKPT_NAME, MEGATRON_EXTRA, NEEDS_TRITON, NEEDS_FLA_052, IS_SINK_FAMILY, NEEDS_UNFUSED_DECODE, HAS_ROPE.
 #   EXP_NAME             results/experiment dir name
 #   CKPT_NAME            checkpoint dir name, if it differs from EXP_NAME
 #   MEGATRON_EXTRA       flags not restored by --use-checkpoint-args
-#   NEEDS_TRITON         1 if the model needs a per-rank node-local TRITON_CACHE_DIR (GDN)
+#   NEEDS_TRITON         1 if the model needs a per-rank node-local TRITON_CACHE_DIR (GDN, KDA)
+#   NEEDS_FLA_052        1 if the model needs flash-linear-attention 0.5.2 side-installed into
+#                        attn_bench/packages-fla (KDA -- the container's 0.4.2 NaNs chunk_kda;
+#                        GDN is fine on 0.4.2). Consumers prepend $FLA_DIR to PYTHONPATH.
 #   IS_SINK_FAMILY       1 for sink/off-by-one (model identity). Used by the pull script's
 #                        config-subset selection and --sink-scale in measure_mem.slurm.
 #   NEEDS_UNFUSED_DECODE 1 if decode needs --attention-backend unfused + NVTE_FUSED_ATTN=0
@@ -22,7 +25,7 @@
 #                        convert_and_validate_hf.slurm's rope-scaling-factor sanity check,
 #                        which otherwise fails on a family that never had rope to drop.
 
-MODELS=(full-scf8 gated-scf8 full-xdoc-leak-scf8 sink-scf8 off-by-one-scf8 gdn carry-r0 carry-r0.5 carry-r1 full-goldfish-scf8 gdn-goldfish full-fineweb80B-scf8 full-long-scf8 full-long-split-1024-scf8 full-scf1 gated-scf1 sink-scf1 swa-w256-scf1 swa-w1024-scf1 swa-w4096-scf1)
+MODELS=(full-scf8 gated-scf8 full-xdoc-leak-scf8 sink-scf8 off-by-one-scf8 gdn carry-r0 carry-r0.5 carry-r1 full-goldfish-scf8 gdn-goldfish full-fineweb80B-scf8 full-long-scf8 full-long-split-1024-scf8 full-scf1 gated-scf1 sink-scf1 swa-w256-scf1 swa-w1024-scf1 swa-w4096-scf1 kda mla)
 
 # GDN linear-attention dims -- not restored by --use-checkpoint-args, must be re-passed.
 GDN_DIMS="--experimental-attention-variant gated_delta_net \
@@ -33,6 +36,30 @@ GDN_DIMS="--experimental-attention-variant gated_delta_net \
     --linear-value-head-dim 384 \
     --linear-conv-kernel-dim 4"
 
+# KDA linear-attention dims -- not restored by --use-checkpoint-args, must be re-passed.
+KDA_DIMS="--experimental-attention-variant kimi_delta_attention \
+    --linear-attention-freq '[1]*16' \
+    --linear-num-key-heads 16 \
+    --linear-num-value-heads 16 \
+    --linear-key-head-dim 128 \
+    --linear-value-head-dim 128 \
+    --linear-conv-kernel-dim 4"
+
+# MLA block dims + explicit non-default RoPE -- not restored by --use-checkpoint-args. The MLA
+# config dataclass defaults to yarn + rope-fusion; fused MLA-RoPE trips an assert in decode, so
+# --rope-type rope --no-rope-fusion must be re-passed (this is why plain rope trained fine but
+# inference needs the flag). VERIFY ON FIRST RUN which of these --use-checkpoint-args restores.
+MLA_DIMS="--multi-latent-attention \
+    --kv-lora-rank 512 \
+    --qk-head-dim 128 \
+    --qk-pos-emb-head-dim 64 \
+    --v-head-dim 128 \
+    --qk-layernorm \
+    --rope-type rope \
+    --no-rope-fusion \
+    --rotary-base 500000 \
+    --rotary-scaling-factor 1.0"
+
 # Actual RoPE scaling factor these checkpoints trained with (see gpt_builders.py) -- not restored by --use-checkpoint-args, must be re-passed.
 ROPE_SCF8="--use-rope-scaling --rope-scaling-factor 8"
 ROPE_SCF1="--use-rope-scaling --rope-scaling-factor 1"
@@ -41,6 +68,7 @@ model_config() {
     local model="$1"
     CKPT_NAME=""
     NEEDS_TRITON=0
+    NEEDS_FLA_052=0
     IS_SINK_FAMILY=0
     NEEDS_UNFUSED_DECODE=0
     HAS_ROPE=1
@@ -142,6 +170,17 @@ model_config() {
         swa-w4096-scf1)
             EXP_NAME=llama3-1b-swa-w4096-scf1-fineweb40B-gutenberg3B
             MEGATRON_EXTRA="$ROPE_SCF1 --window-size 4096,0"
+            ;;
+        kda)
+            EXP_NAME=llama3-1b-kda-scf1-fineweb40B-gutenberg3B
+            MEGATRON_EXTRA="$KDA_DIMS"
+            NEEDS_TRITON=1
+            NEEDS_FLA_052=1
+            HAS_ROPE=0
+            ;;
+        mla)
+            EXP_NAME=llama3-1b-mla-scf1-fineweb40B-gutenberg3B
+            MEGATRON_EXTRA="$MLA_DIMS"
             ;;
         *)
             echo "Unknown MODEL=$model (expected one of: ${MODELS[*]})"

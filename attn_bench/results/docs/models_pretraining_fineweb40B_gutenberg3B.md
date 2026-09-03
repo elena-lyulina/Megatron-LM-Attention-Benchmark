@@ -310,6 +310,72 @@ Logs: `attn_bench/logs/3119138.err` + `attn_bench/_logs/3119138.out` (w=4096), `
 
 ---
 
+## Multi-head Latent Attention (MLA) mixer
+
+LLaMA 3.2 1B backbone with the attention layers replaced by the Multi-head Latent Attention (MLA) block from DeepSeek-V2-Lite (verbatim config): 16 heads, `kv-lora-rank 512`, `qk_nope 128` / `qk_rope 64` / `v 128`, no Q compression (`--q-lora-rank` omitted). FFN shrunk from 8192 to `--ffn-hidden-size 7680` to param-match the ~1.236B attention baselines (~1.238B). Config: `attn_bench/configs/param_count_configs/mla_llama_1B_args_ffn7680.txt`. RoPE forced to plain rotary: `--rope-type rope --no-rope-fusion --rotary-base 500000` (MLA's dataclass default is `yarn`; fused MLA-RoPE is yarn-only and `__post_init__` errors on `rope` + fusion), `--max-position-embeddings 8192`. Document boundaries isolated via `--use-packed-seq-params` + `--reset-position-ids` + `--eod-mask-loss`, same as the masked `full` baseline.
+
+Dist config: 12 nodes / TP=1 / MBS=3 / GBS=288 (DP=48, GAS=2), `TRAINING_STEPS=18141`, `--weight-decay 0.1`, `--lr-warmup-iters 500`, container `nemo_26.04_te2.15`. Same token budget and LR schedule as the other scf=1 runs.
+
+**Note — the args dump shows `rope_scaling_factor = 8.0`, but it is a dead value in these runs.** The MLA/KDA scripts do not pass `--rope-scaling-factor`, so that arg sits at Megatron's default 8.0; the args dump prints every arg whether or not the model reads it. It is never wired in:
+
+- MLA with `--rope-type rope` builds its rotary embedding at `megatron/core/transformer/multi_latent_attention.py:181` — `RotaryEmbedding(qk_pos_emb_head_dim, rotary_percent=..., rotary_base=..., cp_group=...)` — it does **not** pass `rope_scaling` / `rope_scaling_factor` at all, so they fall to the `RotaryEmbedding` class defaults (`rope_scaling=False`, `rope_scaling_factor=8.0`).
+- In `RotaryEmbedding.__init__` (`megatron/core/models/common/embeddings/rotary_pos_embedding.py:83`) the scaling is guarded: `if rope_scaling: self.inv_freq = self._apply_scaling(self.inv_freq, factor=rope_scaling_factor)`. With `rope_scaling=False`, `_apply_scaling` never runs and `rope_scaling_factor` is untouched.
+- The non-MLA GPT path (`megatron/core/models/gpt/gpt_model.py:167`) only forwards `rope_scaling=args.use_rope_scaling`, which is `False` here (confirmed in the args dump). The softmax scf=1 baselines instead have `use_rope_scaling=True` + `rope_scaling_factor=1.0`, which reaches `_apply_scaling` but is a mathematical no-op (scale by 1).
+
+Net effect for MLA: plain RoPE, `rotary_base=500000`, `--max-position-embeddings 8192`, no scaling applied — identical in effect to the softmax scf=1 baselines, just reached by a different route. So `scf1` in the experiment name is accurate.
+
+Ran in two slices (all resume slices must use the same 12-node count — distrib-optim checkpoint padding is DP-count-specific):
+
+- **Initial** (`3245261`): `--exit-duration-in-mins 315` → Megatron saved a checkpoint and exited cleanly at iteration 8180 (5h15m, 15 min before the 05:30:00 walltime kill), *not* a crash.
+- **Resume** (`3248575`): loaded the iteration-8180 checkpoint and resumed at iteration 8181 — zero repeated iterations — then ran to 18141 and exited cleanly via `[exiting program after consuming all available data at iteration 18141]`. No `--exit-duration-in-mins` this slice.
+
+| variant | Slurm job | start (CEST) | end (CEST) | run time | status | final lm loss (step 18141) | throughput (TFLOP/s/GPU) |
+|---|---|---|---|---|---|---|---|
+| mla (scf1) | `3245261` (initial) → `3248575` (resume) | 2026-08-31 17:34:28 | 2026-09-01 22:56:06 | 5h 15m 56s + 6h 28m 35s | clean time-limit save → COMPLETED (data exhausted) | 2.3972 (final step; ~2.385 avg last 50) | ~173 (avg) |
+
+Throughput (~173) is roughly half the softmax baselines' ~360 — the packed-seq (THD) path is ~1.8x slower even absorbed onto 12 nodes (the THD path, not MLA itself; see the slurm header + job 3245069).
+
+W&B runs (project `fineweb-40B_gutenberg-3B`):
+
+- initial: `llama3-1b-mla-scf1-fineweb40B-gutenberg3B-3245261` (`bu9dmq9m`)
+- resume: `llama3-1b-mla-scf1-fineweb40B-gutenberg3B-3248575` (`fkouec5p`)
+
+Checkpoint saved at step 18141, on scratch under `attn_bench/results/pretrain/fineweb-40B_gutenberg-3B/llama3-1b-mla-scf1-fineweb40B-gutenberg3B/checkpoints/` — move to long-term store under:
+`/users/elyulina/store/pretrain-results/llama3-1b-mla-scf1-fineweb40B-gutenberg3B/`
+
+Slurm script: `attn_bench/submissions/pretrain_llama3_1b_mla_fineweb40B_gutenberg3B.slurm`
+
+Logs: `attn_bench/logs/3245261.err` + `attn_bench/_logs/3245261.out` (initial), `attn_bench/logs/3248575.err` + `attn_bench/_logs/3248575.out` (resume) — `.out` files in `_logs/` for exceeding 3 MB.
+
+---
+
+## Kimi Delta Attention (KDA) mixer
+
+LLaMA 3.2 1B backbone with the attention layers replaced by a Kimi Delta Attention (KDA) linear-attention mixer on all 16 layers. 16 K/V heads, `--linear-key-head-dim 128` / `--linear-value-head-dim 128` (symmetric — *not* the GDN-mirrored 192/384, which NaNs fla's `chunk_kda`; jobs 3244703 etc.); `16 × 128 = 2048` total width matches the softmax baseline's `32 × 64`. FFN shrunk from 8192 to `--ffn-hidden-size 6976` to param-match (~1.235B). Config: `attn_bench/configs/param_count_configs/kda_1B_args_16heads_128_128_ffn6976.txt`. `--position-embedding-type none` (KDA ignores positions — the decay gate handles order; no positional params at all), `--max-position-embeddings 8192` (validation only). Document boundaries isolated via `--use-packed-seq-params`, which resets the KDA recurrent state + conv at every `cu_seqlens` boundary.
+
+KDA needs `flash-linear-attention >= 0.5.x`; the `nemo_26.04_te2.15` container ships 0.4.2, whose `chunk_kda` gate + L2-norm are the old unbounded form → `grad_norm = nan` from iteration 1. The script side-installs fla 0.5.2 into a persisted, gitignored pip prefix (`attn_bench/packages-fla`), mirroring swiss-ai/pretrain `kda-common.sh`.
+
+Dist config: 12 nodes / TP=1 / MBS=2 / GBS=288 (DP=48, GAS=3), `TRAINING_STEPS=18141`, `--weight-decay 0.1`, `--lr-warmup-iters 500`, container `nemo_26.04_te2.15`. MBS=2 (not the baseline's 3): `chunk_kda` intermediates OOM at MBS=3 (jobs 3244703/3244987); `PYTORCH_CUDA_ALLOC_CONF=expandable_segments` recovers the fragmented reserved memory. `rope_scaling_factor` also shows 8.0 in the args (same dead default as the MLA run — see that note above), but here it is doubly moot: `use_rope_scaling = False` gates the scaling code path off, and `--position-embedding-type none` means no rotary module is built at all — KDA uses no positional encoding, its decay gate carries order.
+
+Completed cleanly in a single job (`3248579`): ran start→finish to iteration 18141, exited via `[exiting program after consuming all available data at iteration 18141]`, checkpoint saved — no crash, no resume. (The NCCL / TCPStore "connection closed" warnings at the tail of the `.err` are normal post-run teardown noise, after `END TIME` printed.)
+
+| variant | Slurm job | start (CEST) | end (CEST) | run time | status | final lm loss (step 18141) | throughput (TFLOP/s/GPU) |
+|---|---|---|---|---|---|---|---|
+| kda (scf1) | `3248579` | 2026-09-01 16:30:07 | 2026-09-01 23:35:49 | 7h 05m 42s | COMPLETED (data exhausted) | 2.3473 (final step; ~2.335 avg last 50) | ~283 (avg) |
+
+Final loss (~2.35) is the lowest of the scf=1 mixers so far, and throughput (~283) sits below the softmax baselines' ~360 but well above the MLA THD path. KDA's `params norm` runs at ~1328 (vs ~975–987 for MLA / the softmax variants) — a different init/parameter scale, recorded but not investigated.
+
+W&B run: `llama3-1b-kda-scf1-fineweb40B-gutenberg3B-3248579` (`sobnh674`, project `fineweb-40B_gutenberg-3B`).
+
+Checkpoint saved at step 18141, on scratch under `attn_bench/results/pretrain/fineweb-40B_gutenberg-3B/llama3-1b-kda-scf1-fineweb40B-gutenberg3B/checkpoints/` — move to long-term store under:
+`/users/elyulina/store/pretrain-results/llama3-1b-kda-scf1-fineweb40B-gutenberg3B/`
+
+Slurm script: `attn_bench/submissions/pretrain_llama3_1b_kda_fineweb40B_gutenberg3B.slurm` (the committed version has since been switched to a 1h30 reservation-slice + `--exit-duration-in-mins 75` resume setup; job `3248579` itself ran with no exit-duration and finished in one slice).
+
+Logs: `attn_bench/logs/3248579.err` + `attn_bench/_logs/3248579.out` (`.out` in `_logs/` for exceeding 3 MB).
+
+---
+
 ## Attention variants / trained models 
 
 | variant | Megatron flag | description |
@@ -324,6 +390,8 @@ Logs: `attn_bench/logs/3119138.err` + `attn_bench/_logs/3119138.out` (w=4096), `
 | full / GDN + goldfish loss | `--goldfish-k 50 --goldfish-h 50` (stacks on top of `full` or `gated delta net (GDN)`) | hash-based token dropout from the loss only (~2% of tokens), reduces verbatim memorization |
 | full (long / long-split-1024 filler) | *(none — same as `full`)* | same standard softmax attention as `full`; only the FineWeb-Edu-Dedup filler dataset differs (longest documents, whole or split into 1024-token chunks), same token budget |
 | sliding window attention (SWA), w = 256/1024/4096 | `--window-size {256,1024,4096},0` | causal sliding window on all layers (left=w, right=0), no full-attention layers mixed in |
+| multi-head latent attention (MLA) | `--multi-latent-attention --kv-lora-rank 512 --rope-type rope --no-rope-fusion` | DeepSeek-V2-Lite MLA block replaces softmax attention on all layers (16 heads, KV squeezed through a 512 latent); FFN shrunk to 7680 to param-match (~1.238B) |
+| kimi delta attention (KDA) | `--experimental-attention-variant kimi_delta_attention --linear-attention-freq [1]*16 --linear-num-key-heads 16 --linear-num-value-heads 16 --linear-key-head-dim 128 --linear-value-head-dim 128 --position-embedding-type none` | KDA linear-attention mixer replaces softmax attention on all layers (symmetric 128/128 heads); FFN shrunk to 6976 to param-match (~1.235B); needs flash-linear-attention ≥ 0.5.x |
 
 ---
 

@@ -55,7 +55,7 @@ FORCE_METRICS=${FORCE_METRICS:-}
 MAX_DOC_LENGTH=${MAX_DOC_LENGTH:-}
 CAPTURE_ATTENTION=${CAPTURE_ATTENTION:-}
 
-### MODEL -> EXP_NAME / MEGATRON_EXTRA / NEEDS_TRITON / IS_SINK_FAMILY / NEEDS_UNFUSED_DECODE ###
+### MODEL -> EXP_NAME / MEGATRON_EXTRA / NEEDS_TRITON / NEEDS_FLA_052 / IS_SINK_FAMILY / NEEDS_UNFUSED_DECODE ###
 MODEL=${MODEL:-full-scf8}
 model_config "$MODEL"
 
@@ -79,6 +79,23 @@ PY=$MEGATRON_LM_DIR/attn_bench/evaluation/prefix_extraction_inference.py
 
 export PYTHONPATH=$MEGATRON_LM_DIR:$PDM_DIR:$PDM_DIR/src:${PYTHONPATH:-}
 export CUDA_DEVICE_MAX_CONNECTIONS=1
+
+# NEEDS_FLA_052 (KDA): the container ships flash-linear-attention 0.4.2, whose chunk_kda NaNs.
+# Side-install 0.5.2 into $FLA_DIR (guarded one-shot, persisted, gitignored) and prepend it to
+# PYTHONPATH so it shadows the container copy in every srun below. Mirrors the KDA pretrain slurm.
+FLA_VERSION=0.5.2
+FLA_DIR=$MEGATRON_LM_DIR/attn_bench/packages-fla
+if [ "$NEEDS_FLA_052" = "1" ]; then
+    export PYTHONPATH=$FLA_DIR:$PYTHONPATH
+    srun --nodes=1 --ntasks=1 --overlap --environment=$CONTAINER_ENV bash -c "
+        set -e
+        if [ ! -f '$FLA_DIR/fla/__init__.py' ]; then
+            pip install --quiet --no-deps --ignore-installed --target='$FLA_DIR' \
+                'flash-linear-attention==$FLA_VERSION' 'fla-core==$FLA_VERSION'
+        fi
+        PYTHONPATH='$FLA_DIR' python3 -c \"import fla; assert fla.__version__.startswith('$FLA_VERSION'), 'got fla '+fla.__version__; print('fla', fla.__version__, 'OK')\"
+    "
+fi
 
 # Parsed once here, reused by every step below.
 IFS=',' read -r -a POINTS_ARR <<< "$POINTS"
