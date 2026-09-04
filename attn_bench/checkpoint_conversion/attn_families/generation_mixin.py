@@ -1,9 +1,12 @@
 """Shared prepare_inputs_for_generation for every custom Mamba-cache-shaped family (GDN, KDA,
 the Qwen hybrid): each keeps per-layer conv/recurrent state in a `cache_params` object instead
 of a standard `past_key_values` Cache (transformers.generation.utils special-cases the
-`cache_params` name for exactly this Mamba2ForCausalLM-style convention). The body has no
-family-specific logic beyond `self.config.linear_conv_kernel_dim`, present on every one of
-these configs (GDNLlamaConfig, KDALlamaConfig, QwenLlamaConfig all set it).
+`cache_params` name for exactly this Mamba2ForCausalLM-style convention).
+
+The initial cache_position (first call) is seeded to the real prompt length, not a placeholder
+-- GDN/KDA only check cache_position[0] > 0, so length never mattered for them, but Qwen's
+softmax layers derive RoPE cos/sin from it too, and a short placeholder there breaks
+apply_rotary_pos_emb on prefill (job 3296040). Correct for GDN/KDA either way.
 """
 
 from typing import Optional
@@ -29,7 +32,7 @@ class CacheParamsGenerationMixin:
     ):
         model_inputs = {"input_ids": input_ids.contiguous()}
         if use_cache and cache_params is None:
-            cache_position = torch.arange(0, self.config.linear_conv_kernel_dim, device=input_ids.device)
+            cache_position = torch.arange(0, input_ids.shape[1], device=input_ids.device)
             if inputs_embeds is not None:
                 model_inputs = {"inputs_embeds": inputs_embeds}
 
