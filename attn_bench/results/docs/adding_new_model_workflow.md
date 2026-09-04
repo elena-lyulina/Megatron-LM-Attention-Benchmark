@@ -49,52 +49,68 @@ https://wandb.ai/elyulina-thesis/fineweb-40B_gutenberg-3B/reports/Llama-1B-pre-t
 
 ## 6. Confirm inference works before measuring anything
 
-Standard softmax variants decode out of the box. A **different sequence mixer**
-(e.g. GDN) needs its own cached-decode path verified first — see
-`memorization_measurement.md` § "Adding a new attention variant", steps 1-2, and
-`_plans/gdn_inference_plan.md` for the GDN precedent. Do this on a short run before
-trusting any number from step 7.
+Standard softmax variants decode out of the box. A **different sequence mixer** needs its
+own cached-decode path verified first — see `memorization_measurement.md` § "Adding a new
+attention variant", steps 1-2. Precedents: `_plans/gdn_inference_plan.md` (GDN),
+`_plans/kda_packed_and_inference_plan.md` + `attn_bench/tests/test_kda_inference.py` (KDA:
+`_decode` porting a `fused_recurrent_*` + `causal_conv1d_update` path, parity-tested against
+a cacheless quadratic oracle). Do this on a short run before trusting any number from step 8.
 
 ## 7. Register the model once
 
 Add one entry to `attn_bench/scripts/llama_checkpoints.sh` (`MODELS` + a `model_config()`
 case: `EXP_NAME`, `CKPT_NAME` if it differs, `MEGATRON_EXTRA` flags not restored by
-`--use-checkpoint-args`, `NEEDS_TRITON` for GDN-style mixers, `IS_SINK_FAMILY` for sink-logit
-variants (resource policy + config selection) and `NEEDS_UNFUSED_DECODE` if the model's decode
-path needs `--attention-backend unfused`). This is the single source of truth for
-every sweep and puller below — nothing else needs to change.
+`--use-checkpoint-args`, `NEEDS_TRITON` for fla/triton mixers (GDN, KDA), `NEEDS_FLA_052` if
+the mixer needs the side-installed flash-linear-attention 0.5.2 (KDA — the container's 0.4.2
+NaNs `chunk_kda`), `IS_SINK_FAMILY` for sink-logit variants (resource policy + config
+selection), `NEEDS_UNFUSED_DECODE` if the decode path needs `--attention-backend unfused`,
+and `HAS_ROPE=0` for a variant with no rotary embeddings (GDN, KDA — skips the HF-conversion
+rope sanity check). This is the single source of truth for every sweep and puller below —
+nothing else needs to change.
 
 ## 8. Run the eval sweeps
 
-`measure_mem_all.sh` submits one job per `(suffix, model)`, covering every requested
-`(offset, prefix)` point in that group (sharing one checkpoint load) — a full cross
-product of whatever lists you pass. To reproduce the grid plotted in
-`notebooks/mem_metrics_2.ipynb` (`OFFSETS = [0, 1, 5, 12, 25, 50, 100, 500, 1000, 2000, 3000]`,
-`PREFIXES = [50, 100, 250, 500, 750, 1000, 2000, 3000]`, `SUFFIXES = [50, 500]`) without
-flooding the queue, run it in 3 passes rather than the full cross product — deliberately
-skipping the `prefix=500 / suffix=50` combo (never plotted, and pulling it in would nearly
-double the job count for nothing): all offsets at `prefix=500, suffix=500`, all offsets at
-`prefix=50, suffix=50`, and `offset=0` alone across the wider prefix range. The sweep skips
-anything already complete (checked on scratch, then store), so the 3rd call's overlap with
-the 1st (`offset=0, prefix∈{50,500}, suffix=500`) is free — **but only if the 1st call's
-jobs have already finished (landed on scratch is enough, no store sync required); run the
-calls sequentially, don't fire all 3 at once, or the overlapping jobs won't get deduped.**
+`measure_mem_all.sh` nests `--offsets` × `--prefixes`, drops points where
+`offset + prefix + suffix > --max-doc-length`, dual-checks scratch+store for what's already
+done, and submits **one bundled `measure_mem.slurm` job per model** (one checkpoint load,
+multi-point Stage 1). Megatron backend is the default and is what the dashboard uses; a
+recurrent mixer needing flash-linear-attention 0.5.2 is handled by `NEEDS_FLA_052` from
+step 7 (the `--backend hf` path is only for softmax families — see
+`_plans/kda_mla_hf_checkpoint_conversion_plan.md`, "megatron is faster + exact for KDA").
 
-That's `11×2 + 11×1 + 8 = 41` `(offset, prefix, suffix)` combos requested across the 3
-calls, 2 of which duplicate the 1st call — **39 unique combinations**. At the 11 models
-currently in `MODELS` (`llama_checkpoints.sh`), that's up to `39 × 11 = 429`
-`measure_mem.slurm` jobs total (fewer once combos already on store get skipped).
+### Dashboard grid — the one to run
+
+`attn_bench/dashboard/export_data.py` is the source of truth for exactly which points,
+suffixes and repetitions the published memorization dashboard plots. Keep this in sync:
+
+- `CANDIDATE_OFFSETS  = [0, 50, 150, 250, 500, 1000, 2000, 3971, 5942, 7892]`
+- `CANDIDATE_PREFIXES = [50, 250, 500, 1000, 2000, 3971, 5942, 7892]`
+- `REPS               = [0, 1, 16, 32, 64, 128, 256]`   — **not** the full 10-bucket set
+- `SUFFIXES           = [25, 50, 75, 100, 150, 250]`   — all from **one suffix=250 run**;
+  Stage 2 writes a metrics pkl per reachable boundary
+- `MAX_DOC_LENGTH     = 8192`
 
 ```bash
-# from attn_bench/
-bash submissions/measure_mem_all.sh --offsets 0 1 5 12 25 50 100 500 1000 2000 3000 --prefixes 50 500 --suffix 500
-bash submissions/measure_mem_all.sh --offsets 0 1 5 12 25 50 100 500 1000 2000 3000 --prefixes 50 --suffix 50
-#bash submissions/measure_mem_all.sh --offsets 0 --prefixes 50 100 250 500 750 1000 2000 3000 --suffix 500
-# to avoid overlapping 
-bash submissions/measure_mem_all.sh --offsets 0 --prefixes 100 250 750 1000 2000 3000 --suffix 500
+# from attn_bench/ -- --dry-run first, then drop it to submit
+bash submissions/measure_mem_all.sh --models <tag> --offsets 0 50 150 250 500 1000 2000 3971 5942 7892 --prefixes 50 250 500 1000 2000 3971 5942 7892 --suffix 250 --repetitions 0,1,16,32,64,128,256 --max-doc-length 8192 --time 05:00:00 --dry-run
+
 bash submissions/long_gutenberg_inference_all.sh
 bash submissions/long_fineweb_inference_all.sh
 ```
+
+`--time 05:00:00` overrides measure_mem.slurm's 50-min default. The bundled per-model job
+does one checkpoint load then all feasible points sequentially — the full dashboard grid is
+~10-15 h of compute for a recurrent mixer (KDA ~30 tok/s/GPU, ~40+ points × 7 reps), so it
+will **not** finish in one job. Keep `--time` short (~5 h) so it actually schedules, and
+just re-run the call (no `--dry-run`) a few times: each pass submits only still-missing
+`(point, rep)` combos and Stage 1 self-skips completed points, so it converges over 2-3
+jobs. Softmax mixers are far faster and usually finish in one 5 h job. Omit `--models <tag>`
+to (re)sweep every model in `llama_checkpoints.sh`.
+
+The wider offset grid from `notebooks/mem_metrics_2.ipynb`
+(`OFFSETS = [0, 1, 5, 12, 25, 50, 100, 500, 1000, 2000, 3000]`, `SUFFIXES = [50, 500]`) is
+kept for that notebook's finer-resolution analysis near offset 0 — run it separately if you
+need those plots; it is not what the dashboard uses.
 
 Each sweep iterates `llama_checkpoints.sh`, skips combinations already complete, and
 writes to scratch only -- scratch is purged only every ~2 weeks, so there's no rush to
@@ -105,6 +121,18 @@ been purged. Sync scratch to store yourself when you want it (e.g.
 node). Pull results locally:
 
 ```bash
-bash attn_bench/scripts/pull_mem_results.sh
+bash attn_bench/scripts/pull_mem_results.sh <tag>      # megatron backend -> no --backend hf
 bash attn_bench/scripts/pull_long_inference_results.sh
 ```
+
+## 9. Add the model to the dashboard
+
+Add `'<tag>'` to `MODELS` in `attn_bench/dashboard/export_data.py` (and a colour +
+display name to `attn_bench/plotting/model_registry.py` if not already there), then
+regenerate the per-suffix JSONs:
+
+```bash
+cd attn_bench/dashboard && python export_data.py
+```
+
+Commit the new `dashboard/data/<tag>__s*.json` files.
