@@ -5,14 +5,20 @@ user-facing flag needed -- and looks up that attn_family's config/state-dict bui
 
 from typing import Any
 
-from attn_bench.checkpoint_conversion.attn_families import full, swa
+from attn_bench.checkpoint_conversion.attn_families import full, gated, swa
 
-ATTN_FAMILIES = ("full", "sink", "gated", "swa", "gdn")
+ATTN_FAMILIES = ("full", "sink", "gated", "swa", "gdn", "kda")
 
 
 def detect_attn_family(args: Any) -> str:
     if getattr(args, "experimental_attention_variant", None) == "gated_delta_net":
         return "gdn"
+    if getattr(args, "experimental_attention_variant", None) == "kimi_delta_attention":
+        return "kda"
+    if getattr(args, "multi_latent_attention", False):
+        # detected but not yet routed (T2b) -- falls through to NotImplementedError, same as
+        # off-by-one below.
+        return "mla"
     if getattr(args, "attention_output_gate", False):
         return "gated"
     softmax_type = getattr(args, "softmax_type", "vanilla")
@@ -34,7 +40,6 @@ def get_attn_family_module(args: Any):
     if attn_family == "swa":
         return swa
     if attn_family == "gated":
-        from attn_bench.checkpoint_conversion.attn_families import gated
         return gated
     if attn_family == "sink":
         # lazy: pulls in modeling_sink_llama.py, which needs flash_attn.cute (see
@@ -45,6 +50,10 @@ def get_attn_family_module(args: Any):
         # lazy: pulls in modeling_gdn_llama.py, which needs fla (flash-linear-attention).
         from attn_bench.checkpoint_conversion.attn_families import gdn
         return gdn
+    if attn_family == "kda":
+        # lazy: pulls in modeling_kda_llama.py, which needs fla >= 0.5.2 (chunk_kda / fused_recurrent_kda).
+        from attn_bench.checkpoint_conversion.attn_families import kda
+        return kda
     raise NotImplementedError(
         f"HF conversion for the '{attn_family}' attention family isn't implemented yet "
         f"(only {sorted(ATTN_FAMILIES)} are). See attn_bench/checkpoint_conversion/attn_families/."

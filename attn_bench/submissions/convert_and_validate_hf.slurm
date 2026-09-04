@@ -52,6 +52,16 @@ CONV_DIR=$MEGATRON_LM_DIR/attn_bench/checkpoint_conversion
 export PYTHONPATH=$MEGATRON_LM_DIR:${PYTHONPATH:-}
 export CUDA_DEVICE_MAX_CONNECTIONS=1
 
+# NEEDS_FLA_052 (KDA): steps 1-4 all run Megatron chunk_kda; the container ships
+# flash-linear-attention 0.4.2, which NaNs it. Side-install 0.5.2 into $FLA_DIR (guarded one-shot,
+# persisted, gitignored) and prepend it to PYTHONPATH so it shadows the container copy in the srun
+# below. Mirrors the KDA pretrain / measure_mem slurms.
+FLA_VERSION=0.5.2
+FLA_DIR=$MEGATRON_LM_DIR/attn_bench/packages-fla
+if [ "$NEEDS_FLA_052" = "1" ]; then
+    export PYTHONPATH=$FLA_DIR:$PYTHONPATH
+fi
+
 # Steps 2-4: sink's HF architecture (SinkLlamaForCausalLM) needs a patched flash-attn checkout
 # for its fused kernel -- see flash-attention-cute-workflow.md
 SINK_ENV=""
@@ -82,6 +92,22 @@ if [ -z "$OVERWRITE" ] && [ -f "$STORE_HF_DIR/config.json" ]; then
 fi
 
 echo "RUN: model=$MODEL  exp=$EXP_NAME"
+
+# One-shot: ensure flash-linear-attention $FLA_VERSION in $FLA_DIR (KDA only). Guard skips it once
+# installed. Both packages -- they merge into one fla/ namespace and flash-linear-attention alone
+# ships no __init__.py. --no-deps keeps torch/triton out; --ignore-installed stops pip skipping on
+# the container's 0.4.2.
+if [ "$NEEDS_FLA_052" = "1" ]; then
+    echo "[$(date)] Ensuring flash-linear-attention $FLA_VERSION in $FLA_DIR"
+    srun --nodes=1 --ntasks=1 --overlap --environment=$CONTAINER_ENV bash -c "
+        set -e
+        if [ ! -f '$FLA_DIR/fla/__init__.py' ]; then
+            pip install --quiet --no-deps --ignore-installed --target='$FLA_DIR' \
+                'flash-linear-attention==$FLA_VERSION' 'fla-core==$FLA_VERSION'
+        fi
+        PYTHONPATH='$FLA_DIR' python3 -c \"import fla; assert fla.__version__.startswith('$FLA_VERSION'), 'got fla '+fla.__version__; print('fla', fla.__version__, 'OK')\"
+    "
+fi
 
 # TRITON_CACHE_DIR: per-rank node-local cache for GDN's fla kernels -- a shared-FS cache
 # crashes with "OSError: [Errno 116] Stale file handle" when fla autotunes/compiles on first
