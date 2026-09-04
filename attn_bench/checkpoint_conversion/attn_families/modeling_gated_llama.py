@@ -1,21 +1,16 @@
-"""HuggingFace config/model classes (subclassing transformers' Llama implementation) for
-attention-output-gate checkpoints (--attention-output-gate), needed so AutoModelForCausalLM
-can load them like any other HF model.
+"""HuggingFace config/model classes (subclassing Llama) for attention-output-gate checkpoints
+(--attention-output-gate).
 
-Not reused from Qwen3-Next's Qwen3NextAttention despite matching post-attention-output
-sigmoid-gate math: Qwen3-Next unconditionally applies q_norm/k_norm (per-head RMSNorm on Q/K
-before attention), a genuinely different, untrained computation our checkpoints never had
-(Megatron's qk_l2_norm/qk_layernorm is an orthogonal flag from attention_output_gate, and
-these checkpoints were trained with only the latter). Reusing it would silently change the
-attention math relative to what was actually trained. Its gate is also fused into a widened
-q_proj (chunked in half), a different weight layout than Megatron's separate gate chunk within
-linear_qkv (see gated_llama.py's build_state_dict). Everything except the attention module is
-stock Llama, subclassed rather than copied -- same structure as modeling_sink_llama.py.
+Not reused from Qwen3-Next's Qwen3NextAttention despite matching gate math: this module
+implements the gate as in its origin paper (arXiv:2505.06708), which never applies q_norm/
+k_norm -- Qwen3-Next's is a separate stability feature inherited from Qwen3 (Megatron's
+qk_layernorm is an orthogonal flag from attention_output_gate; this family only sets the
+latter). Its gate is also fused into a widened q_proj, a different weight layout than our
+separate gate chunk in linear_qkv (see build_state_dict). Otherwise stock Llama, subclassed
+not copied -- same structure as modeling_sink_llama.py.
 
-Unlike sink, the gate is a plain post-hoc elementwise multiply on the attention output (not
-something a kernel needs to fuse), so this doesn't force a specific attn_implementation --
-GatedLlamaAttention calls whatever attn_implementation is configured (eager/sdpa/...) unchanged
-and only adds the gating step around it.
+Unlike sink, the gate is a plain post-hoc multiply on the attention output, not something a
+kernel needs to fuse -- GatedLlamaAttention works with any attn_implementation (eager/sdpa/...).
 """
 
 import torch

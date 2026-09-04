@@ -3,6 +3,10 @@ checkpoints. Targets the custom GatedLlamaForCausalLM architecture (modeling_gat
 -- see that module's docstring for why Qwen3-Next's matching gate math can't just be reused.
 Everything except the gate itself and attention dispatch is identical to full.py's Llama
 conversion, reused directly rather than duplicated.
+
+convert_gated_attn_weights (the per-layer rename+split) is a standalone function, reused as-is
+by qwen.py for the Qwen-style hybrid's full_attention layers: those layers run the same gated
+softmax-attention module spec as this pure-gated model, just at a subset of layer indices.
 """
 
 from collections import OrderedDict
@@ -96,6 +100,28 @@ def convert_qkvg_weights(qkvg_weights: torch.Tensor, num_heads: int, num_query_g
     )
 
 
+def convert_gated_attn_weights(model_dict: Dict[str, torch.Tensor], layer_idx: int,
+                               num_heads: int, num_query_groups: int, hidden_size: int) -> OrderedDict:
+    """Convert one gated-attention layer's q/gate/k/v/o_proj weights + input_layernorm from
+    Megatron's key layout to HF's model.layers.{layer_idx}.{self_attn,input_layernorm}.* keys."""
+    hf_prefix = f'model.layers.{layer_idx}.'
+    qkvg_weights = model_dict[f'decoder.layers.{layer_idx}.self_attention.linear_qkv.weight']
+    q_weights, gate_weights, k_weights, v_weights = convert_qkvg_weights(
+        qkvg_weights, num_heads, num_query_groups, hidden_size
+    )
+
+    layer_checkpoint = OrderedDict()
+    layer_checkpoint[hf_prefix + 'self_attn.q_proj.weight'] = q_weights
+    layer_checkpoint[hf_prefix + 'self_attn.gate_proj.weight'] = gate_weights
+    layer_checkpoint[hf_prefix + 'self_attn.k_proj.weight'] = k_weights
+    layer_checkpoint[hf_prefix + 'self_attn.v_proj.weight'] = v_weights
+    layer_checkpoint[hf_prefix + 'self_attn.o_proj.weight'] = \
+        model_dict[f'decoder.layers.{layer_idx}.self_attention.linear_proj.weight']
+    layer_checkpoint[hf_prefix + 'input_layernorm.weight'] = \
+        model_dict[f'decoder.layers.{layer_idx}.self_attention.linear_qkv.layer_norm_weight']
+    return layer_checkpoint
+
+
 def build_state_dict(model_dict: Dict[str, torch.Tensor], args: Any) -> OrderedDict:
     """Convert a gated-attention Megatron state dict to GatedLlamaForCausalLM format."""
     checkpoint = OrderedDict()
@@ -104,18 +130,9 @@ def build_state_dict(model_dict: Dict[str, torch.Tensor], args: Any) -> OrderedD
     checkpoint['model.embed_tokens.weight'] = model_dict['embedding.word_embeddings.weight']
 
     for layer_idx in range(args.num_layers):
-        qkvg_weights = model_dict[f'decoder.layers.{layer_idx}.self_attention.linear_qkv.weight']
-        q_weights, gate_weights, k_weights, v_weights = convert_qkvg_weights(
-            qkvg_weights, args.num_attention_heads, args.num_query_groups, hidden_size
-        )
-
-        checkpoint[f'model.layers.{layer_idx}.self_attn.q_proj.weight'] = q_weights
-        checkpoint[f'model.layers.{layer_idx}.self_attn.gate_proj.weight'] = gate_weights
-        checkpoint[f'model.layers.{layer_idx}.self_attn.k_proj.weight'] = k_weights
-        checkpoint[f'model.layers.{layer_idx}.self_attn.v_proj.weight'] = v_weights
-
-        checkpoint[f'model.layers.{layer_idx}.self_attn.o_proj.weight'] = \
-            model_dict[f'decoder.layers.{layer_idx}.self_attention.linear_proj.weight']
+        checkpoint.update(convert_gated_attn_weights(
+            model_dict, layer_idx, args.num_attention_heads, args.num_query_groups, hidden_size
+        ))
 
         mlp_weight = model_dict[f'decoder.layers.{layer_idx}.mlp.linear_fc1.weight']
         ffn_hidden_size = mlp_weight.shape[0] // 2
@@ -124,8 +141,6 @@ def build_state_dict(model_dict: Dict[str, torch.Tensor], args: Any) -> OrderedD
         checkpoint[f'model.layers.{layer_idx}.mlp.down_proj.weight'] = \
             model_dict[f'decoder.layers.{layer_idx}.mlp.linear_fc2.weight']
 
-        checkpoint[f'model.layers.{layer_idx}.input_layernorm.weight'] = \
-            model_dict[f'decoder.layers.{layer_idx}.self_attention.linear_qkv.layer_norm_weight']
         checkpoint[f'model.layers.{layer_idx}.post_attention_layernorm.weight'] = \
             model_dict[f'decoder.layers.{layer_idx}.mlp.linear_fc1.layer_norm_weight']
 

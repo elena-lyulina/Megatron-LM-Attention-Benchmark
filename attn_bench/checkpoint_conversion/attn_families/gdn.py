@@ -6,6 +6,12 @@ final norm, lm_head) is identical to full.py's Llama conversion.
 build_state_dict is a near-literal key rename, not a reshape-and-split like full.py's/gated.py's
 convert_qkv_weights/convert_qkvg_weights, since GDNMixer keeps Megatron's own in_proj/conv1d
 layout -- see modeling_gdn_llama.py.
+
+convert_gdn_mixer_weights (the per-layer rename) is a standalone function, reused as-is by
+qwen.py for the Qwen-style hybrid's linear_attention layers: those layers run the same GDN
+module spec as a pure-GDN model (get_linear_attention_pattern only picks which layer indices
+get it, the spec itself is unchanged), so the key layout is identical -- just applied to a
+subset of layer indices instead of every layer.
 """
 
 from collections import OrderedDict
@@ -57,6 +63,25 @@ def build_model(config: GDNLlamaConfig) -> GDNLlamaForCausalLM:
     return model
 
 
+def convert_gdn_mixer_weights(model_dict: Dict[str, torch.Tensor], layer_idx: int) -> OrderedDict:
+    """Convert one GDN layer's mixer weights + fused input_layernorm from Megatron's key
+    layout to HF's model.layers.{layer_idx}.{mixer,input_layernorm}.* keys -- a straight
+    rename, no reshape (GDNMixer keeps Megatron's own in_proj/conv1d layout)."""
+    prefix = f'decoder.layers.{layer_idx}.self_attention.'
+    hf_prefix = f'model.layers.{layer_idx}.'
+    layer_checkpoint = OrderedDict()
+    layer_checkpoint[hf_prefix + 'mixer.in_proj.weight'] = model_dict[prefix + 'in_proj.weight']
+    layer_checkpoint[hf_prefix + 'input_layernorm.weight'] = model_dict[prefix + 'in_proj.layer_norm_weight']
+    layer_checkpoint[hf_prefix + 'mixer.conv1d.weight'] = model_dict[prefix + 'conv1d.weight']
+    if prefix + 'conv1d.bias' in model_dict:
+        layer_checkpoint[hf_prefix + 'mixer.conv1d.bias'] = model_dict[prefix + 'conv1d.bias']
+    layer_checkpoint[hf_prefix + 'mixer.dt_bias'] = model_dict[prefix + 'dt_bias']
+    layer_checkpoint[hf_prefix + 'mixer.A_log'] = model_dict[prefix + 'A_log']
+    layer_checkpoint[hf_prefix + 'mixer.out_norm.weight'] = model_dict[prefix + 'out_norm.weight']
+    layer_checkpoint[hf_prefix + 'mixer.out_proj.weight'] = model_dict[prefix + 'out_proj.weight']
+    return layer_checkpoint
+
+
 def build_state_dict(model_dict: Dict[str, torch.Tensor], args: Any) -> OrderedDict:
     """Convert a GDN Megatron state dict to GDNLlamaForCausalLM format."""
     checkpoint = OrderedDict()
@@ -64,17 +89,7 @@ def build_state_dict(model_dict: Dict[str, torch.Tensor], args: Any) -> OrderedD
     checkpoint['model.embed_tokens.weight'] = model_dict['embedding.word_embeddings.weight']
 
     for layer_idx in range(args.num_layers):
-        prefix = f'decoder.layers.{layer_idx}.self_attention.'
-        checkpoint[f'model.layers.{layer_idx}.mixer.in_proj.weight'] = model_dict[prefix + 'in_proj.weight']
-        checkpoint[f'model.layers.{layer_idx}.input_layernorm.weight'] = \
-            model_dict[prefix + 'in_proj.layer_norm_weight']
-        checkpoint[f'model.layers.{layer_idx}.mixer.conv1d.weight'] = model_dict[prefix + 'conv1d.weight']
-        if prefix + 'conv1d.bias' in model_dict:
-            checkpoint[f'model.layers.{layer_idx}.mixer.conv1d.bias'] = model_dict[prefix + 'conv1d.bias']
-        checkpoint[f'model.layers.{layer_idx}.mixer.dt_bias'] = model_dict[prefix + 'dt_bias']
-        checkpoint[f'model.layers.{layer_idx}.mixer.A_log'] = model_dict[prefix + 'A_log']
-        checkpoint[f'model.layers.{layer_idx}.mixer.out_norm.weight'] = model_dict[prefix + 'out_norm.weight']
-        checkpoint[f'model.layers.{layer_idx}.mixer.out_proj.weight'] = model_dict[prefix + 'out_proj.weight']
+        checkpoint.update(convert_gdn_mixer_weights(model_dict, layer_idx))
 
         mlp_weight = model_dict[f'decoder.layers.{layer_idx}.mlp.linear_fc1.weight']
         ffn_hidden_size = mlp_weight.shape[0] // 2

@@ -28,6 +28,9 @@ from transformers.modeling_outputs import ModelOutput
 from transformers.modeling_utils import PreTrainedModel
 from transformers.models.llama.modeling_llama import LlamaMLP, LlamaRMSNorm
 
+from attn_bench.checkpoint_conversion.attn_families.generation_mixin import \
+    CacheParamsGenerationMixin
+
 
 class KDALlamaConfig(PretrainedConfig):
     """Llama backbone (embeddings/MLP/final norm) + a pure KDA mixer replacing attention.
@@ -337,10 +340,14 @@ class KDALlamaModel(KDALlamaPreTrainedModel):
         return KDALlamaOutput(last_hidden_state=hidden_states, cache_params=cache_params if use_cache else None)
 
 
-class KDALlamaForCausalLM(KDALlamaPreTrainedModel, GenerationMixin):
+class KDALlamaForCausalLM(KDALlamaPreTrainedModel, CacheParamsGenerationMixin, GenerationMixin):
     """_tied_weights_keys cleared for the same reason modeling_gdn_llama.py clears it (job 3118149):
     without it, from_pretrained's meta-device loading leaves lm_head.weight on the meta device for
-    a custom architecture class."""
+    a custom architecture class.
+
+    prepare_inputs_for_generation comes from CacheParamsGenerationMixin (shared with GDN and
+    the Qwen hybrid) -- CacheParamsGenerationMixin must precede GenerationMixin in the base
+    list so its method wins over GenerationMixin's own default via MRO."""
 
     _tied_weights_keys = None
 
@@ -380,31 +387,3 @@ class KDALlamaForCausalLM(KDALlamaPreTrainedModel, GenerationMixin):
         )
         logits = self.lm_head(outputs.last_hidden_state)
         return KDALlamaCausalLMOutput(logits=logits, cache_params=outputs.cache_params)
-
-    def prepare_inputs_for_generation(
-        self,
-        input_ids,
-        inputs_embeds=None,
-        use_cache=None,
-        cache_params: Optional[KDACache] = None,
-        cache_position: Optional[torch.LongTensor] = None,
-        **kwargs,
-    ):
-        """Uses `cache_params` (not `past_key_values`), same pattern as
-        Mamba2ForCausalLM.prepare_inputs_for_generation."""
-        model_inputs = {"input_ids": input_ids.contiguous()}
-        if use_cache and cache_params is None:
-            cache_position = torch.arange(0, self.config.linear_conv_kernel_dim, device=input_ids.device)
-            if inputs_embeds is not None:
-                model_inputs = {"inputs_embeds": inputs_embeds}
-
-        if use_cache and cache_position[0] > 0:
-            model_inputs["input_ids"] = input_ids[:, -1].unsqueeze(-1).contiguous()
-
-        if not use_cache and inputs_embeds is not None:
-            model_inputs = {"inputs_embeds": inputs_embeds}
-
-        model_inputs.update(
-            {"cache_params": cache_params, "use_cache": use_cache, "cache_position": cache_position}
-        )
-        return model_inputs

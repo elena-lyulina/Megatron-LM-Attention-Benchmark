@@ -5,13 +5,17 @@ user-facing flag needed -- and looks up that attn_family's config/state-dict bui
 
 from typing import Any
 
-from attn_bench.checkpoint_conversion.attn_families import full, gated, mla, swa
+from attn_bench.checkpoint_conversion.attn_families import (full, gated, mla,
+                                                            swa)
 
-ATTN_FAMILIES = ("full", "sink", "gated", "swa", "gdn", "kda", "mla")
+ATTN_FAMILIES = ("full", "sink", "gated", "swa", "gdn", "kda", "mla", "qwen")
 
 
 def detect_attn_family(args: Any) -> str:
     if getattr(args, "experimental_attention_variant", None) == "gated_delta_net":
+        # Checked before the pure-gdn branch below
+        if getattr(args, "attention_output_gate", False):
+            return "qwen"
         return "gdn"
     if getattr(args, "experimental_attention_variant", None) == "kimi_delta_attention":
         return "kda"
@@ -53,6 +57,10 @@ def get_attn_family_module(args: Any):
         # lazy: pulls in modeling_kda_llama.py, which needs fla >= 0.5.2 (chunk_kda / fused_recurrent_kda).
         from attn_bench.checkpoint_conversion.attn_families import kda
         return kda
+    if attn_family == "qwen":
+        # lazy: pulls in modeling_qwen_llama.py, which needs fla (its GDN layers, like gdn.py).
+        from attn_bench.checkpoint_conversion.attn_families import qwen
+        return qwen
     raise NotImplementedError(
         f"HF conversion for the '{attn_family}' attention family isn't implemented yet "
         f"(only {sorted(ATTN_FAMILIES)} are). See attn_bench/checkpoint_conversion/attn_families/."
