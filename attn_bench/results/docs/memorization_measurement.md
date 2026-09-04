@@ -184,7 +184,8 @@ To measure memorization for a newly trained variant:
    originally raised `NotImplementedError` on any `inference_context` and needed a
    conv + recurrent state cache implemented and verified against a quadratic oracle
    before any number could be trusted (see `_plans/gdn_inference_plan.md`,
-   `tests/test_gdn_inference.py`).
+   `tests/util/inference.py` — the shared oracle suites, run per family via the
+   `{gdn,kda,qwen_hybrid}_inference` test names / `run_inference_from_ckpt.py --model`).
 2. **Confirm checkpoint loading.** Inference loads the `torch_dist` checkpoint with
    `--use-checkpoint-args` (no HF conversion). Verify which architecture flags that
    restores and which must be re-passed explicitly via `--megatron-extra-args` —

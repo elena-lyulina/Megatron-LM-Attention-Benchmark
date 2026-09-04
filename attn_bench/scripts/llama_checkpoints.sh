@@ -25,7 +25,7 @@
 #                        convert_and_validate_hf.slurm's rope-scaling-factor sanity check,
 #                        which otherwise fails on a family that never had rope to drop.
 
-MODELS=(full-scf8 gated-scf8 full-xdoc-leak-scf8 sink-scf8 off-by-one-scf8 gdn carry-r0 carry-r0.5 carry-r1 full-goldfish-scf8 gdn-goldfish full-fineweb80B-scf8 full-long-scf8 full-long-split-1024-scf8 full-scf1 gated-scf1 sink-scf1 swa-w256-scf1 swa-w1024-scf1 swa-w4096-scf1 kda mla)
+MODELS=(full-scf8 gated-scf8 full-xdoc-leak-scf8 sink-scf8 off-by-one-scf8 gdn carry-r0 carry-r0.5 carry-r1 full-goldfish-scf8 gdn-goldfish full-fineweb80B-scf8 full-long-scf8 full-long-split-1024-scf8 full-scf1 gated-scf1 sink-scf1 swa-w256-scf1 swa-w1024-scf1 swa-w4096-scf1 kda mla qwen)
 
 # GDN linear-attention dims -- not restored by --use-checkpoint-args, must be re-passed.
 GDN_DIMS="--experimental-attention-variant gated_delta_net \
@@ -59,6 +59,20 @@ MLA_DIMS="--multi-latent-attention \
     --no-rope-fusion \
     --rotary-base 500000 \
     --rotary-scaling-factor 1.0"
+
+# Qwen-style hybrid: GDN linear mixer on 12 layers + gated softmax attention on 4 (layers 3/7/11/15
+# via --linear-attention-freq 4). The GDN --linear-* flags, --attention-output-gate and --rotary-base
+# are not restored by --use-checkpoint-args; GQA (--num-query-groups 8) is. RoPE scaling added by the
+# case entry via $ROPE_SCF1 (the 4 softmax layers use RoPE; GDN layers ignore positions).
+QWEN_DIMS="--experimental-attention-variant gated_delta_net \
+    --linear-attention-freq 4 \
+    --linear-num-key-heads 8 \
+    --linear-num-value-heads 8 \
+    --linear-key-head-dim 192 \
+    --linear-value-head-dim 384 \
+    --linear-conv-kernel-dim 4 \
+    --attention-output-gate \
+    --rotary-base 500000"
 
 # Actual RoPE scaling factor these checkpoints trained with (see gpt_builders.py) -- not restored by --use-checkpoint-args, must be re-passed.
 ROPE_SCF8="--use-rope-scaling --rope-scaling-factor 8"
@@ -181,6 +195,11 @@ model_config() {
         mla)
             EXP_NAME=llama3-1b-mla-scf1-fineweb40B-gutenberg3B
             MEGATRON_EXTRA="$MLA_DIMS"
+            ;;
+        qwen)
+            EXP_NAME=llama3-1b-hybrid-qwen-scf1-fineweb40B-gutenberg3B
+            MEGATRON_EXTRA="$ROPE_SCF1 $QWEN_DIMS"
+            NEEDS_TRITON=1
             ;;
         *)
             echo "Unknown MODEL=$model (expected one of: ${MODELS[*]})"

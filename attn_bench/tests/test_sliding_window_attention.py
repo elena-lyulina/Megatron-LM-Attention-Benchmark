@@ -1,20 +1,30 @@
 # Sliding window attention tests: verify --window-size actually restricts each query's receptive
 # field to the configured distance, rather than silently falling back to full causal attention.
 #
-# Single query position q = seq_len - 1 (window covers [window_edge, q] inclusive, window_edge = q -
-# window). Starting from one random base sequence, flip one token at a time and compare the loss at q
-# against the base:
-#   - window_isolation:   flipping any token in [0, window_edge) (OUTSIDE the window) must leave the
-#                          loss at q unchanged -> the window is actually cutting off distant context.
-#   - window_sensitivity: flipping any token in [window_edge, q] (INSIDE the window) must change the
-#                          loss at q -> the window isn't accidentally empty/dead. Catches an "always
-#                          block everything before q" bug that would otherwise make window_isolation
-#                          pass for the wrong reason.
+# Single query position q = seq_len - 1. Starting from one random base sequence, flip one token at a
+# time and compare the loss at q against the base:
+#   - window_sensitivity: flipping any token in [q-window, q] (inside a SINGLE layer's window) must
+#                          change the loss at q -> the window isn't accidentally empty/dead. Catches
+#                          an "always block everything before q" bug that would otherwise make
+#                          window_isolation pass for the wrong reason.
+#   - window_isolation:   flipping any token in [0, q - num_layers*window) must leave the loss at q
+#                          unchanged. This is NOT [0, q-window) -- windowed attention stacks across
+#                          layers: layer 2's query at q reads layer-1 hidden states that already
+#                          encode [q-window, q], and those hidden states themselves were computed from
+#                          [q-2*window, q] at layer 1, etc. After num_layers layers, q's *effective*
+#                          receptive field is num_layers*window tokens back, not window (this is the
+#                          same "receptive span ~ window * num_layers" property that lets Mistral's
+#                          32-layer, window=4096 model reach ~131K tokens deep -- see the earlier
+#                          window-size-choice discussion). A single-layer window boundary would fail
+#                          this suite on a correct implementation the moment num_layers > 1.
 #
 # Each suite tests every position in its pool if the pool is small (<= _EXHAUSTIVE_THRESHOLD), else a
 # random sample of _SAMPLE_SIZE positions -- exhaustive for a small seq_len/window (the tiny test),
 # bounded-cost for a large one (the real 1B-model window=1024/seq_len=8192 test). A single mismatching
-# position fails the suite.
+# position fails the suite. Note that with num_layers*window >= seq_len (e.g. the real model's 16
+# layers * window=4096 > seq_len=8192), NO position is provably outside the effective receptive field
+# -- window_isolation then has an empty pool and reports [SKIP], which is the correct outcome, not a
+# test gap.
 
 import torch
 
@@ -28,12 +38,13 @@ _EXHAUSTIVE_THRESHOLD = 200  # pools up to this size are tested in full
 _SAMPLE_SIZE = 100           # larger pools are randomly sampled down to this many positions
 
 
-def _query_and_edge(seq_len, window):
-    # q's window covers [window_edge, q] inclusive (window_size=(window, 0) is a causal, left-only
-    # window -- see megatron/core/extensions/transformer_engine.py's window_size handling)
+def _query_and_edge(seq_len, window, depth_multiplier):
+    # depth_multiplier=1 -> single-layer window edge (used by window_sensitivity, always a safe
+    # "guaranteed inside" boundary regardless of num_layers); depth_multiplier=num_layers -> the
+    # full-stack edge (used by window_isolation, see the module docstring for why)
     q = seq_len - 1
-    window_edge = q - window
-    return q, window_edge
+    edge = q - depth_multiplier * window
+    return q, edge
 
 
 def _select_positions(pool, seed):
@@ -126,34 +137,28 @@ def _make_window_tests(base_forward_step):
     # test_sink_attention (this file can't import pretrain_gpt.forward_step directly, see those
     # files for why)
 
-    def _setup(args, test_name):
-        assert args.window_size is not None, "swa suite requires --window-size to be set"
-        window = args.window_size[0]
-        seq_len = args.seq_length
-        q, window_edge = _query_and_edge(seq_len, window)
-        if window_edge <= 0:
-            print_rank_0(f"[SKIP] {test_name}: seq_len={seq_len} too small for window={window} "
-                         f"(window_edge={window_edge} leaves no outside-window pool)")
-            return None
-        print_rank_0(f"  seq_len={seq_len}  window={window}  q={q}  window_edge={window_edge}")
-        return q, window_edge
-
-    def _make_property_test(name, pool_fn, seed, tol, expect_change, direction_label, ok_msg, bad_msg):
+    def _make_property_test(name, pool_fn, seed, tol, expect_change, direction_label, depth_multiplier_fn, ok_msg, bad_msg):
         # builds one (model)->bool test function; test_window_isolation and test_window_sensitivity
-        # are just two instantiations of this with opposite pools/expectations
+        # are just two instantiations of this with opposite pools/expectations/depth_multiplier
         def test_fn(model):
             print_rank_0(f"\n### Test: {name} ###")
             args = get_args()
             eos_id = get_tokenizer().eod
+            assert args.window_size is not None, "swa suite requires --window-size to be set"
+            window = args.window_size[0]
 
-            setup = _setup(args, name)
-            if setup is None:
+            q, edge = _query_and_edge(args.seq_length, window, depth_multiplier_fn(args))
+            pool = pool_fn(q, edge)
+            print_rank_0(f"  seq_len={args.seq_length}  window={window}  num_layers={args.num_layers}  "
+                         f"q={q}  edge={edge}  pool_size={len(pool)}")
+            if not pool:
+                print_rank_0(f"[SKIP] {name}: empty pool -- no position provably matches this "
+                             f"property for this seq_len/window/num_layers combination")
                 return True
-            q, window_edge = setup
 
             base_seq = _build_base_seq(args.seq_length, eos_id)
             passed = _verify_flip_effects(base_forward_step, model, args, eos_id, base_seq, q,
-                                           pool=pool_fn(q, window_edge), seed=seed,
+                                           pool=pool, seed=seed,
                                            tol=tol, expect_change=expect_change, label=direction_label)
 
             verdict, msg = ("PASS", ok_msg) if passed else ("FAIL", bad_msg)
@@ -164,14 +169,16 @@ def _make_window_tests(base_forward_step):
         return test_fn
 
     test_window_isolation = _make_property_test(
-        "window_isolation", pool_fn=lambda q, we: list(range(we)), seed=1,
-        tol=_ISOLATION_TOL, expect_change=False, direction_label="outside-window flips",
-        ok_msg=f"all outside-window flips left the loss at q unchanged (< {_ISOLATION_TOL:g})",
-        bad_msg="some outside-window flip changed the loss at q -> attention leaked past the window",
+        "window_isolation", pool_fn=lambda q, edge: list(range(edge)), seed=1,
+        tol=_ISOLATION_TOL, expect_change=False, direction_label="outside-effective-receptive-field flips",
+        depth_multiplier_fn=lambda args: args.num_layers,
+        ok_msg=f"all flips beyond num_layers*window left the loss at q unchanged (< {_ISOLATION_TOL:g})",
+        bad_msg="some flip beyond num_layers*window changed the loss at q -> attention leaked past the full-stack receptive field",
     )
     test_window_sensitivity = _make_property_test(
-        "window_sensitivity", pool_fn=lambda q, we: list(range(we, q + 1)), seed=2,
+        "window_sensitivity", pool_fn=lambda q, edge: list(range(max(0, edge), q + 1)), seed=2,
         tol=_SENSITIVITY_TOL, expect_change=True, direction_label="inside-window flips",
+        depth_multiplier_fn=lambda args: 1,
         ok_msg=f"every inside-window flip changed the loss at q (> {_SENSITIVITY_TOL:g})",
         bad_msg="some inside-window flip had no effect on the loss at q -> in-window context is not wired in",
     )

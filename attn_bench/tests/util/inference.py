@@ -1,12 +1,19 @@
-# GDN inference tests: verify GDN generation is correct.
-# M0 (this file): the cacheless quadratic *oracle* generator + its self-check (oracle output ==
-# teacher forcing over the committed sequence). No core change -- runs against today's code.
-# M1 (later): add the cached/incremental decode vs oracle equivalence assertion, once
-# GatedDeltaNet supports inference. See attn_bench/_plans/gdn_inference_plan.md.
+# Inference oracle suites, shared across mixer families (GDN, KDA, Qwen hybrid, ...).
+#
+# Two suites, both model-agnostic:
+#   - oracle_selfcheck     : the S-step cacheless oracle loop == a single teacher-forced forward over
+#                            prompt+suffix (oracle is self-consistent / the model is causal).
+#   - decode_matches_oracle: the cached/incremental decode path == the quadratic oracle, token for
+#                            token. Exercises the mixer's _decode + the prefill state cache
+#                            (StaticInferenceContext.key_value_memory_dict).
+#
+# make_oracle_suites(require, label) returns a register(base_forward_step) -> [fn, ...] callable for
+# registry.py. `require` is a list of module classes that must ALL be present in the model (the guard
+# that the mixer under test is actually wired -- for a hybrid, both the linear mixer and SelfAttention);
+# `label` names the model in the logs.
 
 import torch
 
-from megatron.core.ssm.gated_delta_net import GatedDeltaNet
 from megatron.training import get_tokenizer, print_rank_0
 
 
@@ -36,8 +43,8 @@ def greedy_cacheless(model, prompt_ids, suffix_length, return_logits=False):
 
 @torch.no_grad()
 def greedy_cached(model, prompt_ids, suffix_length, return_logits=False):
-    # The path under test: prefill the prompt into a StaticInferenceContext (writes the GDN conv +
-    # recurrent state into the cache), then decode one token at a time. Mirrors
+    # The path under test: prefill the prompt into a StaticInferenceContext (writes the mixer conv +
+    # recurrent state and/or the attention KV cache), then decode one token at a time. Mirrors
     # MegatronBackend.generate_with_capture in inference_backend.py, kept local so the test
     # pulls no eval deps.
     from megatron.core.inference.contexts import StaticInferenceContext
@@ -69,7 +76,7 @@ def greedy_cached(model, prompt_ids, suffix_length, return_logits=False):
     return gen
 
 
-def _tiny_prompt(model, batch, prefix_length):
+def tiny_prompt(model, batch, prefix_length):
     # a [batch, prefix_length] prompt of valid token ids, on the model's device
     device = next(model.parameters()).device
     eos = get_tokenizer().eod
@@ -77,8 +84,10 @@ def _tiny_prompt(model, batch, prefix_length):
 
 
 # tiny configs (batch, prefix_length, suffix_length): small enough to eyeball + cheap, B>1, no offset
-# axis (the model is --position-embedding-type none, so absolute offset cannot change the computation)
-_ORACLE_CONFIGS = [(2, 4, 8), (2, 8, 16), (3, 16, 32)]
+# axis. For GDN/KDA (--position-embedding-type none) absolute offset cannot change the computation.
+# For the Qwen hybrid the 4 softmax layers use RoPE, so parity here relies on both paths feeding
+# consistent absolute positions (0-based); a nonzero-offset axis is added separately (b2).
+ORACLE_CONFIGS = [(2, 4, 8), (2, 8, 16), (3, 16, 32)]
 
 # A token flip is benign when it is a near-tie: the model barely preferred its token over the one the
 # other path chose (small oracle_margin), so the choice is arbitrary. Gate on oracle_margin, not the
@@ -87,13 +96,25 @@ _ORACLE_CONFIGS = [(2, 4, 8), (2, 8, 16), (3, 16, 32)]
 ORACLE_MARGIN_TOL = 0.3
 
 
-def _make_test_oracle_selfcheck(base_forward_step):
+def _require_ok(model, require):
+    # True iff at least one instance of every class in `require` is present in the model.
+    present = {cls.__name__: False for cls in require}
+    for _, m in model.named_modules():
+        for cls in require:
+            if isinstance(m, cls):
+                present[cls.__name__] = True
+    missing = [name for name, ok in present.items() if not ok]
+    return (not missing), missing
+
+
+def _make_test_oracle_selfcheck(base_forward_step, require, label):
     # base_forward_step is unused (the oracle calls the model directly for logits), but kept in the
     # factory signature so registry.py wires this suite the same way as the others.
     def test_oracle_selfcheck(model):
         print_rank_0("\n### Test: oracle_selfcheck ###")
-        if not any(isinstance(m, GatedDeltaNet) for _, m in model.named_modules()):
-            print_rank_0("[FAIL] oracle_selfcheck: no GatedDeltaNet module found in model")
+        ok_req, missing = _require_ok(model, require)
+        if not ok_req:
+            print_rank_0(f"[FAIL] oracle_selfcheck: {label} model missing module(s): {missing}")
             return False
 
         was_training = model.training
@@ -101,8 +122,8 @@ def _make_test_oracle_selfcheck(base_forward_step):
         torch.manual_seed(1234)
 
         ok = True
-        for B, P, S in _ORACLE_CONFIGS:
-            prompt = _tiny_prompt(model, B, P)
+        for B, P, S in ORACLE_CONFIGS:
+            prompt = tiny_prompt(model, B, P)
             gen, oracle_logits = greedy_cacheless(model, prompt, S, return_logits=True)  # [B, S], [B, S, V]
 
             # Teacher forcing over the full committed sequence should reproduce the per-step suffix:
@@ -141,12 +162,13 @@ def _make_test_oracle_selfcheck(base_forward_step):
     return test_oracle_selfcheck
 
 
-def _make_test_decode_matches_oracle(base_forward_step):
-    # the M1 gate: the cached/incremental decode must reproduce the quadratic oracle token for token.
+def _make_test_decode_matches_oracle(base_forward_step, require, label):
+    # the real gate: the cached/incremental decode must reproduce the quadratic oracle token for token.
     def test_decode_matches_oracle(model):
         print_rank_0("\n### Test: decode_matches_oracle ###")
-        if not any(isinstance(m, GatedDeltaNet) for _, m in model.named_modules()):
-            print_rank_0("[FAIL] decode_matches_oracle: no GatedDeltaNet module found in model")
+        ok_req, missing = _require_ok(model, require)
+        if not ok_req:
+            print_rank_0(f"[FAIL] decode_matches_oracle: {label} model missing module(s): {missing}")
             return False
 
         was_training = model.training
@@ -154,8 +176,8 @@ def _make_test_decode_matches_oracle(base_forward_step):
         torch.manual_seed(1234)
 
         ok = True
-        for B, P, S in _ORACLE_CONFIGS:
-            prompt = _tiny_prompt(model, B, P)
+        for B, P, S in ORACLE_CONFIGS:
+            prompt = tiny_prompt(model, B, P)
             ref, ref_logits = greedy_cacheless(model, prompt, S, return_logits=True)  # quadratic oracle (ground truth)
             got, got_logits = greedy_cached(model, prompt, S, return_logits=True)     # cached path under test
 
@@ -190,10 +212,17 @@ def _make_test_decode_matches_oracle(base_forward_step):
     return test_decode_matches_oracle
 
 
-def register(base_forward_step):
-    # called by registry.py to resolve test functions for the 'gdn_inference' suite;
-    # each returned function has signature (model)->bool
-    return [
-        _make_test_oracle_selfcheck(base_forward_step),
-        _make_test_decode_matches_oracle(base_forward_step),
-    ]
+def make_oracle_suites(require, label):
+    """registry.py factory: -> register(base_forward_step) -> [oracle_selfcheck, decode_matches_oracle].
+
+    require: list of module classes that must all be present in the model under test.
+    label:   name used in the suite's log lines.
+    """
+
+    def register(base_forward_step):
+        return [
+            _make_test_oracle_selfcheck(base_forward_step, require, label),
+            _make_test_decode_matches_oracle(base_forward_step, require, label),
+        ]
+
+    return register

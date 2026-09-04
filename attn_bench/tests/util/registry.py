@@ -6,11 +6,7 @@ from attn_bench.tests.test_gdn import \
     register_carry_mechanism as _register_gdn_carry_mechanism
 from attn_bench.tests.test_gdn import \
     register_carry_sample as _register_gdn_carry_sample
-from attn_bench.tests.test_gdn_inference import \
-    register as _register_gdn_inference
 from attn_bench.tests.test_goldfish_loss import register as _register_goldfish
-from attn_bench.tests.test_kda_inference import \
-    register as _register_kda_inference
 from attn_bench.tests.test_sink_attention import register as _register_sink
 from attn_bench.tests.test_sliding_window_attention import \
     register as _register_swa
@@ -20,6 +16,10 @@ from attn_bench.tests.test_xdoc_attention import \
     register_mask as _register_xdoc_mask
 from attn_bench.tests.test_xdoc_attention import \
     register_position_ids as _register_xdoc_position_ids
+from attn_bench.tests.util.inference import make_oracle_suites
+from megatron.core.ssm.gated_delta_net import GatedDeltaNet
+from megatron.core.ssm.kimi_delta_attention import KimiDeltaAttention
+from megatron.core.transformer.attention import SelfAttention
 from megatron.training import get_args, print_rank_0
 
 # maps --tests name → register(base_forward_step) → [test_fn, ...]
@@ -31,12 +31,14 @@ TEST_REGISTRY = {
     "swa": _register_swa,
     "gated": _register_gated,
     "gdn": _register_gdn,
-    "gdn_inference": _register_gdn_inference,
     "gdn_carry_sample": _register_gdn_carry_sample,
     "gdn_carry_effect": _register_gdn_carry_effect,
     "gdn_carry_mechanism": _register_gdn_carry_mechanism,
     "goldfish": _register_goldfish,
-    "kda_inference": _register_kda_inference,
+    # inference oracle suites -- shared factory, differ only by the required module(s) + label
+    "gdn_inference": make_oracle_suites([GatedDeltaNet], "GDN"),
+    "kda_inference": make_oracle_suites([KimiDeltaAttention], "KDA"),
+    "qwen_hybrid_inference": make_oracle_suites([GatedDeltaNet, SelfAttention], "Qwen hybrid"),
 }
 
 
