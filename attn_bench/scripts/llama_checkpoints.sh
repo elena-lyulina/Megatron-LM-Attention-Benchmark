@@ -6,7 +6,7 @@
 # model_config() below. Nothing else needs to change.
 #
 # Usage: source this file, call `model_config <tag>`. Sets (resets each call): EXP_NAME,
-# CKPT_NAME, MEGATRON_EXTRA, NEEDS_TRITON, NEEDS_FLA_052, IS_SINK_FAMILY, NEEDS_UNFUSED_DECODE, HAS_ROPE.
+# CKPT_NAME, MEGATRON_EXTRA, NEEDS_TRITON, NEEDS_FLA_052, IS_SINK_FAMILY, NEEDS_UNFUSED_DECODE.
 #   EXP_NAME             results/experiment dir name
 #   CKPT_NAME            checkpoint dir name, if it differs from EXP_NAME
 #   MEGATRON_EXTRA       flags not restored by --use-checkpoint-args
@@ -21,9 +21,10 @@
 #                        measure_mem.slurm decodes -- the long_* scripts do a plain forward
 #                        pass, where TE's FusedAttention already supports softmax_type
 #                        natively, so they never need this.
-#   HAS_ROPE             0 for GDN (no rotary embeddings at all) -- skips
-#                        convert_and_validate_hf.slurm's rope-scaling-factor sanity check,
-#                        which otherwise fails on a family that never had rope to drop.
+#
+# (No HAS_ROPE flag: convert_and_validate_hf.slurm's rope-scaling check self-guards -- it
+#  no-ops when the HF config has no llama3 rope-scaling dict, so GDN/KDA (no RoPE) and MLA
+#  (plain RoPE, no scaling) all pass through untouched.)
 
 MODELS=(full-scf8 gated-scf8 full-xdoc-leak-scf8 sink-scf8 off-by-one-scf8 gdn carry-r0 carry-r0.5 carry-r1 full-goldfish-scf8 gdn-goldfish full-fineweb80B-scf8 full-long-scf8 full-long-split-1024-scf8 full-scf1 gated-scf1 sink-scf1 swa-w256-scf1 swa-w1024-scf1 swa-w4096-scf1 kda mla qwen)
 
@@ -85,7 +86,6 @@ model_config() {
     NEEDS_FLA_052=0
     IS_SINK_FAMILY=0
     NEEDS_UNFUSED_DECODE=0
-    HAS_ROPE=1
     case "$model" in
         full-scf8)
             EXP_NAME=llama3-1b-full-attn-scf8-fineweb40B-gutenberg3B
@@ -117,25 +117,21 @@ model_config() {
             EXP_NAME=llama3-1b-gdn-fineweb40B-gutenberg3B
             MEGATRON_EXTRA="$GDN_DIMS"
             NEEDS_TRITON=1
-            HAS_ROPE=0
             ;;
         carry-r0)
             EXP_NAME=llama3-1b-gdn-carry-r0-fineweb40B-gutenberg3B
             MEGATRON_EXTRA="$GDN_DIMS"
             NEEDS_TRITON=1
-            HAS_ROPE=0
             ;;
         carry-r0.5)
             EXP_NAME=llama3-1b-gdn-carry-r0.5-fineweb40B-gutenberg3B
             MEGATRON_EXTRA="$GDN_DIMS"
             NEEDS_TRITON=1
-            HAS_ROPE=0
             ;;
         carry-r1)
             EXP_NAME=llama3-1b-gdn-carry-r1-fineweb40B-gutenberg3B
             MEGATRON_EXTRA="$GDN_DIMS"
             NEEDS_TRITON=1
-            HAS_ROPE=0
             ;;
         full-goldfish-scf8)
             EXP_NAME=llama3-1b-full-attn-goldfish-scf8-fineweb40B-gutenberg3B
@@ -145,7 +141,6 @@ model_config() {
             EXP_NAME=llama3-1b-gdn-goldfish-fineweb40B-gutenberg3B
             MEGATRON_EXTRA="$GDN_DIMS"
             NEEDS_TRITON=1
-            HAS_ROPE=0
             ;;
         full-fineweb80B-scf8)
             EXP_NAME=llama3-1b-full-attn-scf8-fineweb80B-gutenberg3B
@@ -190,7 +185,6 @@ model_config() {
             MEGATRON_EXTRA="$KDA_DIMS"
             NEEDS_TRITON=1
             NEEDS_FLA_052=1
-            HAS_ROPE=0
             ;;
         mla)
             EXP_NAME=llama3-1b-mla-scf1-fineweb40B-gutenberg3B

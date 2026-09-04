@@ -63,10 +63,11 @@ case: `EXP_NAME`, `CKPT_NAME` if it differs, `MEGATRON_EXTRA` flags not restored
 `--use-checkpoint-args`, `NEEDS_TRITON` for fla/triton mixers (GDN, KDA), `NEEDS_FLA_052` if
 the mixer needs the side-installed flash-linear-attention 0.5.2 (KDA — the container's 0.4.2
 NaNs `chunk_kda`), `IS_SINK_FAMILY` for sink-logit variants (resource policy + config
-selection), `NEEDS_UNFUSED_DECODE` if the decode path needs `--attention-backend unfused`,
-and `HAS_ROPE=0` for a variant with no rotary embeddings (GDN, KDA — skips the HF-conversion
-rope sanity check). This is the single source of truth for every sweep and puller below —
-nothing else needs to change.
+selection), and `NEEDS_UNFUSED_DECODE` if the decode path needs `--attention-backend unfused`.
+(No rope flag needed — `convert_and_validate_hf.slurm`'s rope-scaling sanity check self-guards
+on the HF config having no llama3 rope-scaling dict, which covers no-RoPE variants like GDN/KDA
+and no-NTK-scaling ones like MLA alike.) This is the single source of truth for every sweep and
+puller below — nothing else needs to change.
 
 ## 8. Run the eval sweeps
 

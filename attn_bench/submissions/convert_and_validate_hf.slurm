@@ -159,22 +159,24 @@ srun \
     STEP2_STATUS=\$?
     if [ \$STEP2_STATUS -ne 0 ]; then echo 'Step 2 failed'; exit \$STEP2_STATUS; fi
 
-    if [ "$HAS_ROPE" = "1" ]; then
-        echo '### Sanity check: rope factor before the GPU-heavy steps 3/4 ###'
-        python -c \"
+    echo '### Sanity check: rope-scaling factor before the GPU-heavy steps 3/4 ###'
+    # Self-guarding: no-ops when the HF config carries no llama3 rope-scaling dict (GDN/KDA have
+    # no RoPE at all; MLA has RoPE but no NTK scaling -- rope_scaling=None) instead of relying on
+    # a per-model flag to skip it.
+    python -c \"
 import json
 cfg = json.load(open('$SCRATCH_CONVERT_DIR/HF/config.json'))
 # This transformers version stores rope scaling under 'rope_parameters', not 'rope_scaling'.
-rope_cfg = cfg.get('rope_parameters') or cfg.get('rope_scaling', {})
+rope_cfg = cfg.get('rope_parameters') or cfg.get('rope_scaling') or {}
 factor = rope_cfg.get('factor')
-assert factor == $EXPECTED_ROPE_FACTOR, f'expected rope factor == $EXPECTED_ROPE_FACTOR, got {factor!r} -- conversion likely dropped it silently'
-print(f'rope factor = {factor} (expected $EXPECTED_ROPE_FACTOR) -- OK')
+if factor is None:
+    print('rope factor = N/A -- no llama3 rope-scaling dict in this config, check skipped')
+else:
+    assert factor == $EXPECTED_ROPE_FACTOR, f'expected rope factor == $EXPECTED_ROPE_FACTOR, got {factor!r} -- conversion likely dropped it silently'
+    print(f'rope factor = {factor} (expected $EXPECTED_ROPE_FACTOR) -- OK')
 \"
-        CFG_CHECK_STATUS=\$?
-        if [ \$CFG_CHECK_STATUS -ne 0 ]; then echo 'Config sanity check failed'; exit \$CFG_CHECK_STATUS; fi
-    else
-        echo '### Sanity check: skipped -- HAS_ROPE=0 for this model (GDN has no rotary embeddings) ###'
-    fi
+    CFG_CHECK_STATUS=\$?
+    if [ \$CFG_CHECK_STATUS -ne 0 ]; then echo 'Config sanity check failed'; exit \$CFG_CHECK_STATUS; fi
 
     echo '### STEP 3: compare logits (random tokens, single forward pass) ###'
     # batch-size 1 (default 4 OOMs: fp32 SDPA has no flash kernel, so it materializes the full

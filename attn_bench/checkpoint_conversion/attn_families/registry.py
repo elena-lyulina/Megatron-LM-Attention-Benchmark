@@ -5,9 +5,9 @@ user-facing flag needed -- and looks up that attn_family's config/state-dict bui
 
 from typing import Any
 
-from attn_bench.checkpoint_conversion.attn_families import full, gated, swa
+from attn_bench.checkpoint_conversion.attn_families import full, gated, mla, swa
 
-ATTN_FAMILIES = ("full", "sink", "gated", "swa", "gdn", "kda")
+ATTN_FAMILIES = ("full", "sink", "gated", "swa", "gdn", "kda", "mla")
 
 
 def detect_attn_family(args: Any) -> str:
@@ -16,8 +16,6 @@ def detect_attn_family(args: Any) -> str:
     if getattr(args, "experimental_attention_variant", None) == "kimi_delta_attention":
         return "kda"
     if getattr(args, "multi_latent_attention", False):
-        # detected but not yet routed (T2b) -- falls through to NotImplementedError, same as
-        # off-by-one below.
         return "mla"
     if getattr(args, "attention_output_gate", False):
         return "gated"
@@ -41,9 +39,10 @@ def get_attn_family_module(args: Any):
         return swa
     if attn_family == "gated":
         return gated
+    if attn_family == "mla":
+        return mla
     if attn_family == "sink":
-        # lazy: pulls in modeling_sink_llama.py, which needs flash_attn.cute (see
-        # flash-attention-cute-workflow.md).
+        # lazy: pulls in modeling_sink_llama.py, which needs flash_attn.cute.
         from attn_bench.checkpoint_conversion.attn_families import sink
         return sink
     if attn_family == "gdn":
