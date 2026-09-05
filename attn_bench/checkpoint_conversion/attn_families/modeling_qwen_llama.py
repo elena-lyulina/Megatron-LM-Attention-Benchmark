@@ -201,13 +201,27 @@ class QwenLlamaDecoderLayer(nn.Module):
 class QwenLlamaPreTrainedModel(PreTrainedModel):
     """_is_stateful = True, same flag GDNLlamaPreTrainedModel sets and for the same reason --
     tells GenerationMixin._prepare_cache_for_generation to skip eagerly instantiating a
-    DynamicCache under past_key_values, since our own cache_params covers both mixer types."""
+    DynamicCache under past_key_values, since our own cache_params covers both mixer types.
+
+    _supports_sdpa/_supports_flash_attn/_supports_attention_backend = True: unlike GDN/KDA
+    (no softmax attention at all, so PreTrainedModel's all-False defaults were fine), Qwen's
+    GatedLlamaAttention layers need an efficient backend offered -- GatedLlamaForCausalLM gets
+    these for free by subclassing the real LlamaForCausalLM/LlamaPreTrainedModel, which set all
+    three True; subclassing generic PreTrainedModel here (matching GDN/KDA's pattern) left them
+    False, forcing eager attention (materializes the full [B,H,S,S] matrix) for every
+    full_attention layer regardless of prefix length -- the cause of a real OOM in the T3f
+    memorization sweep at prefix=3971, batch=660 (job 3300059), that pure `gated` never hits
+    since it already gets SDPA. GatedLlamaAttention.forward already dispatches on
+    self.config._attn_implementation generically, so declaring support here is the whole fix."""
 
     config: QwenLlamaConfig
     config_class = QwenLlamaConfig
     base_model_prefix = "model"
     _no_split_modules = ["QwenLlamaDecoderLayer"]
     _is_stateful = True
+    _supports_sdpa = True
+    _supports_flash_attn = True
+    _supports_attention_backend = True
 
 
 @dataclass
