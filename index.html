@@ -121,7 +121,7 @@
     flex: 1;
     min-width: 84px;  /* stops the slider shrinking to an unusable sliver before wrapping */
     /* Right room for the readout near the "1 col" end; only a little on the left so the
-       magnifier hugs the track (the "10 cols" readout is only at the far-left extreme, where
+       magnifier hugs the track (the widest readout is only at the far-left extreme, where
        a small overlap with the icon is fine). positionZoomValue measures the padded box. */
     padding: 0 10px 0 4px;
   }
@@ -603,6 +603,20 @@
     overflow: hidden;
   }
 
+  /* Compare mode outlines its reference card in the theme's purple accent, so the panel
+     every other card is differenced against is identifiable at a glance -- the "reference"
+     n-points label alone is easy to miss at high column counts. outline, not border, so
+     switching it on doesn't reflow the grid -- it needs no reserved space in the off state.
+     outline-offset must stay >= 0: .panel is a positioned descendant, and those paint AFTER
+     the ancestor's outline, so an inset outline gets covered by the panels' opaque background
+     everywhere they reach the card edge -- leaving purple only around the header. At offset 0
+     the outline sits outside the border box, where no child paints, and the 20px grid gap
+     leaves it room. */
+  .card.is-ref {
+    outline: 2px solid var(--accent);
+    outline-offset: 0;
+  }
+
   .card-header {
     display: flex;
     align-items: baseline;
@@ -738,8 +752,8 @@
         </svg>
       </span>
       <div class="zoom-slider-wrap">
-        <input type="range" id="zoom" min="0" max="9" value="5" step="1" />
-        <div class="rep-ticks" id="zoom-ticks"><span id="zoom-value" class="active">5 cols</span></div>
+        <input type="range" id="zoom" min="0" step="1" />
+        <div class="rep-ticks" id="zoom-ticks"><span id="zoom-value" class="active"></span></div>
       </div>
       <span class="zoom-icon" aria-hidden="true">
         <svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
@@ -772,7 +786,7 @@
 <div class="page-body">
   <main>
     <div class="meta-row">
-      <span class="pill" id="model-count-pill">10 of 10 models</span>
+      <span class="pill" id="model-count-pill">13 of 13 models</span>
       <span class="pill" id="metric-pill">metric: Rouge&#8209;L</span>
       <span class="pill" id="suffix-pill">suffix: 250 tokens</span>
       <span class="pill">document boundary: 8192 tokens</span>
@@ -804,8 +818,9 @@
   const LOG_FLOOR = 10;  // where offset=0 is parked on a log axis. The grid keeps its real x=0
                          // column and it renders here too, so the parked dots sit on the fill's
                          // left edge AND over contour that carries the true offset=0 value.
-  const MODELS = ['full-scf1', 'swa-w4096-scf1', 'swa-w1024-scf1', 'swa-w256-scf1',
-                  'sink-scf1', 'gated-scf1', 'gdn', 'gdn-xdl', 'gdn-xdl-xsl-0.5', 'gdn-xdl-xsl'];
+  const MODELS = ['full-scf1', 'mla', 'swa-w4096-scf1', 'swa-w1024-scf1', 'swa-w256-scf1',
+                  'sink-scf1', 'gated-scf1', 'gdn', 'gdn-xdl', 'gdn-xdl-xsl-0.5', 'gdn-xdl-xsl',
+                  'kda', 'qwen'];
   const DISPLAY_NAMES = {
     'full-scf1': 'Full Attention',
     'swa-w4096-scf1': 'Sliding Window (w=4096)',
@@ -817,6 +832,9 @@
     'gdn-xdl-xsl': 'Gated DeltaNet (state leaks: docs, batches)',
     'gated-scf1': 'Gated Attention',
     'sink-scf1': 'Learnable Sink Attention',
+    'mla': 'Multi-head Latent Attention',
+    'kda': 'Kimi Delta Attention',
+    'qwen': 'Qwen Hybrid (GDN:Gated = 3:1)',
   };
 
   // vmin/vmax are in "plot space" -- the raw metric's own range for everything except the two
@@ -1151,7 +1169,7 @@
 
   function cardHtml(m) {
     return `
-      <div class="card">
+      <div class="card" id="card-${m}">
         <div class="card-header">
           <h2>${DISPLAY_NAMES[m] || m}</h2>
           <span class="n-points" id="n-points-${m}">&mdash; points</span>
@@ -1223,6 +1241,7 @@
       const sf = surfaceFigure(data, rep, metricKey, T, currentLogAxes, cmp);
       Plotly.react(`panel-3d-${model}`, sf.traces, sf.layout, PLOT_CONFIG);
     }
+    document.getElementById(`card-${model}`).classList.toggle('is-ref', isRef);
     const nEl = document.getElementById(`n-points-${model}`);
     nEl.textContent = isRef ? 'reference'
       : cmp ? 'Δ'
@@ -1514,6 +1533,14 @@
   const zoom = document.getElementById('zoom');
   const zoomValue = document.getElementById('zoom-value');
   const COLS = Array.from({ length: MODELS.length }, (_, i) => MODELS.length - i);  // [N,N-1,...,1]
+  // max/value are derived, not markup literals -- they used to be hardcoded to the 10-model
+  // era (max="9" value="5"), which silently made the last COLS entries unreachable the moment
+  // a model was added. Initial count is the fewest columns that still fits every model in two
+  // rows: biggest charts without a third row. (N=10 -> 5, matching the old default; N=13 -> 7,
+  // since 6 would spill to three rows.)
+  const INITIAL_COLS = Math.ceil(MODELS.length / 2);
+  zoom.max = COLS.length - 1;
+  zoom.value = COLS.indexOf(INITIAL_COLS);
 
   // Slide the readout to sit under the thumb, same geometry as alignTicks (thumb centre
   // travels [THUMB_WIDTH/2, trackWidth-THUMB_WIDTH/2]).
