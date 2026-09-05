@@ -28,8 +28,9 @@ sys.modules['utils'] = _ut
 sys.path.insert(0, '../..')
 from attn_bench.plotting.data_loading import load_offset_prefix_grid_data
 
-MODELS = ['full-scf1', 'swa-w4096-scf1', 'swa-w1024-scf1', 'swa-w256-scf1',
-          'sink-scf1', 'gated-scf1', 'gdn', 'gdn-xdl', 'gdn-xdl-xsl-0.5', 'gdn-xdl-xsl']
+MODELS = ['full-scf1',  'swa-w4096-scf1', 'swa-w1024-scf1', 'swa-w256-scf1',
+          'sink-scf1', 'gated-scf1', 'gdn', 'gdn-xdl', 'gdn-xdl-xsl-0.5', 'gdn-xdl-xsl',
+          'qwen', 'mla', 'kda']
 REPS = [0, 1, 16, 32, 64, 128, 256]
 # One JSON per suffix per model -- inference feasibility was defined at suffix=250, so the
 # populated candidate points are the same set at every smaller suffix (a shorter suffix only

@@ -83,6 +83,12 @@ MODELS = {
     'swa-w256-scf1': 'llama3-1b-swa-w256-scf1-fineweb40B-gutenberg3B',
     'swa-w1024-scf1': 'llama3-1b-swa-w1024-scf1-fineweb40B-gutenberg3B',
     'swa-w4096-scf1': 'llama3-1b-swa-w4096-scf1-fineweb40B-gutenberg3B',
+    # scf1-trained non-softmax / non-MHA architectures. MLA is still softmax attention (latent
+    # KV compression); KDA and the Qwen hybrid are delta-rule linear attention like GDN. The
+    # Qwen hybrid runs GDN on 12 layers and gated softmax attention on 4 (--linear-attention-freq 4).
+    'mla': 'llama3-1b-mla-scf1-fineweb40B-gutenberg3B',
+    'kda': 'llama3-1b-kda-scf1-fineweb40B-gutenberg3B',
+    'qwen': 'llama3-1b-hybrid-qwen-scf1-fineweb40B-gutenberg3B',
 }
 
 # Backend -> folder-name suffix appended to a MODELS entry (mirrors measure_mem.slurm's own
@@ -149,6 +155,12 @@ MODEL_COLORS = {
     'swa-w256-scf1':          '#cbc9e2',
     'swa-w1024-scf1':         '#9e9ac8',
     'swa-w4096-scf1':         '#54278f',
+    # MLA -- own hue (burnt sienna); linear-attention newcomers share the GDN pink family,
+    # lighter shade for the hybrid. All three checked for CVD/normal-vision separation
+    # against every colour above.
+    'mla':                    '#B15928',
+    'kda':                    '#C51B7D',
+    'qwen':                   '#F06BA8',
 }
 
 
