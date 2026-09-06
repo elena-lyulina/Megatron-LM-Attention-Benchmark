@@ -21,6 +21,10 @@
 #   TO_STEP=13 sbatch attn_bench/submissions/prepare_gutenberg_laion_full.slurm
 #     stop after the given step, e.g. 13 to regenerate stats and match files up to
 #     content deduplication without running excerpt sampling or scoring
+#
+#   DATASET_DIR=/users/$USER/store/datasets/raw/gutenberg-laion/raw-hf-full sbatch ...
+#     read the raw dataset from somewhere other than scratch, e.g. store after a
+#     scratch purge, avoiding a copy back
 
 echo "START TIME: $(date)"
 
@@ -28,7 +32,7 @@ echo "START TIME: $(date)"
 
 MEGATRON_DIR=/iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark
 TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b
-DATASET_DIR=/iopsstor/scratch/cscs/$USER/datasets/raw/gutenberg-laion/raw-hf-full
+DATASET_DIR=${DATASET_DIR:-/iopsstor/scratch/cscs/$USER/datasets/raw/gutenberg-laion/raw-hf-full}
 OUTPUT_DIR=/iopsstor/scratch/cscs/$USER/datasets/preprocessing/gutenberg-laion/hf-full-output
 MEGATRON_CKPT_DIR=/users/$USER/store/pretrain-results/llama3-1b-fineweb160B/checkpoints
 
@@ -40,7 +44,10 @@ cd $MEGATRON_DIR
 
 ### INSTALL DEPS ###
 
-pip install --quiet -e "$MEGATRON_DIR/attn_bench[data]"
+# transformers>=5 drops the "tf" backend that sentence-transformers still references,
+# breaking the step-5 title-embedding import. The attn_bench[data] extra is unpinned, so
+# a fresh resolve picks up whatever is newest on PyPI; pin to what the container expects.
+pip install --quiet -e "$MEGATRON_DIR/attn_bench[data]" "transformers<5" "numpy<2"
 
 
 ### PIPELINE ###
