@@ -17,6 +17,10 @@
 #
 # Usage:
 #   sbatch attn_bench/submissions/prepare_gutenberg_laion_full.slurm
+#
+#   TO_STEP=13 sbatch attn_bench/submissions/prepare_gutenberg_laion_full.slurm
+#     stop after the given step, e.g. 13 to regenerate stats and match files up to
+#     content deduplication without running excerpt sampling or scoring
 
 echo "START TIME: $(date)"
 
@@ -47,6 +51,7 @@ python3 -u -m attn_bench.data_processing.books.main_gutenberg_laion \
     --tokenizer-path $TOKENIZER_PATH \
     --checkpoint \
     --megatron-ckpt-dir $MEGATRON_CKPT_DIR \
+    ${TO_STEP:+--to-step $TO_STEP} \
     --num-workers    $SLURM_CPUS_PER_TASK
 
 

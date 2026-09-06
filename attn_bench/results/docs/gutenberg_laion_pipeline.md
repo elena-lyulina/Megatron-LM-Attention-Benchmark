@@ -10,7 +10,8 @@ All thresholds were first validated on a 7k-book sample (~10% of the corpus, `ra
 
 ## Full-dataset run (2026-05-13)
 
-56,982 books in → 26,814 kept (47%). Two Slurm jobs on CSCS Clariden (`nemo` env), 1 node, 96 CPUs, scripts in `attn_bench/submissions/`:
+56,982 books in → 26,814 kept (47%) per the drop tallies below, though the downstream
+stats measure 26,816 entering step 20 (see "Verified funnel"). Two Slurm jobs on CSCS Clariden (`nemo` env), 1 node, 96 CPUs, scripts in `attn_bench/submissions/`:
 
 - `2123565` — `prepare_gutenberg_laion_full.slurm`, steps 1–18, 2026-05-11 18:48→~19:48, logs: `attn_bench/logs/2123565.{out,err}`
 - `2125605` — same script resumed from step-18 checkpoint, step 19 + final output, 2026-05-11 21:03→21:30, logs: `attn_bench/logs/2125605.{out,err}`
@@ -217,13 +218,34 @@ After the full scoring run completes, apply bilateral cutoffs informed by the pi
 
 Specific thresholds TBD after examining the full-dataset distribution; pilot observations above guide where to look.
 
-Final: PPl cut p10/p90 percentiles -- after ppl cut 21 452 / 26 816 
-Then take only excerpt with 0 n-13 duplication against fineweb edu (6600 / 21452) and split into 10 repetition buckets (0, 1, 2 .. 256)
+Final: PPl cut p10/p90 percentiles -- after ppl cut 21 452 / 26 816
 
-## Megatron tokenization (2026-05-19)
+Then keep only excerpts with 0 n-13 duplication against FineWeb-Edu. The containment step
+found 8,036 clean books out of 26,816 (`stats/fineweb_containment/fineweb_containment_stats.txt`);
+intersecting those with the 21,452 perplexity-cut survivors leaves **6,600**, which is then
+split into 10 repetition buckets (0, 1, 2 .. 256).
+
+**Verified funnel** (all figures measured, 2026-09-05):
+
+```
+56,982 → 26,816 → 21,452 (ppl p10/p90) → 6,600 (∩ 8,036 clean) → 660 × 10 buckets
+```
+
+Note the filter summary table above totals 26,814 kept, while both
+`stats/20_score_perplexity_min_k_pp/perplexity_stats.txt` and the containment stats
+independently record `n=26,816` entering step 20. The measured 26,816 is the figure to
+cite; the two-book difference in the drop tallies has not been chased down.
+
+## Megatron tokenization (2026-05-19, SUPERSEDED)
+
+> **This section describes a superseded run.** The repetition buckets were rebuilt on
+> 2026-05-20 (see `stats/repetition-buckets/`, and the live
+> `gutenberg_rep_jsonl/rep_*_token.jsonl` files, which hold 660 lines each). Job 2305689
+> tokenized the *earlier* bucket build, which used 733 books per bucket. Its summary
+> below therefore does not describe the dataset that was trained on. Kept for history.
 
 Script: `attn_bench/submissions/write_gutenberg_in_megatron_format.slurm`  
-Input: `repetition_buckets.jsonl` (660 books × 9 rep levels)  
+Input: `repetition_buckets.jsonl`  
 Output: `/iopsstor/scratch/cscs/elyulina/datasets/tokenized/gutenberg_rep_1_256`  
 Job: `2305689`, runtime: 09:59→10:02 (~3 min)
 
@@ -232,8 +254,19 @@ One `rep_N_tokens.bin/.idx` pair per repetition level. Each sequence is 8,192 to
 
 All verification checks passed (lengths, BOS/EOS position and count, repetition counts).
 
-SUMMARY
+SUMMARY (superseded, 733 books per bucket)
   total sequences  : 374,563
   total unique books (across all buckets): 6,597
   total tokens     : 3,068,420,096  (3.07B)
   ALL CHECKS PASSED
+
+## Current dataset (post 2026-05-20 rebuild)
+
+660 books in each of the 10 buckets: 9 repetition levels (1, 2, 4, 8, 16, 32, 64, 128, 256)
+plus the unseen `rep_0` control, which is excluded from the training blend.
+
+  books per bucket : 660  (measured: `wc -l gutenberg_rep_jsonl/rep_*_token.jsonl`)
+  filtered pool    : 6,600  (660 × 10)
+  training books   : 5,940  (660 × 9)
+  total sequences  : 337,260  (660 × 511)
+  total tokens     : 2,762,833,920  (2.76B; recorded in `models_pretraining_fineweb40B_gutenberg3B.md`)

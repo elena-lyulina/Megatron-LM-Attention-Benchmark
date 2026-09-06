@@ -217,7 +217,7 @@ def _clear_stats(stats_dir: Path):
     shutil.rmtree(stats_dir)
 
 
-def pipeline(dataset_dir: Path, output_dir: Path, tokenizer_path: str, ckpt_dir: Path | None, stats_dir: Path | None, megatron_ckpt_dir: str | None = None, num_workers: int | None = None):
+def pipeline(dataset_dir: Path, output_dir: Path, tokenizer_path: str, ckpt_dir: Path | None, stats_dir: Path | None, megatron_ckpt_dir: str | None = None, num_workers: int | None = None, to_step: int | None = None):
     t_start = time.time()
     num_proc = num_workers or os.cpu_count()
 
@@ -245,6 +245,8 @@ def pipeline(dataset_dir: Path, output_dir: Path, tokenizer_path: str, ckpt_dir:
     def step(step_name, step_fn, stats_fn=None, save_ckpt=True):
         nonlocal ds
         if fast_forward_name and step_name <= fast_forward_name:
+            return
+        if to_step is not None and int(step_name.split("_")[0]) > to_step:
             return
         ckpt_path = ckpt_dir / step_name if (ckpt_dir and save_ckpt) else None
         ds, size = run_step(step_fn, ds, ckpt_path)
@@ -274,13 +276,18 @@ def pipeline(dataset_dir: Path, output_dir: Path, tokenizer_path: str, ckpt_dir:
     step("18_compute_excerpt_chunk_sigs", lambda d: d.map(compute_excerpt_chunk_signatures, num_proc=num_proc, load_from_cache_file=HF_CACHE_RESULTS, desc="compute excerpt chunk sigs"), save_ckpt=False)
     step("19_dedup_excerpts_minhash", lambda d: dedup_excerpts_minhash(d, stats_dir=stats_dir / "19_dedup_excerpts_minhash" if stats_dir else None))
 
-    if megatron_ckpt_dir:
+    if megatron_ckpt_dir and (to_step is None or to_step >= 20):
         ppl_model = load_model(megatron_ckpt_dir, tokenizer_path)
         step("20_score_perplexity_min_k_pp", lambda d: score_perplexity_and_min_k_pp(d, ppl_model), stats_fn=write_scoring_stats)
 
     print_stats(ds)
-    output_dir.mkdir(parents=True, exist_ok=True)
-    write_tokenized_excerpts(ds, output_dir, num_proc)
+    if to_step is not None and to_step < 19:
+        # Excerpt columns are only populated by steps 14-19, so the final output
+        # would be empty or malformed when stopping earlier. Stats are already written.
+        print(f"\nStopped after step {to_step}; skipping excerpt output.")
+    else:
+        output_dir.mkdir(parents=True, exist_ok=True)
+        write_tokenized_excerpts(ds, output_dir, num_proc)
     print(f"\nTime: {(time.time() - t_start) / 60:.1f}min  output: {output_dir}")
 
 
@@ -298,6 +305,8 @@ def main():
                         help="path to FineWeb LLaMA 1B Megatron checkpoint dir for step 20 perplexity + Min-K%++ scoring (requires GPU)")
     parser.add_argument("--num-workers", type=int, default=None,
                         help="number of parallel workers for dataset.map() steps (default: os.cpu_count())")
+    parser.add_argument("--to-step", type=int, default=None,
+                        help="stop after this step number, e.g. 13 to regenerate stats up to content dedup")
     args = parser.parse_args()
     output_dir = Path(args.output_dir)
     ckpt_dir = output_dir / "checkpoints" if args.checkpoint else None
@@ -310,6 +319,7 @@ def main():
         stats_dir=stats_dir,
         megatron_ckpt_dir=args.megatron_ckpt_dir,
         num_workers=args.num_workers,
+        to_step=args.to_step,
     )
 
 
