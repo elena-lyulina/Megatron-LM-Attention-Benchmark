@@ -12,14 +12,9 @@
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=clariden-jobs-elyulin-aaaauapxybdkdx42ppvef2c2eq@swissai-initiative.slack.com
 
-# Zero-shot downstream benchmarks (lm-eval-harness) for one trained model, all tasks in a
-# single lm_eval call so the checkpoint loads once. Feeds the benchmark table in results 4.1.
-# See attn_bench/_plans/lm_eval_benchmark_plan.md for the full design and its rationale.
-#
-# Loads the HF checkpoint through the stock --model hf path: every attention family already
-# has a conversion registered for auto_class (checkpoint_conversion/attn_families/), so the
-# custom modeling_*.py ships inside the checkpoint dir and trust_remote_code picks it up.
-# No custom LM subclass needed.
+# Downstream benchmarks (lm-eval-harness) for one model, all tasks in a single lm_eval call
+# so the checkpoint loads once. Loads the HF checkpoint via the stock --model hf path.
+# Design and rationale: attn_bench/_plans/lm_eval_benchmark_plan.md
 #
 # Env vars:
 #   MODEL        see llama_checkpoints.sh (default: full-scf1)
@@ -37,12 +32,10 @@ echo "START TIME: $(date)"
 
 CONTAINER_ENV=nemo_26.04_te2.15
 
-# Pinned so all models share one lm-eval version, and therefore one set of task versions --
-# per-question results are only comparable across models when the task version matches.
-# The job asserts the installed version equals this before doing any work.
-# 0.4.13 was the current stable on PyPI as of 07/09/2026. Set LM_EVAL_VERSION=latest to
-# install unpinned and skip the assert (the resolved version still lands in run_metadata.json).
-LM_EVAL_VERSION=${LM_EVAL_VERSION:-0.4.13}
+# All models must share one version, so task versions match. 0.4.8 is what the container
+# ships; a pip install lands below /opt/venv on sys.path and gets shadowed (job 3314708),
+# hence the assert. LM_EVAL_VERSION=latest installs unpinned and skips it.
+LM_EVAL_VERSION=${LM_EVAL_VERSION:-0.4.8}
 
 ### PATHS ###
 MEGATRON_LM_DIR=/iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark
@@ -63,6 +56,11 @@ TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b
 OUT_DIR=/iopsstor/scratch/cscs/$USER/eval-results/lm-eval/$EXP_NAME/shots$NUM_FEWSHOT
 STORE_OUT_DIR=/users/$USER/store/eval-results/lm-eval/$EXP_NAME/shots$NUM_FEWSHOT
 
+# Request cache, written as it goes -- results are only written after the whole task list,
+# so this is what makes a killed job cheap to resubmit. Keyed by request and NOT by model:
+# two models sharing a path would silently get each other's loglikelihoods.
+CACHE_DIR=/iopsstor/scratch/cscs/$USER/eval-results/lm-eval-cache/$EXP_NAME/shots$NUM_FEWSHOT
+
 # Dataset + dynamic-module cache on scratch, shared by every model so hellaswag downloads once.
 # Never store: compute nodes must not write to capstor.
 export HF_HOME=/iopsstor/scratch/cscs/$USER/hf-home
@@ -70,10 +68,8 @@ export HF_DATASETS_TRUST_REMOTE_CODE=1
 
 export PYTHONPATH=$MEGATRON_LM_DIR:${PYTHONPATH:-}
 
-# The trained context length. The HF configs carry max_position_embeddings=131072, so without
-# this wikitext's rolling window would be scored 16x past anything these models ever saw --
-# especially wrong for the SWA and linear-attention families. Runtime only, the checkpoints
-# are untouched.
+# Trained context length. The HF configs say 131072, so without this wikitext's rolling
+# window runs 16x past anything these models saw. Runtime only, checkpoints untouched.
 MAX_LENGTH=8192
 
 SEED=1234
@@ -84,8 +80,8 @@ if [ ! -f "$HF_DIR/config.json" ]; then
 fi
 
 ### SKIP CHECK ###
-# Read-only on both sides: the job writes to scratch and never to store, but you promote
-# results to store by hand, so a rerun must not redo a model already copied over.
+# Read-only on both sides -- results are promoted to store by hand, so a rerun must not
+# redo a model already copied over.
 if [ -z "$OVERWRITE" ] && [ -z "$LIMIT" ]; then
     FOUND=$(find "$OUT_DIR" "$STORE_OUT_DIR" -name 'results_*.json' 2>/dev/null | head -1)
     if [ -n "$FOUND" ]; then
@@ -94,22 +90,21 @@ if [ -z "$OVERWRITE" ] && [ -z "$LIMIT" ]; then
     fi
 fi
 
-mkdir -p "$OUT_DIR"
+mkdir -p "$OUT_DIR" "$CACHE_DIR"
 
 echo "RUN: model=$MODEL  exp=$EXP_NAME  shots=$NUM_FEWSHOT  bs=$BATCH_SIZE  tasks=$TASKS${LIMIT:+  limit=$LIMIT}"
 
 ### PER-FAMILY ENV ###
-# NEEDS_FLA_052 (KDA): the container ships flash-linear-attention 0.4.2, whose chunk_kda NaNs.
-# Side-installed 0.5.2 in $FLA_DIR (populated by the pretrain / measure_mem slurms), prepended
-# to PYTHONPATH so it shadows the container copy.
+# NEEDS_FLA_052 (KDA): container's fla 0.4.2 NaNs chunk_kda; shadow it with the side-installed
+# 0.5.2 (populated by the pretrain / measure_mem slurms).
 FLA_DIR=$MEGATRON_LM_DIR/attn_bench/packages-fla
 FLA_ENV=""
 if [ "$NEEDS_FLA_052" = "1" ]; then
     FLA_ENV="export PYTHONPATH=$FLA_DIR:\$PYTHONPATH;"
 fi
 
-# NEEDS_TRITON (GDN / KDA / qwen / carry-*): fla autotune on a shared Triton cache dies with
-# "stale file handle" (job 2570257). One process here, so a per-job dir is enough.
+# NEEDS_TRITON: fla autotune on a shared Triton cache dies with "stale file handle"
+# (job 2570257). One process here, so a per-job dir is enough.
 TRITON_ENV=""
 if [ "$NEEDS_TRITON" = "1" ]; then
     TRITON_ENV="export TRITON_CACHE_DIR=/tmp/triton_${USER}_${SLURM_JOB_ID}; mkdir -p \$TRITON_CACHE_DIR;"
@@ -125,13 +120,9 @@ LIMIT_ARG=""
 [ -n "$LIMIT" ] && LIMIT_ARG="--limit $LIMIT"
 
 ### RUN ###
-# --log_samples writes one record per document (doc_id, target, filtered_resps, per-doc metric
-# values). That is the only way to recover per-question outcomes afterwards, so it is always on
-# and the analysis (CIs, paired model comparisons, bootstrapped wikitext ppl) can be decided later.
-#
-# batch_size is a fixed integer on purpose. Under bf16 the batch composition perturbs logits in
-# the last decimals, so "auto" -- which picks a different size per model and per run -- would make
-# per-document scores irreproducible and flip near-ties.
+# --log_samples is always on: per-document records are the only way to recover per-question
+# outcomes later. batch_size is a fixed integer, never "auto" -- under bf16 the batch
+# composition perturbs logits, so a varying size makes per-document scores irreproducible.
 srun \
     --cpus-per-task $SLURM_CPUS_PER_TASK \
     --environment=$CONTAINER_ENV \
@@ -142,8 +133,13 @@ srun \
         pip install --quiet lm-eval
         python -c \"import lm_eval; print('lm_eval', lm_eval.__version__, '(unpinned)')\"
     else
-        pip install --quiet 'lm-eval==$LM_EVAL_VERSION'
-        python -c \"import lm_eval; assert lm_eval.__version__ == '$LM_EVAL_VERSION', 'got lm_eval '+lm_eval.__version__; print('lm_eval', lm_eval.__version__, 'OK')\"
+        # No-op unless the image lacks the pinned version.
+        INSTALLED=\$(python -c 'import lm_eval; print(lm_eval.__version__)' 2>/dev/null || echo none)
+        if [ \"\$INSTALLED\" != '$LM_EVAL_VERSION' ]; then
+            echo \"lm_eval \$INSTALLED found, installing $LM_EVAL_VERSION\"
+            pip install --quiet 'lm-eval==$LM_EVAL_VERSION'
+        fi
+        python -c \"import lm_eval; assert lm_eval.__version__ == '$LM_EVAL_VERSION', 'got lm_eval '+lm_eval.__version__+' (a pip install can land below /opt/venv on sys.path and be shadowed)'; print('lm_eval', lm_eval.__version__, 'OK')\"
     fi
     $FLA_ENV
     $TRITON_ENV
@@ -157,13 +153,13 @@ srun \
         --seed $SEED \
         --output_path $OUT_DIR \
         --log_samples \
+        --use_cache $CACHE_DIR/cache \
         $LIMIT_ARG
     "
 EVAL_STATUS=$?
 
 ### RUN METADATA ###
-# Written on success only, next to the results. The pins live in the script, this is the audit
-# trail that lets the analysis assert all models really did share a version / max_length / batch.
+# Audit trail: lets the analysis assert all models shared a version / max_length / batch.
 if [ $EVAL_STATUS -eq 0 ]; then
     RESOLVED_VERSION=$(srun --overlap --environment=$CONTAINER_ENV bash -c "python -c 'import lm_eval; print(lm_eval.__version__)'" 2>/dev/null | tail -1)
     cat > "$OUT_DIR/run_metadata.json" <<EOF
