@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --account=infra01
-#SBATCH --time=4:00:00
+#SBATCH --time=3:00:00
 #SBATCH --job-name=eval-bench
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
@@ -32,10 +32,11 @@ echo "START TIME: $(date)"
 
 CONTAINER_ENV=nemo_26.04_te2.15
 
-# All models must share one version, so task versions match. 0.4.8 is what the container
-# ships; a pip install lands below /opt/venv on sys.path and gets shadowed (job 3314708),
-# hence the assert. LM_EVAL_VERSION=latest installs unpinned and skips it.
-LM_EVAL_VERSION=${LM_EVAL_VERSION:-0.4.8}
+# All models must share one version, so task versions match. Side-installed rather than taken
+# from the container: /opt/venv's copy mixes files from two releases and dies importing the hf
+# backend (job 3314815). Must be recent enough for the image's transformers -- 0.4.8 fails on
+# transformers.AutoModelForVision2Seq, removed from newer transformers (job 3315048).
+LM_EVAL_VERSION=${LM_EVAL_VERSION:-0.4.13}
 
 ### PATHS ###
 MEGATRON_LM_DIR=/iopsstor/scratch/cscs/$USER/Megatron-LM-Attention-Benchmark
@@ -52,9 +53,15 @@ OVERWRITE=${OVERWRITE:-}
 model_config "$MODEL"
 
 HF_DIR=/users/$USER/store/hf-checkpoints/$EXP_NAME
+# Version-scoped so changing the pin installs cleanly instead of reusing the old tree.
+LM_EVAL_DIR=$MEGATRON_LM_DIR/attn_bench/packages-lm-eval/$LM_EVAL_VERSION
 TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b
 OUT_DIR=/iopsstor/scratch/cscs/$USER/eval-results/lm-eval/$EXP_NAME/shots$NUM_FEWSHOT
 STORE_OUT_DIR=/users/$USER/store/eval-results/lm-eval/$EXP_NAME/shots$NUM_FEWSHOT
+
+# A --limit run writes a results_*.json like any other, so it must never land in the real
+# output dir -- the sweep's skip check would find it and leave that model on 20-doc numbers.
+[ -n "$LIMIT" ] && OUT_DIR="$OUT_DIR/limit$LIMIT"
 
 # Request cache, written as it goes -- results are only written after the whole task list,
 # so this is what makes a killed job cheap to resubmit. Keyed by request and NOT by model:
@@ -129,18 +136,20 @@ srun \
     -lu \
     bash -c "
     set -e
-    if [ '$LM_EVAL_VERSION' = 'latest' ]; then
-        pip install --quiet lm-eval
-        python -c \"import lm_eval; print('lm_eval', lm_eval.__version__, '(unpinned)')\"
-    else
-        # No-op unless the image lacks the pinned version.
-        INSTALLED=\$(python -c 'import lm_eval; print(lm_eval.__version__)' 2>/dev/null || echo none)
-        if [ \"\$INSTALLED\" != '$LM_EVAL_VERSION' ]; then
-            echo \"lm_eval \$INSTALLED found, installing $LM_EVAL_VERSION\"
-            pip install --quiet 'lm-eval==$LM_EVAL_VERSION'
-        fi
-        python -c \"import lm_eval; assert lm_eval.__version__ == '$LM_EVAL_VERSION', 'got lm_eval '+lm_eval.__version__+' (a pip install can land below /opt/venv on sys.path and be shadowed)'; print('lm_eval', lm_eval.__version__, 'OK')\"
+    # Guarded one-shot side-install, same shape as packages-fla. PYTHONPATH precedes
+    # /opt/venv, so this shadows the container's broken copy.
+    if [ ! -f '$LM_EVAL_DIR/lm_eval/__init__.py' ] || [ ! -f '$LM_EVAL_DIR/sqlitedict.py' ]; then
+        # sqlitedict is the only lm-eval dep the container lacks (everything else, incl. torch
+        # and transformers, comes from the image -- deliberately not shadowed here).
+        pip install --quiet --no-deps --ignore-installed --target='$LM_EVAL_DIR' 'lm-eval==$LM_EVAL_VERSION' sqlitedict
     fi
+    # Expanded from the batch script, not the container's own: the custom modeling_*.py inside
+    # each HF checkpoint imports attn_bench, and transformers' check_imports refuses to load a
+    # dynamic module whose imports are missing (job 3315463).
+    export PYTHONPATH='$LM_EVAL_DIR:$PYTHONPATH'
+    # Importing the hf backend is the check that matters -- a version match alone would not
+    # have caught the container's mixed-release install (job 3314815).
+    python -c \"import lm_eval, lm_eval.models.huggingface as h; assert lm_eval.__version__ == '$LM_EVAL_VERSION', 'got lm_eval '+lm_eval.__version__; assert lm_eval.__file__.startswith('$LM_EVAL_DIR'), 'shadowed by '+lm_eval.__file__; print('lm_eval', lm_eval.__version__, 'hf backend OK')\"
     $FLA_ENV
     $TRITON_ENV
     $SINK_ENV
@@ -161,7 +170,7 @@ EVAL_STATUS=$?
 ### RUN METADATA ###
 # Audit trail: lets the analysis assert all models shared a version / max_length / batch.
 if [ $EVAL_STATUS -eq 0 ]; then
-    RESOLVED_VERSION=$(srun --overlap --environment=$CONTAINER_ENV bash -c "python -c 'import lm_eval; print(lm_eval.__version__)'" 2>/dev/null | tail -1)
+    RESOLVED_VERSION=$(srun --overlap --environment=$CONTAINER_ENV bash -c "PYTHONPATH=$LM_EVAL_DIR:\$PYTHONPATH python -c 'import lm_eval; print(lm_eval.__version__)'" 2>/dev/null | tail -1)
     cat > "$OUT_DIR/run_metadata.json" <<EOF
 {
   "job_id": "$SLURM_JOB_ID",
