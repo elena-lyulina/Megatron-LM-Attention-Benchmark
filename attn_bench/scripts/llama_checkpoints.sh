@@ -26,7 +26,7 @@
 #  no-ops when the HF config has no llama3 rope-scaling dict, so GDN/KDA (no RoPE) and MLA
 #  (plain RoPE, no scaling) all pass through untouched.)
 
-MODELS=(full-scf8 gated-scf8 full-xdoc-leak-scf8 sink-scf8 off-by-one-scf8 gdn carry-r0 carry-r0.5 carry-r1 full-goldfish-scf8 gdn-goldfish full-fineweb80B-scf8 full-long-scf8 full-long-split-1024-scf8 full-scf1 gated-scf1 sink-scf1 swa-w256-scf1 swa-w1024-scf1 swa-w4096-scf1 kda mla qwen)
+MODELS=(full-scf8 gated-scf8 full-xdoc-leak-scf8 sink-scf8 off-by-one-scf8 gdn carry-r0 carry-r0.5 carry-r1 full-goldfish-scf8 gdn-goldfish full-fineweb80B-scf8 full-long-scf8 full-long-split-1024-scf8 full-scf1 gated-scf1 sink-scf1 swa-w256-scf1 swa-w1024-scf1 swa-w4096-scf1 kda mla qwen gemma)
 
 # GDN linear-attention dims -- not restored by --use-checkpoint-args, must be re-passed.
 GDN_DIMS="--experimental-attention-variant gated_delta_net \
@@ -74,6 +74,11 @@ QWEN_DIMS="--experimental-attention-variant gated_delta_net \
     --linear-conv-kernel-dim 4 \
     --attention-output-gate \
     --rotary-base 500000"
+
+# Gemma-3-style hybrid: SWA on 14 layers, full attention at layers 6 and 12. Neither flag is in
+# checkpointing.py's _set_arg restore list -- dropping the skip-freq silently gives pure SWA.
+GEMMA_DIMS="--window-size 1024,0 \
+    --window-attn-skip-freq 6"
 
 # Actual RoPE scaling factor these checkpoints trained with (see gpt_builders.py) -- not restored by --use-checkpoint-args, must be re-passed.
 ROPE_SCF8="--use-rope-scaling --rope-scaling-factor 8"
@@ -194,6 +199,10 @@ model_config() {
             EXP_NAME=llama3-1b-hybrid-qwen-scf1-fineweb40B-gutenberg3B
             MEGATRON_EXTRA="$ROPE_SCF1 $QWEN_DIMS"
             NEEDS_TRITON=1
+            ;;
+        gemma)
+            EXP_NAME=llama3-1b-hybrid-gemma-w1024-scf1-fineweb40B-gutenberg3B
+            MEGATRON_EXTRA="$ROPE_SCF1 $GEMMA_DIMS"
             ;;
         *)
             echo "Unknown MODEL=$model (expected one of: ${MODELS[*]})"

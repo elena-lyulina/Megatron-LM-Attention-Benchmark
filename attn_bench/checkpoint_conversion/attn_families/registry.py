@@ -5,10 +5,10 @@ user-facing flag needed -- and looks up that attn_family's config/state-dict bui
 
 from typing import Any
 
-from attn_bench.checkpoint_conversion.attn_families import (full, gated, mla,
-                                                            swa)
+from attn_bench.checkpoint_conversion.attn_families import (full, gated, gemma,
+                                                            mla, swa)
 
-ATTN_FAMILIES = ("full", "sink", "gated", "swa", "gdn", "kda", "mla", "qwen")
+ATTN_FAMILIES = ("full", "sink", "gated", "swa", "gemma", "gdn", "kda", "mla", "qwen")
 
 
 def detect_attn_family(args: Any) -> str:
@@ -31,6 +31,9 @@ def detect_attn_family(args: Any) -> str:
         # lands in the checkpoint's state dict, so it needs its own conversion path.
         return "off-by-one"
     if getattr(args, "window_size", None) is not None:
+        # a Gemma-style hybrid sets window_size too and is checked based on window_attn_skip_freq
+        if getattr(args, "window_attn_skip_freq", None) is not None:
+            return "gemma"
         return "swa"
     return "full"
 
@@ -41,6 +44,8 @@ def get_attn_family_module(args: Any):
         return full
     if attn_family == "swa":
         return swa
+    if attn_family == "gemma":
+        return gemma
     if attn_family == "gated":
         return gated
     if attn_family == "mla":

@@ -392,6 +392,40 @@ Logs: `attn_bench/logs/3281383.err` + `attn_bench/_logs/3281383.out` (`.out` in 
 
 ---
 
+## Hybrid Gemma-3-style mixer (14 SWA w=1024 + 2 full attention)
+
+LLaMA 3.2 1B backbone with a Gemma-3-style attention pattern: sliding window (`--window-size 1024,0`) on most layers, full attention interleaved every 6th (`--window-attn-skip-freq 6`) — at 16 layers that's full attention at layers 6 and 12, so 14 SWA : 2 full. Window 1024 and skip-freq 6 are Gemma 3's own values; the pattern rule matches Gemma exactly, the ratio only approximately (Gemma is 5:1 over 26 layers). No FFN shrink needed — both layer types are the same `SelfAttention` module, so the param count is 1,235,814,400, exactly the full-attention baseline's. scf=1 via `--rope-scaling-factor 1`. Document boundaries isolated via `--use-packed-seq-params` + `--reset-position-ids` + `--eod-mask-loss`. See the slurm header for the Gemma-fidelity caveats (dual RoPE base, `query_pre_attn_scalar`, softcapping — none replicated).
+
+Dist config: 8 nodes / TP=1 / MBS=3 / GBS=288, `TRAINING_STEPS=18141`, container `nemo_26.04_te2.15` — identical to the SWA and softmax scf=1 baselines.
+
+Completed cleanly in a single job (`3318605`): ran to iteration 18141, exited via `[exiting program after consuming all available data at iteration 18141]`, checkpoint saved — no crash, no resume, zero skipped/NaN iterations.
+
+| variant | Slurm job | start (CEST) | end (CEST) | run time | status | final lm loss (step 18141) | throughput (TFLOP/s/GPU) |
+|---|---|---|---|---|---|---|---|
+| hybrid gemma w=1024, skip-freq 6 (scf1) | `3318605` | 2026-09-07 22:37:55 | 2026-09-08 06:01:05 | 7h 23m 10s | COMPLETED (data exhausted) | 2.3933 (final step; ~2.383 avg last 50) | ~404.3 (avg) |
+
+Two full-attention layers out of 16 buy a 4x wider window for free — against the pure-SWA runs at the same 8-node config:
+
+| run | final lm loss | avg last 50 | throughput |
+|---|---|---|---|
+| swa w=256 | 2.4305 | 2.4206 | ~425.6 |
+| swa w=1024 | 2.4013 | 2.3911 | ~410.2 |
+| **hybrid gemma w=1024 + 2 full** | **2.3933** | **2.3828** | **~404.3** |
+| swa w=4096 | 2.3923 | 2.3816 | ~380.2 |
+
+It matches `swa w=4096` to within noise while running ~6% faster, and lands at the softmax scf=1 baseline loss level (~2.38) at ~404 vs their ~360.
+
+W&B run: `llama3-1b-hybrid-gemma-w1024-scf1-fineweb40B-gutenberg3B-3318605` (`qtb5xq5m`, project `fineweb-40B_gutenberg-3B`).
+
+Checkpoint saved at step 18141. Moved to long-term storage under:
+`/users/elyulina/store/pretrain-results/llama3-1b-hybrid-gemma-w1024-scf1-fineweb40B-gutenberg3B/`
+
+Slurm script: `attn_bench/submissions/pretrain_llama3_1b_hybrid_gemma_fineweb40B_gutenberg3B.slurm` (`WINDOW_SIZE` defaults to 1024, `SKIP_FREQ` to 6).
+
+Logs: `attn_bench/logs/3318605.err` + `attn_bench/_logs/3318605.out` (`.out` in `_logs/` for exceeding 3 MB).
+
+---
+
 ## Attention variants / trained models 
 
 | variant | Megatron flag | description |
@@ -409,6 +443,7 @@ Logs: `attn_bench/logs/3281383.err` + `attn_bench/_logs/3281383.out` (`.out` in 
 | multi-head latent attention (MLA) | `--multi-latent-attention --kv-lora-rank 512 --rope-type rope --no-rope-fusion` | DeepSeek-V2-Lite MLA block replaces softmax attention on all layers (16 heads, KV squeezed through a 512 latent); FFN shrunk to 7680 to param-match (~1.238B) |
 | kimi delta attention (KDA) | `--experimental-attention-variant kimi_delta_attention --linear-attention-freq [1]*16 --linear-num-key-heads 16 --linear-num-value-heads 16 --linear-key-head-dim 128 --linear-value-head-dim 128 --position-embedding-type none` | KDA linear-attention mixer replaces softmax attention on all layers (symmetric 128/128 heads); FFN shrunk to 6976 to param-match (~1.235B); needs flash-linear-attention ≥ 0.5.x |
 | hybrid qwen (12 GDN + 4 gated attn) | `--experimental-attention-variant gated_delta_net --linear-attention-freq 4 --linear-num-key-heads 8 --linear-num-value-heads 8 --attention-output-gate` | Qwen-style hybrid: `[1,1,1,0]×4` — GDN mixer on 12 layers, gated softmax attention on layers 3/7/11/15; FFN shrunk to 6208 to param-match (~1.234B) |
+| hybrid gemma (14 SWA w=1024 + 2 full) | `--window-size 1024,0 --window-attn-skip-freq 6` | Gemma-3-style interleave: sliding window on 14 layers, full attention at layers 6 and 12; no FFN shrink needed, param count identical to `full` (~1.236B) |
 
 ---
 

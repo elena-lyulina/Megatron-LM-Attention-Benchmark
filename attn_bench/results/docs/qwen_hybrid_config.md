@@ -59,8 +59,15 @@ Key points:
 - **Scale, MoE, MTP, the vision tower, `mrope` are not part of the replication.**
   What we replicate is the *interleaving pattern* — which mixer sits where, in
   what ratio.
-- Related hybrids for later (T4): **Kimi Linear** = KDA + MLA (3:1); **Gemma2/3** =
-  SWA + full (1:1). Same construction, different components.
+- Related hybrids for later (T4): **Kimi Linear** = KDA + MLA (3:1); **Gemma 2** =
+  SWA + full (1:1, window 4096); **Gemma 3** = SWA + full (5:1, window 1024).
+  Same construction, different components. Gemma 2 and 3 differ — verified against
+  `transformers/models/gemma{2,3}/configuration_gemma*.py`: Gemma 2 hardcodes
+  `(i + 1) % 2`, Gemma 3 uses `_sliding_window_pattern = 6` and dropped the window
+  from 4096 to 1024. Both build `layer_types` as
+  `"sliding_attention" if bool((i + 1) % pattern) else "full_attention"`, the same
+  1-indexed rule as Megatron's `is_layer_window_attention`, so `--window-attn-skip-freq`
+  reproduces either exactly.
 
 Sources (raw `config.json`):
 [Qwen3.5-0.8B](https://huggingface.co/Qwen/Qwen3.5-0.8B/blob/main/config.json),
