@@ -3,10 +3,10 @@
 Running log of empirical patterns noticed while exploring the memorization dashboard
 (`attn_bench/dashboard/`, published at
 https://elena-lyulina.github.io/Megatron-LM-Attention-Benchmark/). Source data:
-`attn_bench/dashboard/data/*.json`, one file per model (`full-scf1`, `gated-scf1`,
-`sink-scf1`, `swa-w4096-scf1`, `swa-w1024-scf1`, `swa-w256-scf1`, `gdn`, `gdn-xdl`,
-`gdn-xdl-xsl-0.5`, `gdn-xdl-xsl`), each holding the offset x prefix grid for reps
-0/1/16/32/64/128/256. See `memorization_measurement.md` for how the numbers are produced.
+`attn_bench/dashboard/data/*.json`, one file per model per suffix (`full-scf1`,
+`gated-scf1`, `sink-scf1`, `swa-w4096-scf1`, `swa-w1024-scf1`, `swa-w256-scf1`, `gemma`,
+`gdn`, `gdn-xdl`, `gdn-xdl-xsl-0.5`, `gdn-xdl-xsl`, `mla`, `kda`, `qwen`), each holding
+the offset x prefix grid for reps 0/1/16/32/64/128/256. See `memorization_measurement.md` for how the numbers are produced.
 
 Every section below is split into **Observation** (what the data shows, not up for
 debate) and **Possible explanations** (our current best guesses at why, explicitly
@@ -343,3 +343,91 @@ learning, not noise.
   like on ordinary non-probe held-out text of similar style, which would be the
   natural baseline to compare against rather than assuming ppl≈1.0 is the
   reasonable expectation.
+
+## 13. Gemma's SWA hybrid sits between SWA and full attention, and slides toward full attention as either repetition or suffix grows
+
+**Observation.** `gemma` runs SWA w=1024 on every layer except every 6th, which stays
+full attention (`--window-attn-skip-freq 6`). Measuring where it lands on the
+full-attention-to-swa-w1024 axis — `(gemma - full) / (swa1024 - full)` in rouge_l,
+averaged over the six non-zero-offset cells with prefix >= 2000, where the two endpoints
+are far enough apart for the ratio to mean anything:
+
+| | rep=16 | rep=32 | rep=64 | rep=128 | rep=256 |
+|---|---|---|---|---|---|
+| suffix=25 | 0.61 | 0.54 | 0.48 | 0.27 | 0.17 |
+| suffix=250 | 0.29 | 0.19 | 0.14 | 0.08 | 0.06 |
+
+At suffix=25/rep=32 gemma is genuinely intermediate, then moves monotonically toward full
+attention along both axes. Concretely at off=1000/prefix=5942: suffix=25/rep=32 gives
+full=0.371, gemma=0.754, swa1024=0.956; the same cell at rep=256 gives full=0.256,
+gemma=0.385, swa1024=1.000; and at suffix=250/rep=32, full=0.217, gemma=0.380,
+swa1024=0.805. By suffix=250/rep=256 gemma (0.245) is within 0.06 of full attention
+(0.189) while swa1024 is at 0.998.
+
+Gemma also shows a muted version of observation 2's window threshold. At off=2000,
+suffix=25, rep=32, prefix 1000 -> 2000 moves gemma 0.40 -> 0.62 while swa1024 moves
+0.62 -> 0.96 and full attention stays flat at 0.22 -> 0.24.
+
+**Possible explanations (hypotheses).**
+- Five of every six layers are SWA w=1024, so observation 2's window-familiarity story
+  should apply to them, while the full-attention layers see the whole synthetic,
+  position-reset excerpt and carry observation 1's mismatch. A position between the two
+  endpoints is what any mixture of the two mechanisms predicts. Not verified that the
+  layer ratio maps onto the measured fraction in any quantitative way — 5:1 layers does
+  not obviously predict 0.54.
+- The layer-ratio story is static and so explains none of the drift. For the suffix
+  direction, observation 5's compounding is the natural guess: a longer suffix gives any
+  single divergence more positions to appear in, penalizing the weaker pathway more. The
+  repetition direction is not gemma-specific at all — see observation 14.
+
+## 14. The mid-repetition peak is not GDN-specific: at non-zero offset nearly every model peaks at rep=32-64 and declines by rep=256
+
+**Observation.** Observation 10 recorded `gdn` peaking around rep=32 and declining
+through rep=256. The same sweep across all 14 dashboard models shows this is the norm,
+not a GDN property. At off=1000/prefix=5942, suffix=25, rouge_l:
+
+| model | rep=16 | rep=32 | rep=64 | rep=128 | rep=256 | peak | peak - rep256 |
+|---|---|---|---|---|---|---|---|
+| gemma | 0.442 | 0.754 | 0.647 | 0.482 | 0.385 | 32 | +0.369 |
+| gated-scf1 | 0.363 | 0.608 | 0.411 | 0.294 | 0.243 | 32 | +0.365 |
+| swa-w4096-scf1 | 0.407 | 0.649 | 0.353 | 0.321 | 0.299 | 32 | +0.350 |
+| gdn | 0.612 | 0.890 | 0.781 | 0.725 | 0.602 | 32 | +0.288 |
+| qwen | 0.252 | 0.425 | 0.473 | 0.434 | 0.302 | 64 | +0.171 |
+| mla | 0.275 | 0.406 | 0.325 | 0.292 | 0.290 | 32 | +0.116 |
+| full-scf1 | 0.258 | 0.371 | 0.273 | 0.251 | 0.256 | 32 | +0.114 |
+| sink-scf1 | 0.269 | 0.370 | 0.297 | 0.267 | 0.270 | 32 | +0.100 |
+| gdn-xdl-xsl-0.5 | 0.478 | 0.738 | 0.647 | 0.713 | 0.642 | 32 | +0.096 |
+| swa-w1024-scf1 | 0.524 | 0.956 | 0.997 | 1.000 | 1.000 | 256 | 0 |
+| swa-w256-scf1 | 0.552 | 0.959 | 0.989 | 0.999 | 1.000 | 256 | 0 |
+| gdn-xdl | 0.543 | 0.864 | 0.780 | 0.869 | 0.990 | 256 | 0 |
+| gdn-xdl-xsl | 0.517 | 0.896 | 0.872 | 0.945 | 0.991 | 256 | 0 |
+| kda | 0.445 | 0.515 | 0.439 | 0.537 | 0.646 | 256 | 0 |
+
+The effect survives at suffix=250 but the ranking changes: gdn takes the largest drop
+there (+0.437), ahead of swa4096 (+0.154) and gemma (+0.135), while full, mla and sink
+compress to +0.015-0.028. Two facts constrain any explanation. First, at
+off=0/prefix=1000 **every** model is monotonic in repetition and reaches 1.00 at rep=256,
+at both suffixes — the non-monotonicity exists only at non-zero offset. Second, four of
+the five models that do not decline are exactly the ones with nowhere to decline to:
+swa1024 and swa256 saturate near 1.0 once prefix clears their window threshold
+(observation 2), and gdn-xdl/gdn-xdl-xsl saturate at ~0.99 by rep=256 (observation 8).
+`kda` is the only model that neither saturates (0.646 at rep=256) nor declines.
+
+**Possible explanations (hypotheses).**
+- This reframes observation 10. `gdn`'s rep=32 peak is not on its own evidence of a
+  GDN-specific forgetting mechanism, since full attention, MLA, sink, gated, swa4096 and
+  gemma all do the same thing; whatever explains it has to cover the whole set, not
+  GDN's document-boundary state-reset regime. The GDN-versus-gdn-xdl *split* in
+  observation 10 is a separate finding and is untouched by this.
+- Since off=0 is monotonic for every model, the decline is tied to the offset
+  construction — the synthetic BOS and position reset described in the setup section —
+  rather than to memorization of the document as such. Working hypothesis: repetition
+  sharpens a representation anchored to the document's true start, which helps at off=0
+  and increasingly hurts at off>0, where the model is asked to continue from a position
+  it never occupied during training. Not verified here.
+- The saturation confound is not resolved: it is equally consistent with "every
+  non-saturated model peaks mid-repetition" and with "the four saturating models would
+  not peak even if they had headroom". Distinguishing the two needs a cell where those
+  models are below ceiling but past their threshold, which the current grid may not
+  contain. `kda` is open either way — it is the one counterexample the saturation
+  argument cannot absorb.

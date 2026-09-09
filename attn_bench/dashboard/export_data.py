@@ -4,7 +4,8 @@ Pages is static -- no scipy in the browser -- so this runs the same interpolatio
 plots use (load_offset_prefix_grid_data) once, ahead of time, instead of shipping the computation
 client-side. The dashboard's suffix slider swaps in a different {model}__s{suffix}.json.
 
-Run from anywhere: `python3 attn_bench/dashboard/export_data.py`.
+Run from anywhere: `python3 attn_bench/dashboard/export_data.py`, optionally with model
+names to re-export only those.
 """
 
 import json
@@ -30,7 +31,7 @@ from attn_bench.plotting.data_loading import load_offset_prefix_grid_data
 
 MODELS = ['full-scf1',  'swa-w4096-scf1', 'swa-w1024-scf1', 'swa-w256-scf1',
           'sink-scf1', 'gated-scf1', 'gdn', 'gdn-xdl', 'gdn-xdl-xsl-0.5', 'gdn-xdl-xsl',
-          'qwen', 'mla', 'kda']
+          'qwen', 'mla', 'kda', 'gemma']
 REPS = [0, 1, 16, 32, 64, 128, 256]
 # One JSON per suffix per model -- inference feasibility was defined at suffix=250, so the
 # populated candidate points are the same set at every smaller suffix (a shorter suffix only
@@ -128,7 +129,13 @@ def export_model(model, suffix):
 
 
 if __name__ == '__main__':
+    # Optional model filter -- a full re-export is ~78 files x ~4 MB, so pass the models you
+    # actually changed when adding one: `python3 export_data.py gemma`.
+    selected = sys.argv[1:] or MODELS
+    unknown = [m for m in selected if m not in MODELS]
+    if unknown:
+        raise SystemExit(f'unknown model(s) {unknown} -- known: {MODELS}')
     OUT_DIR.mkdir(exist_ok=True)
     for suffix in SUFFIXES:
-        for model in MODELS:
+        for model in selected:
             export_model(model, suffix)

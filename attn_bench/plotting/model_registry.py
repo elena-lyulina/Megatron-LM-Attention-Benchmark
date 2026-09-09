@@ -89,6 +89,9 @@ MODELS = {
     'mla': 'llama3-1b-mla-scf1-fineweb40B-gutenberg3B',
     'kda': 'llama3-1b-kda-scf1-fineweb40B-gutenberg3B',
     'qwen': 'llama3-1b-hybrid-qwen-scf1-fineweb40B-gutenberg3B',
+    # Gemma-3-style hybrid: SWA w=1024 everywhere except every 6th layer, which stays full
+    # attention (--window-attn-skip-freq 6). Softmax throughout, unlike the linear-attention hybrids.
+    'gemma': 'llama3-1b-hybrid-gemma-w1024-scf1-fineweb40B-gutenberg3B',
 }
 
 # Backend -> folder-name suffix appended to a MODELS entry (mirrors measure_mem.slurm's own
@@ -161,6 +164,7 @@ MODEL_COLORS = {
     'mla':                    '#B15928',
     'kda':                    '#C51B7D',
     'qwen':                   '#F06BA8',
+    'gemma':                  '#984EA3',
 }
 
 
