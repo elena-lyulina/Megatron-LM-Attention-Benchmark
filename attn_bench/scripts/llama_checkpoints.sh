@@ -211,3 +211,36 @@ model_config() {
     esac
     CKPT_NAME="${CKPT_NAME:-$EXP_NAME}"
 }
+# --- External reference models ------------------------------------------------------------
+# Public HF hub models, evaluated through the same path as the local checkpoints.
+# max_length is each model's OWN trained context, never eval_benchmarks.slurm's 8192:
+# scoring a model past its trained context inflates its wikitext perplexity.
+# Why these two exist: attn_bench/_plans/lm_eval_benchmark_plan.md
+EXTERNAL_MODELS=(llama-3.2-1b pythia-1.4b-43b)
+
+external_config() {
+    local name="$1"
+    EXTERNAL_REVISION=""
+    case "$name" in
+        llama-3.2-1b)
+            # Gated: needs a login-node pre-download, or HF_TOKEN in the job env.
+            EXTERNAL_HF_MODEL=meta-llama/Llama-3.2-1B
+            EXTERNAL_TOKENIZER=meta-llama/Llama-3.2-1B
+            EXTERNAL_MAX_LENGTH=8192
+            ;;
+        pythia-1.4b-43b)
+            # 1024 seqs x 2048 tokens = 2.097M tokens/step, so step21000 ~= 44.0B tokens.
+            # NeoX tokenizer: wikitext compares on bits_per_byte, not word_perplexity.
+            EXTERNAL_HF_MODEL=EleutherAI/pythia-1.4b
+            EXTERNAL_REVISION=step21000
+            EXTERNAL_TOKENIZER=EleutherAI/pythia-1.4b
+            EXTERNAL_MAX_LENGTH=2048
+            ;;
+        *)
+            echo "Unknown EXTERNAL_MODEL=$name (expected one of: ${EXTERNAL_MODELS[*]})"
+            exit 1
+            ;;
+    esac
+    # Hub ids carry a "/", which cannot be a single path component.
+    EXP_NAME="external__$(echo "$EXTERNAL_HF_MODEL" | tr '/' '__')${EXTERNAL_REVISION:+__$EXTERNAL_REVISION}"
+}

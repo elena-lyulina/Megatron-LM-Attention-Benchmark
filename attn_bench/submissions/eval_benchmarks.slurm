@@ -17,7 +17,10 @@
 # Design and rationale: attn_bench/_plans/lm_eval_benchmark_plan.md
 #
 # Env vars:
-#   MODEL        see llama_checkpoints.sh (default: full-scf1)
+#   MODEL          see llama_checkpoints.sh (default: full-scf1)
+#   EXTERNAL_MODEL public HF hub reference model (see external_config in llama_checkpoints.sh).
+#                  Takes over from MODEL: brings its own pretrained id, revision, tokenizer and
+#                  trained context length, and has no local checkpoint to look for.
 #   NUM_FEWSHOT  shots, appears in the output path (default: 0)
 #   BATCH_SIZE   fixed integer, never "auto" -- see the pinning note below (default: 8)
 #   TASKS        comma-separated lm-eval task names (default: the 8-task thesis set)
@@ -26,6 +29,7 @@
 #
 # Usage: sbatch --export=MODEL=full-scf1 eval_benchmarks.slurm
 #        sbatch --export=MODEL=full-scf1,LIMIT=20 eval_benchmarks.slurm   # smoke test
+#        sbatch --export=EXTERNAL_MODEL=pythia-1.4b-43b eval_benchmarks.slurm
 # (normally submitted via eval_benchmarks_all.sh)
 
 echo "START TIME: $(date)"
@@ -48,14 +52,35 @@ BATCH_SIZE=${BATCH_SIZE:-8}
 TASKS=${TASKS:-lambada_openai,hellaswag,piqa,arc_easy,arc_challenge,winogrande,sciq,wikitext}
 LIMIT=${LIMIT:-}
 OVERWRITE=${OVERWRITE:-}
+EXTERNAL_MODEL=${EXTERNAL_MODEL:-}
 
 ### MODEL -> EXP_NAME / NEEDS_TRITON / NEEDS_FLA_052 / IS_SINK_FAMILY ###
-model_config "$MODEL"
+# PRETRAINED / REVISION / TOKENIZER_PATH / MAX_LENGTH are what the two paths have to agree on;
+# everything downstream (output dirs, cache, skip check, metadata) keys off EXP_NAME alone.
+if [ -n "$EXTERNAL_MODEL" ]; then
+    # A hub reference model: no local checkpoint, no model_config entry, and none of the
+    # per-family kernel quirks -- those are properties of our Megatron conversions only.
+    external_config "$EXTERNAL_MODEL"
+    NEEDS_TRITON=0
+    NEEDS_FLA_052=0
+    IS_SINK_FAMILY=0
+    PRETRAINED=$EXTERNAL_HF_MODEL
+    REVISION=$EXTERNAL_REVISION
+    TOKENIZER_PATH=$EXTERNAL_TOKENIZER
+    # The reference model's own trained context, NOT our 8192 -- see external_config.
+    MAX_LENGTH=$EXTERNAL_MAX_LENGTH
+else
+    model_config "$MODEL"
+    PRETRAINED=/users/$USER/store/hf-checkpoints/$EXP_NAME
+    REVISION=""
+    TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b
+    # Trained context length. The HF configs say 131072, so without this wikitext's rolling
+    # window runs 16x past anything these models saw. Runtime only, checkpoints untouched.
+    MAX_LENGTH=8192
+fi
 
-HF_DIR=/users/$USER/store/hf-checkpoints/$EXP_NAME
 # Version-scoped so changing the pin installs cleanly instead of reusing the old tree.
 LM_EVAL_DIR=$MEGATRON_LM_DIR/attn_bench/packages-lm-eval/$LM_EVAL_VERSION
-TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b
 OUT_DIR=/iopsstor/scratch/cscs/$USER/eval-results/lm-eval/$EXP_NAME/shots$NUM_FEWSHOT
 STORE_OUT_DIR=/users/$USER/store/eval-results/lm-eval/$EXP_NAME/shots$NUM_FEWSHOT
 
@@ -75,14 +100,12 @@ export HF_DATASETS_TRUST_REMOTE_CODE=1
 
 export PYTHONPATH=$MEGATRON_LM_DIR:${PYTHONPATH:-}
 
-# Trained context length. The HF configs say 131072, so without this wikitext's rolling
-# window runs 16x past anything these models saw. Runtime only, checkpoints untouched.
-MAX_LENGTH=8192
-
 SEED=1234
 
-if [ ! -f "$HF_DIR/config.json" ]; then
-    echo "No HF checkpoint at $HF_DIR -- run convert_and_validate_hf.slurm (MODEL=$MODEL) first."
+# Local checkpoints only: a hub model is resolved (and downloaded, or read from HF_HOME) by
+# transformers at load time, so there is nothing to stat here.
+if [ -z "$EXTERNAL_MODEL" ] && [ ! -f "$PRETRAINED/config.json" ]; then
+    echo "No HF checkpoint at $PRETRAINED -- run convert_and_validate_hf.slurm (MODEL=$MODEL) first."
     exit 1
 fi
 
@@ -99,7 +122,7 @@ fi
 
 mkdir -p "$OUT_DIR" "$CACHE_DIR"
 
-echo "RUN: model=$MODEL  exp=$EXP_NAME  shots=$NUM_FEWSHOT  bs=$BATCH_SIZE  tasks=$TASKS${LIMIT:+  limit=$LIMIT}"
+echo "RUN: model=${EXTERNAL_MODEL:-$MODEL}  exp=$EXP_NAME  shots=$NUM_FEWSHOT  bs=$BATCH_SIZE  max_length=$MAX_LENGTH  tasks=$TASKS${REVISION:+  revision=$REVISION}${LIMIT:+  limit=$LIMIT}"
 
 ### PER-FAMILY ENV ###
 # NEEDS_FLA_052 (KDA): container's fla 0.4.2 NaNs chunk_kda; shadow it with the side-installed
@@ -125,6 +148,9 @@ fi
 
 LIMIT_ARG=""
 [ -n "$LIMIT" ] && LIMIT_ARG="--limit $LIMIT"
+
+MODEL_ARGS="pretrained=$PRETRAINED,tokenizer=$TOKENIZER_PATH,trust_remote_code=True,dtype=bfloat16,max_length=$MAX_LENGTH"
+[ -n "$REVISION" ] && MODEL_ARGS="$MODEL_ARGS,revision=$REVISION"
 
 ### RUN ###
 # --log_samples is always on: per-document records are the only way to recover per-question
@@ -155,7 +181,7 @@ srun \
     $SINK_ENV
     python -m lm_eval \
         --model hf \
-        --model_args pretrained=$HF_DIR,tokenizer=$TOKENIZER_PATH,trust_remote_code=True,dtype=bfloat16,max_length=$MAX_LENGTH \
+        --model_args $MODEL_ARGS \
         --tasks $TASKS \
         --num_fewshot $NUM_FEWSHOT \
         --batch_size $BATCH_SIZE \
@@ -175,9 +201,11 @@ if [ $EVAL_STATUS -eq 0 ]; then
 {
   "job_id": "$SLURM_JOB_ID",
   "timestamp": "$(date -Iseconds)",
-  "model": "$MODEL",
+  "model": "${EXTERNAL_MODEL:-$MODEL}",
+  "external_model": "${EXTERNAL_MODEL:-null}",
   "exp_name": "$EXP_NAME",
-  "hf_dir": "$HF_DIR",
+  "pretrained": "$PRETRAINED",
+  "revision": "${REVISION:-null}",
   "tokenizer": "$TOKENIZER_PATH",
   "tasks": "$TASKS",
   "num_fewshot": $NUM_FEWSHOT,
