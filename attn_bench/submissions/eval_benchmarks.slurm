@@ -14,7 +14,6 @@
 
 # Downstream benchmarks (lm-eval-harness) for one model, all tasks in a single lm_eval call
 # so the checkpoint loads once. Loads the HF checkpoint via the stock --model hf path.
-# Design and rationale: attn_bench/_plans/lm_eval_benchmark_plan.md
 #
 # Env vars:
 #   MODEL          see llama_checkpoints.sh (default: full-scf1)

@@ -1,15 +1,15 @@
 #!/bin/bash
-# Submit lm-eval-harness benchmark jobs for the 13 models of the benchmark table (one job per
+# Submit lm-eval-harness benchmark jobs for the 14 models of the benchmark table (one job per
 # model). Models whose results already exist on scratch or store are skipped.
-# The list is not the whole llama_checkpoints.sh registry -- see
-# attn_bench/_plans/lm_eval_benchmark_plan.md section 1.
+# EVAL_MODELS is the benchmark-table scope, deliberately narrower than the
+# llama_checkpoints.sh registry: registering a model there does not add it here.
 #
 # Usage: bash eval_benchmarks_all.sh [--dry-run] [--models m1,m2] [--shots N] [--limit N]
 #   --dry-run        print sbatch commands, submit nothing
-#   --models m1,m2   restrict to these models (default: all 13)
+#   --models m1,m2   restrict to these models (default: all of EVAL_MODELS)
 #   --external-model NAME|all
-#                    submit public HF reference models INSTEAD of the 13 (repeatable). These
-#                    calibrate the table's absolute numbers; they are not architecture
+#                    submit public HF reference models INSTEAD of EVAL_MODELS (repeatable).
+#                    They calibrate the table's absolute numbers; they are not architecture
 #                    comparisons. See external_config in llama_checkpoints.sh.
 #   --shots N        num_fewshot (default: 0), appears in the output path
 #   --limit N        cap documents per task -- smoke tests only, never counts as done
@@ -24,7 +24,7 @@ SCRIPT_DIR=$(dirname "$0")
 # No python: the login node's is 3.6 (see measure_mem_all.sh) and the "done" marker is a file.
 
 EVAL_MODELS=(full-scf1 gated-scf1 sink-scf1 swa-w256-scf1 swa-w1024-scf1 swa-w4096-scf1 \
-             gdn carry-r0 carry-r0.5 carry-r1 kda mla qwen)
+             gdn carry-r0 carry-r0.5 carry-r1 kda mla qwen gemma)
 
 SCRATCH_EVAL_BASE=/iopsstor/scratch/cscs/$USER/eval-results/lm-eval
 STORE_EVAL_BASE=/users/$USER/store/eval-results/lm-eval
@@ -58,7 +58,7 @@ fi
 
 source "$SCRIPT_DIR/../scripts/llama_checkpoints.sh"
 
-# --external-model replaces the 13 rather than adding to them: the reference rows are a
+# --external-model replaces EVAL_MODELS rather than adding to it: the reference rows are a
 # separate, occasional errand, and combining the two would make it easy to resubmit the whole
 # sweep by accident while adding one calibration row.
 if [[ ${#EXTERNAL_SELECTED[@]} -gt 0 && -n "$MODELS_CSV" ]]; then

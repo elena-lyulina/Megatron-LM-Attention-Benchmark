@@ -215,7 +215,6 @@ model_config() {
 # Public HF hub models, evaluated through the same path as the local checkpoints.
 # max_length is each model's OWN trained context, never eval_benchmarks.slurm's 8192:
 # scoring a model past its trained context inflates its wikitext perplexity.
-# Why these two exist: attn_bench/_plans/lm_eval_benchmark_plan.md
 EXTERNAL_MODELS=(llama-3.2-1b pythia-1.4b-43b)
 
 external_config() {
