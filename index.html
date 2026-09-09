@@ -819,8 +819,8 @@
                          // column and it renders here too, so the parked dots sit on the fill's
                          // left edge AND over contour that carries the true offset=0 value.
   const MODELS = ['full-scf1', 'mla', 'swa-w4096-scf1', 'swa-w1024-scf1', 'swa-w256-scf1',
-                  'sink-scf1', 'gated-scf1', 'gdn', 'gdn-xdl', 'gdn-xdl-xsl-0.5', 'gdn-xdl-xsl',
-                  'kda', 'qwen'];
+                  'gemma', 'sink-scf1', 'gated-scf1', 'gdn', 'gdn-xdl', 'gdn-xdl-xsl-0.5',
+                  'gdn-xdl-xsl', 'kda', 'qwen'];
   const DISPLAY_NAMES = {
     'full-scf1': 'Full Attention',
     'swa-w4096-scf1': 'Sliding Window (w=4096)',
@@ -835,6 +835,7 @@
     'mla': 'Multi-head Latent Attention',
     'kda': 'Kimi Delta Attention',
     'qwen': 'Qwen Hybrid (GDN:Gated = 3:1)',
+    'gemma': 'Gemma Hybrid (SWA w=1024 : Full = 5:1)',
   };
 
   // vmin/vmax are in "plot space" -- the raw metric's own range for everything except the two
