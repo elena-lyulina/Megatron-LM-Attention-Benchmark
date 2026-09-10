@@ -22,7 +22,12 @@
 #                  trained context length, and has no local checkpoint to look for.
 #   NUM_FEWSHOT  shots, appears in the output path (default: 0)
 #   BATCH_SIZE   fixed integer, never "auto" -- see the pinning note below (default: 8)
-#   TASKS        comma-separated lm-eval task names (default: the 8-task thesis set)
+#   TASKS        comma-separated lm-eval task names (default: the 8-task thesis set). Our own
+#                task definitions in attn_bench/evaluation/lm_eval_tasks/ are always indexed
+#                (--include_path), so long_gutenberg_rep0 / long_fineweb_{unseen,seen} can be
+#                named here like any built-in task.
+#   TASK_TAG     subdirectory for a second task set on an already-evaluated model, e.g.
+#                TASK_TAG=ppl-long -- required whenever TASKS is not the benchmark set, see below
 #   LIMIT        cap documents per task, for smoke tests only (default: unset = full)
 #   OVERWRITE    re-run even if results already exist in scratch or store
 #
@@ -49,6 +54,10 @@ MODEL=${MODEL:-full-scf1}
 NUM_FEWSHOT=${NUM_FEWSHOT:-0}
 BATCH_SIZE=${BATCH_SIZE:-8}
 TASKS=${TASKS:-lambada_openai,hellaswag,piqa,arc_easy,arc_challenge,winogrande,sciq,wikitext}
+# A second task set for the same model needs its own output dir: the skip check below fires on
+# any results_*.json under OUT_DIR, so an untagged perplexity run would either self-skip or need
+# OVERWRITE=1, which would rewrite the benchmark table's own artifacts. Empty = current layout.
+TASK_TAG=${TASK_TAG:-}
 LIMIT=${LIMIT:-}
 OVERWRITE=${OVERWRITE:-}
 EXTERNAL_MODEL=${EXTERNAL_MODEL:-}
@@ -80,8 +89,18 @@ fi
 
 # Version-scoped so changing the pin installs cleanly instead of reusing the old tree.
 LM_EVAL_DIR=$MEGATRON_LM_DIR/attn_bench/packages-lm-eval/$LM_EVAL_VERSION
+# Our own task definitions (the long-corpora perplexities), indexed alongside lm-eval's built-in
+# ones. Always passed: it only widens the task index, so a stock task list is unaffected.
+TASKS_DIR=$MEGATRON_LM_DIR/attn_bench/evaluation/lm_eval_tasks
 OUT_DIR=/iopsstor/scratch/cscs/$USER/eval-results/lm-eval/$EXP_NAME/shots$NUM_FEWSHOT
 STORE_OUT_DIR=/users/$USER/store/eval-results/lm-eval/$EXP_NAME/shots$NUM_FEWSHOT
+
+# TASK_TAG scopes both sides of the skip check, so a tagged run neither sees nor overwrites the
+# benchmark table's results (and vice versa).
+if [ -n "$TASK_TAG" ]; then
+    OUT_DIR="$OUT_DIR/$TASK_TAG"
+    STORE_OUT_DIR="$STORE_OUT_DIR/$TASK_TAG"
+fi
 
 # A --limit run writes a results_*.json like any other, so it must never land in the real
 # output dir -- the sweep's skip check would find it and leave that model on 20-doc numbers.
@@ -90,7 +109,7 @@ STORE_OUT_DIR=/users/$USER/store/eval-results/lm-eval/$EXP_NAME/shots$NUM_FEWSHO
 # Request cache, written as it goes -- results are only written after the whole task list,
 # so this is what makes a killed job cheap to resubmit. Keyed by request and NOT by model:
 # two models sharing a path would silently get each other's loglikelihoods.
-CACHE_DIR=/iopsstor/scratch/cscs/$USER/eval-results/lm-eval-cache/$EXP_NAME/shots$NUM_FEWSHOT
+CACHE_DIR=/iopsstor/scratch/cscs/$USER/eval-results/lm-eval-cache/$EXP_NAME/shots$NUM_FEWSHOT${TASK_TAG:+/$TASK_TAG}
 
 # Dataset + dynamic-module cache on scratch, shared by every model so hellaswag downloads once.
 # Never store: compute nodes must not write to capstor.
@@ -182,6 +201,7 @@ srun \
         --model hf \
         --model_args $MODEL_ARGS \
         --tasks $TASKS \
+        --include_path $TASKS_DIR \
         --num_fewshot $NUM_FEWSHOT \
         --batch_size $BATCH_SIZE \
         --seed $SEED \
@@ -207,6 +227,7 @@ if [ $EVAL_STATUS -eq 0 ]; then
   "revision": "${REVISION:-null}",
   "tokenizer": "$TOKENIZER_PATH",
   "tasks": "$TASKS",
+  "task_tag": "${TASK_TAG:-null}",
   "num_fewshot": $NUM_FEWSHOT,
   "batch_size": $BATCH_SIZE,
   "max_length": $MAX_LENGTH,

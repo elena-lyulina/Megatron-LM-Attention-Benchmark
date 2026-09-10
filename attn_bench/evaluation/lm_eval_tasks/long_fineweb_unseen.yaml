@@ -1,0 +1,21 @@
+# Unseen FineWeb-Edu documents of 3-4x the training sequence length (_0.75_unseen).
+# Same definition as lm-eval's own `wikitext` task, only the dataset differs, so the
+# numbers sit beside WikiText's. Corpus built by submissions/build_long_text_corpora.slurm;
+# the path cannot use $USER, a task YAML gets no shell expansion.
+task: long_fineweb_unseen
+dataset_path: json
+dataset_kwargs:
+  data_files:
+    test: /users/elyulina/store/datasets/text/long-corpora/fineweb_unseen.jsonl
+test_split: test
+output_type: loglikelihood_rolling
+doc_to_text: ""
+doc_to_target: "{{text}}"
+process_results: !function process_long_corpus.process_results
+should_decontaminate: false
+metric_list:
+  - metric: word_perplexity
+  - metric: byte_perplexity
+  - metric: bits_per_byte
+metadata:
+  version: 1.0

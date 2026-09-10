@@ -14,6 +14,10 @@
 #   --shots N        num_fewshot (default: 0), appears in the output path
 #   --limit N        cap documents per task -- smoke tests only, never counts as done
 #   --batch-size N   fixed integer, never "auto" (default: 8, must match across all models)
+#   --task-tag TAG   scope this sweep's outputs to shots<N>/<TAG>/, so a second task set does not
+#                    collide with the benchmark table's results. Required with a custom TASKS,
+#                    e.g. TASKS=long_gutenberg_rep0,long_fineweb_unseen \
+#                         bash eval_benchmarks_all.sh --task-tag ppl-long
 #   --force          resubmit even if results already exist
 #   --time HH:MM:SS  override eval_benchmarks.slurm's default time limit
 
@@ -37,6 +41,9 @@ LIMIT=""
 BATCH_SIZE=8
 JOB_TIME=""
 MODELS_CSV=""
+# TASKS itself is NOT an option here (see the comment at the submit loop); it rides via the
+# environment. TASK_TAG has no commas, so it travels in --export like every other scalar.
+TASK_TAG=${TASK_TAG:-}
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -46,6 +53,7 @@ while [[ $# -gt 0 ]]; do
         --limit) LIMIT="$2"; shift 2 ;;
         --batch-size) BATCH_SIZE="$2"; shift 2 ;;
         --time) JOB_TIME="$2"; shift 2 ;;
+        --task-tag) TASK_TAG="$2"; shift 2 ;;
         --models) MODELS_CSV="$2"; shift 2 ;;
         --external-model) EXTERNAL_SELECTED+=("$2"); shift 2 ;;
         *) echo "Unknown argument: $1"; exit 1 ;;
@@ -74,7 +82,8 @@ already_done() {
     local exp_name="$1"
     if [[ $FORCE -eq 1 || -n "$LIMIT" ]]; then return 1; fi
     local found
-    found=$(find "$SCRATCH_EVAL_BASE/$exp_name/shots$SHOTS" "$STORE_EVAL_BASE/$exp_name/shots$SHOTS" \
+    local sub="shots$SHOTS${TASK_TAG:+/$TASK_TAG}"
+    found=$(find "$SCRATCH_EVAL_BASE/$exp_name/$sub" "$STORE_EVAL_BASE/$exp_name/$sub" \
                  -name 'results_*.json' 2>/dev/null | head -1)
     [[ -n "$found" ]] && { echo "$found"; return 0; }
     return 1
@@ -96,6 +105,7 @@ for NAME in "${EXTERNAL_SELECTED[@]}"; do
     fi
 
     EXPORTS="EXTERNAL_MODEL=$NAME,NUM_FEWSHOT=$SHOTS,BATCH_SIZE=$BATCH_SIZE"
+    [[ -n "$TASK_TAG" ]] && EXPORTS="$EXPORTS,TASK_TAG=$TASK_TAG"
     [[ -n "$LIMIT" ]] && EXPORTS="$EXPORTS,LIMIT=$LIMIT"
     [[ $FORCE -eq 1 ]] && EXPORTS="$EXPORTS,OVERWRITE=1"
 
@@ -136,6 +146,7 @@ for MODEL in "${EVAL_MODELS[@]}"; do
     # at the first comma (as measure_mem_all.sh documents for POINTS). To override it, export
     # TASKS as a shell variable before running this and --export=ALL propagates it intact.
     EXPORTS="MODEL=$MODEL,NUM_FEWSHOT=$SHOTS,BATCH_SIZE=$BATCH_SIZE"
+    [[ -n "$TASK_TAG" ]] && EXPORTS="$EXPORTS,TASK_TAG=$TASK_TAG"
     [[ -n "$LIMIT" ]] && EXPORTS="$EXPORTS,LIMIT=$LIMIT"
     [[ $FORCE -eq 1 ]] && EXPORTS="$EXPORTS,OVERWRITE=1"
 
