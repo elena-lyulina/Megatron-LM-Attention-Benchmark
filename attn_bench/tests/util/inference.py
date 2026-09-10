@@ -83,16 +83,12 @@ def tiny_prompt(model, batch, prefix_length):
     return torch.randint(0, eos, (batch, prefix_length), dtype=torch.long, device=device)
 
 
-# tiny configs (batch, prefix_length, suffix_length): small enough to eyeball + cheap, B>1, no offset
-# axis. For GDN/KDA (--position-embedding-type none) absolute offset cannot change the computation.
-# For the Qwen hybrid the 4 softmax layers use RoPE, so parity here relies on both paths feeding
-# consistent absolute positions (0-based); a nonzero-offset axis is added separately (b2).
+# tiny configs (batch, prefix_length, suffix_length): small enough to eyeball + cheap, B>1.
 ORACLE_CONFIGS = [(2, 4, 8), (2, 8, 16), (3, 16, 32)]
 
-# A token flip is benign when it is a near-tie: the model barely preferred its token over the one the
-# other path chose (small oracle_margin), so the choice is arbitrary. Gate on oracle_margin, not the
-# vocab-wide max logit diff (inflated by bf16 rounding on large logits). 0.3 sits above the bf16 noise
-# floor (~0.125 at logit 16-32) and below any real preference gap.
+# A flip is benign if it's a near-tie (small oracle_margin), not a real divergence. Gate on that,
+# not the vocab-wide max logit diff (inflated by bf16 rounding). 0.3 sits above the bf16 noise
+# floor (~0.125) and below any real preference gap.
 ORACLE_MARGIN_TOL = 0.3
 
 
@@ -181,9 +177,8 @@ def _make_test_decode_matches_oracle(base_forward_step, require, label):
             ref, ref_logits = greedy_cacheless(model, prompt, S, return_logits=True)  # quadratic oracle (ground truth)
             got, got_logits = greedy_cached(model, prompt, S, return_logits=True)     # cached path under test
 
-            # Both paths free-run on their own argmax. Only the first position where they differ is a
-            # valid comparison; before it both fed identical tokens, after it the inputs diverge so we
-            # stop. Judge that first flip by oracle_margin: near-tie is benign, large margin is real.
+            # Both paths generate on their own, so they can diverge. Only the first differing token is
+            # a fair comparison -- past that point they're no longer looking at the same input.
             for b in range(B):
                 mism = (ref[b] != got[b]).nonzero(as_tuple=True)[0]
                 if mism.numel() == 0:

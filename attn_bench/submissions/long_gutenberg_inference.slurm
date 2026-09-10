@@ -110,6 +110,16 @@ COMMON_ARGS="--container-env $CONTAINER_ENV \
 
 echo "RUN: model=$MODEL  exp=$EXP_NAME  backend=$CHECKPOINT_BACKEND  reps=$REPETITIONS  max_length=${MAX_LENGTH:-none}  max_samples=${MAX_SAMPLES:-all}  triton=$NEEDS_TRITON  state_norm=${LOG_STATE_NORM:+on}  individual=${STORE_INDIVIDUAL:+on}"
 
+### PER-FAMILY ENV ###
+# NEEDS_FLA_052 (KDA): the container's fla 0.4.2 NaNs chunk_kda -- shadow it with the
+# side-installed 0.5.2, same as eval_benchmarks.slurm and measure_mem.slurm. Without this a
+# KDA run completes normally and writes an npz of NaNs.
+FLA_DIR=$MEGATRON_LM_DIR/attn_bench/packages-fla
+FLA_ENV=""
+if [ "$NEEDS_FLA_052" = "1" ]; then
+    FLA_ENV="export PYTHONPATH=$FLA_DIR:\$PYTHONPATH;"
+fi
+
 ### Position-wise loss inference ###
 # GDN needs a per-rank node-local TRITON_CACHE_DIR: fla kernels autotune on first use and
 # a shared/colliding cache crashes with "stale file handle" (job 2570257). torchrun sets
@@ -124,6 +134,7 @@ if [ "$NEEDS_TRITON" = "1" ]; then
         bash -c "
         export PYTHONPATH='${PYTHONPATH}'
         export CUDA_DEVICE_MAX_CONNECTIONS=1
+        $FLA_ENV
         RANK=\$SLURM_PROCID LOCAL_RANK=\$SLURM_LOCALID \
         torchrun --nproc_per_node=4 --no-python \
             bash -c 'export TRITON_CACHE_DIR=/tmp/triton_\${USER}_\${SLURM_JOB_ID}_\${RANK}; mkdir -p \"\$TRITON_CACHE_DIR\"; exec python \"\$@\"' _ \
@@ -136,6 +147,7 @@ else
         bash -c "
         export PYTHONPATH='${PYTHONPATH}'
         export CUDA_DEVICE_MAX_CONNECTIONS=1
+        $FLA_ENV
         $EXTRA_ENV
         RANK=\$SLURM_PROCID LOCAL_RANK=\$SLURM_LOCALID \
         torchrun --nproc_per_node=4 \

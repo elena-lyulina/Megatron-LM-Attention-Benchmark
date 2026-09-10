@@ -43,13 +43,17 @@ def plot_loss_panel(nll_by_label, ncols=3,
                     linestyles=None, suptitle=None, colors=None,
                     bucket_title_fn=lambda b: f"repetition {b}", bucket_order=None,
                     show_count=False, metric="nll", show_random_baseline=False, log_y=False,
-                    vlines=None, vline_colors=None, cell_w=8.0, cell_h=4.3):
+                    vlines=None, vline_colors=None, cell_w=8.0, cell_h=4.3,
+                    legend_fontsize=11, legend_ncol=None):
     """One cell per bucket; every model overlaid as a coloured mean line.
 
     nll_by_label: {label: {bucket: load_long_inference_nll(...)}}, from
     load_long_inference_nll_grid (bucket=repetition) or load_long_fineweb_inference_nll_grid.
     cell_w / cell_h: widen cell_w for few panels with many legend entries (legend width
     scales with the figure, not panel count).
+    legend_fontsize / legend_ncol: the legend sets the minimum figure width, so at a narrow
+    cell_w a wide legend collapses the axes to zero. Shrink the font or force fewer columns
+    (default: 11pt, ceil(entries / 2) columns).
     metric: "ppl" plots exp(mean NLL) of the aggregated cross-entropy, not per-sample exp(NLL).
     log_y: independent of metric -- "ppl" on a log axis is just a rescaling of "nll".
     show_count: adds a count-per-position panel under each loss cell.
@@ -208,8 +212,10 @@ def plot_loss_panel(nll_by_label, ncols=3,
             # Wrap into 2 rows instead of one -- one row can overflow the figure width once the
             # boundary + random-baseline entries are added, which made constrained_layout shrink
             # the plots to make room.
-            legax.legend(leg_handles, leg_labels, loc="center", ncol=int(np.ceil(len(leg_labels) / 2)),
-                         frameon=False, fontsize=11, handlelength=1.4, columnspacing=1.2, handletextpad=0.5)
+            ncol = legend_ncol or int(np.ceil(len(leg_labels) / 2))
+            legax.legend(leg_handles, leg_labels, loc="center", ncol=ncol,
+                         frameon=False, fontsize=legend_fontsize, handlelength=1.4,
+                         columnspacing=1.2, handletextpad=0.5)
         if suptitle:
             fig.suptitle(suptitle, fontweight="bold", fontsize=16)
     return fig

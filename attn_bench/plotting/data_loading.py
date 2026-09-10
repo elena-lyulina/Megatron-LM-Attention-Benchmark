@@ -371,16 +371,20 @@ def _load_grid(results_by_label, reps, path_fn, loader_fn):
 
 
 def load_long_inference_nll_grid(reps, models=None, config=model_registry.LONG_INFERENCE_CONFIG,
-                                 results_base=model_registry.LONG_GUTENBERG_RESULTS_DIR):
+                                 results_base=model_registry.LONG_GUTENBERG_RESULTS_DIR,
+                                 backend='megatron'):
     """Load `load_long_inference_nll` for every (model, rep) found on disk, for
     `models` (a list of names from model_registry.MODELS; default/empty -> every model in the
     registry) under one `config` (capture directory name).
+
+    `backend` selects which backend's results to read (HF results live in `<EXP_NAME>_hf`).
 
     Returns {label: {rep: load_long_inference_nll(...)}} -- only combos found on disk.
     For FineWeb (no rep buckets, just seen/unseen), use `load_long_fineweb_inference_nll_grid` instead.
     """
     models = _resolve_models(models)
-    results_by_label = {m: Path(results_base) / model_registry.MODELS[m] / config for m in models}
+    results_by_label = {m: Path(results_base) / model_registry.model_folder(m, backend) / config
+                        for m in models}
     return _load_grid(results_by_label, reps, _long_inference_rep_path, load_long_inference_nll)
 
 
@@ -459,20 +463,25 @@ def load_long_inference_state_norm_by_layer_grid(rep, models=None, config=model_
 def load_long_fineweb_inference_nll_grid(partitions=('seen', 'unseen'), models=None,
                                          config=model_registry.LONG_FINEWEB_CONFIG,
                                          key=model_registry.LONG_FINEWEB_KEY,
-                                         results_base=model_registry.LONG_FINEWEB_RESULTS_DIR):
+                                         results_base=model_registry.LONG_FINEWEB_RESULTS_DIR,
+                                         backend='megatron'):
     """Load `load_long_inference_nll` for every (model, partition) found on disk, for
     `models` (a list of names from model_registry.MODELS; default/empty -> every model in the
     registry). FineWeb has no repetition buckets -- `partitions` ('seen'/'unseen') plays the
     same per-cell role `reps` plays for Gutenberg.
 
+    `backend` selects which backend's results to read. Its suffix lands on the partition dir
+    here (`<EXP_NAME>/<partition>_long_hf/`), not on the model dir as in Gutenberg.
+
     Returns {label: {partition: load_long_inference_nll(...)}}.
     """
     models = _resolve_models(models)
     results_by_label = {m: model_registry.MODELS[m] for m in models}
+    suffix = model_registry.BACKEND_SUFFIXES[backend]
 
     def path_fn(model_folder, partition):
-        return (Path(results_base) / model_folder / model_registry.LONG_FINEWEB_PARTITION_DIRS[partition]
-                / config / f"{key}.npz")
+        partition_dir = model_registry.LONG_FINEWEB_PARTITION_DIRS[partition] + suffix
+        return Path(results_base) / model_folder / partition_dir / config / f"{key}.npz"
 
     return _load_grid(results_by_label, partitions, path_fn, load_long_inference_nll)
 
