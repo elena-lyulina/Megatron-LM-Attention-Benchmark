@@ -59,8 +59,8 @@ def build(data_file: Path, corpus: str, tokenizer, max_length: int, max_samples:
     """Decode every selected record; return (rows, stats). Rows are {doc_id, text}.
 
     The faithfulness check is whether the text is a fixed point, decode(encode(text)) == text.
-    The ids themselves mostly do not round-trip, which is expected and harmless: both corpora
-    were tokenized in pieces, so BPE re-merges across the seams.
+    A handful of documents also re-segment, harmlessly: the stored ids are non-canonical where
+    the corpora were tokenized in pieces, so BPE re-merges across those seams.
     """
     # Must be off: the Llama-3.2 config sets it True, which deletes the space before punctuation
     # ("Dry Season .5" -> "Dry Season.5"), corrupting the text and the word count alike.

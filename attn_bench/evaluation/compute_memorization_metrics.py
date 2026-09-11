@@ -255,9 +255,9 @@ def find_missing_metrics_reps_by_suffix_boundary(
         inference_reps_reaching_suffix_length: set, target_suffix_boundaries: list,
         save_path: Path, persistent_save_path: Path | None, policy: str, tag: str | None,
         requested_reps: set | None = None) -> dict:
-    """Check phase only: per boundary, which reps (union of what's on disk and
-    requested_reps) are missing from the metrics pkl."""
-    target_reps = inference_reps_reaching_suffix_length | (requested_reps or set())
+    """Check phase only: per boundary, which reps are missing from the metrics pkl --
+    the requested_reps if given, else every rep on disk."""
+    target_reps = requested_reps if requested_reps else inference_reps_reaching_suffix_length
 
     def pkl_candidates(suffix_boundary: int) -> list:
         paths = [build_pkl_path(save_path, exp_name, offset, prefix_length, suffix_boundary, policy, tag)]
