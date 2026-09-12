@@ -87,7 +87,8 @@ suffixes and repetitions the published memorization dashboard plots. Keep this i
 - `CANDIDATE_OFFSETS  = [0, 50, 150, 250, 500, 1000, 2000, 3971, 5942, 7892]`
 - `CANDIDATE_PREFIXES = [50, 250, 500, 1000, 2000, 3971, 5942, 7892]`
 - `REPS               = [0, 1, 16, 32, 64, 128, 256]`   — **not** the full 10-bucket set
-- `SUFFIXES           = [25, 50, 75, 100, 150, 250]`   — all from **one suffix=250 run**;
+- `SUFFIXES           = [25, 50, 75, 100, 150, 249, 250]` — 25..150 and 250 from **one suffix=250 run**,
+  249 from the all-repetitions suffix=249 re-run;
   Stage 2 writes a metrics pkl per reachable boundary
 - `MAX_DOC_LENGTH     = 8192`
 

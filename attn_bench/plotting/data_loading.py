@@ -194,6 +194,12 @@ def load_offset_prefix_grid_data(model, rep, suffix, backends=('hf', 'megatron')
     g_offset = axis
     G_OFFSET, G_PREFIX = np.meshgrid(g_offset, g_prefix)
 
+    # No pkl for this (model, suffix) yet (e.g. a suffix the sweep hasn't reached for this
+    # model): hand back the empty surface on the same grid rather than letting griddata
+    # choke on zero points, so a multi-model export/plot still gets a blank panel.
+    if zs.size == 0:
+        return offset_vals, prefix_vals, zs, G_OFFSET, G_PREFIX, np.full(G_OFFSET.shape, np.nan), feasible_bound
+
     if interp == 'bilinear':
         # Bilinear on the candidate (offset x prefix) lattice itself. Unlike griddata's
         # Delaunay 'linear' -- which splits every lattice quad along an arbitrary diagonal and

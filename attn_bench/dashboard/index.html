@@ -155,7 +155,7 @@
     gap: 8px;
     flex: 1;
     /* max-width is set in JS (wireDiscreteSlider), sized to the tick count -- Repetitions
-       (7 ticks) ends up wider than Suffix (6), matching the pre-redesign track length. */
+       and Suffix both have 7 ticks, matching the pre-redesign track length. */
   }
 
   .rep-label {
@@ -738,9 +738,9 @@
     <div class="rep-control slider-control">
       <span class="rep-label">Suffix</span>
       <div class="rep-slider-wrap">
-        <input type="range" id="suffix" min="0" max="5" value="5" step="1" />
+        <input type="range" id="suffix" min="0" max="6" value="6" step="1" />
         <div class="rep-ticks" id="suffix-ticks">
-          <span>25</span><span>50</span><span>75</span><span>100</span><span>150</span><span>250</span>
+          <span>25</span><span>50</span><span>75</span><span>100</span><span>150</span><span>249</span><span>250</span>
         </div>
       </div>
     </div>
@@ -814,7 +814,9 @@
   const REP_VALUES = [0, 1, 16, 32, 64, 128, 256];
   // One exported JSON per suffix (data/{model}__s{suffix}.json). Inference feasibility was
   // fixed at suffix=250, so every smaller suffix carries the same populated candidate points.
-  const SUFFIX_VALUES = [25, 50, 75, 100, 150, 250];
+  // 249 is the all-repetitions re-run of the grid; a model not yet swept at a suffix ships
+  // an empty payload (0 points, blank contour) rather than a missing file.
+  const SUFFIX_VALUES = [25, 50, 75, 100, 150, 249, 250];
   const LOG_FLOOR = 10;  // where offset=0 is parked on a log axis. The grid keeps its real x=0
                          // column and it renders here too, so the parked dots sit on the fill's
                          // left edge AND over contour that carries the true offset=0 value.
@@ -1218,7 +1220,7 @@
   const suffixCache = {};
   let dataByModel = {};
   let currentRepIdx = 3;  // matches the slider's initial value="3" -> rep=32
-  let currentSuffixIdx = SUFFIX_VALUES.length - 1;  // matches the slider's value="5" -> suffix=250
+  let currentSuffixIdx = SUFFIX_VALUES.length - 1;  // matches the slider's value="6" -> suffix=250
   let currentMetric = 'rouge_l';
   let currentLogAxes = true;
   let compareRef = null;  // model key when "Compare vs" is on -- panels show (model - reference)

@@ -36,7 +36,11 @@ REPS = [0, 1, 16, 32, 64, 128, 256]
 # One JSON per suffix per model -- inference feasibility was defined at suffix=250, so the
 # populated candidate points are the same set at every smaller suffix (a shorter suffix only
 # opens up an unsampled sliver in the far corner). The 250 file preserves the old behaviour.
-SUFFIXES = [25, 50, 75, 100, 150, 250]
+# 249 is the re-run of the same grid with every repetition bucket (0,1,2,4,...,256) in one
+# job; the 25..150 boundaries here still come from the original suffix=250 run. A model
+# that has no pkl at a suffix yet exports as an empty payload (all-NaN grid, 0 points), so
+# the dashboard -- which fetches every model per suffix -- still loads.
+SUFFIXES = [25, 50, 75, 100, 150, 249, 250]
 MAX_DOC_LENGTH = 8192
 GRID_RES = 80
 # grid_scale='log' swaps ~6 of the linear grid nodes for explicit low nodes (down to grid_min,
@@ -129,13 +133,23 @@ def export_model(model, suffix):
 
 
 if __name__ == '__main__':
-    # Optional model filter -- a full re-export is ~78 files x ~4 MB, so pass the models you
-    # actually changed when adding one: `python3 export_data.py gemma`.
-    selected = sys.argv[1:] or MODELS
+    # Optional model filter -- a full re-export is ~98 files x ~4 MB, so pass the models you
+    # actually changed when adding one: `python3 export_data.py gemma`. `--suffixes 249`
+    # (comma-separated) likewise restricts the suffixes, e.g. after adding a new one.
+    args = sys.argv[1:]
+    suffixes = SUFFIXES
+    if '--suffixes' in args:
+        i = args.index('--suffixes')
+        suffixes = [int(v) for v in args[i + 1].split(',')]
+        del args[i:i + 2]
+        unknown_s = [v for v in suffixes if v not in SUFFIXES]
+        if unknown_s:
+            raise SystemExit(f'unknown suffix(es) {unknown_s} -- known: {SUFFIXES}')
+    selected = args or MODELS
     unknown = [m for m in selected if m not in MODELS]
     if unknown:
         raise SystemExit(f'unknown model(s) {unknown} -- known: {MODELS}')
     OUT_DIR.mkdir(exist_ok=True)
-    for suffix in SUFFIXES:
+    for suffix in suffixes:
         for model in selected:
             export_model(model, suffix)
