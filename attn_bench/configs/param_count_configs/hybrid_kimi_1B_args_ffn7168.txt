@@ -1,0 +1,64 @@
+############ KIMI-STYLE HYBRID 1B CONFIG (param-matched to Llama-3.2-1B) #################
+# Interleaves a KDA linear mixer with MLA softmax attention on the LLaMA-3.2-1B backbone, replicating
+# the Kimi Linear hybrid structure (3 KDA layers then 1 MLA layer, repeated) -> 12 KDA + 4 MLA over
+# 16 layers, MLA layers at indices 3, 7, 11, 15. Same rule as the Qwen hybrid (--linear-attention-freq 4).
+#
+# Only the *hybridization pattern* is taken from Kimi Linear. Each component is frozen to the pure
+# model we already trained, so the hybrid stays comparable to both:
+#   - KDA block = kda_1B_args_16heads_128_128_ffn6976.txt  (16 heads, 128/128, fla 0.5.2 chunk_kda)
+#   - MLA block = mla_llama_1B_args_ffn7680.txt            (DeepSeek-V2-Lite verbatim, 16 heads, RoPE base 500000)
+# Deliberately NOT matched to Kimi Linear: its MLA layers use NoPE (no rotary at all), 32 heads at a
+# wider hidden, MoE, and an MTP head -- all dropped; our MLA layers keep the RoPE of the pure MLA run.
+#
+# Target: Llama-3.2-1B = 1,235,814,400 params. Analytic (from the two pure models' per-layer counts:
+# KDA mixer 17,887,504 / MLA mixer 13,765,248 / MLP 3*2048*ffn + 2048): exact-match FFN is ~7155;
+# 7168 (112x64) -> ~1,237,055,168 (+0.10%), 7104 lands -0.41% under. Run the counter to lock the total.
+# args names taken from: megatron/core/transformer/transformer_config.py + megatron/training/arguments.py
+
+### Embeddings / input-output:
+--make-vocab-size-divisible-by 128      # sizes the model's input / output embedding matrix (vocab x hidden / hidden x vocab)
+# Llama-3.2-1B config: "vocab_size": 128256 -- derived from the tokenizer
+# Llama-3.2-1B config: "tie_word_embeddings": true -- embeddings tied by default; need --untie-embeddings-and-output-weights to disable
+
+### Global / model-wide
+# not changed, same as Llama 1B config
+--hidden-size 2048                      # representing 1 token
+--num-layers 16                         # how many blocks
+--normalization RMSNorm                 # used before the blocks (both attn and mlp) throughout the model
+--norm-epsilon 1e-5                     # "rms_norm_eps"
+--disable-bias-linear                   # "mlp_bias": false, "attention_bias": false  -- following Llama-3.2-1B config
+--transformer-impl transformer_engine
+--seq-length 8192                       # runtime, doesn't affect the model's size but required to build a model
+
+### MLP
+--ffn-hidden-size 7168                  # shrunk from 8192 (112x64) to absorb the KDA/MLA mixers and match Llama-3.2-1B param count
+--swiglu                                # "hidden_act": "silu"  -- following Llama-3.2-1B config + gating
+
+### Token mixer -- hybrid: KDA on the linear-attention layers, MLA on the SDPA layers
+
+# Linear-attention layers (12 of 16): KDA, identical to kda_1B_args_16heads_128_128_ffn6976.txt
+--experimental-attention-variant kimi_delta_attention
+--linear-attention-freq 4               # int N: SDPA where (i+1)%N==0 -> [1,1,1,0]*4 (1=KDA, 0=MLA)
+                                        # = 12 KDA + 4 MLA, MLA at layers 3/7/11/15 (Kimi Linear's 3:1)
+--linear-num-key-heads 16               # KDA's K/Q heads
+--linear-num-value-heads 16             # KDA's V heads, must be a multiple of linear_num_key_heads
+--linear-key-head-dim 128               # qk_dim = 16*128 = 2048 ; also the fine-grained gate_dim = key_head_dim * num_value_heads
+--linear-value-head-dim 128             # v_dim = 16*128 = 2048 ; also the low-rank gate bottleneck dim (gate_low_rank_dim = value_head_dim)
+--linear-conv-kernel-dim 4
+
+# SDPA layers (4 of 16): MLA, identical to mla_llama_1B_args_ffn7680.txt (DeepSeek-V2-Lite verbatim)
+--multi-latent-attention                # the hybrid's standard-attention spec honors this (_get_self_attention_module_spec)
+--num-attention-heads 16                # V2-Lite native; NOT the baseline's 32
+# --group-query-attention is mutually exclusive with MLA -- omitted
+# --q-lora-rank omitted -> None: V2-Lite does not compress Q
+--kv-lora-rank 512                      # KV squeezed through a shared 512 latent
+--qk-head-dim 128                       # qk_nope_head_dim; q_head_dim = 128 + 64 = 192
+--qk-pos-emb-head-dim 64                # qk_rope_head_dim -- the decoupled-RoPE slice
+--v-head-dim 128                        # per-head V dim; o_proj is (heads*v_head_dim) x hidden
+--qk-layernorm                          # DeepSeek's kv_a_layernorm: RMSNorm(kv_lora_rank) between down/up proj
+--position-embedding-type rope          # the MLA layers need real positions; KDA ignores them (conv + decay gate). Pure KDA used 'none'.
+--rope-type yarn                        # NOT plain 'rope': YaRN at scaling factor 1.0 IS plain RoPE (same inv_freq, mscale 1) and
+--rotary-scaling-factor 1.0             # unlocks the fused MLA-RoPE kernels; the unfused THD path was the pure MLA run's 1.7x slowdown
+--rotary-base 500000                    # "rope_theta": 500000.0 -- the benchmark's Llama value, not V2-Lite's 10000
+--max-position-embeddings 8192
+# RoPE has no params; only the KDA/MLA projection dims above move the count.
