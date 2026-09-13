@@ -11,23 +11,30 @@
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=clariden-jobs-elyulin-aaaauapxybdkdx42ppvef2c2eq@swissai-initiative.slack.com
 
-# MLA ATTENTION-BACKEND DIAGNOSTIC. The prod MLA run (3245261/3248575) did ~2.2 s/iter at 12 nodes,
-# ~2x the softmax baselines. With --use-packed-seq-params (THD) upstream pads V 128 -> 192 to match
-# the 192 q/k head dim (multi_latent_attention.py, _prepare_mla_core_attention_value), so core
-# attention runs at head_dim 192 in THD. Which TE backend that lands on was never checked.
-# This run: same prod MLA config + NVTE_DEBUG so TE prints the selected backend and why the others
-# were rejected, plus a preflight of TE / cuDNN / flash-attn versions. ATTN_BACKEND picks the
-# Megatron --attention-backend (auto | fused | flash); a hard error under `fused` or `flash` means
-# that backend cannot take THD + head_dim 192 at all, which is itself the answer.
-# Read: the preflight block, the "[DotProductAttention]" backend lines, and `elapsed time per iteration (ms)`.
+# MLA THROUGHPUT DIAGNOSTIC. The prod MLA run (3245261/3248575) did ~2.2 s/iter at 12 nodes,
+# ~2x the softmax baselines.
+# Round 1 (ATTN_BACKEND, jobs 3393779/3393811/3393816): auto already picks cuDNN FusedAttention;
+# forcing fused or FlashAttention-2 gives the same ~2.2 s/iter, so the attention kernel is not the cost.
+# The timers pointed elsewhere: forward-compute spread across ranks is ~400 ms (baseline: ~30 ms),
+# i.e. something scales with the number of packed documents per micro-batch. That is the RoPE path:
+# --no-rope-fusion + THD sends MLA through _apply_rotary_pos_emb_thd (rope_utils.py), a Python loop
+# over every packed document with .tolist()/.item() syncs, on q and k in every layer, fwd and bwd.
+# The softmax baselines never hit it (rope fusion on -> one TE kernel per tensor).
+# Round 2 (ROPE_MODE): the fused MLA-RoPE kernels (fused_apply_mla_rope_for_q/kv, take cu_seqlens)
+# only run under rope_type=yarn, but YaRN at --rotary-scaling-factor 1.0 IS plain RoPE:
+# inv_freq_inter == inv_freq_extra (ramp mask cancels) and mscale = 1.0, softmax scale unchanged.
+#   ROPE_MODE=unfused     : prod config, --rope-type rope --no-rope-fusion (the slow reference)
+#   ROPE_MODE=fused_yarn1 : --rope-type yarn --rotary-scaling-factor 1.0, fusion on
+# Read: the preflight block, the "[DotProductAttention]" backend lines, `elapsed time per iteration (ms)`
+# and the (min, max) forward-compute / backward-compute timer spread.
 # 60 iters, no --tests, no checkpointing.
 #
 # Usage (from attn_bench/):
-#   ATTN_BACKEND=auto  sbatch submissions/diag_mla_attn_backend.slurm
-#   ATTN_BACKEND=fused sbatch submissions/diag_mla_attn_backend.slurm
-#   ATTN_BACKEND=flash sbatch submissions/diag_mla_attn_backend.slurm
+#   ATTN_BACKEND=auto ROPE_MODE=unfused     sbatch submissions/diag_mla_attn_backend.slurm
+#   ATTN_BACKEND=auto ROPE_MODE=fused_yarn1 sbatch submissions/diag_mla_attn_backend.slurm
 
 ATTN_BACKEND=${ATTN_BACKEND:-auto}
+ROPE_MODE=${ROPE_MODE:-unfused}
 
 echo "START TIME: $(date)"
 
@@ -74,7 +81,7 @@ PYTHON_CACHE_DIR=/tmp/.python_cache
 # Logging directories & artifacts
 PROJECT_NAME="test"
 PROJECT_DIR=$MEGATRON_LM_DIR/attn_bench/results/$PROJECT_NAME
-EXP_NAME="diag-mla-attn-backend-$ATTN_BACKEND"
+EXP_NAME="diag-mla-attn-backend-$ATTN_BACKEND-rope-$ROPE_MODE"
 EXP_DIR=$PROJECT_DIR/$EXP_NAME
 DEBUG_DIR=$EXP_DIR/debug/$SLURM_JOB_ID
 LOGGING_DIR=$EXP_DIR/logging
@@ -122,7 +129,24 @@ NETWORK_SIZE_ARGS=(
     --disable-bias-linear
 )
 
-# FAITHFUL V2-Lite MLA block, identical to the prod run; only --attention-backend is added.
+# FAITHFUL V2-Lite MLA block, identical to the prod run; only --attention-backend and the RoPE wiring vary.
+case "$ROPE_MODE" in
+    unfused)
+        ROPE_ARGS=(
+            --rope-type rope            # prod: plain RotaryEmbedding, unfused (fused MLA-RoPE is yarn-only)
+            --no-rope-fusion
+        )
+        ;;
+    fused_yarn1)
+        ROPE_ARGS=(
+            --rope-type yarn            # YaRN at scaling factor 1.0 == plain RoPE, unlocks fused_apply_mla_rope_for_q/kv
+        )
+        ;;
+    *)
+        echo "unknown ROPE_MODE=$ROPE_MODE (unfused | fused_yarn1)"; exit 1
+        ;;
+esac
+
 ATTENTION_ARGS=(
     --multi-latent-attention
     --num-attention-heads 16
@@ -132,10 +156,9 @@ ATTENTION_ARGS=(
     --v-head-dim 128
     --qk-layernorm                      # DeepSeek kv_a_layernorm: RMSNorm(kv_lora_rank) between down/up proj
     --position-embedding-type rope
-    --rope-type rope                    # EXPLICIT: MLA default is "yarn"; force plain RotaryEmbedding
-    --no-rope-fusion                    # REQUIRED with rope_type=rope (fused MLA-RoPE is yarn-only)
+    "${ROPE_ARGS[@]}"
     --rotary-base 500000
-    --rotary-scaling-factor 1.0         # explicit no-op
+    --rotary-scaling-factor 1.0         # no-op for rope; for yarn it is what makes it plain RoPE (dataclass default is 40!)
     --max-position-embeddings 8192
     --attention-backend $ATTN_BACKEND
 )
@@ -301,7 +324,7 @@ SEP=$(printf '=%.0s' {1..100})
 
 ### LAUNCH ###
 
-echo "Diag: MLA attention backend=${ATTN_BACKEND}  nodes=${SLURM_NNODES}  mbs=${MBS}  gbs=${GBS}  train_iters=${TRAINING_STEPS}"
+echo "Diag: MLA attention backend=${ATTN_BACKEND}  rope=${ROPE_MODE}  nodes=${SLURM_NNODES}  mbs=${MBS}  gbs=${GBS}  train_iters=${TRAINING_STEPS}"
 
 ### PREFLIGHT: kernel versions inside the container ###
 cat > $DEBUG_DIR/preflight.py <<'PY'
