@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --account=infra01
-#SBATCH --time=08:00:00
+#SBATCH --time=09:00:00
 #SBATCH --job-name=pretrain-llama1B-hybrid-kimi-fineweb40B-gutenberg3B
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
@@ -21,16 +21,17 @@
 #             Not replicated from Kimi Linear: NoPE in the MLA layers, its head counts, MoE, MTP head.
 #   - FFN:    --ffn-hidden-size 7168 (shrunk from 8192 to absorb the KDA/MLA mixers; ~1.237B params, +0.10%)
 #   - Config: attn_bench/configs/param_count_configs/hybrid_kimi_1B_args_ffn7168.txt
-#   - RoPE:   --rope-type yarn --rotary-scaling-factor 1.0 with rope fusion ON. YaRN at factor 1.0 IS
-#             plain RoPE (same inv_freq, mscale 1) but unlocks the fused MLA-RoPE kernels; the pure MLA
-#             run's --no-rope-fusion + packed seqs went through a per-document Python RoPE loop and
-#             cost 1.7x (jobs 3393779 vs 3394135, diag_mla_attn_backend.slurm).
+#   - RoPE:   plain rope, unfused (--rope-type rope --no-rope-fusion) -- the pure MLA run's wiring.
+#             The fused MLA-RoPE path (--rope-type yarn at factor 1.0, same math) runs a 1.28 s
+#             steady step but showed persistent multi-second spikes in every test (jobs 3394135/
+#             3394304/3394349, not Triton compiles), so it is not used for the production run.
+#             The unfused THD loop costs ~920 ms/iter over 16 MLA layers; here only 4 layers pay it.
 #   - Data / LR / regularization: from the full-attn baseline (GBS=288, TP=1, wd 0.1, warmup 500,
 #     18141 steps). Dist: MBS=2 / nodes=12 (GAS=3), as KDA -- MBS=3 OOMs on chunk_kda intermediates.
 #   - --use-packed-seq-params (DATA_ARGS) resets the KDA recurrent state + conv at every document
 #     boundary via cu_seqlens, and isolates documents in the MLA layers (THD attention).
-#   - Walltime: single 8h slice, no reservation split. KDA alone took 7h06m at this dist config and the
-#     MLA layers are faster than KDA layers now. Checkpoints every 2000 steps + --load $CKPT_DIR, so a
+#   - Walltime: single 9h slice, no reservation split. KDA alone took 7h06m at this dist config;
+#     the 4 unfused-RoPE MLA layers add an estimated ~230 ms/iter -> ~8h. Checkpoints every 2000 steps + --load $CKPT_DIR, so a
 #     plain resubmit resumes if it is ever killed (keep the node count at 12 for that).
 # NOTE: KDA needs flash-linear-attention >= 0.5.x. The te2.15 container ships 0.4.2, whose chunk_kda
 # gate + L2-norm are the old unbounded form -> grad_norm=nan from iteration 1. This script side-installs
@@ -191,7 +192,7 @@ ATTENTION_ARGS=(
     --linear-key-head-dim 128      # qk_dim = 16*128 = 2048 ; also the fine-grained gate_dim = key_head_dim * num_value_heads
     --linear-value-head-dim 128    # v_dim = 16*128 = 2048 ; also the low-rank gate bottleneck dim (gate_low_rank_dim = value_head_dim)
     --linear-conv-kernel-dim 4
-    # MLA layers (4 of 16), identical to the pure MLA run except the RoPE kernel path (see header)
+    # MLA layers (4 of 16), identical to the pure MLA run
     --multi-latent-attention            # route the SDPA layers through MLASelfAttention instead of GQA
     --num-attention-heads 16            # DeepSeek-V2-Lite native
     # --group-query-attention / --num-query-groups -- mutually exclusive with MLA, omitted
@@ -202,8 +203,9 @@ ATTENTION_ARGS=(
     --qk-layernorm                      # DeepSeek kv_a_layernorm: RMSNorm(kv_lora_rank) between down/up proj
     # --q-lora-rank omitted -> None : V2-Lite does not compress Q
     --position-embedding-type rope      # the MLA layers need real positions; KDA ignores them (pure KDA used 'none')
-    --rope-type yarn                    # YaRN at scaling factor 1.0 == plain RoPE, and it unlocks fused_apply_mla_rope_for_q/kv
-    --rotary-scaling-factor 1.0         # what makes yarn plain RoPE: inv_freq_inter == inv_freq_extra, mscale 1.0 (dataclass default is 40!)
+    --rope-type rope                    # EXPLICIT: MLATransformerConfig.rope_type defaults to "yarn"; force plain RotaryEmbedding
+    --no-rope-fusion                    # REQUIRED with rope_type=rope (fused MLA-RoPE is yarn-only); see header for why not yarn
+    --rotary-scaling-factor 1.0         # explicit no-op guard (dataclass default is 40)
     --rotary-base 500000               # "rope_theta": 500000.0 (baseline value; MLA dataclass default is 10000)
     --max-position-embeddings 8192      # native context, no length extrapolation
 )
