@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --account=infra01
-#SBATCH --time=09:00:00
+#SBATCH --time=06:00:00
 #SBATCH --job-name=pretrain-llama1B-hybrid-kimi-fineweb40B-gutenberg3B
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
@@ -30,9 +30,11 @@
 #     18141 steps). Dist: MBS=2 / nodes=12 (GAS=3), as KDA -- MBS=3 OOMs on chunk_kda intermediates.
 #   - --use-packed-seq-params (DATA_ARGS) resets the KDA recurrent state + conv at every document
 #     boundary via cu_seqlens, and isolates documents in the MLA layers (THD attention).
-#   - Walltime: single 9h slice, no reservation split. KDA alone took 7h06m at this dist config;
-#     the 4 unfused-RoPE MLA layers add an estimated ~230 ms/iter -> ~8h. Checkpoints every 2000 steps + --load $CKPT_DIR, so a
-#     plain resubmit resumes if it is ever killed (keep the node count at 12 for that).
+#   - Walltime: 6h slices. KDA alone took 7h06m at this dist config and the 4 unfused-RoPE MLA layers
+#     add an estimated ~230 ms/iter -> ~8h total, so this takes two slices: --exit-duration-in-mins 345
+#     saves a checkpoint + exits cleanly at 5h45m (15 min before the walltime kill); resubmit the SAME
+#     script to resume (--load $CKPT_DIR). Keep the node count at 12 for every slice (distrib-optim
+#     checkpoint padding is DP-count-specific).
 # NOTE: KDA needs flash-linear-attention >= 0.5.x. The te2.15 container ships 0.4.2, whose chunk_kda
 # gate + L2-norm are the old unbounded form -> grad_norm=nan from iteration 1. This script side-installs
 # fla 0.5.2 into $FLA_DIR before launch (see the install srun); PR #5769's module runs unpatched on it.
@@ -243,6 +245,7 @@ TRAINING_ARGS=(
     --manual-gc
     --manual-gc-interval 500
     --exit-signal-handler # listen for SIGTERM/SIGINT and do a clean checkpoint save before exiting
+    --exit-duration-in-mins 345  # 5h45m: proactive clean save + exit, 15 min before the 06:00:00 walltime kill. Resubmit the same script to resume from $CKPT_DIR.
     --eval-interval 100000000000  # must match or be a multiple of checkpoint interval, must be set to avoid TypeError even when EVAL_ITERS=0
     --eval-iters 0                # no validation split for pretraining (--split 100,0,0)
 )
