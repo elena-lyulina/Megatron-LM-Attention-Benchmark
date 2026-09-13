@@ -27,6 +27,18 @@
 #   EXPECTED_COUNT records a rep dir needs to count as present, for Stage 2's completeness check (default: 660)
 #   CAPTURE_ATTENTION  Step 1 also captures attention maps into per-rep / per-Rouge-L .npz
 #                      (megatron backend only; single point per job; prefix+suffix <= 600)
+#   DATASET_NAME   results subfolder under mem-results (default: SparseGutenberg). Use e.g.
+#                  UnseenFineWeb together with JSONL_DIR for the unseen-FineWeb generation run.
+#   JSONL_DIR      folder holding rep_<r>_token.jsonl inputs (default: the Gutenberg rep buckets).
+#                  For UnseenFineWeb: a folder with a rep_0_token.jsonl symlink to the long
+#                  FineWeb-Edu jsonl from extract_long_docs.py (records: doc_id, input_ids, length).
+#   MAX_SAMPLES    cap the number of documents per bucket (e.g. 660 to match the long-context
+#                  runs when the jsonl holds more); default: unset, all documents
+#   EXTERNAL_MODEL public HF reference model instead of MODEL (see external_config in
+#                  llama_checkpoints.sh); forces CHECKPOINT_BACKEND=hf and expects a local
+#                  snapshot at HF_DIR (default: store/hf-checkpoints/$EXP_NAME, e.g. from
+#                  `huggingface-cli download meta-llama/Llama-3.2-1B --local-dir <HF_DIR>`).
+#   HF_DIR         override the HF checkpoint directory (default: store/hf-checkpoints/$EXP_NAME)
 #
 # No pre-checkpoint-load "is this already done" check here -- measure_mem_all.sh already
 # decided this job is worth submitting (its own dry-run check, dual-checking scratch+store).
@@ -35,6 +47,10 @@
 #
 # Usage: sbatch --export=MODEL=sink,POINTS=0:1000 measure_mem.slurm
 # (normally submitted via measure_mem_all.sh)
+# Unseen-text generation for Section 4.1 (one prompt point, rep 0 only, 1000-token continuation):
+#   sbatch --export=MODEL=full-scf1,CHECKPOINT_BACKEND=hf,POINTS=0:500,SUFFIX_LENGTH=1000,REPETITIONS=0 measure_mem.slurm
+#   sbatch --export=MODEL=full-scf1,CHECKPOINT_BACKEND=hf,POINTS=0:500,SUFFIX_LENGTH=1000,REPETITIONS=0,DATASET_NAME=UnseenFineWeb,JSONL_DIR=<folder>,MAX_SAMPLES=660 measure_mem.slurm
+#   sbatch --export=EXTERNAL_MODEL=llama-3.2-1b,POINTS=0:500,SUFFIX_LENGTH=1000,REPETITIONS=0 measure_mem.slurm
 
 echo "START TIME: $(date)"
 
@@ -54,10 +70,23 @@ SINK_SCALE=${SINK_SCALE:-}
 FORCE_METRICS=${FORCE_METRICS:-}
 MAX_DOC_LENGTH=${MAX_DOC_LENGTH:-}
 CAPTURE_ATTENTION=${CAPTURE_ATTENTION:-}
+DATASET_NAME=${DATASET_NAME:-SparseGutenberg}
+JSONL_DIR=${JSONL_DIR:-/users/$USER/store/datasets/tokenized/gutenberg_rep_jsonl}
+MAX_SAMPLES=${MAX_SAMPLES:-}
+EXTERNAL_MODEL=${EXTERNAL_MODEL:-}
 
 ### MODEL -> EXP_NAME / MEGATRON_EXTRA / NEEDS_TRITON / NEEDS_FLA_052 / IS_SINK_FAMILY / NEEDS_UNFUSED_DECODE ###
-MODEL=${MODEL:-full-scf8}
-model_config "$MODEL"
+if [ -n "$EXTERNAL_MODEL" ]; then
+    # Public reference model: HF backend only, no Megatron checkpoint, none of the model flags.
+    external_config "$EXTERNAL_MODEL"
+    MODEL=$EXTERNAL_MODEL
+    CKPT_NAME=""
+    MEGATRON_EXTRA=""; NEEDS_TRITON=0; NEEDS_FLA_052=0; IS_SINK_FAMILY=0; NEEDS_UNFUSED_DECODE=0
+    CHECKPOINT_BACKEND=hf
+else
+    MODEL=${MODEL:-full-scf8}
+    model_config "$MODEL"
+fi
 
 # Mirrors InferenceBackend.experiment_path_suffix() in inference_backend.py -- keep in sync.
 if [ "$CHECKPOINT_BACKEND" = "hf" ]; then
@@ -71,9 +100,8 @@ fi
 MODEL_DIR=/users/$USER/store/pretrain-results/$CKPT_NAME
 STORE_MEM_BASE=/users/$USER/store/mem-results
 SCRATCH_MEM_BASE=/iopsstor/scratch/cscs/$USER/mem-results
-MEM_DIR=$SCRATCH_MEM_BASE/SparseGutenberg/$EXP_NAME
-STORE_MEM_DIR=$STORE_MEM_BASE/SparseGutenberg/$EXP_NAME
-GUTENBERG_JSONL_DIR=/users/$USER/store/datasets/tokenized/gutenberg_rep_jsonl
+MEM_DIR=$SCRATCH_MEM_BASE/$DATASET_NAME/$EXP_NAME
+STORE_MEM_DIR=$STORE_MEM_BASE/$DATASET_NAME/$EXP_NAME
 TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b
 PY=$MEGATRON_LM_DIR/attn_bench/evaluation/prefix_extraction_inference.py
 
@@ -104,14 +132,14 @@ IFS=',' read -r -a POINTS_ARR <<< "$POINTS"
 # this also doubles as the "is this model even HF-convertible" check, since GDN models
 # never get one.
 if [ "$CHECKPOINT_BACKEND" = "hf" ]; then
-    HF_DIR=/users/$USER/store/hf-checkpoints/$EXP_NAME
+    HF_DIR=${HF_DIR:-/users/$USER/store/hf-checkpoints/$EXP_NAME}
     if [ ! -f "$HF_DIR/config.json" ]; then
-        echo "CHECKPOINT_BACKEND=hf requested but $HF_DIR/config.json not found -- run convert_and_validate_hf.slurm (MODEL=$MODEL) first."
+        echo "CHECKPOINT_BACKEND=hf requested but $HF_DIR/config.json not found -- run convert_and_validate_hf.slurm (MODEL=$MODEL) first, or download the external snapshot there."
         exit 1
     fi
 fi
 
-echo "RUN: model=$MODEL  exp=$EXP_NAME  backend=$CHECKPOINT_BACKEND  points=$POINTS  suffix=$SUFFIX_LENGTH${SINK_SCALE:+  sink_scale=$SINK_SCALE}"
+echo "RUN: model=$MODEL  exp=$EXP_NAME  backend=$CHECKPOINT_BACKEND  dataset=$DATASET_NAME  points=$POINTS  suffix=$SUFFIX_LENGTH${SINK_SCALE:+  sink_scale=$SINK_SCALE}${MAX_SAMPLES:+  max_samples=$MAX_SAMPLES}"
 
 # --experiment-path is the scratch working dir -- results stay there; sync to store manually
 # (e.g. copy_mem_results_to_store.sh) when you want it, scratch is only purged every ~2 weeks.
@@ -120,12 +148,13 @@ COMMON_ARGS="--container-env $CONTAINER_ENV \
     --checkpoint-backend $CHECKPOINT_BACKEND \
     --experiment-path $MEM_DIR \
     --persistent-storage-path $STORE_MEM_DIR \
-    --data-folder $GUTENBERG_JSONL_DIR \
+    --data-folder $JSONL_DIR \
     --repetitions $REPETITIONS \
     --points ${POINTS_ARR[*]} \
     --suffix-length $SUFFIX_LENGTH \
     --batch-size 20"
 [ -n "$MAX_DOC_LENGTH" ] && COMMON_ARGS="$COMMON_ARGS --max-doc-length $MAX_DOC_LENGTH"
+[ -n "$MAX_SAMPLES" ] && COMMON_ARGS="$COMMON_ARGS --max-samples $MAX_SAMPLES"
 
 if [ -n "$CAPTURE_ATTENTION" ]; then
     if [ "$CHECKPOINT_BACKEND" = "hf" ]; then
@@ -212,9 +241,9 @@ if [ $INFERENCE_STATUS -eq 0 ]; then
         export PYTHONPATH='${PYTHONPATH}'
         python $MEGATRON_LM_DIR/attn_bench/evaluation/compute_memorization_metrics.py \
             --exp-name $PDM_EXP_NAME \
-            --base-path $SCRATCH_MEM_BASE/SparseGutenberg \
-            --save-path $SCRATCH_MEM_BASE/SparseGutenberg \
-            --persistent-storage-path $STORE_MEM_BASE/SparseGutenberg \
+            --base-path $SCRATCH_MEM_BASE/$DATASET_NAME \
+            --save-path $SCRATCH_MEM_BASE/$DATASET_NAME \
+            --persistent-storage-path $STORE_MEM_BASE/$DATASET_NAME \
             --points ${POINTS_ARR[*]} \
             --suffix-length $SUFFIX_LENGTH \
             --repetitions $REPETITIONS \
