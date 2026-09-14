@@ -5,6 +5,7 @@ Reads the rank*.jsonl of one inference dir (offset_O_prefix_P_suffix_S/rep_R_gre
 written by prefix_extraction_inference.py) and computes, per sample, from the stored
 `generated_suffix` / `true_suffix` token lists -- CPU only, no model:
 
+  * raw cumulative TTR    TTR(gen[:b]) and TTR(true[:b]) at each boundary b -> [N, B]
   * cumulative TTR ratio  TTR(gen[:b]) / TTR(true[:b]) at each boundary b     -> [N, B]
   * rolling TTR ratio     TTR over a window of --window tokens ending at each
                           position t = window, window+step, ...               -> [N, T]
@@ -43,12 +44,17 @@ def ttr(tokens) -> float:
     return len(set(tokens)) / len(tokens) if len(tokens) else float("nan")
 
 
-def cumulative_ttr_ratio(gen, ref, boundaries) -> np.ndarray:
+def cumulative_ttr(tokens, boundaries) -> np.ndarray:
+    """Raw token diversity from the start of a continuation to each boundary."""
     out = np.full(len(boundaries), np.nan)
     for i, b in enumerate(boundaries):
-        if b <= len(gen) and b <= len(ref):
-            out[i] = ttr(gen[:b]) / ttr(ref[:b])
+        if b <= len(tokens):
+            out[i] = ttr(tokens[:b])
     return out
+
+
+def cumulative_ttr_ratio(gen, ref, boundaries) -> np.ndarray:
+    return cumulative_ttr(gen, boundaries) / cumulative_ttr(ref, boundaries)
 
 
 def rolling_ttr(tokens, positions, window) -> np.ndarray:
@@ -112,7 +118,8 @@ def main():
     positions = list(range(args.window, suffix_len + 1, args.step))
 
     n = len(records)
-    cum_ratio = np.full((n, len(boundaries)), np.nan)
+    cum_gen = np.full((n, len(boundaries)), np.nan)
+    cum_ref = np.full((n, len(boundaries)), np.nan)
     roll_gen = np.full((n, len(positions)), np.nan)
     roll_ref = np.full((n, len(positions)), np.nan)
     onset_gen = {k: np.zeros(n, dtype=np.int32) for k in args.ngram}
@@ -123,7 +130,8 @@ def main():
     for i, rec in enumerate(records):
         gen, ref = rec["generated_suffix"], rec["true_suffix"]
         sample_idx[i] = rec["sample_idx"]
-        cum_ratio[i] = cumulative_ttr_ratio(gen, ref, boundaries)
+        cum_gen[i] = cumulative_ttr(gen, boundaries)
+        cum_ref[i] = cumulative_ttr(ref, boundaries)
         roll_gen[i] = rolling_ttr(gen, positions, args.window)
         roll_ref[i] = rolling_ttr(ref, positions, args.window)
         for k in args.ngram:
@@ -131,6 +139,7 @@ def main():
             onset_ref[k][i] = loop_onset(ref, k)
         diverge[i] = divergence_point(gen, ref)
 
+    cum_ratio = cum_gen / cum_ref
     args.out.parent.mkdir(parents=True, exist_ok=True)
     # onset_gen / onset_ref keep the first n for backwards compatibility; every n is also
     # stored as onset_gen_n<k> / onset_ref_n<k>.
@@ -142,12 +151,16 @@ def main():
              sample_idx=sample_idx, boundaries=np.array(boundaries),
              positions=np.array(positions), window=args.window, step=args.step,
              ngram=np.array(args.ngram), suffix_len=suffix_len,
-             cum_ratio=cum_ratio, roll_gen=roll_gen, roll_ref=roll_ref,
+             cum_gen=cum_gen, cum_ref=cum_ref, cum_ratio=cum_ratio,
+             roll_gen=roll_gen, roll_ref=roll_ref,
              onset_gen=onset_gen[args.ngram[0]], onset_ref=onset_ref[args.ngram[0]],
              divergence=diverge, **per_n)
 
     roll_ratio = roll_gen / roll_ref
     print(f"{args.inference_dir}: {n} samples, suffix {suffix_len}")
+    for name, values in (("generated", cum_gen), ("true", cum_ref)):
+        print(f"cumulative TTR ({name}, mean):",
+              ", ".join(f"{b}:{v:.3f}" for b, v in zip(boundaries, np.nanmean(values, 0))))
     print("cumulative TTR ratio (mean):",
           ", ".join(f"{b}:{v:.3f}" for b, v in zip(boundaries, np.nanmean(cum_ratio, 0))))
     print("rolling TTR ratio (mean):   ",

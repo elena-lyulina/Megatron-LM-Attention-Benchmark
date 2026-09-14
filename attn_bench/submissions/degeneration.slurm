@@ -27,6 +27,8 @@
 #
 # Usage:
 #   sbatch attn_bench/submissions/degeneration.slurm
+#   # Refresh existing files to include raw cumulative TTR (cum_gen, cum_ref):
+#   sbatch --export=ALL,FORCE=1 attn_bench/submissions/degeneration.slurm
 #   sbatch --export=DATASETS="UnseenFineWeb",EXPRS="llama3-1b-full-attn-scf1-fineweb40B-gutenberg3B_hf" attn_bench/submissions/degeneration.slurm
 
 echo "START TIME: $(date)"
