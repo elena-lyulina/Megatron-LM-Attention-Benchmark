@@ -8,9 +8,12 @@ written by prefix_extraction_inference.py) and computes, per sample, from the st
   * cumulative TTR ratio  TTR(gen[:b]) / TTR(true[:b]) at each boundary b     -> [N, B]
   * rolling TTR ratio     TTR over a window of --window tokens ending at each
                           position t = window, window+step, ...               -> [N, T]
-  * loop onset            first position whose --ngram-gram already occurred
-                          earlier in the same sequence (S+1 if none), for the
-                          generated and the true continuation                 -> [N], [N]
+  * loop onset            first position whose n-gram already occurred earlier
+                          in the same sequence (S+1 if none), for the generated
+                          and the true continuation, for every n in --ngram:
+                          a short n (8) catches the first repeated phrase, a
+                          long n (32) the point where the text has become
+                          periodic                                            -> [N] per n
   * divergence point      first position where gen != true (S+1 if none)      -> [N]
 
 TTR = |unique tokens| / |tokens|. The ratio to the true continuation at the same length
@@ -99,7 +102,8 @@ def main():
                         help="Cumulative-TTR boundaries (tokens)")
     parser.add_argument("--window", type=int, default=100, help="Rolling-TTR window (tokens)")
     parser.add_argument("--step", type=int, default=25, help="Rolling-TTR step (tokens)")
-    parser.add_argument("--ngram", type=int, default=8, help="n for the loop-onset detector")
+    parser.add_argument("--ngram", type=int, nargs="+", default=[8, 16, 32],
+                        help="n-gram sizes for the loop-onset detector (one onset array per n)")
     args = parser.parse_args()
 
     records = load_records(args.inference_dir)
@@ -111,8 +115,8 @@ def main():
     cum_ratio = np.full((n, len(boundaries)), np.nan)
     roll_gen = np.full((n, len(positions)), np.nan)
     roll_ref = np.full((n, len(positions)), np.nan)
-    onset_gen = np.zeros(n, dtype=np.int32)
-    onset_ref = np.zeros(n, dtype=np.int32)
+    onset_gen = {k: np.zeros(n, dtype=np.int32) for k in args.ngram}
+    onset_ref = {k: np.zeros(n, dtype=np.int32) for k in args.ngram}
     diverge = np.zeros(n, dtype=np.int32)
     sample_idx = np.zeros(n, dtype=np.int64)
 
@@ -122,17 +126,25 @@ def main():
         cum_ratio[i] = cumulative_ttr_ratio(gen, ref, boundaries)
         roll_gen[i] = rolling_ttr(gen, positions, args.window)
         roll_ref[i] = rolling_ttr(ref, positions, args.window)
-        onset_gen[i] = loop_onset(gen, args.ngram)
-        onset_ref[i] = loop_onset(ref, args.ngram)
+        for k in args.ngram:
+            onset_gen[k][i] = loop_onset(gen, k)
+            onset_ref[k][i] = loop_onset(ref, k)
         diverge[i] = divergence_point(gen, ref)
 
     args.out.parent.mkdir(parents=True, exist_ok=True)
+    # onset_gen / onset_ref keep the first n for backwards compatibility; every n is also
+    # stored as onset_gen_n<k> / onset_ref_n<k>.
+    per_n = {}
+    for k in args.ngram:
+        per_n[f"onset_gen_n{k}"] = onset_gen[k]
+        per_n[f"onset_ref_n{k}"] = onset_ref[k]
     np.savez(args.out,
              sample_idx=sample_idx, boundaries=np.array(boundaries),
              positions=np.array(positions), window=args.window, step=args.step,
-             ngram=args.ngram, suffix_len=suffix_len,
+             ngram=np.array(args.ngram), suffix_len=suffix_len,
              cum_ratio=cum_ratio, roll_gen=roll_gen, roll_ref=roll_ref,
-             onset_gen=onset_gen, onset_ref=onset_ref, divergence=diverge)
+             onset_gen=onset_gen[args.ngram[0]], onset_ref=onset_ref[args.ngram[0]],
+             divergence=diverge, **per_n)
 
     roll_ratio = roll_gen / roll_ref
     print(f"{args.inference_dir}: {n} samples, suffix {suffix_len}")
@@ -141,13 +153,14 @@ def main():
     print("rolling TTR ratio (mean):   ",
           ", ".join(f"{t}:{v:.3f}" for t, v in zip(positions, np.nanmean(roll_ratio, 0))
                     if t in (args.window, 250, 500, 750, suffix_len)))
-    for name, onset in (("generated", onset_gen), ("true", onset_ref)):
-        share = {t: float((onset > t).mean()) for t in (100, 250, 500, suffix_len)}
-        looped = onset <= suffix_len
-        median = int(np.median(onset[looped])) if looped.any() else None
-        print(f"loop onset ({name}, {args.ngram}-gram): loop-free share "
-              + ", ".join(f"@{t}:{s:.2f}" for t, s in share.items())
-              + f"; median onset among looping {median}")
+    for k in args.ngram:
+        for name, onset in (("generated", onset_gen[k]), ("true", onset_ref[k])):
+            share = {t: float((onset > t).mean()) for t in (100, 250, 500, suffix_len)}
+            looped = onset <= suffix_len
+            median = int(np.median(onset[looped])) if looped.any() else None
+            print(f"loop onset ({name}, {k}-gram): loop-free share "
+                  + ", ".join(f"@{t}:{s:.2f}" for t, s in share.items())
+                  + f"; median onset among looping {median}")
     print(f"divergence point: mean {diverge.mean():.1f}, share never diverging "
           f"{(diverge > suffix_len).mean():.3f}")
 
