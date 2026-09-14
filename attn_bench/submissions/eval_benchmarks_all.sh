@@ -1,5 +1,5 @@
 #!/bin/bash
-# Submit lm-eval-harness benchmark jobs for the 14 models of the benchmark table (one job per
+# Submit lm-eval-harness benchmark jobs for the 15 models of the benchmark table (one job per
 # model). Models whose results already exist on scratch or store are skipped.
 # EVAL_MODELS is the benchmark-table scope, deliberately narrower than the
 # llama_checkpoints.sh registry: registering a model there does not add it here.
@@ -28,7 +28,7 @@ SCRIPT_DIR=$(dirname "$0")
 # No python: the login node's is 3.6 (see measure_mem_all.sh) and the "done" marker is a file.
 
 EVAL_MODELS=(full-scf1 gated-scf1 sink-scf1 swa-w256-scf1 swa-w1024-scf1 swa-w4096-scf1 \
-             gdn carry-r0 carry-r0.5 carry-r1 kda mla qwen gemma)
+             gdn gdn-upd carry-r0 carry-r0.5 carry-r1 kda mla qwen gemma)
 
 SCRATCH_EVAL_BASE=/iopsstor/scratch/cscs/$USER/eval-results/lm-eval
 STORE_EVAL_BASE=/users/$USER/store/eval-results/lm-eval
