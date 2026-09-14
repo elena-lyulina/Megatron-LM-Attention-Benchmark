@@ -26,7 +26,7 @@
 #  no-ops when the HF config has no llama3 rope-scaling dict, so GDN/KDA (no RoPE) and MLA
 #  (plain RoPE, no scaling) all pass through untouched.)
 
-MODELS=(full-scf8 gated-scf8 full-xdoc-leak-scf8 sink-scf8 off-by-one-scf8 gdn carry-r0 carry-r0.5 carry-r1 full-goldfish-scf8 gdn-goldfish full-fineweb80B-scf8 full-long-scf8 full-long-split-1024-scf8 full-scf1 gated-scf1 sink-scf1 swa-w256-scf1 swa-w1024-scf1 swa-w4096-scf1 kda mla qwen gemma)
+MODELS=(full-scf8 gated-scf8 full-xdoc-leak-scf8 sink-scf8 off-by-one-scf8 gdn gdn-upd carry-r0 carry-r0.5 carry-r1 full-goldfish-scf8 gdn-goldfish full-fineweb80B-scf8 full-long-scf8 full-long-split-1024-scf8 full-scf1 gated-scf1 sink-scf1 swa-w256-scf1 swa-w1024-scf1 swa-w4096-scf1 kda mla qwen gemma)
 
 # GDN linear-attention dims -- not restored by --use-checkpoint-args, must be re-passed.
 GDN_DIMS="--experimental-attention-variant gated_delta_net \
@@ -120,6 +120,12 @@ model_config() {
             ;;
         gdn)
             EXP_NAME=llama3-1b-gdn-fineweb40B-gutenberg3B
+            MEGATRON_EXTRA="$GDN_DIMS"
+            NEEDS_TRITON=1
+            ;;
+        gdn-upd)
+            # same model as gdn, retrained on the scf1 recipe (GBS 288 / warmup 500 / WD 0.1)
+            EXP_NAME=llama3-1b-gdn-upd-fineweb40B-gutenberg3B
             MEGATRON_EXTRA="$GDN_DIMS"
             NEEDS_TRITON=1
             ;;

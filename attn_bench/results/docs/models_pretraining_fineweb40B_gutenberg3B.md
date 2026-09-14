@@ -327,7 +327,7 @@ Ran in two slices (resume slices must keep the same 12-node count — distrib-op
 |---|---|---|---|---|---|---|---|
 | mla (scf1) | `3245261` (initial) → `3248575` (resume) | 2026-08-31 17:34:28 | 2026-09-01 22:56:06 | 5h 15m 56s + 6h 28m 35s | clean time-limit save → COMPLETED (data exhausted) | 2.3972 (final step; ~2.385 avg last 50) | ~173 (avg) |
 
-Throughput (~173) is roughly half the softmax baselines' ~360 — the packed-seq (THD) path is ~1.8x slower even absorbed onto 12 nodes (the THD path, not MLA itself; see the slurm header + job 3245069).
+Throughput (~173) is roughly half the softmax baselines' ~360. Unpacked MLA is fast (job 3245069), so the cost comes with `--use-packed-seq-params` — but not from the THD attention kernel: TE picks cuDNN FusedAttention for it and forcing cuDNN or FlashAttention-2 gives the same step time (jobs 3393811/3393816, `diag_mla_attn_backend.slurm`). The cost is MLA's RoPE: `--no-rope-fusion` (required with `--rope-type rope`) sends packed sequences through `_apply_rotary_pos_emb_thd`, a Python loop over every document with GPU syncs, on q and k in every layer, forward and backward — standard attention keeps rope fusion and uses TE's single THD kernel instead. Measured: with `--rope-type yarn --rotary-scaling-factor 1.0` (mathematically plain RoPE, but it unlocks the fused MLA-RoPE kernels) the steady step drops from ~2200 to ~1280 ms/iter at the same 12-node config (job 3394135, losses match the unfused run to 5 digits early on). The fused path is nonetheless not used in production: its runs show unexplained multi-second spikes on ~60% of iterations that cancel the gain on average (also seen on the unfused path in the Kimi hybrid, cause open). The trained MLA model is unaffected either way — same RoPE, different kernel.
 
 W&B runs (project `fineweb-40B_gutenberg-3B`): initial `llama3-1b-mla-scf1-fineweb40B-gutenberg3B-3245261` (`bu9dmq9m`), resume `...-3248575` (`fkouec5p`).
 
@@ -426,6 +426,29 @@ Logs: `attn_bench/logs/3318605.err` + `attn_bench/_logs/3318605.out` (`.out` in 
 
 ---
 
+## GDN mixer, scf=1 recipe (gdn-upd)
+
+Same model as `gdn` (GDN on all 16 layers, 8 heads 192/384, FFN 5824, `--use-packed-seq-params`), retrained under the updated due to scf=1 in softmax attentions training recipe (GBS 288 / warmup 500 / weight decay 0.1, 18141 steps) instead of the original 336 / 2000 / 0.01 — same token budget. `gdn` and the GDN-carry runs were the only models left on the old recipe, so comparing them with `full-scf1` / `kda` / `mla` / `qwen` confounded mixer with optimizer; this run removes that. Dist config: 12 nodes / TP=1 / MBS=2 (GAS 3), container `nemo_26.04_te2.15`, container's fla 0.4.2 (no side-install needed, unlike KDA).
+
+Completed cleanly in a single job: exited via `[exiting program after consuming all available data at iteration 18141]`, checkpoint saved at 18141.
+
+| variant | Slurm job | start (CEST) | end (CEST) | run time | status | final lm loss (step 18141) | throughput (TFLOP/s/GPU) |
+|---|---|---|---|---|---|---|---|
+| gdn-upd (scf1) | `3334192` | 2026-09-09 12:53:28 | 2026-09-09 19:17:17 | 6h 23m 49s | COMPLETED (data exhausted) | 2.4047 (final step; ~2.394 avg last 50) | ~315 (avg) |
+
+Loss ~2.394 vs 2.4125 for the old-recipe `gdn` (and vs ~2.335 KDA / ~2.385 MLA on the same recipe).
+
+W&B run: `llama3-1b-gdn-upd-fineweb40B-gutenberg3B-3334192` (`vs6xkhmz`, project `fineweb-40B_gutenberg-3B`).
+
+Checkpoint saved at step 18141. Moved to long-term storage under:
+`/users/elyulina/store/pretrain-results/llama3-1b-gdn-upd-fineweb40B-gutenberg3B/`
+
+Slurm script: `attn_bench/submissions/pretrain_llama3_1b_gdn_upd_fineweb40B_gutenberg3B.slurm`
+
+Logs: `attn_bench/logs/3334192.err` + `attn_bench/_logs/3334192.out` (`.out` in `_logs/` for exceeding 3 MB).
+
+---
+
 ## Attention variants / trained models 
 
 | variant | Megatron flag | description |
@@ -436,6 +459,7 @@ Logs: `attn_bench/logs/3318605.err` + `attn_bench/_logs/3318605.out` (`.out` in 
 | off-by-one | `--softmax-type off-by-one` | sink with fixed logit 0 — `1 / (1 + Σ exp(xⱼ))` |
 | full (xdoc leak) | drop `--use-packed-seq-params` + `--reset-position-ids` (keep `--eod-mask-loss`) | standard softmax, but no intra-document masking — attention leaks across document boundaries within a packed sequence |
 | gated delta net (GDN) | `--experimental-attention-variant gated_delta_net --linear-attention-freq [1]*16` | GDN linear-attention mixer replaces softmax attention on all layers; FFN shrunk to 5824 to param-match (~1.239B) |
+| gated delta net (GDN), scf=1 recipe (gdn-upd) | same flags as `gated delta net (GDN)` | identical model, retrained with the scf=1 training recipe (GBS 288 / warmup 500 / WD 0.1) for a like-for-like comparison with the other scf=1 models |
 | GDN carry (r = 0 / 0.5 / 1) | `--gdn-state-carry-ratio {0,0.5,1}`, drop `--use-packed-seq-params` | GDN without doc-boundary state reset (leaks across docs within a sequence); recurrent + conv state additionally carried across batch boundaries with probability r |
 | full / GDN + goldfish loss | `--goldfish-k 50 --goldfish-h 50` (stacks on top of `full` or `gated delta net (GDN)`) | hash-based token dropout from the loss only (~2% of tokens), reduces verbatim memorization |
 | full (long / long-split-1024 filler) | *(none — same as `full`)* | same standard softmax attention as `full`; only the FineWeb-Edu-Dedup filler dataset differs (longest documents, whole or split into 1024-token chunks), same token budget |
