@@ -48,7 +48,9 @@ from attn_bench.evaluation.inference_common import (
     count_rep_records, filter_points_by_doc_length, find_suffix_dirs,
     parse_points)
 
-SUFFIX_BOUNDARIES = [25, 50, 75, 100, 150, 250, 500, 750, 1000, 1500, 2000, 3000, 4000, 5000, 7000]
+# 249: content-only twin of 250 -- at the document-end corner (offset+prefix = 8192-250) token
+# 250 is the EOS, which attention models reliably miss, so the dashboard reads 249 alongside 250.
+SUFFIX_BOUNDARIES = [25, 50, 75, 100, 150, 249, 250, 500, 750, 1000, 1500, 2000, 3000, 4000, 5000, 7000]
 
 
 ### lcs_norm -- local copy of PDM's _find_lcs, keeping the array instead of a running max ###

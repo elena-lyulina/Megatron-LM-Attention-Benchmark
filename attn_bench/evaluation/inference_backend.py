@@ -285,17 +285,48 @@ class HFBackend(InferenceBackend):
 
     def generate(self, prompt, suffix_length, top_p=None, num_samples=1):
         if top_p is None:
-            sampling = {"do_sample": False}
-        else:
-            # top_k=0 disables HF's default top_k=50, so the nucleus is the only truncation.
-            # num_return_sequences repeat_interleaves the prompt before prefill, so the
-            # custom-cache families see a plain [B * num_samples]-row batch.
-            sampling = {"do_sample": True, "top_p": top_p, "top_k": 0, "temperature": 1.0,
-                        "num_return_sequences": num_samples}
+            output = self.model.generate(
+                input_ids=prompt, max_new_tokens=suffix_length, min_new_tokens=suffix_length, do_sample=False,
+            )
+            return output[:, prompt.shape[1]:]
+
+        # Nucleus: prefill the B prompts once, repeat the cache num_samples-fold, decode the
+        # B*num_samples rows from there. A prefill of the expanded batch OOMs full-attn and
+        # overflows fla's int32 kernel indexing for GDN (jobs 3407714/3407715).
+        # top_k=0 disables HF's default top_k=50.
+        cache_kwargs = self._prefill_shared(prompt, num_samples)
         output = self.model.generate(
-            input_ids=prompt, max_new_tokens=suffix_length, min_new_tokens=suffix_length, **sampling,
+            input_ids=prompt.repeat_interleave(num_samples, dim=0),
+            max_new_tokens=suffix_length, min_new_tokens=suffix_length,
+            do_sample=True, top_p=top_p, top_k=0, temperature=1.0, **cache_kwargs,
         )
         return output[:, prompt.shape[1]:]
+
+    def _prefill_shared(self, prompt, num_samples):
+        """Prefill prompt[:, :-1] through the base model (no lm_head), repeat the cache along
+        the batch dim, return the generate() kwargs that continue from it (the last prompt
+        token is generate's first forward). Stateful families (_is_stateful: GDN/KDA/Qwen)
+        keep per-layer state lists in cache_params and slice input_ids on cache_position
+        themselves; for DynamicCache models HF only forwards the uncached tail of input_ids
+        when an attention_mask of the full prompt length is given, hence the ones mask."""
+        prefix, cached_len = prompt[:, :-1], prompt.shape[1] - 1
+        device = prompt.device
+        if getattr(self.model, "_is_stateful", False):
+            cache = self.model.base_model(
+                input_ids=prefix, use_cache=True, cache_position=torch.arange(cached_len, device=device),
+            ).cache_params
+            for name in ("conv_states", "recurrent_states", "key_cache", "value_cache"):
+                states = getattr(cache, name, None)
+                if states is None:
+                    continue
+                for i, state in enumerate(states):
+                    if state is not None:
+                        states[i] = state.repeat_interleave(num_samples, dim=0)
+            return {"cache_params": cache, "cache_position": torch.tensor([cached_len], device=device)}
+        cache = self.model.base_model(input_ids=prefix, use_cache=True).past_key_values
+        cache.batch_repeat_interleave(num_samples)
+        attention_mask = torch.ones(prompt.shape[0] * num_samples, prompt.shape[1], dtype=torch.long, device=device)
+        return {"past_key_values": cache, "attention_mask": attention_mask}
 
     def forward_logits(self, inputs, position_ids, fp32_output=True):
         # HF never auto-upcasts logits -- fp32_output is a no-op here, kept for interface parity.
