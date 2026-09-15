@@ -302,6 +302,7 @@ class HFBackend(InferenceBackend):
         )
         return output[:, prompt.shape[1]:]
 
+    @torch.no_grad()
     def _prefill_shared(self, prompt, num_samples):
         """Prefill prompt[:, :-1] through the base model (no lm_head), repeat the cache along
         the batch dim, return the generate() kwargs that continue from it (the last prompt
