@@ -1,11 +1,15 @@
 """
-Sparse Gutenberg inference for memorization measurement (Step 1): greedy-generate a suffix
-from a prefix at increasing repetition counts and score it. Backend-agnostic via
+Sparse Gutenberg inference for memorization measurement (Step 1): generate a suffix from a
+prefix at increasing repetition counts and score it. Greedy by default, or nucleus sampling
+(--sampling nucleus: N draws per document, HF backend only). Backend-agnostic via
 InferenceBackend -- Megatron or an already-converted HF checkpoint. GPU-dependent work only
 (generation, NLL, p_z); text metrics live in compute_memorization_metrics.py.
 
-Writes one rank{N}.jsonl per GPU under offset_O_prefix_P_suffix_S/rep_R_greedy/. Reuses a
-sibling suffix' >= the request, or extends a smaller one via teacher-forced prefill.
+Writes one rank{N}.jsonl per GPU under offset_O_prefix_P_suffix_S/rep_R_<policy>/, policy
+being "greedy" or e.g. "nucleus-p0.95-n10" (see policy_tag). One record per document either
+way; under nucleus the generation-side fields (generated_suffix, gen_nll, nll_mean, nll_std,
+perplexity) hold one entry per draw. Reuses a sibling suffix' >= the request, or (greedy
+only) extends a smaller one via teacher-forced prefill.
 
 --points takes one or more offset:prefix_length pairs sharing a single checkpoint load, e.g.
 --points 0:500 50:450 -- a single pair behaves exactly like the old --offset/--prefix-length.
@@ -54,6 +58,15 @@ from attn_bench.evaluation.inference_common import (
 P_Z_TOP_K = 40
 P_Z_TEMPERATURE = 1.0
 
+
+def policy_tag(sampling: str, top_p: float, num_samples: int) -> str:
+    """Policy token in rep dir names and Step 2 pkl names. Hyphens, not underscores: PDM's
+    Results.load takes the last "_"-separated token of a pkl filename as the policy.
+    Mirrored in bash by measure_mem.slurm -- keep in sync."""
+    if sampling == "greedy":
+        return "greedy"
+    return f"nucleus-p{top_p:g}-n{num_samples}"
+
 ### NLL / p_z ###
 
 @torch.no_grad()
@@ -85,9 +98,10 @@ def compute_nll(backend: InferenceBackend, input_ids: torch.Tensor, suffix_lengt
 
 
 def nll_stats(per_position_nll: torch.Tensor):
-    """mean/std/ppl per sample, for the flat top-level PDM-compatible fields."""
-    mean = per_position_nll.mean(dim=1)
-    std = per_position_nll.std(dim=1)
+    """mean/std/ppl over the position axis (last), for the flat top-level PDM-compatible
+    fields. [B, S] -> [B]; [B, N, S] -> [B, N]."""
+    mean = per_position_nll.mean(dim=-1)
+    std = per_position_nll.std(dim=-1)
     return mean, std, mean.exp()
 
 
@@ -107,13 +121,24 @@ def p_z_log_probs(suffix_logits: torch.Tensor, suffix_labels: torch.Tensor,
 
 
 def compute_nll_pz_stats(backend: InferenceBackend, true_full_sequence: torch.Tensor,
-                         gen_full_sequence: torch.Tensor, suffix_length: int):
-    """ref/gen NLL, p_z, and their mean/std/ppl summaries for one batch."""
+                         gen_full_sequences: torch.Tensor, suffix_length: int):
+    """ref/gen NLL, p_z, and their mean/std/ppl summaries for one batch.
+
+    gen_full_sequences: [B, N, prompt+suffix], one row per draw. The gen side runs one
+    forward per draw rather than one [B*N] forward: compute_nll materialises the full
+    [rows, S, V] logits before slicing, so the loop keeps peak memory at the greedy level
+    for the same total FLOPs. Returns gen_nll [B, N, suffix], gen stats [B, N]; ref side
+    [B, suffix] / [B] as before.
+    """
     ref_nll, ref_logits, ref_labels = compute_nll(backend, true_full_sequence, suffix_length)
     p_z = p_z_log_probs(ref_logits, ref_labels)
     del ref_logits, ref_labels
-    gen_nll, gen_logits, gen_labels = compute_nll(backend, gen_full_sequence, suffix_length)
-    del gen_logits, gen_labels
+    gen_nll = []
+    for k in range(gen_full_sequences.shape[1]):
+        nll_k, gen_logits, gen_labels = compute_nll(backend, gen_full_sequences[:, k], suffix_length)
+        del gen_logits, gen_labels
+        gen_nll.append(nll_k)
+    gen_nll = torch.stack(gen_nll, dim=1)
     ref_mean, ref_std, ref_ppl = nll_stats(ref_nll)
     gen_mean, gen_std, gen_ppl = nll_stats(gen_nll)
     return ref_nll, gen_nll, p_z, ref_mean, ref_std, ref_ppl, gen_mean, gen_std, gen_ppl
@@ -137,12 +162,12 @@ def file_exists_in_locations(locations, file: str, require_nonempty: bool = Fals
 ### CROSS-SUFFIX LOOKUP ###
 
 def find_rep_source(experiment_path: Path, offset: int, prefix_length: int,
-                    suffix_length: int, rep: int, expected_count: int,
+                    suffix_length: int, rep: int, policy: str, expected_count: int,
                     persistent_storage_path: Path | None = None):
     """Among existing suffix dirs for (offset, prefix) -- experiment_path and, if given,
-    persistent_storage_path -- find one whose rep_{rep}_greedy is complete: the smallest suffix' >=
-    suffix_length if any (nothing to compute), else the largest suffix' < suffix_length
-    (extend from here). None if nothing usable exists.
+    persistent_storage_path -- find one whose rep_{rep}_{policy} is complete: the smallest
+    suffix' >= suffix_length if any (nothing to compute), else the largest suffix' <
+    suffix_length (extend from here). None if nothing usable exists.
 
     "Complete" means at least expected_count records across its rank*.jsonl -- a rep dir
     truncated by a killed job doesn't count.
@@ -151,7 +176,7 @@ def find_rep_source(experiment_path: Path, offset: int, prefix_length: int,
     """
     usable = []
     for suffix_prime, d in find_suffix_dirs(experiment_path, offset, prefix_length, persistent_storage_path):
-        rep_dir = d / f"rep_{rep}_greedy"
+        rep_dir = d / f"rep_{rep}_{policy}"
         if count_rep_records(rep_dir) >= expected_count:
             usable.append((suffix_prime, rep_dir))
     if not usable:
@@ -182,7 +207,8 @@ def _capture_rouge_l(true_suffixes: list, gen_suffixes: list) -> list:
 
 def run_bucket(backend: InferenceBackend, dataset, prefix_length, suffix_length, batch_size,
               inference_dir, rank, world_size, needs_bos: bool, capture=None, rep: int | None = None,
-              extend_records: dict | None = None, extend_from_suffix: int | None = None) -> float:
+              extend_records: dict | None = None, extend_from_suffix: int | None = None,
+              top_p: float | None = None, num_samples: int = 1) -> float:
     """Run inference for one repetition bucket.
 
     dataset: (sample_idx, excerpt_tokens) list -- sample_idx tagged pre-split, so it's
@@ -190,14 +216,22 @@ def run_bucket(backend: InferenceBackend, dataset, prefix_length, suffix_length,
     needs_bos: True when offset > 0 (excerpts don't start with BOS, so we prepend it).
     extend_records: {sample_idx: old_record} to extend from a smaller suffix' run, or None
                     to generate fresh (old_record needs "generated_suffix" of length
-                    extend_from_suffix).
+                    extend_from_suffix). Greedy only.
     capture: shared AttentionCapture, or None. Always regenerates from scratch when set
              (extend_records is ignored) -- the maps need real forward passes.
-    rep: this bucket's repetition count, used only to route captured maps (capture mode).
+    rep: this bucket's repetition count; routes captured maps (capture mode) and seeds
+         the sampler (nucleus mode).
+    top_p / num_samples: nucleus sampling, num_samples draws per document; top_p=None is
+             greedy. HF generate has no per-row generator, so the seed is per batch,
+             torch.manual_seed(rep * 1_000_000 + first sample_idx of the batch): the exact
+             draws reproduce only for the same --batch-size and world size (both in
+             run_metadata.json), which only changes which draws are made, not their
+             distribution.
 
     Returns: wall time spent generating (checkpoint load happens before this is called).
     """
     device = backend.device
+    per_sample = top_p is not None
 
     sampler = DistributedSampler(dataset, num_replicas=world_size, rank=rank, shuffle=False)
     loader = DataLoader(dataset, batch_size=batch_size, sampler=sampler, collate_fn=lambda b: b)
@@ -246,14 +280,25 @@ def run_bucket(backend: InferenceBackend, dataset, prefix_length, suffix_length,
                     decode_step_callback=capture.collect_decode,
                 )
                 generation_time += time.monotonic() - t0
+            elif per_sample:
+                torch.manual_seed(rep * 1_000_000 + sample_indices[0])
+                t0 = time.monotonic()
+                generated = backend.generate(prompt, suffix_length, top_p=top_p, num_samples=num_samples)
+                generation_time += time.monotonic() - t0
             else:
                 t0 = time.monotonic()
                 generated = backend.generate(prompt, suffix_length)
                 generation_time += time.monotonic() - t0
 
-            gen_full = torch.cat([prompt, generated], dim=1)
+            # [B, N, suffix]: N draws per document (N=1 for greedy, extend and capture).
+            generated = generated.view(B, -1, suffix_length)
+            gen_full = torch.cat([prompt.unsqueeze(1).expand(-1, generated.shape[1], -1), generated], dim=2)
             ref_nll, gen_nll, p_z, ref_mean, ref_std, ref_ppl, gen_mean, gen_std, gen_ppl = \
                 compute_nll_pz_stats(backend, seq, gen_full, suffix_length)
+            if not per_sample:
+                # Greedy keeps the flat per-document shape every existing reader expects.
+                generated, gen_nll = generated.squeeze(1), gen_nll.squeeze(1)
+                gen_mean, gen_std, gen_ppl = gen_mean.squeeze(1), gen_std.squeeze(1), gen_ppl.squeeze(1)
 
             # Raw prefix/suffix from the original excerpt (for output, no BOS management)
             prefixes = batch_tensor[:, :prefix_length].cpu().tolist()
@@ -325,9 +370,17 @@ def parse_args():
     parser.add_argument("--max-doc-length", type=int, default=None,
                         help="Skip a point where offset+prefix_length+suffix_length exceeds this. "
                              "Omit for no filtering.")
-    parser.add_argument("--batch-size", type=int, default=20)
+    parser.add_argument("--batch-size", type=int, default=20,
+                        help="Documents per batch. Under --sampling nucleus the decode batch is "
+                             "batch_size * num_samples rows; lower it for long prefixes if that OOMs.")
     parser.add_argument("--max-samples", type=int, default=None,
                         help="Cap sequences per repetition bucket (for testing)")
+    parser.add_argument("--sampling", choices=["greedy", "nucleus"], default="greedy",
+                        help="Decoding policy. nucleus: top-p sampling at T=1, --num-samples draws "
+                             "per document, results under rep_R_<policy_tag>/ (hf backend only; "
+                             "never extends a smaller-suffix run, always generates fresh).")
+    parser.add_argument("--top-p", type=float, default=0.95, help="Nucleus mass (--sampling nucleus)")
+    parser.add_argument("--num-samples", type=int, default=10, help="Draws per document (--sampling nucleus)")
     parser.add_argument("--container-env", default=None,
                         help="Container/environment name this run executed in (e.g. nemo_26.04_te2.15). "
                              "Recorded verbatim in run_metadata.json for provenance.")
@@ -368,6 +421,8 @@ def build_backend(args) -> InferenceBackend:
         raise ValueError(f"--sink-scale: {backend.name} backend does not implement patch_sink_scale.")
     if args.capture_attention and type(backend).setup_attention_capture is InferenceBackend.setup_attention_capture:
         raise ValueError(f"--capture-attention: {backend.name} backend does not implement setup_attention_capture.")
+    if args.sampling != "greedy" and not backend.supports_sampling:
+        raise ValueError(f"--sampling {args.sampling}: {backend.name} backend only implements greedy generation.")
     return backend
 
 
@@ -407,6 +462,7 @@ def write_run_metadata(output_path: Path, args, backend: InferenceBackend, world
     last write.
     """
     meta_path = output_path / "run_metadata.json"
+    sampling = getattr(args, "sampling", "greedy")
     history = []
     if meta_path.exists():
         with open(meta_path) as f:
@@ -423,7 +479,15 @@ def write_run_metadata(output_path: Path, args, backend: InferenceBackend, world
         "ckpt_dir": getattr(args, "ckpt_dir", None),
         "hf_dir": getattr(args, "hf_dir", None),
         "world_size": world_size,
+        "batch_size": args.batch_size,
         "max_samples": args.max_samples,
+        # getattr: the backfill script's args have no sampling flags (it is greedy-only).
+        "policy": getattr(args, "policy", "greedy"),
+        "sampling": sampling,
+        "top_p": args.top_p if sampling == "nucleus" else None,
+        "num_samples": args.num_samples if sampling == "nucleus" else 1,
+        "seed_scheme": ("torch.manual_seed(rep * 1_000_000 + first sample_idx of the batch), per batch"
+                        if sampling == "nucleus" else None),
         "git_commit": _git_commit(),
         "timestamp": datetime.now(timezone.utc).isoformat(),
     })
@@ -437,7 +501,7 @@ def _process_rep(backend: InferenceBackend, args, experiment_path: Path, output_
     """Runs (or skips, or extends) one repetition bucket. Returns None if skipped,
     else (extend_from_suffix_or_None, generation_time)."""
     rep = int(path.stem.split("_")[1])
-    inference_dir = output_path / f"rep_{rep}_greedy"
+    inference_dir = output_path / f"rep_{rep}_{args.policy}"
 
     dataset = load_rep_bucket(path, offset, prefix_length, args.suffix_length,
                                max_samples=args.max_samples)
@@ -445,7 +509,7 @@ def _process_rep(backend: InferenceBackend, args, experiment_path: Path, output_
 
     persistent_inference_dir = (
         persistent_storage_path / "inference" /
-        f"offset_{offset}_prefix_{prefix_length}_suffix_{args.suffix_length}" / f"rep_{rep}_greedy"
+        f"offset_{offset}_prefix_{prefix_length}_suffix_{args.suffix_length}" / f"rep_{rep}_{args.policy}"
         if persistent_storage_path is not None else None
     )
     jsonl_done = count_rep_records(inference_dir) >= expected_count or (
@@ -453,7 +517,8 @@ def _process_rep(backend: InferenceBackend, args, experiment_path: Path, output_
     )
 
     source = None if capture is not None else find_rep_source(
-        experiment_path, offset, prefix_length, args.suffix_length, rep, expected_count, persistent_storage_path,
+        experiment_path, offset, prefix_length, args.suffix_length, rep, args.policy, expected_count,
+        persistent_storage_path,
     )
 
     if (jsonl_done or (source is not None and source[0] >= args.suffix_length)) and capture is None:
@@ -462,12 +527,13 @@ def _process_rep(backend: InferenceBackend, args, experiment_path: Path, output_
         return None
 
     if rank == 0:
-        print(f"\nProcessing rep={rep}")
+        print(f"\nProcessing rep={rep} policy={args.policy}")
         print(f"  {len(dataset)} sequences")
 
+    # Extending N stored draws would mean N*batch-row decode prompts -- nucleus generates fresh.
     extend_records = None
     extend_from_suffix = None
-    if source is not None and source[0] < args.suffix_length:
+    if source is not None and source[0] < args.suffix_length and args.sampling == "greedy":
         extend_from_suffix = source[0]
         extend_records = load_records_by_sample_idx(source[1], dataset_len=len(dataset))
         if rank == 0:
@@ -483,11 +549,13 @@ def _process_rep(backend: InferenceBackend, args, experiment_path: Path, output_
         rep=rep,
         extend_records=extend_records,
         extend_from_suffix=extend_from_suffix,
+        top_p=args.top_p if args.sampling == "nucleus" else None,
+        num_samples=args.num_samples if args.sampling == "nucleus" else 1,
     )
 
     if rank == 0:
         print(f"  Done rep={rep} offset={offset} prefix={prefix_length} suffix={args.suffix_length} "
-              f"(generation: {generation_time:.1f}s)")
+              f"policy={args.policy} (generation: {generation_time:.1f}s)")
     torch.cuda.empty_cache()
 
     return extend_from_suffix, generation_time
@@ -584,7 +652,7 @@ def results_already_complete(args, world_size: int, offset: int, prefix_length: 
         for path in paths:
             rep = int(path.stem.split("_")[1])
             if not file_exists_in_locations([output_path, persistent_output_path],
-                                            f"rep_{rep}_greedy/rank0.jsonl", require_nonempty=True):
+                                            f"rep_{rep}_{args.policy}/rank0.jsonl", require_nonempty=True):
                 return False
         # Two markers per rank: last Rouge-L bucket and highest repetition bucket -- both
         # must be present so an older capture that only wrote the Rouge-L cut is redone.
@@ -602,7 +670,7 @@ def results_already_complete(args, world_size: int, offset: int, prefix_length: 
         expected_count = len(load_rep_bucket(path, offset, prefix_length, args.suffix_length,
                                              max_samples=args.max_samples))
         source = find_rep_source(experiment_path, offset, prefix_length, args.suffix_length, rep,
-                                 expected_count, persistent_storage_path)
+                                 args.policy, expected_count, persistent_storage_path)
         if source is None or source[0] < args.suffix_length:
             return False
 
@@ -624,6 +692,7 @@ def print_dry_run_report(points: list, status: dict) -> None:
 
 def main():
     args = parse_args()
+    args.policy = policy_tag(args.sampling, args.top_p, args.num_samples)
     points = parse_points(args.points)
     points = filter_points_by_doc_length(points, args.suffix_length, args.max_doc_length)
     if not points:
@@ -674,7 +743,7 @@ def main():
         if int(os.environ.get("RANK", "0")) == 0:
             print(
                 f"All results already present for every requested point "
-                f"(suffix={args.suffix_length}, capture={args.capture_attention}) "
+                f"(suffix={args.suffix_length}, policy={args.policy}, capture={args.capture_attention}) "
                 f"— skipping checkpoint load."
             )
         return
@@ -695,7 +764,7 @@ def main():
     for i, (offset, prefix_length) in enumerate(remaining_points, 1):
         if rank == 0:
             print(f"\n=== POINT [{i}/{len(remaining_points)}] offset={offset} prefix={prefix_length} "
-                  f"suffix={args.suffix_length} ===")
+                  f"suffix={args.suffix_length} policy={args.policy} ===")
         run_inference(backend, args, rank, world_size, offset, prefix_length, persistent_storage_path)
 
 

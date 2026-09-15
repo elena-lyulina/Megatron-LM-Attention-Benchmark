@@ -113,8 +113,10 @@ def backfill_rep_dir(backend: MegatronBackend, rep_dir: Path, offset: int, prefi
                 true_full = torch.cat([bos, true_full], dim=1)
                 gen_full = torch.cat([bos, gen_full], dim=1)
 
+            # Backfill is greedy-only (flat generated_suffix): one draw per document.
             ref_nll, gen_nll, p_z, ref_mean, ref_std, ref_ppl, gen_mean, gen_std, gen_ppl = \
-                compute_nll_pz_stats(backend, true_full, gen_full, suffix_length)
+                compute_nll_pz_stats(backend, true_full, gen_full.unsqueeze(1), suffix_length)
+            gen_nll, gen_mean, gen_std, gen_ppl = (t.squeeze(1) for t in (gen_nll, gen_mean, gen_std, gen_ppl))
 
             for i, rec in enumerate(batch):
                 rec["sample_idx"] = batch_indices[i]

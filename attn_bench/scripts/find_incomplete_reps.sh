@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Scans a mem-results SparseGutenberg tree for rep_*_greedy dirs whose rank*.jsonl files
+# Scans a mem-results SparseGutenberg tree for rep_R_<policy> dirs (greedy and nucleus-*) whose rank*.jsonl files
 # sum to fewer records than expected -- the signature a job killed mid-generation leaves
 # behind. Step 1 writes each rank's jsonl incrementally with a flush per record (see
 # prefix_extraction_inference.py's run_bucket), but the resume/skip check only tests that
@@ -17,7 +17,7 @@ set -euo pipefail
 BASE_DIR=${1:-/iopsstor/scratch/cscs/$USER/mem-results/SparseGutenberg}
 EXPECTED=${2:-660}
 
-echo "Scanning $BASE_DIR for rep_*_greedy dirs with != $EXPECTED total records..."
+echo "Scanning $BASE_DIR for rep_*_<policy> dirs with != $EXPECTED total records..."
 echo
 
 FOUND=0
@@ -30,7 +30,7 @@ while IFS= read -r -d '' rep_dir; do
             [ -f "$rank_file" ] && echo "    $(wc -l < "$rank_file" | tr -d ' ')  $(basename "$rank_file")"
         done
     fi
-done < <(find "$BASE_DIR" -type d -name 'rep_*_greedy' -print0)
+done < <(find "$BASE_DIR" -type d -name 'rep_[0-9]*_*' -print0)
 
 echo
 echo "$FOUND incomplete rep dir(s) found."

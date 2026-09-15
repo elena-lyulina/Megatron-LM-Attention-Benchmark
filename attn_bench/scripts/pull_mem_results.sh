@@ -30,8 +30,10 @@ done
 [ ${#TARGETS[@]} -eq 0 ] && TARGETS=("${MODELS[@]}")
 
 ### BUILD INCLUDE FILTERS ###
-# Pull each experiment dir's metrics/*_greedy.pkl summaries and metrics_metadata/*.json
-# (which job/reps/timestamp wrote each pkl) only, not the raw per-sample jsonls.
+# Pull each experiment dir's metrics pkl summaries (greedy and nucleus-* policies; the
+# exclude drops --tag validation variants like ..._nucleus-p0.95-n10_opt.pkl, which works
+# because policy tags themselves carry no underscore) and metrics_metadata/*.json (which
+# job/reps/timestamp wrote each pkl) only, not the raw per-sample jsonls.
 INC=()
 for MODEL in "${TARGETS[@]}"; do
     model_config "$MODEL"
@@ -39,6 +41,7 @@ for MODEL in "${TARGETS[@]}"; do
     PDM_EXP_NAME="$EXP_NAME"
     [[ "$BACKEND" = "hf" ]] && PDM_EXP_NAME="${EXP_NAME}_hf"
     INC+=(--include="$PDM_EXP_NAME/" --include="$PDM_EXP_NAME/metrics/" --include="$PDM_EXP_NAME/metrics/*_greedy.pkl"
+          --exclude="$PDM_EXP_NAME/metrics/*_nucleus-*_*.pkl" --include="$PDM_EXP_NAME/metrics/*_nucleus-*.pkl"
           --include="$PDM_EXP_NAME/metrics_metadata/" --include="$PDM_EXP_NAME/metrics_metadata/*.json")
 done
 

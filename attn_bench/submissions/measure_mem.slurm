@@ -22,6 +22,16 @@
 #   POINTS         comma-separated offset:prefix_length pairs, e.g. "0:500,50:450" (default: "0:500")
 #   SUFFIX_LENGTH  shared by every point (default: 500)
 #   REPETITIONS    comma-separated rep buckets (default: 0,1,2,4,8,16,32,64,128,256)
+#   SAMPLING       greedy (default) or nucleus: top-p sampling, NUM_SAMPLES draws per document,
+#                  hf backend only; results under rep_R_<policy>/ and ..._<policy>.pkl with
+#                  policy = nucleus-p<TOP_P>-n<NUM_SAMPLES>. Never extends a smaller-suffix run.
+#   TOP_P          nucleus mass (default: 0.95). Write it the way Python's %g prints it (0.95,
+#                  not 0.950): the tag is derived from the literal string here and from the
+#                  float in prefix_extraction_inference.py, and the two must agree.
+#   NUM_SAMPLES    draws per document under nucleus (default: 10)
+#   BATCH_SIZE     documents per batch (default: 20). Under nucleus the decode batch is
+#                  BATCH_SIZE*NUM_SAMPLES rows -- lower it for long prefixes if that OOMs. Only
+#                  changes which draws are made, not their distribution; recorded in run_metadata.json.
 #   FORCE_METRICS  recompute every Step-2 boundary even if it already exists
 #   MAX_DOC_LENGTH Stage 1 and Stage 2 both skip a point where offset+prefix+suffix exceeds this (default: unset, no filtering)
 #   EXPECTED_COUNT records a rep dir needs to count as present, for Stage 2's completeness check (default: 660)
@@ -64,6 +74,10 @@ source $MEGATRON_LM_DIR/attn_bench/scripts/llama_checkpoints.sh
 POINTS=${POINTS:-0:500}
 SUFFIX_LENGTH=${SUFFIX_LENGTH:-500}
 REPETITIONS=${REPETITIONS:-0,1,2,4,8,16,32,64,128,256}
+SAMPLING=${SAMPLING:-greedy}
+TOP_P=${TOP_P:-0.95}
+NUM_SAMPLES=${NUM_SAMPLES:-10}
+BATCH_SIZE=${BATCH_SIZE:-20}
 CHECKPOINT_BACKEND=${CHECKPOINT_BACKEND:-megatron}
 EXPECTED_COUNT=${EXPECTED_COUNT:-660}
 SINK_SCALE=${SINK_SCALE:-}
@@ -95,6 +109,13 @@ elif [ -n "$SINK_SCALE" ]; then
     PDM_EXP_NAME="${EXP_NAME}_sscale${SINK_SCALE}"
 else
     PDM_EXP_NAME="$EXP_NAME"
+fi
+
+# Mirrors policy_tag() in prefix_extraction_inference.py -- keep in sync.
+if [ "$SAMPLING" = "greedy" ]; then
+    POLICY=greedy
+else
+    POLICY="nucleus-p${TOP_P}-n${NUM_SAMPLES}"
 fi
 
 MODEL_DIR=/users/$USER/store/pretrain-results/$CKPT_NAME
@@ -139,7 +160,7 @@ if [ "$CHECKPOINT_BACKEND" = "hf" ]; then
     fi
 fi
 
-echo "RUN: model=$MODEL  exp=$EXP_NAME  backend=$CHECKPOINT_BACKEND  dataset=$DATASET_NAME  points=$POINTS  suffix=$SUFFIX_LENGTH${SINK_SCALE:+  sink_scale=$SINK_SCALE}${MAX_SAMPLES:+  max_samples=$MAX_SAMPLES}"
+echo "RUN: model=$MODEL  exp=$EXP_NAME  backend=$CHECKPOINT_BACKEND  dataset=$DATASET_NAME  points=$POINTS  suffix=$SUFFIX_LENGTH  policy=$POLICY  batch_size=$BATCH_SIZE${SINK_SCALE:+  sink_scale=$SINK_SCALE}${MAX_SAMPLES:+  max_samples=$MAX_SAMPLES}"
 
 # --experiment-path is the scratch working dir -- results stay there; sync to store manually
 # (e.g. copy_mem_results_to_store.sh) when you want it, scratch is only purged every ~2 weeks.
@@ -152,9 +173,17 @@ COMMON_ARGS="--container-env $CONTAINER_ENV \
     --repetitions $REPETITIONS \
     --points ${POINTS_ARR[*]} \
     --suffix-length $SUFFIX_LENGTH \
-    --batch-size 20"
+    --batch-size $BATCH_SIZE"
 [ -n "$MAX_DOC_LENGTH" ] && COMMON_ARGS="$COMMON_ARGS --max-doc-length $MAX_DOC_LENGTH"
 [ -n "$MAX_SAMPLES" ] && COMMON_ARGS="$COMMON_ARGS --max-samples $MAX_SAMPLES"
+
+if [ "$SAMPLING" != "greedy" ]; then
+    if [ "$CHECKPOINT_BACKEND" != "hf" ]; then
+        echo "SAMPLING=$SAMPLING needs CHECKPOINT_BACKEND=hf (the megatron backend only implements greedy)."
+        exit 1
+    fi
+    COMMON_ARGS="$COMMON_ARGS --sampling $SAMPLING --top-p $TOP_P --num-samples $NUM_SAMPLES"
+fi
 
 if [ -n "$CAPTURE_ATTENTION" ]; then
     if [ "$CHECKPOINT_BACKEND" = "hf" ]; then
@@ -246,6 +275,7 @@ if [ $INFERENCE_STATUS -eq 0 ]; then
             --persistent-storage-path $STORE_MEM_BASE/$DATASET_NAME \
             --points ${POINTS_ARR[*]} \
             --suffix-length $SUFFIX_LENGTH \
+            --policy $POLICY \
             --repetitions $REPETITIONS \
             --expected-count $EXPECTED_COUNT \
             $MAX_DOC_LENGTH_ARG \

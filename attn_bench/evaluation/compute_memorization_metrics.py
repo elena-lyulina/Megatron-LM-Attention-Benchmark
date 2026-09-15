@@ -4,6 +4,13 @@ purely from Step 1's jsonl (CPU-only, no model).
 
 For one --exp-name, processes every --points pair at --suffix-length, writing one
 PDM-Results-shaped .pkl per suffix boundary <= --suffix-length under exp_dir/metrics/.
+--policy selects which rep_R_<policy> dirs are read and names the pkl (default greedy).
+Under a sampling policy each record holds N draws: draw-level metrics (Rouge-L, lcs_norm,
+TTR_gen, token_acc, divergence_point, gen_nll_mean, exact_match/match_x) get scores of
+shape [docs, N], document-level ones (TTR_ref, ref_nll_mean, p_z) stay [docs]; mean is
+over every entry, std over the per-document means. Nothing is reduced across draws here
+-- any-of-N / best-of-N are plot-time reductions. Every pkl also stores sample_idx [docs]
+next to the metrics so paired greedy-vs-sampling comparisons don't rely on file order.
 Skip-if-done compares an existing pkl's reps against what Stage 1 has on disk (scratch,
 then --persistent-storage-path); --repetitions widens that to also catch reps that were
 requested but never generated at Stage 1 at all (see process_point).
@@ -74,6 +81,9 @@ def p_for_n(p_z: float, n: int) -> float:
 
 
 ### PER-SAMPLE METRICS AT A SET OF SUFFIX BOUNDARIES ###
+DOCUMENT_LEVEL_METRICS = ("TTR_ref", "ref_nll_mean", "p_z")  # depend on the true suffix only
+
+
 def text_metrics_at_suffix_boundaries(true_suffix: list, gen_suffix: list, suffix_boundaries: list) -> dict:
     """{suffix_boundary: {Rouge-L, lcs_norm, TTR_ref, TTR_gen, token_acc, divergence_point}}
     -- one DP fill per metric regardless of how many suffix boundaries are requested.
@@ -121,59 +131,98 @@ def nll_p_z_at_suffix_boundaries(ref_nll: list, gen_nll: list, p_z_logprob: list
 
 ### PER-REP AGGREGATION (dataset-level match_x + Results-shaped scores/mean/std) ###
 
+def record_metrics_at_suffix_boundaries(rec: dict, suffix_boundaries: list) -> dict:
+    """One record's {suffix_boundary: {metric: value}}. A greedy record (flat
+    generated_suffix) gives scalars; a sampling record (generated_suffix = N draws) gives
+    an N-list per draw-level metric and a scalar per document-level one."""
+    per_draw = isinstance(rec["generated_suffix"][0], list)
+    draws = rec["generated_suffix"] if per_draw else [rec["generated_suffix"]]
+    gen_nlls = rec.get("gen_nll") if per_draw else [rec.get("gen_nll")]
+    has_nll = "ref_nll" in rec
+
+    out = defaultdict(lambda: defaultdict(list))
+    for k, gen in enumerate(draws):
+        for suffix_boundary, metrics in text_metrics_at_suffix_boundaries(rec["true_suffix"], gen, suffix_boundaries).items():
+            for name, val in metrics.items():
+                out[suffix_boundary][name].append(val)
+        if has_nll:
+            for suffix_boundary, metrics in nll_p_z_at_suffix_boundaries(
+                    rec["ref_nll"], gen_nlls[k], rec["p_z_logprob"], suffix_boundaries).items():
+                for name, val in metrics.items():
+                    out[suffix_boundary][name].append(val)
+    return {
+        suffix_boundary: {
+            name: (vals[0] if name in DOCUMENT_LEVEL_METRICS or not per_draw else vals)
+            for name, vals in metrics.items()
+        }
+        for suffix_boundary, metrics in out.items()
+    }
+
+
+def summarize_scores(arr: np.ndarray) -> dict:
+    """PDM MetricData fields. mean over every entry; std over the per-document values --
+    for [docs, N] that is the std of per-document means, keeping greedy's between-document
+    meaning rather than adding the within-document sampling spread."""
+    per_doc = arr if arr.ndim == 1 else arr.mean(axis=1)
+    return {"scores": arr, "mean": float(arr.mean()), "std": float(per_doc.std())}
+
+
 def compute_rep_metrics(records: list, suffix_boundaries: list) -> dict:
-    """records: one rep bucket's jsonl records. Returns {suffix_boundary: {metric: {scores, mean, std}}}."""
+    """records: one rep bucket's jsonl records. Returns {suffix_boundary: {metric: {scores, mean, std}}}
+    plus, when every record carries one, "sample_idx": np.ndarray [docs] per boundary."""
     per_suffix_boundary = defaultdict(lambda: defaultdict(list))
     missing_nll = 0
     for rec in records:
-        text_m = text_metrics_at_suffix_boundaries(rec["true_suffix"], rec["generated_suffix"], suffix_boundaries)
-        for suffix_boundary, metrics in text_m.items():
+        if "ref_nll" not in rec:
+            missing_nll += 1
+        for suffix_boundary, metrics in record_metrics_at_suffix_boundaries(rec, suffix_boundaries).items():
             for name, val in metrics.items():
                 per_suffix_boundary[suffix_boundary][name].append(val)
-        if "ref_nll" in rec:
-            nll_m = nll_p_z_at_suffix_boundaries(rec["ref_nll"], rec["gen_nll"], rec["p_z_logprob"], suffix_boundaries)
-            for suffix_boundary, metrics in nll_m.items():
-                for name, val in metrics.items():
-                    per_suffix_boundary[suffix_boundary][name].append(val)
-        else:
-            missing_nll += 1
     if missing_nll:
         print(f"  {missing_nll}/{len(records)} record(s) missing ref_nll -- NLL/p_z skipped for "
               "them (run backfill first to fill them in)")
+    sample_idx = np.array([rec["sample_idx"] for rec in records]) if all("sample_idx" in rec for rec in records) else None
 
     result = {}
     for suffix_boundary, metrics in per_suffix_boundary.items():
-        result[suffix_boundary] = {}
-        for name, values in metrics.items():
-            arr = np.array(values)
-            result[suffix_boundary][name] = {"scores": arr, "mean": float(arr.mean()), "std": float(arr.std())}
+        result[suffix_boundary] = {name: summarize_scores(np.array(values)) for name, values in metrics.items()}
         lcs_arr = np.array(metrics["lcs_norm"])
-        n = len(lcs_arr)
         for label, threshold in [("exact_match", 1.0), ("match_75", 0.75), ("match_50", 0.5), ("match_25", 0.25)]:
-            count = int((lcs_arr >= threshold).sum())
-            result[suffix_boundary][label] = {"scores": count, "mean": (count / n if n else 0.0), "std": 0}
+            hits = lcs_arr >= threshold
+            if hits.ndim == 1:
+                # Greedy: the historical count-shaped entry, unchanged for existing readers.
+                count = int(hits.sum())
+                result[suffix_boundary][label] = {"scores": count, "mean": (count / len(hits) if len(hits) else 0.0), "std": 0}
+            else:
+                # Sampling: [docs, N] bool; mean = per-draw rate, any-of-N = scores.any(axis=1).mean() at plot time.
+                result[suffix_boundary][label] = {"scores": hits, "mean": float(hits.mean()), "std": 0}
+        if sample_idx is not None:
+            result[suffix_boundary]["sample_idx"] = sample_idx
     return result
 
 
 ### INFERENCE-REP DISCOVERY (reads Step 1's jsonl on disk) ###
 
 def find_inference_reps(expr_dir: Path, offset: int, prefix_length: int, expected_count: int,
-                        persistent_expr_dir: Path | None = None) -> dict:
+                        persistent_expr_dir: Path | None = None, policy: str = "greedy") -> dict:
     """{rep: (max_suffix_available, rep_dir_path)} across every suffix dir for
-    (offset, prefix_length); persistent_expr_dir is a fallback for reps expr_dir lacks.
+    (offset, prefix_length), rep_R_<policy> dirs only -- a suffix dir can hold several
+    policies side by side; persistent_expr_dir is a fallback for reps expr_dir lacks.
     A rep dir with fewer than expected_count records (truncated by a killed job) is
     treated as not present, the same as if Stage 1 hadn't generated it yet."""
     result = {}
     for suffix_prime, d in find_suffix_dirs(expr_dir, offset, prefix_length, persistent_expr_dir):
         for rep_dir in d.iterdir():
-            if not rep_dir.is_dir() or not rep_dir.name.startswith("rep_"):
+            # rep_<R>_<policy>; policy tags carry no underscores (see policy_tag in Stage 1).
+            parts = rep_dir.name.split("_", 2)
+            if not rep_dir.is_dir() or len(parts) != 3 or parts[0] != "rep" or parts[2] != policy:
                 continue
             count = count_rep_records(rep_dir)
             if count < expected_count:
                 print(f"  {rep_dir}: {count}/{expected_count} records -- treating as not present",
                      file=sys.stderr)
                 continue
-            rep = int(rep_dir.name.split("_")[1])
+            rep = int(parts[1])
             if rep not in result or suffix_prime > result[rep][0]:
                 result[rep] = (suffix_prime, rep_dir)
     return result
@@ -226,7 +275,7 @@ def find_missing_metrics_reps(pkl_paths: list, target_reps: set, exp_name: str) 
     return target_reps - metrics_reps
 
 
-def print_dry_run_summary(exp_name: str, suffix_length: int, point_results: dict) -> None:
+def print_dry_run_summary(exp_name: str, suffix_length: int, policy: str, point_results: dict) -> None:
     """point_results: {(offset, prefix_length): missing_metrics_reps_by_suffix_boundary or
     None}. One report per exp_name, status at suffix_length only -- that's the boundary
     that decides submit/skip, not every intermediate one."""
@@ -238,7 +287,7 @@ def print_dry_run_summary(exp_name: str, suffix_length: int, point_results: dict
     }
     done = len(point_results) - len(not_ready) - len(incomplete)
 
-    print(f"{exp_name} @ suffix_length={suffix_length}: "
+    print(f"{exp_name} @ suffix_length={suffix_length} policy={policy}: "
           f"{done}/{len(point_results)} points complete", file=sys.stderr)
     if not_ready:
         points_str = ", ".join(f"{o}:{p}" for o, p in not_ready)
@@ -379,15 +428,15 @@ def process_expr(exp_name: str, base_path: Path, save_path: Path, suffix_boundar
     point_results = {}
     for i, (offset, prefix_length) in enumerate(all_points, 1):
         inference_reps = find_inference_reps(expr_dir, offset, prefix_length, args.expected_count,
-                                             persistent_expr_dir)
+                                             persistent_expr_dir, policy=args.policy)
         if not args.dry_run:
             print(f"\n=== [{i}/{len(all_points)}] {exp_name}  offset={offset} prefix={prefix_length}  "
-                  f"inference_reps={sorted(inference_reps)} ===", file=sys.stderr)
+                  f"policy={args.policy}  inference_reps={sorted(inference_reps)} ===", file=sys.stderr)
         try:
             missing_metrics_reps_by_suffix_boundary = process_point(
                 exp_name, offset, prefix_length, args.suffix_length, inference_reps, suffix_boundaries,
-                save_path, tag=args.tag, force=args.force, persistent_save_path=persistent_save_path,
-                dry_run=args.dry_run, requested_reps=requested_reps)
+                save_path, policy=args.policy, tag=args.tag, force=args.force,
+                persistent_save_path=persistent_save_path, dry_run=args.dry_run, requested_reps=requested_reps)
         except ValueError as e:
             print(f"  Skipping offset={offset} prefix={prefix_length}: {e}", file=sys.stderr)
             continue
@@ -405,7 +454,7 @@ def process_expr(exp_name: str, base_path: Path, save_path: Path, suffix_boundar
                     missing_point_reps += len(missing)
 
     if args.dry_run:
-        print_dry_run_summary(exp_name, args.suffix_length, point_results)
+        print_dry_run_summary(exp_name, args.suffix_length, args.policy, point_results)
 
     return needed_points, missing_point_reps
 
@@ -428,6 +477,10 @@ if __name__ == "__main__":
     parser.add_argument("--max-doc-length", type=int, default=None,
                         help="Skip a point where offset+prefix+suffix exceeds this (same check as "
                              "Stage 1's --max-doc-length). Omit for no filtering.")
+    parser.add_argument("--policy", type=str, default="greedy",
+                        help="Decoding policy tag as Stage 1 wrote it: rep_R_<policy> dirs are read "
+                             "and the pkl is named ..._suffix_S_<policy>.pkl (e.g. greedy, "
+                             "nucleus-p0.95-n10).")
     parser.add_argument("--tag", type=str, default=None,
                         help="Appended after policy in the pkl filename (e.g. --tag opt -> "
                              "..._greedy_opt.pkl), so a validation run never overwrites the "

@@ -7,6 +7,9 @@
 # Usage: bash measure_mem_all.sh --offsets 0 --prefixes 50 100 500 1000 2000
 #   --diagonal-starts <s1> [s2 ...]  instead of --offsets: fixed suffix_start diagonal
 #                                    (offset = start - prefix), mutually exclusive with --offsets
+#   --points o:p [o:p ...]           instead of --offsets/--prefixes: an explicit cell list
+#                                    (e.g. the nucleus pilot's 24 cells), mutually exclusive
+#                                    with both
 #   --suffix N                       single value (default: 500) -- Stage 2 always computes
 #                                    every boundary <= this from one job, so sweeping over
 #                                    multiple suffix values is redundant with that already
@@ -16,6 +19,12 @@
 #   --time HH:MM:SS                 override measure_mem.slurm's default time limit
 #   --backend hf                    use each model's already-converted HF checkpoint
 #   --repetitions r1,r2,...         restrict which reps each job generates (default: all 10)
+#   --sampling nucleus              top-p sampling instead of greedy (needs --backend hf);
+#                                    results and the done-check are keyed on the policy tag
+#                                    nucleus-p<top-p>-n<num-samples>, next to the greedy ones
+#   --top-p P / --num-samples N     nucleus mass (default 0.95) and draws per document (default 10)
+#   --batch-size B                  documents per batch (default 20); lower it for long
+#                                    prefixes under nucleus (decode batch is B*N rows)
 #   --max-doc-length N               drops any point where offset+prefix+suffix > N (the
 #                                    source documents' real length, e.g. 8192). Omit for no
 #                                    filtering.
@@ -49,6 +58,7 @@ OFFSETS=()
 PREFIXES=()
 SUFFIX_LENGTH=500
 DIAGONAL_STARTS=()
+EXPLICIT_POINTS=()
 FORCE=0
 FORCE_METRICS=0
 DRY_RUN=0
@@ -57,6 +67,10 @@ BACKEND="megatron"
 REPETITIONS=""
 MAX_DOC_LENGTH=""
 CAPTURE_ATTENTION=0
+SAMPLING="greedy"
+TOP_P="0.95"
+NUM_SAMPLES="10"
+BATCH_SIZE=""
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -88,6 +102,22 @@ while [[ $# -gt 0 ]]; do
         --repetitions)
             REPETITIONS="$2"; shift 2
             ;;
+        --sampling)
+            SAMPLING="$2"; shift 2
+            if [[ "$SAMPLING" != "greedy" && "$SAMPLING" != "nucleus" ]]; then
+                echo "--sampling must be 'greedy' or 'nucleus', got '$SAMPLING'."
+                exit 1
+            fi
+            ;;
+        --top-p)
+            TOP_P="$2"; shift 2
+            ;;
+        --num-samples)
+            NUM_SAMPLES="$2"; shift 2
+            ;;
+        --batch-size)
+            BATCH_SIZE="$2"; shift 2
+            ;;
         --suffix)
             SUFFIX_LENGTH="$2"; shift 2
             ;;
@@ -106,6 +136,12 @@ while [[ $# -gt 0 ]]; do
                 DIAGONAL_STARTS+=("$1"); shift
             done
             ;;
+        --points)
+            shift
+            while [[ $# -gt 0 && "$1" != --* ]]; do
+                EXPLICIT_POINTS+=("$1"); shift
+            done
+            ;;
         --prefixes)
             shift
             while [[ $# -gt 0 && "$1" != --* ]]; do
@@ -114,7 +150,7 @@ while [[ $# -gt 0 ]]; do
             ;;
         *)
             echo "Unknown argument: $1"
-            echo "Usage: $0 [--force] [--force-metrics] [--dry-run] [--models m1,m2] --offsets <o1> [o2 ...] --prefixes <p1> [p2 ...] [--suffix <n>]"
+            echo "Usage: $0 [--force] [--force-metrics] [--dry-run] [--models m1,m2] (--offsets <o1> [o2 ...] --prefixes <p1> [p2 ...] | --points o:p [o:p ...]) [--suffix <n>]"
             exit 1
             ;;
     esac
@@ -124,12 +160,37 @@ if [[ $CAPTURE_ATTENTION -eq 1 && "$BACKEND" = "hf" ]]; then
     echo "--capture-attention is megatron-only (the hooks read Megatron internals); drop --backend hf."
     exit 1
 fi
+if [[ "$SAMPLING" != "greedy" && "$BACKEND" != "hf" ]]; then
+    echo "--sampling $SAMPLING needs --backend hf (the megatron backend only implements greedy)."
+    exit 1
+fi
+if [[ "$SAMPLING" != "greedy" && $CAPTURE_ATTENTION -eq 1 ]]; then
+    echo "--capture-attention and --sampling $SAMPLING are mutually exclusive (capture is greedy, megatron-only)."
+    exit 1
+fi
 
-# Build the (offset, prefix) pairs to sweep -- either the full cartesian product of
-# --offsets x --prefixes, or a fixed-suffix_start diagonal (--diagonal-starts x --prefixes,
-# offset = start - prefix) so offset+prefix stays fixed while only the anchor length varies.
+# Mirrors policy_tag() in prefix_extraction_inference.py (and measure_mem.slurm) -- keep in sync.
+POLICY=greedy
+[[ "$SAMPLING" != "greedy" ]] && POLICY="nucleus-p${TOP_P}-n${NUM_SAMPLES}"
+
+# Build the (offset, prefix) pairs to sweep -- the full cartesian product of --offsets x
+# --prefixes, a fixed-suffix_start diagonal (--diagonal-starts x --prefixes, offset = start -
+# prefix) so offset+prefix stays fixed while only the anchor length varies, or an explicit
+# --points list.
 PAIRS=()
-if [[ ${#DIAGONAL_STARTS[@]} -gt 0 ]]; then
+if [[ ${#EXPLICIT_POINTS[@]} -gt 0 ]]; then
+    if [[ ${#OFFSETS[@]} -gt 0 || ${#PREFIXES[@]} -gt 0 || ${#DIAGONAL_STARTS[@]} -gt 0 ]]; then
+        echo "--points is mutually exclusive with --offsets/--prefixes/--diagonal-starts."
+        exit 1
+    fi
+    for PAIR in "${EXPLICIT_POINTS[@]}"; do
+        if [[ ! "$PAIR" =~ ^[0-9]+:[0-9]+$ ]]; then
+            echo "--points entries must be offset:prefix, got '$PAIR'."
+            exit 1
+        fi
+    done
+    PAIRS=("${EXPLICIT_POINTS[@]}")
+elif [[ ${#DIAGONAL_STARTS[@]} -gt 0 ]]; then
     if [[ ${#OFFSETS[@]} -gt 0 ]]; then
         echo "--diagonal-starts and --offsets are mutually exclusive (offset is derived as start - prefix in diagonal mode)."
         exit 1
@@ -248,7 +309,7 @@ for MODEL in "${MODELS[@]}"; do
             --base-path "$SCRATCH_MEM_BASE/SparseGutenberg" \
             --save-path "$SCRATCH_MEM_BASE/SparseGutenberg" \
             --persistent-storage-path "$STORE_MEM_BASE/SparseGutenberg" \
-            --points "${PAIRS[@]}" --suffix-length "$SUFFIX_LENGTH" \
+            --points "${PAIRS[@]}" --suffix-length "$SUFFIX_LENGTH" --policy "$POLICY" \
             --repetitions "${REPETITIONS:-0,1,2,4,8,16,32,64,128,256}")
         IFS=' ' read -r -a GROUP_POINTS <<< "${NEEDED%%$'\n'*}"
         MISSING_POINT_REPS="${NEEDED##*$'\n'}"
@@ -256,7 +317,7 @@ for MODEL in "${MODELS[@]}"; do
     SKIPPED_COUNT=$((SKIPPED_COUNT + ${#PAIRS[@]} * REP_COUNT - MISSING_POINT_REPS))
 
     if [[ ${#GROUP_POINTS[@]} -eq 0 ]]; then
-        echo "All ${#PAIRS[@]} point(s) already complete for (model=$MODEL suffix=$SUFFIX_LENGTH reps=$REP_COUNT) -- nothing to submit."
+        echo "All ${#PAIRS[@]} point(s) already complete for (model=$MODEL suffix=$SUFFIX_LENGTH policy=$POLICY reps=$REP_COUNT) -- nothing to submit."
         continue
     fi
     POINTS_CSV=$(IFS=,; echo "${GROUP_POINTS[*]}")
@@ -275,6 +336,8 @@ for MODEL in "${MODELS[@]}"; do
     # Same threshold this script just filtered PAIRS with -- Stage 1 gets its own copy so it
     # still skips (rather than crashes on) a point reached via a direct/manual invocation.
     [[ -n "$MAX_DOC_LENGTH" ]] && EXPORTS="$EXPORTS,MAX_DOC_LENGTH=$MAX_DOC_LENGTH"
+    [[ "$SAMPLING" != "greedy" ]] && EXPORTS="$EXPORTS,SAMPLING=$SAMPLING,TOP_P=$TOP_P,NUM_SAMPLES=$NUM_SAMPLES"
+    [[ -n "$BATCH_SIZE" ]] && EXPORTS="$EXPORTS,BATCH_SIZE=$BATCH_SIZE"
     TIME_ARG=()
     [[ -n "$JOB_TIME" ]] && TIME_ARG=(--time="$JOB_TIME")
 
@@ -285,7 +348,7 @@ for MODEL in "${MODELS[@]}"; do
         continue
     fi
 
-    echo "Submitting measure_mem.slurm (model=$MODEL exp=$EXP_NAME backend=$BACKEND) points=$POINTS_CSV suffix_length=$SUFFIX_LENGTH (${#GROUP_POINTS[@]} distinct points, $MISSING_POINT_REPS point-reps missing, 1 job)"
+    echo "Submitting measure_mem.slurm (model=$MODEL exp=$EXP_NAME backend=$BACKEND policy=$POLICY) points=$POINTS_CSV suffix_length=$SUFFIX_LENGTH (${#GROUP_POINTS[@]} distinct points, $MISSING_POINT_REPS point-reps missing, 1 job)"
     # ALL = propagate the full submission env (USER, PATH, …) so the scripts'
     # $USER-based paths resolve, then layer our per-job vars on top.
     sbatch "${TIME_ARG[@]}" --export=ALL,"$EXPORTS" "$SCRIPT_DIR/measure_mem.slurm"

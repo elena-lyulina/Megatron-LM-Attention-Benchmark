@@ -17,6 +17,7 @@ import torch.distributed as dist
 
 class InferenceBackend(ABC):
     name: str  # "megatron" or "hf" -- used in run_metadata.json
+    supports_sampling: bool = False  # nucleus sampling in generate(); greedy is always available
 
     @abstractmethod
     def load_model(self) -> None:
@@ -28,8 +29,12 @@ class InferenceBackend(ABC):
         """The device the model currently lives on."""
 
     @abstractmethod
-    def generate(self, prompt: torch.Tensor, suffix_length: int) -> torch.Tensor:
-        """prompt: [B, prompt_len] -> generated: [B, suffix_length]."""
+    def generate(self, prompt: torch.Tensor, suffix_length: int,
+                 top_p: float | None = None, num_samples: int = 1) -> torch.Tensor:
+        """prompt: [B, prompt_len] -> generated: [B * num_samples, suffix_length], rows grouped
+        per prompt (prompt i's samples are rows i*num_samples .. (i+1)*num_samples-1).
+        top_p=None: greedy, num_samples must be 1. top_p set: nucleus sampling at T=1,
+        num_samples draws per prompt; only backends with supports_sampling implement it."""
 
     @abstractmethod
     def forward_logits(self, inputs: torch.Tensor, position_ids: torch.Tensor,
@@ -121,7 +126,9 @@ class MegatronBackend(InferenceBackend):
     def device(self) -> torch.device:
         return next(self.model.parameters()).device
 
-    def generate(self, prompt, suffix_length):
+    def generate(self, prompt, suffix_length, top_p=None, num_samples=1):
+        if top_p is not None or num_samples != 1:
+            raise NotImplementedError("megatron backend only implements greedy generation")
         return self.generate_with_capture(prompt, suffix_length)
 
     @torch.no_grad()
@@ -247,6 +254,7 @@ class MegatronBackend(InferenceBackend):
 
 class HFBackend(InferenceBackend):
     name = "hf"
+    supports_sampling = True
 
     def __init__(self, hf_dir: str):
         if not hf_dir:
@@ -275,9 +283,17 @@ class HFBackend(InferenceBackend):
     def device(self) -> torch.device:
         return next(self.model.parameters()).device
 
-    def generate(self, prompt, suffix_length):
+    def generate(self, prompt, suffix_length, top_p=None, num_samples=1):
+        if top_p is None:
+            sampling = {"do_sample": False}
+        else:
+            # top_k=0 disables HF's default top_k=50, so the nucleus is the only truncation.
+            # num_return_sequences repeat_interleaves the prompt before prefill, so the
+            # custom-cache families see a plain [B * num_samples]-row batch.
+            sampling = {"do_sample": True, "top_p": top_p, "top_k": 0, "temperature": 1.0,
+                        "num_return_sequences": num_samples}
         output = self.model.generate(
-            input_ids=prompt, max_new_tokens=suffix_length, min_new_tokens=suffix_length, do_sample=False,
+            input_ids=prompt, max_new_tokens=suffix_length, min_new_tokens=suffix_length, **sampling,
         )
         return output[:, prompt.shape[1]:]
 
