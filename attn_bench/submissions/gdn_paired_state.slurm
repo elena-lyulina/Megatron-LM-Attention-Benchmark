@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --account=infra01
-#SBATCH --time=1:00:00
+#SBATCH --time=2:00:00
 #SBATCH --job-name=gdn-paired-state
 #SBATCH --output=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.out
 #SBATCH --error=/iopsstor/scratch/cscs/%u/Megatron-LM-Attention-Benchmark/attn_bench/logs/%j.err
@@ -15,20 +15,23 @@
 # Paired complete-vs-truncated GDN state comparison, one GDN checkpoint per job, one GPU.
 # See evaluation/gdn_paired_state.py. Results: <scratch>/gdn-state-results/<EXP_NAME>/
 # rep_R_offset_O_prefix_P.npz (+ run_metadata.json, test.json); a finished file is skipped.
+# Forwards are shared across points per book, so one job runs all points of a bucket at
+# once; ~5.5 s/book for the default six points (~1 h for 165 books x 4 buckets).
 #
 # Env vars:
 #   MODEL          gdn (default), carry-r0, carry-r1, ... (GDN tags in llama_checkpoints.sh)
-#   REPETITIONS    comma-separated rep buckets (default: 32,64,256)
-#   POINTS         comma-separated truncated offset:prefix pairs (default: 50:2000); the
-#                  full control (0, offset+prefix) is always run alongside
+#   REPETITIONS    comma-separated rep buckets (default: 32,64,128,256)
+#   POINTS         comma-separated truncated offset:prefix pairs (default: the six section-12
+#                  points in the .py); the full control (0, offset+prefix) is always run
+#                  alongside. offset % 64 == 1 and prefix % 64 == 63 keeps it cheap (see the .py)
 #   SUFFIX_LENGTH  scored suffix tokens (default: 249)
 #   MAX_BOOKS      first N books of the seeded per-bucket permutation (default: all)
 #   TEST           also compare instrumented vs plain forward on 2 books first
 #   DRY_RUN        print resolved books/boundaries/work and exit, no model load
 #   OVERWRITE      recompute existing files
 #
-# Usage: sbatch --export=ALL,MODEL=gdn,MAX_BOOKS=4,TEST=1 gdn_paired_state.slurm
-#        sbatch --export=ALL,MODEL=carry-r0 gdn_paired_state.slurm
+# Usage: sbatch --time=0:20:00 --export=ALL,MODEL=gdn,MAX_BOOKS=4,TEST=1 gdn_paired_state.slurm
+#        sbatch --export=ALL,MODEL=carry-r0,MAX_BOOKS=165 gdn_paired_state.slurm
 
 echo "START TIME: $(date)"
 
@@ -41,8 +44,8 @@ SCRATCH_RESULTS_BASE=/iopsstor/scratch/cscs/$USER/gdn-state-results
 GUTENBERG_JSONL_DIR=/users/$USER/store/datasets/tokenized/gutenberg_rep_jsonl
 TOKENIZER_PATH=/iopsstor/scratch/cscs/$USER/tokenizers/llama-3.2-1b
 
-REPETITIONS=${REPETITIONS:-32,64,256}
-POINTS=${POINTS:-50:2000}
+REPETITIONS=${REPETITIONS:-32,64,128,256}
+POINTS=${POINTS:-}
 SUFFIX_LENGTH=${SUFFIX_LENGTH:-249}
 MAX_BOOKS=${MAX_BOOKS:-}
 TEST=${TEST:-}
@@ -80,8 +83,8 @@ ARGS="--container-env $CONTAINER_ENV \
     --persistent-storage-path $RESULTS_DIR \
     --data-folder $GUTENBERG_JSONL_DIR \
     --repetitions $REPETITIONS \
-    --suffix-length $SUFFIX_LENGTH \
-    --points ${POINTS//,/ }"
+    --suffix-length $SUFFIX_LENGTH"
+[ -n "$POINTS" ] && ARGS="$ARGS --points ${POINTS//,/ }"
 [ -n "$MAX_BOOKS" ] && ARGS="$ARGS --max-books $MAX_BOOKS"
 [ -n "$TEST" ] && ARGS="$ARGS --test"
 [ -n "$DRY_RUN" ] && ARGS="$ARGS --dry-run"
@@ -89,7 +92,7 @@ ARGS="--container-env $CONTAINER_ENV \
 # --megatron-extra-args swallows the rest of the line, so it goes last
 [ -n "$MEGATRON_EXTRA" ] && ARGS="$ARGS --megatron-extra-args $MEGATRON_EXTRA"
 
-echo "RUN: model=$MODEL  exp=$EXP_NAME  reps=$REPETITIONS  points=$POINTS  suffix=$SUFFIX_LENGTH  max_books=${MAX_BOOKS:-all}  test=${TEST:+on}  dry_run=${DRY_RUN:+on}"
+echo "RUN: model=$MODEL  exp=$EXP_NAME  reps=$REPETITIONS  points=${POINTS:-default}  suffix=$SUFFIX_LENGTH  max_books=${MAX_BOOKS:-all}  test=${TEST:+on}  dry_run=${DRY_RUN:+on}"
 
 ### Paired inference ###
 # Per-job node-local TRITON_CACHE_DIR: fla kernels autotune on first use and a shared cache
