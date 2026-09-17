@@ -106,6 +106,8 @@ export TRITON_HOME=$TRITON_HOME_DIR
 # TE prints the attention backend it selects (and why the others were rejected), once per unique config per rank
 export NVTE_DEBUG=1
 export NVTE_DEBUG_LEVEL=2
+# Triton prints autotune results whenever it (re)benchmarks a kernel -> shows if the fused RoPE kernels re-autotune
+export TRITON_PRINT_AUTOTUNING=1
 export TRITON_CACHE_DIR=$TRITON_HOME_DIR/cache
 
 export MASTER_ADDR=$(scontrol show hostnames $SLURM_JOB_NODELIST | head -n 1)

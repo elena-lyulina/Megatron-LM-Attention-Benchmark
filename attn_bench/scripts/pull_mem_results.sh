@@ -5,16 +5,22 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/llama_checkpoints.sh"   # provides MODELS + model_config -> EXP_NAME
 
 ### CONFIG ###
-REMOTE_SRC="elyulina@clariden:/users/elyulina/store/mem-results/SparseGutenberg/"
+REMOTE_STORE="elyulina@clariden:/users/elyulina/store/mem-results/SparseGutenberg/"
+REMOTE_SCRATCH="elyulina@clariden:/iopsstor/scratch/cscs/elyulina/mem-results/SparseGutenberg/"
 LOCAL_DST="/Users/Elena.Lyulina/PycharmProjects/swiss-ai/Megatron-LM-Attention-Benchmark/attn_bench/results/mem-results/SparseGutenberg/"
 
 ### MODELS TO PULL ###
 # Positional args restrict which models to pull (default: all). --backend hf pulls the
-# _hf-suffixed results dir instead -- run twice to pull a mixed backend set.
+# _hf-suffixed results dir instead -- run twice to pull a mixed backend set. --scratch
+# pulls from the scratch tree instead of store (results not yet promoted to store).
 BACKEND="megatron"
+REMOTE_SRC="$REMOTE_STORE"
 TARGETS=()
 while [[ $# -gt 0 ]]; do
     case "$1" in
+        --scratch)
+            REMOTE_SRC="$REMOTE_SCRATCH"; shift
+            ;;
         --backend)
             BACKEND="$2"; shift 2
             if [[ "$BACKEND" != "megatron" && "$BACKEND" != "hf" ]]; then

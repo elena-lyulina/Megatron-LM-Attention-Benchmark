@@ -7,9 +7,13 @@ set -euo pipefail
 # scratch's ~biweekly purge. Run from a login node, never from inside a compute job.
 #
 # Usage: bash copy_mem_results_to_store.sh exp1 [exp2 ...]
+#        DATASET=UnseenFineWeb bash copy_mem_results_to_store.sh exp1 [exp2 ...]
+# DATASET selects the mem-results subfolder (default SparseGutenberg; UnseenFineWeb for the
+# Section 4.1 unseen-text generation runs, see measure_mem.slurm's DATASET_NAME).
 
-SCRATCH_BASE=/iopsstor/scratch/cscs/$USER/mem-results/SparseGutenberg
-STORE_BASE=/users/$USER/store/mem-results/SparseGutenberg
+DATASET=${DATASET:-SparseGutenberg}
+SCRATCH_BASE=/iopsstor/scratch/cscs/$USER/mem-results/$DATASET
+STORE_BASE=/users/$USER/store/mem-results/$DATASET
 
 if [ $# -eq 0 ]; then
     echo "Usage: $0 exp1 [exp2 ...]"

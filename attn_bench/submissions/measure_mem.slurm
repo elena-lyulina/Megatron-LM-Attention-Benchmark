@@ -41,7 +41,9 @@
 #                  UnseenFineWeb together with JSONL_DIR for the unseen-FineWeb generation run.
 #   JSONL_DIR      folder holding rep_<r>_token.jsonl inputs (default: the Gutenberg rep buckets).
 #                  For UnseenFineWeb: a folder with a rep_0_token.jsonl symlink to the long
-#                  FineWeb-Edu jsonl from extract_long_docs.py (records: doc_id, input_ids, length).
+#                  FineWeb-Edu jsonl from extract_long_docs.py (records: doc_id, input_ids, length);
+#                  the one every UnseenFineWeb run used so far is
+#                  /capstor/scratch/cscs/$USER/datasets/tokenized/fineweb_unseen_rep_jsonl
 #   MAX_SAMPLES    cap the number of documents per bucket (e.g. 660 to match the long-context
 #                  runs when the jsonl holds more); default: unset, all documents
 #   EXTERNAL_MODEL public HF reference model instead of MODEL (see external_config in
@@ -59,7 +61,7 @@
 # (normally submitted via measure_mem_all.sh)
 # Unseen-text generation for Section 4.1 (one prompt point, rep 0 only, 1000-token continuation):
 #   sbatch --export=MODEL=full-scf1,CHECKPOINT_BACKEND=hf,POINTS=0:500,SUFFIX_LENGTH=1000,REPETITIONS=0 measure_mem.slurm
-#   sbatch --export=MODEL=full-scf1,CHECKPOINT_BACKEND=hf,POINTS=0:500,SUFFIX_LENGTH=1000,REPETITIONS=0,DATASET_NAME=UnseenFineWeb,JSONL_DIR=<folder>,MAX_SAMPLES=660 measure_mem.slurm
+#   sbatch --export=MODEL=full-scf1,CHECKPOINT_BACKEND=hf,POINTS=0:500,SUFFIX_LENGTH=1000,REPETITIONS=0,DATASET_NAME=UnseenFineWeb,JSONL_DIR=/capstor/scratch/cscs/$USER/datasets/tokenized/fineweb_unseen_rep_jsonl,MAX_SAMPLES=660 measure_mem.slurm
 #   sbatch --export=EXTERNAL_MODEL=llama-3.2-1b,POINTS=0:500,SUFFIX_LENGTH=1000,REPETITIONS=0 measure_mem.slurm
 
 echo "START TIME: $(date)"
