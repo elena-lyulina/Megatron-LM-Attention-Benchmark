@@ -61,6 +61,8 @@ GUTENBERG_REMOTE_SRC="$REMOTE_HOST:/users/elyulina/store/long-gutenberg-results/
 GUTENBERG_LOCAL_DST="/Users/Elena.Lyulina/PycharmProjects/swiss-ai/Megatron-LM-Attention-Benchmark/attn_bench/results/long-gutenberg-results/"
 FINEWEB_REMOTE_SRC="$REMOTE_HOST:/users/elyulina/store/long-fineweb-results/"
 FINEWEB_LOCAL_DST="/Users/Elena.Lyulina/PycharmProjects/swiss-ai/Megatron-LM-Attention-Benchmark/attn_bench/results/long-fineweb-results/"
+GDN_STATE_REMOTE_SRC="$REMOTE_HOST:/users/elyulina/store/gdn-state-results/"
+GDN_STATE_LOCAL_DST="/Users/Elena.Lyulina/PycharmProjects/swiss-ai/Megatron-LM-Attention-Benchmark/attn_bench/results/gdn-state-results/"
 
 ### BUILD INCLUDE FILTERS ###
 # $EXP_NAME/*** pulls the dir and every config subdir under it.
@@ -105,6 +107,8 @@ else
 fi
 
 ### PULL ###
-mkdir -p "$GUTENBERG_LOCAL_DST" "$FINEWEB_LOCAL_DST"
+mkdir -p "$GUTENBERG_LOCAL_DST" "$FINEWEB_LOCAL_DST" "$GDN_STATE_LOCAL_DST"
 rsync -avm "${INDIVIDUAL_FILTER[@]}" "${GUTENBERG_INC[@]}" --exclude='*' "$GUTENBERG_REMOTE_SRC" "$GUTENBERG_LOCAL_DST"
 rsync -avm "${INDIVIDUAL_FILTER[@]}" "${FINEWEB_INC[@]}" --exclude='*' "$FINEWEB_REMOTE_SRC" "$FINEWEB_LOCAL_DST"
+# GDN paired-state results (megatron backend only, so the plain EXP_NAME include is enough)
+rsync -avm "${GUTENBERG_INC[@]}" --exclude='*' "$GDN_STATE_REMOTE_SRC" "$GDN_STATE_LOCAL_DST"

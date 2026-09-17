@@ -20,7 +20,9 @@ import sys
 import torch
 import torch.nn.functional as F
 
-from attn_bench.evaluation.gdn_state_norm import StateNormAccumulator, _make_wrapper
+from attn_bench.evaluation.gdn_paired_state import StateProbe
+from attn_bench.evaluation.gdn_state_norm import (StateNormAccumulator,
+                                                  _make_wrapper)
 
 # Real GDN dims (num_value_heads, key_head_dim, value_head_dim) so we exercise shapes the
 # kernel is known to support; batch 1 as in the eval.
@@ -65,6 +67,30 @@ def _check_length(real_fn, seq_len, device):
     return ok
 
 
+@torch.no_grad()
+def _check_probe(real_fn, seq_len, boundaries, device):
+    # Same equivalence for the paired-state wrapper, which cuts at arbitrary requested
+    # boundaries (irregular segment lengths, trailing segment) instead of a fixed chunk.
+    query, key, value, g, beta = _random_inputs(seq_len, device)
+    common = dict(g=g, beta=beta, use_qk_l2norm_in_kernel=False, cu_seqlens=None)
+    out_ref, state_ref = real_fn(query, key, value, initial_state=None, output_final_state=True, **common)
+
+    probe = object.__new__(StateProbe)  # no model needed for the wrapper itself
+    probe.layer_ids, probe.boundaries, probe._states, probe._outputs = [0], boundaries, {}, {}
+    wrapper = probe._wrap(real_fn, 0)
+    out_seg, state_seg = wrapper(query, key, value, initial_state=None, output_final_state=True, **common)
+    states, outputs = probe.take()
+
+    out_diff = (out_ref - out_seg).abs().max().item()
+    state_diff = (state_ref - state_seg).abs().max().item()
+    # the captured output at each boundary is the wrapper's own output at that token
+    cap_diff = max((outputs[0, i] - out_seg[0, b - 1]).abs().max().item() for i, b in enumerate(boundaries))
+    ok = out_diff < TOL and state_diff < TOL and cap_diff == 0 and states.shape == (1, len(boundaries), NUM_HEADS, KEY_HEAD_DIM, VALUE_HEAD_DIM)
+    print(f"  seq_len={seq_len} boundaries={boundaries}: max|dout|={out_diff:.2e}  max|dstate|={state_diff:.2e}  "
+          f"captured={tuple(states.shape)}  -> {'ok' if ok else 'FAIL'}")
+    return ok
+
+
 def main():
     from fla.ops.gated_delta_rule import chunk_gated_delta_rule
 
@@ -77,10 +103,16 @@ def main():
     ok = clean_ok and tail_ok
     print(f"[{'PASS' if ok else 'FAIL'}] state_norm_segmentation: segment-and-carry == single call")
 
+    print("\n### Test: paired_state_boundaries ###")
+    probe_ok = _check_probe(chunk_gated_delta_rule, 300, [114, 250, 255, 299], device)  # irregular + tail
+    probe_ok &= _check_probe(chunk_gated_delta_rule, 300, [64, 300], device)            # boundary == seq_len
+    print(f"[{'PASS' if probe_ok else 'FAIL'}] paired_state_boundaries: irregular cuts == single call")
+
     print("\n### GDN state-norm — Summary ###")
     print(f"  {'PASS' if ok else 'FAIL'}   state_norm_segmentation")
-    print(f"### Verdict: {'ALL PASS' if ok else 'FAILURES PRESENT'} ###")
-    if not ok:
+    print(f"  {'PASS' if probe_ok else 'FAIL'}   paired_state_boundaries")
+    print(f"### Verdict: {'ALL PASS' if ok and probe_ok else 'FAILURES PRESENT'} ###")
+    if not (ok and probe_ok):
         sys.exit(1)
 
 

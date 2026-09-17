@@ -12,8 +12,9 @@
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=clariden-jobs-elyulin-aaaauapxybdkdx42ppvef2c2eq@swissai-initiative.slack.com
 
-# Check the state-norm segment-and-carry against a single chunk-kernel call on random inputs
-# (no checkpoint needed -- it is a property of the kernel + our slicing). Look for the
+# Check the state-norm segment-and-carry and the paired-state boundary cuts (gdn_paired_state.py)
+# against a single chunk-kernel call on random inputs (no checkpoint needed -- it is a property
+# of the kernel + our slicing). Look for the
 # "### GDN state-norm — Summary ###" block; the job exits nonzero on failure.
 #
 # Usage:
