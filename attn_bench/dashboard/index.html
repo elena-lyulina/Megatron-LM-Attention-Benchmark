@@ -1,5 +1,8 @@
 <meta charset="utf-8" />
 <title>Attention Benchmark: Memorization</title>
+<!-- Tab icon: a disc with the thermal ramp radiating from the centre (1 -> 0), inline so it
+     needs no extra file on localhost or GitHub Pages. -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3CradialGradient id='g'%3E%3Cstop offset='0' stop-color='rgb(231,250,90)'/%3E%3Cstop offset='0.3' stop-color='rgb(251,173,60)'/%3E%3Cstop offset='0.55' stop-color='rgb(225,113,97)'/%3E%3Cstop offset='0.8' stop-color='rgb(126,77,143)'/%3E%3Cstop offset='1' stop-color='rgb(53,50,155)'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle cx='32' cy='32' r='30' fill='url(%23g)'/%3E%3C/svg%3E" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
   :root {
@@ -256,7 +259,7 @@
     outline-offset: 1px;
   }
 
-  .metric-control, .model-control {
+  .metric-control, .model-control, .decoding-control {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -320,7 +323,7 @@
     padding: 8px;
   }
 
-  .dropdown-panel[hidden] {
+  .dropdown-panel[hidden], .decoding-control[hidden] {
     display: none;
   }
 
@@ -346,6 +349,39 @@
 
   .model-dropdown-actions button:hover {
     background: var(--pane-alt);
+  }
+
+  /* Group presets: a row of chips above the checklist, on the alt background so they read
+     as "one click sets the list" rather than as more list entries. The chip whose models
+     are exactly the current selection is highlighted. */
+  .model-groups {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding-bottom: 8px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid var(--grid);
+  }
+
+  .model-group {
+    font: inherit;
+    font-size: 11.5px;
+    color: var(--ink);
+    background: var(--pane-alt);
+    border: 1px solid var(--grid);
+    border-radius: 999px;
+    padding: 3px 9px;
+    cursor: pointer;
+  }
+
+  .model-group:hover {
+    border-color: var(--accent);
+  }
+
+  .model-group.active {
+    color: var(--accent-ink);
+    background: var(--accent);
+    border-color: var(--accent);
   }
 
   .model-compare {
@@ -704,6 +740,7 @@
             <button type="button" id="select-all-btn">Select all</button>
             <button type="button" id="deselect-all-btn">Deselect all</button>
           </div>
+          <div class="model-groups" id="model-groups"></div>
           <label class="model-compare">
             <span class="switch">
               <input type="checkbox" id="compare-toggle" />
@@ -714,6 +751,31 @@
           </label>
         </div>
       </div>
+    </div>
+
+    <div class="decoding-control">
+      <span class="rep-label">Decoding</span>
+      <select id="decoding" class="select-control">
+        <option value="greedy">greedy</option>
+        <option value="nucleus">nucleus (p=0.95, n=10)</option>
+      </select>
+      <span class="decoding-control" id="draw-controls" hidden>
+        <span class="rep-label">Draw</span>
+        <select id="draw" class="select-control">
+          <option value="mean">mean of 10</option>
+          <option value="single">single draw</option>
+          <option value="max">max of 10</option>
+          <option value="min">min of 10</option>
+        </select>
+        <span class="rep-label">by</span>
+        <select id="draw-by" class="select-control" disabled>
+          <option value="rouge_l">Rouge-L</option>
+          <option value="lcs">LCS</option>
+          <option value="ttr_gen">TTR, generated</option>
+          <option value="ppl_gen">PPL, generated</option>
+          <option value="divergence_point">divergence point</option>
+        </select>
+      </span>
     </div>
 
     <div class="rep-control slider-control">
@@ -770,6 +832,14 @@
       </span>
     </div>
 
+    <div class="toggle-control">
+      <label for="x-start" title="x = suffix start (offset + prefix) instead of offset; the diagonal is then offset = 0">x: suffix start</label>
+      <span class="switch">
+        <input type="checkbox" id="x-start" />
+        <span class="track"><span class="thumb"></span></span>
+      </span>
+    </div>
+
     <div class="toggle-control toggle-control--stacked" id="show-3d-control">
       <span class="toggle-hint">might take time to plot</span>
       <div class="toggle-row">
@@ -786,8 +856,9 @@
 <div class="page-body">
   <main>
     <div class="meta-row">
-      <span class="pill" id="model-count-pill">13 of 13 models</span>
-      <span class="pill" id="metric-pill">metric: Rouge&#8209;L</span>
+      <span class="pill" id="model-count-pill"></span>
+      <span class="pill" id="metric-pill">metric: Rouge&#8209;L mean</span>
+      <span class="pill" id="decoding-pill">decoding: greedy</span>
       <span class="pill" id="suffix-pill">suffix: 250 tokens</span>
       <span class="pill">document boundary: 8192 tokens</span>
       <span class="pill" id="loading-pill" hidden>updating&hellip;</span>
@@ -795,11 +866,11 @@
 
     <div class="grid hide-3d" id="model-grid"></div>
 
-    <footer>Data: attn_bench/dashboard/export_data.py &middot; feasible candidate grid, griddata-interpolated.</footer>
+    <footer>Data: attn_bench/dashboard/export_data.py &middot; greedy: feasible candidate grid, griddata-interpolated &middot; nucleus: sampled cells, Delaunay-interpolated in the browser.</footer>
   </main>
 
   <aside class="legend" aria-label="metric color scale">
-    <span class="legend-title" id="legend-title">Rouge&#8209;L</span>
+    <span class="legend-title" id="legend-title">Rouge&#8209;L mean</span>
     <div class="legend-scale">
       <div class="legend-bar"></div>
       <div class="legend-ticks" id="legend-ticks">
@@ -810,25 +881,41 @@
 </div>
 
 <script src="https://cdn.plot.ly/plotly-2.32.0.min.js" charset="utf-8"></script>
+<script src="https://cdn.jsdelivr.net/npm/delaunator@5.0.1/delaunator.min.js"></script>
 <script>
   const REP_VALUES = [0, 1, 16, 32, 64, 128, 256];
   // One exported JSON per suffix (data/{model}__s{suffix}.json). Inference feasibility was
   // fixed at suffix=250, so every smaller suffix carries the same populated candidate points.
   // 249 is the all-repetitions re-run of the grid; a model not yet swept at a suffix ships
   // an empty payload (0 points, blank contour) rather than a missing file.
-  const SUFFIX_VALUES = [25, 50, 75, 100, 150, 249, 250];
+  const GREEDY_SUFFIX_VALUES = [25, 50, 75, 100, 150, 249, 250];
+  // Nucleus runs generate 1000 tokens, so every boundary up to 1000 exists; the slider is
+  // rebuilt with this list when the decoding switches (see rebuildSuffixSlider).
+  const NUCLEUS_SUFFIX_VALUES = [25, 50, 75, 100, 150, 249, 250, 500, 750, 1000];
+  let SUFFIX_VALUES = GREEDY_SUFFIX_VALUES;
   const LOG_FLOOR = 10;  // where offset=0 is parked on a log axis. The grid keeps its real x=0
                          // column and it renders here too, so the parked dots sit on the fill's
                          // left edge AND over contour that carries the true offset=0 value.
-  const MODELS = ['full-scf1', 'mla', 'swa-w4096-scf1', 'swa-w1024-scf1', 'swa-w256-scf1',
-                  'gemma', 'sink-scf1', 'gated-scf1', 'gdn', 'gdn-xdl', 'gdn-xdl-xsl-0.5',
-                  'gdn-xdl-xsl', 'kda', 'qwen'];
+  const MODELS = ['full-scf1', 'swa-w4096-scf1', 'swa-w1024-scf1', 'swa-w256-scf1',
+                  'sink-scf1', 'gated-scf1', 'mla', 'gdn', 'gdn-upd', 'gdn-xdl', 'gdn-xdl-xsl-0.5',
+                  'gdn-xdl-xsl', 'kda', 'qwen', 'gemma'];
+  // Preset selections in the model picker. Picking one replaces the selection with exactly
+  // these models (in MODELS order); the checklist below stays live for adding/removing.
+  const MODEL_GROUPS = [
+    { label: 'main attentions', models: ['full-scf1', 'mla', 'swa-w1024-scf1', 'sink-scf1', 'gated-scf1', 'gdn-upd', 'kda'] },
+    { label: 'GDN variants', models: ['gdn', 'gdn-xdl', 'gdn-xdl-xsl-0.5', 'gdn-xdl-xsl'] },
+    { label: 'SWA variants', models: ['full-scf1', 'swa-w4096-scf1', 'swa-w1024-scf1', 'swa-w256-scf1'] },
+    { label: 'hybrid: Gemma', models: ['full-scf1', 'swa-w1024-scf1', 'gemma'] },
+    { label: 'hybrid: Qwen', models: ['gated-scf1', 'gdn-upd', 'qwen'] },
+    { label: 'GDN update', models: ['gdn', 'gdn-upd'] },
+  ];
   const DISPLAY_NAMES = {
     'full-scf1': 'Full Attention',
     'swa-w4096-scf1': 'Sliding Window (w=4096)',
     'swa-w1024-scf1': 'Sliding Window (w=1024)',
     'swa-w256-scf1': 'Sliding Window (w=256)',
     'gdn': 'Gated DeltaNet (no state leak)',
+    'gdn-upd': 'Gated DeltaNet UPD',
     'gdn-xdl': 'Gated DeltaNet (state leaks: docs)',
     'gdn-xdl-xsl-0.5': 'Gated DeltaNet (state leaks: docs, 50% batches)',
     'gdn-xdl-xsl': 'Gated DeltaNet (state leaks: docs, batches)',
@@ -848,12 +935,18 @@
   // can't differ by more than 1; the log-space perplexity entries are compared as a *ratio*
   // (log10 of it), where +/-2 covers up to a 100x ratio -- more than the ~1..55 range allows.
   const METRICS = [
-    { key: 'rouge_l', label: 'Rouge-L', vmin: 0, vmax: 1, diffMax: 1 },
+    { key: 'rouge_l', label: 'Rouge-L mean', vmin: 0, vmax: 1, diffMax: 1 },
+    // Variance over the cell's 660 per-document Rouge-L scores (nucleus: after the draw
+    // reduction). 0.25 is the largest variance a [0, 1] variable can have.
+    { key: 'rouge_l_var', label: 'Rouge-L variance', vmin: 0, vmax: 0.25, diffMax: 0.25 },
     { key: 'lcs', label: 'Longest Common Subsequence (LCS)', vmin: 0, vmax: 1, diffMax: 1 },
     { key: 'ttr_gen', label: 'Type-Token Ratio (TTR), Generated', vmin: 0, vmax: 1, diffMax: 1 },
     { key: 'ttr_ref', label: 'Type-Token Ratio (TTR), Reference', vmin: 0, vmax: 1, diffMax: 1 },
     { key: 'exact_match', label: 'Exact Match', vmin: 0, vmax: 1, diffMax: 1 },
     { key: 'divergence_point', label: 'Divergence Point', vmin: 0, vmax: 1, diffMax: 1 },
+    { key: 'start_rate', label: 'Start rate (first 5 tokens)', vmin: 0, vmax: 1, diffMax: 1 },
+    // finished / started; null (no dot, hole in the fill) where a cell has no starters.
+    { key: 'conditional_finish_rate', label: 'Conditional finish rate', vmin: 0, vmax: 1, diffMax: 1 },
     { key: 'ppl_gen', label: 'Perplexity (PPL), Generated', vmin: 0, vmax: 2, log: true, diffMax: 2 },
     { key: 'ppl_ref', label: 'Perplexity (PPL), Reference', vmin: 0, vmax: 2, log: true, diffMax: 2 },
     { key: 'hayes_n10_p99', label: 'Hayes Extraction (n=10, p=99%)', vmin: 0, vmax: 1, diffMax: 1 },
@@ -900,6 +993,82 @@
     };
   }
 
+  // ---- nucleus decoding: the exported file holds only the sampled cells (see export_data.py's
+  // export_model_nucleus), one value per draw reduction; the grid greedy files ship precomputed
+  // is interpolated here instead, onto the same log-spaced axis, so the render path below sees
+  // the same {points_*, grid_*, metrics[key].{points_z, z_grid}} shape for both decodings.
+
+  // Delaunay triangles as index triples (Delaunator, robust to the co-circular lattice cells
+  // and the collinear cells along offset=0 / prefix=50); collinear-only input yields none, so
+  // the fill stays empty and only the dots show.
+  function delaunay(pts) {
+    if (pts.length < 3) return [];
+    const t = Delaunator.from(pts).triangles;
+    const out = [];
+    for (let i = 0; i < t.length; i += 3) out.push([t[i], t[i + 1], t[i + 2]]);
+    return out;
+  }
+
+  // Linear (barycentric) interpolation of (px, py) -> pz onto axis x axis, null outside the
+  // points' convex hull and beyond the feasible boundary -- what scipy griddata('linear') plus
+  // the export's feasibility mask do for greedy. Rows are prefix, columns offset.
+  function interpolateGrid(px, py, pz, axis, feasibleBound) {
+    const pts = px.map((x, i) => [x, py[i]]);
+    const tris = delaunay(pts).map(([a, b, c]) => {
+      const [x1, y1] = pts[a], [x2, y2] = pts[b], [x3, y3] = pts[c];
+      return { a, b, c, x1, y1, x2, y2, x3, y3, det: (y2 - y3) * (x1 - x3) + (x3 - x2) * (y1 - y3) };
+    });
+    return axis.map((yv) => axis.map((xv) => {
+      if (xv + yv > feasibleBound) return null;
+      for (const t of tris) {
+        const l1 = ((t.y2 - t.y3) * (xv - t.x3) + (t.x3 - t.x2) * (yv - t.y3)) / t.det;
+        const l2 = ((t.y3 - t.y1) * (xv - t.x3) + (t.x1 - t.x3) * (yv - t.y3)) / t.det;
+        const l3 = 1 - l1 - l2;
+        if (l1 >= -1e-9 && l2 >= -1e-9 && l3 >= -1e-9) {
+          const z = l1 * pz[t.a] + l2 * pz[t.b] + l3 * pz[t.c];
+          return Number.isFinite(z) ? z : null;
+        }
+      }
+      return null;
+    }));
+  }
+
+  // Same axis as plotting.data_loading.grid_axis(80, 8192, 'log', 20) -- only needed for a model
+  // with no nucleus file at all (the exported files carry their own copy).
+  function gridAxis() {
+    const geom = (lo, hi, k) => Array.from({ length: k }, (_, i) => lo * (hi / lo) ** (i / (k - 1)));
+    const lin = (lo, hi, k) => Array.from({ length: k }, (_, i) => lo + (hi - lo) * (i / (k - 1)));
+    return [...new Set([...geom(20, 550, 13), ...lin(550, 8192, 67), 0, 50])].sort((a, b) => a - b);
+  }
+
+  function emptyNucleusPayload(model, suffix) {
+    return { model, suffix, max_doc_length: 8192, feasible_bound: 8192 - suffix, grid_axis: gridAxis(), reps: {} };
+  }
+
+  // Nucleus payload + one reduction key ('mean' / 'single' / 'max_<metric>' / 'min_<metric>')
+  // -> a greedy-shaped payload. Cells whose value is null for a metric are left out of that
+  // metric's fill but stay in points_z (null), like a greedy point without the metric.
+  function materializeNucleus(raw, reduction) {
+    const axis = raw.grid_axis;
+    const reps = {};
+    REP_VALUES.forEach((rep) => {
+      const src = raw.reps[String(rep)];
+      const po = src ? src.points_offset : [], pp = src ? src.points_prefix : [];
+      const entry = { points_offset: po, points_prefix: pp, grid_offset: axis, grid_prefix: axis, metrics: {} };
+      METRICS.forEach(({ key }) => {
+        const vals = src && src.reductions[reduction] ? src.reductions[reduction][key] : po.map(() => null);
+        const keep = vals.map((v, i) => (v == null ? -1 : i)).filter((i) => i >= 0);
+        entry.metrics[key] = {
+          points_z: vals,
+          z_grid: interpolateGrid(keep.map((i) => po[i]), keep.map((i) => pp[i]), keep.map((i) => vals[i]), axis, raw.feasible_bound),
+          n_points: keep.length,
+        };
+      });
+      reps[rep] = entry;
+    });
+    return { ...raw, reps };
+  }
+
   // Perplexity is plotted in log10 space (its own vmin/vmax are log10 units) but should still
   // hover/color-key as the real PPL number -- pointsRaw/gridRaw carry the untransformed values
   // for hover (via customdata), pointsPlot/gridPlot the (possibly log10'd) values for color/z.
@@ -916,6 +1085,60 @@
       gridPlot: m.z_grid.map((row) => row.map(log10)),
       gridRaw: m.z_grid,
     };
+  }
+
+  // Points whose value is null (undefined conditional finish rate) get no marker -- a null
+  // colour would otherwise draw a default-coloured dot that reads as a measurement.
+  function definedPointArrays(base) {
+    const keep = base.pointsPlot.map((v, i) => (v == null ? -1 : i)).filter((i) => i >= 0);
+    return { ...base,
+      po: keep.map((i) => base.po[i]), pp: keep.map((i) => base.pp[i]),
+      pointsPlot: keep.map((i) => base.pointsPlot[i]), pointsRaw: keep.map((i) => base.pointsRaw[i]),
+    };
+  }
+
+  // ---- x = suffix start view. The exported grids are offset x prefix; with x = suffix start
+  // (= offset + prefix) the fill is resampled through that shear: the output node (s, p) reads
+  // the grid at (offset = s - p, prefix = p). Both grid axes are the same array, so row p is
+  // exact and only offset needs a 1D linear lookup along the row. null where offset < 0 (above
+  // the diagonal), beyond the document boundary, or where the row has no data.
+  // The x axis is the grid axis cut at the document boundary with the boundary itself added,
+  // so the fill reaches the boundary line instead of stopping at the last node before it.
+  function shearAxis(axis, fb) {
+    const xs = axis.filter((v) => v < fb);
+    return xs.concat([fb]);
+  }
+
+  function shearGrid(grid, axis, fb) {
+    const xs = shearAxis(axis, fb);
+    const lookup = (row, o) => {
+      let j = 0;
+      while (j < axis.length - 1 && axis[j + 1] < o) j++;
+      if (j >= axis.length - 1) return null;
+      const a = row[j], b = row[j + 1];
+      // One null bracket = the row's last cell before the document boundary (the next node
+      // is infeasible): hold that value so the fill reaches the boundary without a notch.
+      if (a == null && b == null) return null;
+      if (a == null || b == null) return a == null ? b : a;
+      const t = (o - axis[j]) / (axis[j + 1] - axis[j]);
+      return a + t * (b - a);
+    };
+    return axis.map((pv, i) => xs.map((sv) => {
+      const o = sv - pv;
+      if (o < 0) return null;
+      return lookup(grid[i], o);
+    }));
+  }
+
+  // base -> the arrays the figure draws: px (x coordinate of each dot), gridX (the fill's x
+  // axis) and gridPlot/gridRaw on it. po (the true offsets) is kept for hover.
+  function viewArrays(base, r, fb, xStart) {
+    if (!xStart) return { ...base, px: base.po, gridX: r.grid_offset };
+    const axis = r.grid_offset;
+    const gridPlot = shearGrid(base.gridPlot, axis, fb);
+    // gridRaw is the same array as gridPlot except for the log-plotted perplexities.
+    const gridRaw = base.gridRaw === base.gridPlot ? gridPlot : shearGrid(base.gridRaw, axis, fb);
+    return { ...base, px: base.po.map((o, i) => o + base.pp[i]), gridX: shearAxis(axis, fb), gridPlot, gridRaw };
   }
 
   // Log mode parks offset=0 at LOG_FLOOR so those points/curve endpoints still plot on a log
@@ -961,14 +1184,14 @@
     return { gridPlot: grid, gridRaw: grid, pointsPlot: pz, pointsRaw: pz, po, pp };
   }
 
-  function contourFigure(data, rep, metricKey, T, log, cmp) {
+  function contourFigure(data, rep, metricKey, T, log, cmp, xStart) {
     const spec = METRICS_BY_KEY[metricKey];
     const r = data.reps[rep];
     const fb = data.feasible_bound;
     const ratio = !!(cmp && spec.log);  // perplexity compare: colour = log10(ratio), hover = ratio
     const base = cmp ? diffFor(r, cmp.refRep, metricKey)
                      : { ...metricArrays(r, metricKey), po: r.points_offset, pp: r.points_prefix };
-    let { pointsPlot, pointsRaw, gridPlot, gridRaw, po, pp } = base;
+    let { pointsPlot, pointsRaw, gridPlot, gridRaw, po, pp, px, gridX } = viewArrays(definedPointArrays(base), r, fb, xStart);
     if (ratio) {
       const pow = (v) => (v == null ? null : 10 ** v);
       gridRaw = gridPlot.map((row) => row.map(pow));
@@ -995,16 +1218,20 @@
         minor: { tickvals: t.minor, ticklen: 3, tickcolor: T.grid },
       };
     };
-    const xAxisExtra = log ? logAxisCfg(Math.log10(7), LOG_FLOOR) : { range: [0, data.max_doc_length] };
+    // suffix start never goes below prefix (>= 50), so that x axis needs no offset=0 parking.
+    const xAxisExtra = log ? logAxisCfg(Math.log10(xStart ? 44 : 7), xStart ? undefined : LOG_FLOOR)
+                           : { range: [0, data.max_doc_length] };
     const yAxisExtra = log ? logAxisCfg(Math.log10(44)) : { range: [0, data.max_doc_length] };
     // Straight 2-point diagonal in linear space; sampled into a polyline so it renders as the
     // proper curve once the axes go log-log.
     const nb = 40;
     const bx = Array.from({ length: nb + 1 }, (_, i) => (fb * i) / nb);
+    const xName = xStart ? 'suffix start' : 'offset';
+    const ac = (v) => (log ? Math.log10(v) : v);
     // floorZero maps the grid's real x=0 / y=0 line to LOG_FLOOR (< the next grid node, so the
     // coord array stays monotonic) -- same place the offset=0 dots are parked, so a dot sits
     // exactly over the contour cell edge that carries the offset=0 value.
-    const gx = r.grid_offset.map((v) => floorZero(v, log));
+    const gx = gridX.map((v) => floorZero(v, log));
     const gy = r.grid_prefix.map((v) => floorZero(v, log));
     const label = cmp ? (ratio ? 'PPL ratio' : `Δ ${spec.label}`) : spec.label;
     const vfmt = ratio ? ':.2f}×' : ':.3f}';
@@ -1013,25 +1240,40 @@
         type: 'contour', x: gx, y: gy, z: gridPlot, customdata: gridRaw,
         colorscale: scale, zmin: vmin, zmax: vmax, showscale: false, connectgaps: false,
         contours: { coloring: 'fill', showlines: false, start: vmin, end: vmax, size: (vmax - vmin) / 100 },
-        hovertemplate: `offset: %{x}<br>prefix: %{y}<br>${label}: %{customdata${vfmt}<extra></extra>`,
+        hovertemplate: `${xName}: %{x}<br>prefix: %{y}<br>${label}: %{customdata${vfmt}<extra></extra>`,
       },
       {
         type: 'scatter', mode: 'markers',
-        x: po.map((o) => floorZero(o, log)), y: pp,
-        customdata: po.map((o, i) => [o, pointsRaw[i]]),
+        x: px.map((v) => floorZero(v, log)), y: pp,
+        customdata: po.map((o, i) => [o, pointsRaw[i], o + pp[i]]),
         marker: {
           size: 5, color: pointsPlot, colorscale: scale, cmin: vmin, cmax: vmax,
           line: { width: 0.5, color: ringColors },
         },
-        hovertemplate: `offset: %{customdata[0]}<br>prefix: %{y}<br>${label}: %{customdata[1]${vfmt}<extra></extra>`,
+        hovertemplate: (xStart ? 'suffix start: %{customdata[2]}<br>prefix: %{y}<br>offset: %{customdata[0]}'
+                               : 'offset: %{customdata[0]}<br>prefix: %{y}')
+          + `<br>${label}: %{customdata[1]${vfmt}<extra></extra>`,
         showlegend: false,
       },
-      {
+      // Document boundary: the anti-diagonal offset + prefix = bound, or with x = suffix start
+      // the vertical line at the bound -- and there the diagonal y = x is offset = 0.
+      xStart ? {
+        type: 'scatter', mode: 'lines',
+        x: bx.map(() => fb), y: bx.map((t) => floorZero(t, log)),
+        line: { color: T.wall, width: 1.5, dash: 'dot' }, showlegend: false, hoverinfo: 'skip',
+      } : {
         type: 'scatter', mode: 'lines',
         x: bx.map((t) => floorZero(t, log)), y: bx.map((t) => fb - t),
         line: { color: T.wall, width: 1.5, dash: 'dot' }, showlegend: false, hoverinfo: 'skip',
       },
     ];
+    if (xStart) {
+      traces.push({
+        type: 'scatter', mode: 'lines',
+        x: bx.map((t) => floorZero(t, log)), y: bx.map((t) => floorZero(t, log)),
+        line: { color: T.grid, width: 1, dash: 'dot' }, showlegend: false, hoverinfo: 'skip',
+      });
+    }
     if (cmp && !cmp.isRef) {
       // One "meaningfully different" outline per side -- the single iso-line at -/+ M/20
       // (the sensitivity). Inside that band nothing is drawn; the fill is untouched
@@ -1050,7 +1292,7 @@
       showlegend: false,
       margin: { l: 46, r: 10, t: 10, b: 36 },
       paper_bgcolor: T.pane, plot_bgcolor: T.paneAlt,
-      xaxis: { title: { text: 'offset', font: { size: 10, color: T.muted, family: SANS } }, ...axisBase, ...xAxisExtra },
+      xaxis: { title: { text: xName, font: { size: 10, color: T.muted, family: SANS } }, ...axisBase, ...xAxisExtra },
       yaxis: {
         title: { text: 'prefix', font: { size: 10, color: T.muted, family: SANS } },
         // Equal-aspect lock only makes sense on the linear domain; on log-log it would force
@@ -1058,8 +1300,14 @@
         ...(log ? {} : { scaleanchor: 'x', scaleratio: 1 }),
         ...axisBase, ...yAxisExtra,
       },
-      annotations: [{
-        x: fb / 2, y: fb / 2, text: 'document boundary', textangle: 45, showarrow: false,
+      // Annotation coordinates are log10 values on a log axis.
+      annotations: xStart ? [
+        { x: ac(fb), y: ac(fb / 2), text: 'document boundary', textangle: -90,
+          showarrow: false, xshift: -8, font: { size: 9, color: T.muted, family: SANS } },
+        { x: ac(fb / 2), y: ac(fb / 2), text: 'offset 0', textangle: -45,
+          showarrow: false, yshift: 8, font: { size: 9, color: T.muted, family: SANS } },
+      ] : [{
+        x: ac(fb / 2), y: ac(fb / 2), text: 'document boundary', textangle: 45, showarrow: false,
         yshift: 8, font: { size: 9, color: T.muted, family: SANS },
       }],
       hoverlabel: { bgcolor: T.pane, bordercolor: T.grid, font: { size: 9, color: T.muted, family: SANS } },
@@ -1075,7 +1323,7 @@
     return { traces, layout };
   }
 
-  function surfaceFigure(data, rep, metricKey, T, log, cmp) {
+  function surfaceFigure(data, rep, metricKey, T, log, cmp, xStart) {
     const spec = METRICS_BY_KEY[metricKey];
     const r = data.reps[rep];
     const fb = data.feasible_bound;
@@ -1083,7 +1331,7 @@
     const ratio = !!(cmp && spec.log);
     const base = cmp ? diffFor(r, cmp.refRep, metricKey)
                      : { ...metricArrays(r, metricKey), po: r.points_offset, pp: r.points_prefix };
-    let { pointsPlot, pointsRaw, gridPlot, gridRaw, po, pp } = base;
+    let { pointsPlot, pointsRaw, gridPlot, gridRaw, po, pp, px, gridX } = viewArrays(definedPointArrays(base), r, fb, xStart);
     if (ratio) {
       const pow = (v) => (v == null ? null : 10 ** v);
       gridRaw = gridPlot.map((row) => row.map(pow));
@@ -1097,10 +1345,12 @@
     const floor = vmin - (vmax - vmin) * 0.2;
     const floorZ = gridPlot.map((row) => row.map((v) => (v === null ? null : floor)));
     // floorZero maps the grid's real x=0 / y=0 line to LOG_FLOOR (see contourFigure).
-    const gx = r.grid_offset.map((v) => floorZero(v, log));
+    const gx = gridX.map((v) => floorZero(v, log));
     const gy = r.grid_prefix.map((v) => floorZero(v, log));
-    const wallOffset = Array.from({ length: gridRes }, (_, i) => floorZero((fb * i) / (gridRes - 1), log));
+    // Document-boundary wall: the anti-diagonal, or with x = suffix start the plane x = bound.
+    const wallOffset = Array.from({ length: gridRes }, (_, i) => (xStart ? fb : floorZero((fb * i) / (gridRes - 1), log)));
     const wallPrefix = Array.from({ length: gridRes }, (_, i) => floorZero(fb - (fb * i) / (gridRes - 1), log));
+    const xName = xStart ? 'suffix start' : 'offset';
     // Same fitted log ranges + tick values as the 2D panel; scene axes ignore `minor`, so
     // these only carry the labelled ticks.
     const logTop = Math.log10(data.max_doc_length * 1.04);
@@ -1108,7 +1358,7 @@
       const t = logTicks(10 ** loExp, data.max_doc_length * 1.04, zeroAt);
       return { type: 'log', range: [loExp, logTop], tickmode: 'array', tickvals: t.vals, ticktext: t.text };
     };
-    const xLog = log ? sceneLog(Math.log10(7), LOG_FLOOR) : {};
+    const xLog = log ? sceneLog(Math.log10(xStart ? 44 : 7), xStart ? undefined : LOG_FLOOR) : {};
     const yLog = log ? sceneLog(Math.log10(44)) : {};
     const axisKwargs = (title, extra) => ({
       title: { text: title, font: { size: 10, color: T.muted, family: SANS } },
@@ -1116,8 +1366,10 @@
       gridcolor: T.grid, showbackground: true, backgroundcolor: T.paneAlt,
       zerolinecolor: T.grid, showspikes: false, ...extra,
     });
-    const hoverTemplate = `offset: %{x}<br>prefix: %{y}<br>${zlabel}: %{customdata${vfmt}<extra></extra>`;
-    const pointHover = `offset: %{customdata[0]}<br>prefix: %{y}<br>${zlabel}: %{customdata[1]${vfmt}<extra></extra>`;
+    const hoverTemplate = `${xName}: %{x}<br>prefix: %{y}<br>${zlabel}: %{customdata${vfmt}<extra></extra>`;
+    const pointHover = (xStart ? 'suffix start: %{customdata[2]}<br>prefix: %{y}<br>offset: %{customdata[0]}'
+                               : 'offset: %{customdata[0]}<br>prefix: %{y}')
+      + `<br>${zlabel}: %{customdata[1]${vfmt}<extra></extra>`;
     const topZ = vmax - (vmax - vmin) * 0.02;
     const traces = [
       {
@@ -1132,8 +1384,8 @@
       },
       {
         type: 'scatter3d', mode: 'markers',
-        x: po.map((o) => floorZero(o, log)), y: pp, z: pointsPlot,
-        customdata: po.map((o, i) => [o, pointsRaw[i]]),
+        x: px.map((v) => floorZero(v, log)), y: pp, z: pointsPlot,
+        customdata: po.map((o, i) => [o, pointsRaw[i], o + pp[i]]),
         marker: {
           size: 3, color: pointsPlot, colorscale: scale, cmin: vmin, cmax: vmax,
           line: { width: 0.6, color: T.ink },
@@ -1158,7 +1410,7 @@
       paper_bgcolor: T.pane,
       scene: {
         domain: { x: [0, 1], y: [0, 1] },
-        xaxis: axisKwargs('offset', xLog), yaxis: axisKwargs('prefix', yLog),
+        xaxis: axisKwargs(xName, xLog), yaxis: axisKwargs('prefix', yLog),
         zaxis: axisKwargs(zlabel, { range: [floor, vmax], showbackground: false }),
         camera: { eye: { x: 1.5, y: 1.5, z: 0.9 } },
       },
@@ -1185,7 +1437,7 @@
     `;
   }
 
-  let selectedModels = [...MODELS];
+  let selectedModels = MODELS.filter((m) => MODEL_GROUPS[0].models.includes(m));  // opens on 'main attentions'
 
   function rebuildGrid() {
     grid.innerHTML = selectedModels.length
@@ -1223,6 +1475,12 @@
   let currentSuffixIdx = SUFFIX_VALUES.length - 1;  // matches the slider's value="6" -> suffix=250
   let currentMetric = 'rouge_l';
   let currentLogAxes = true;
+  let currentXStart = false;  // x axis: false = offset (exported grid), true = suffix start (sheared view)
+  let currentDecoding = 'greedy';  // 'greedy' | 'nucleus'
+  let currentDraw = 'mean';        // nucleus only: 'mean' | 'single' | 'max' | 'min'
+  let currentDrawBy = 'rouge_l';   // nucleus max/min only: the selecting metric
+  const reductionKey = () => (currentDraw === 'mean' || currentDraw === 'single' ? currentDraw : `${currentDraw}_${currentDrawBy}`);
+  const materializedCache = {};  // `${model}__s${suffix}__${reduction}` -> greedy-shaped payload
   let compareRef = null;  // model key when "Compare vs" is on -- panels show (model - reference)
   // The 3D panels are WebGL and ~10x costlier to (re)draw than the 2D contours. They start
   // hidden, so skip rendering them until "Show 3D" is on; `threeDStale` tracks that they
@@ -1233,15 +1491,26 @@
   function renderModel(model, rep, metricKey, T) {
     const data = dataByModel[model];
     if (!data) return;
+    // A metric the loaded JSON doesn't carry (stale browser cache or an export from before the
+    // metric existed) must not throw here: an exception in one panel aborts the whole renderAll,
+    // freezing every chart on the previous metric with no visible cause.
+    if (!data.reps[rep].metrics[metricKey]) {
+      const msg = `${metricKey} missing in ${data.model}__s${data.suffix}${currentDecoding === 'nucleus' ? '__nucleus' : ''}.json -- hard-reload (Cmd+Shift+R) or re-export`;
+      console.error(msg);
+      document.getElementById(`n-points-${model}`).textContent = msg;
+      Plotly.purge(`panel-2d-${model}`);
+      if (threeDShown) Plotly.purge(`panel-3d-${model}`);
+      return;
+    }
     const isRef = compareRef === model;
     // In compare mode every panel goes through the diff path; the reference's own panel diffs
     // against itself (Delta = 0 everywhere) so it still draws a full chart, just flat neutral.
     const cmp = compareRef && dataByModel[compareRef]
       ? { refRep: dataByModel[compareRef].reps[rep], M: METRICS_BY_KEY[metricKey].diffMax, isRef } : null;
-    const cf = contourFigure(data, rep, metricKey, T, currentLogAxes, cmp);
+    const cf = contourFigure(data, rep, metricKey, T, currentLogAxes, cmp, currentXStart);
     Plotly.react(`panel-2d-${model}`, cf.traces, cf.layout, PLOT_CONFIG);
     if (threeDShown) {
-      const sf = surfaceFigure(data, rep, metricKey, T, currentLogAxes, cmp);
+      const sf = surfaceFigure(data, rep, metricKey, T, currentLogAxes, cmp, currentXStart);
       Plotly.react(`panel-3d-${model}`, sf.traces, sf.layout, PLOT_CONFIG);
     }
     document.getElementById(`card-${model}`).classList.toggle('is-ref', isRef);
@@ -1303,19 +1572,43 @@
   // Fetches (and caches) the 10 model files for one suffix, then -- if that suffix is still
   // the selected one -- swaps them into dataByModel and redraws. A stale resolve (slider moved
   // on again mid-fetch) is dropped; the later loadSuffix owns the final render.
+  // Cache key per (model, suffix, decoding); a nucleus file that doesn't exist (model not swept)
+  // becomes an empty payload rather than an error, so the other models still render.
+  const cacheKey = (m, suffix) => `${m}__s${suffix}${currentDecoding === 'nucleus' ? '__nucleus' : ''}`;
+  // Cache-buster on the JSON URLs: browsers heuristically cache fetch() responses that carry
+  // only a Last-Modified header (python http.server, GitHub Pages), so after a re-export the
+  // page would keep reading the old files -- a metric missing from them then shows up as the
+  // renderModel notice. A fresh value per page load makes every reload fetch the files anew;
+  // within a session suffixCache already keeps them in memory.
+  const DATA_VERSION = Date.now();
+
   function loadSuffix(suffix) {
-    const need = MODELS.filter((m) => !suffixCache[`${m}__s${suffix}`]);
-    const fetches = need.map((m) => fetch(`data/${m}__s${suffix}.json`)
+    const decoding = currentDecoding;
+    const need = MODELS.filter((m) => !suffixCache[cacheKey(m, suffix)]);
+    const fetches = need.map((m) => fetch(`data/${cacheKey(m, suffix)}.json?v=${DATA_VERSION}`)
       .then((res) => {
-        if (!res.ok) throw new Error(`${m}__s${suffix}.json: ${res.status}`);
-        return res.json();
+        if (res.ok) return res.json();
+        if (decoding === 'nucleus' && res.status === 404) return emptyNucleusPayload(m, suffix);
+        throw new Error(`${cacheKey(m, suffix)}.json: ${res.status}`);
       })
-      .then((json) => { suffixCache[`${m}__s${suffix}`] = json; }));
+      .then((json) => { suffixCache[cacheKey(m, suffix)] = json; }));
     return Promise.all(fetches).then(() => {
-      if (SUFFIX_VALUES[currentSuffixIdx] !== suffix) return;
-      dataByModel = Object.fromEntries(MODELS.map((m) => [m, suffixCache[`${m}__s${suffix}`]]));
+      if (SUFFIX_VALUES[currentSuffixIdx] !== suffix || currentDecoding !== decoding) return;
+      swapData(suffix);
       rerenderAll();
     });
+  }
+
+  // Points dataByModel at the selected suffix (+ decoding + draw reduction); nucleus payloads
+  // are materialised (interpolated) once per reduction and memoised.
+  function swapData(suffix) {
+    dataByModel = Object.fromEntries(MODELS.map((m) => {
+      const raw = suffixCache[cacheKey(m, suffix)];
+      if (currentDecoding === 'greedy') return [m, raw];
+      const key = `${m}__s${suffix}__${reductionKey()}`;
+      if (!materializedCache[key]) materializedCache[key] = materializeNucleus(raw, reductionKey());
+      return [m, materializedCache[key]];
+    }));
   }
 
   updateLegend(currentMetric);
@@ -1380,15 +1673,27 @@
   const modelPanel = document.getElementById('model-dropdown-panel');
   modelPanel.insertAdjacentHTML('beforeend', MODELS.map((m) => `
     <label class="model-checkbox">
-      <input type="checkbox" value="${m}" checked />
+      <input type="checkbox" value="${m}" ${selectedModels.includes(m) ? 'checked' : ''} />
       ${DISPLAY_NAMES[m] || m}
     </label>
   `).join(''));
-  const modelCheckboxes = [...modelPanel.querySelectorAll('input[type="checkbox"]')];
+  // Only the model rows -- the compare toggle is a checkbox inside the same panel too.
+  const modelCheckboxes = [...modelPanel.querySelectorAll('.model-checkbox input')];
   const modelDropdownBtn = document.getElementById('model-dropdown-btn');
 
+  const groupsEl = document.getElementById('model-groups');
+  groupsEl.innerHTML = MODEL_GROUPS.map((g, i) => `
+    <button type="button" class="model-group" data-group="${i}" title="${g.models.map((m) => DISPLAY_NAMES[m] || m).join(', ')}">${g.label}</button>
+  `).join('');
+  const groupButtons = [...groupsEl.querySelectorAll('.model-group')];
+  const sameSet = (a, b) => a.length === b.length && a.every((m) => b.includes(m));
+  const activeGroup = () => MODEL_GROUPS.find((g) => sameSet(g.models, selectedModels));
+
   function updateModelButtonLabel() {
-    modelDropdownBtn.querySelector('.dropdown-btn-label').textContent = `${selectedModels.length} of ${MODELS.length} models`;
+    const g = activeGroup();
+    modelDropdownBtn.querySelector('.dropdown-btn-label').textContent =
+      g ? `${g.label} (${selectedModels.length})` : `${selectedModels.length} of ${MODELS.length} models`;
+    groupButtons.forEach((el) => el.classList.toggle('active', MODEL_GROUPS[Number(el.dataset.group)] === g));
   }
   updateModelButtonLabel();
 
@@ -1401,6 +1706,12 @@
     rerenderAll();
   }
   modelCheckboxes.forEach((cb) => cb.addEventListener('change', onModelSelectionChange));
+
+  groupButtons.forEach((el) => el.addEventListener('click', () => {
+    const models = new Set(MODEL_GROUPS[Number(el.dataset.group)].models);
+    modelCheckboxes.forEach((cb) => { cb.checked = models.has(cb.value); });
+    onModelSelectionChange();
+  }));
 
   document.getElementById('select-all-btn').addEventListener('click', () => {
     modelCheckboxes.forEach((cb) => { cb.checked = true; });
@@ -1452,7 +1763,14 @@
   function wireDiscreteSlider(slider, ticksEl, onChange, pxPerTick) {
     const spans = [...ticksEl.children];
     const controlEl = ticksEl.closest('.slider-control');
-    if (controlEl) controlEl.style.maxWidth = `${Math.max(110, spans.length * pxPerTick)}px`;
+    if (controlEl) {
+      // Fixed width from the tick count (the row wraps rather than squeezing a slider), so
+      // the 10-tick nucleus suffix slider is wider than the 7-tick ones and no tick strip
+      // ever cramps.
+      const width = `${Math.max(110, spans.length * pxPerTick)}px`;
+      controlEl.style.maxWidth = width;
+      controlEl.style.minWidth = width;
+    }
     const setActive = () => {
       const idx = Number(slider.value);
       spans.forEach((el, i) => el.classList.toggle('active', i === idx));
@@ -1506,14 +1824,13 @@
   // Suffix swaps the whole data payload (a different set of JSON files). If that suffix's files
   // are already cached the swap is instant, so the "updating..." cue only shows when there's an
   // actual fetch; either way the charts stay fully visible until the new data lands.
-  const suffixSlider = document.getElementById('suffix');
   const loadingPill = document.getElementById('loading-pill');
   const reloadForSuffix = rafThrottle((idx) => {
     currentSuffixIdx = idx;
     const suffix = SUFFIX_VALUES[idx];
-    suffixSlider.title = `suffix = ${suffix}`;
+    document.getElementById('suffix').title = `suffix = ${suffix}`;
     document.getElementById('suffix-pill').textContent = `suffix: ${suffix} tokens`;
-    const needFetch = MODELS.some((m) => !suffixCache[`${m}__s${suffix}`]);
+    const needFetch = MODELS.some((m) => !suffixCache[cacheKey(m, suffix)]);
     if (needFetch) {
       loadingPill.hidden = false;
       grid.classList.add('loading');
@@ -1525,8 +1842,64 @@
       }
     });
   });
-  const realignSuffixTicks = wireDiscreteSlider(suffixSlider, document.getElementById('suffix-ticks'), reloadForSuffix, 40);
-  suffixSlider.title = `suffix = ${SUFFIX_VALUES[currentSuffixIdx]}`;
+  let realignSuffixTicks = () => {};
+  // The suffix list differs per decoding (greedy stops at 250, nucleus runs to 1000), and
+  // wireDiscreteSlider captures its tick spans once -- so switching decodings replaces the
+  // slider node and its ticks and wires the fresh copy, keeping the same suffix if it exists.
+  function rebuildSuffixSlider(values) {
+    const suffix = SUFFIX_VALUES[currentSuffixIdx];
+    SUFFIX_VALUES = values;
+    currentSuffixIdx = Math.max(0, values.indexOf(suffix));
+    const old = document.getElementById('suffix');
+    const fresh = old.cloneNode(false);
+    fresh.max = String(values.length - 1);
+    fresh.value = String(currentSuffixIdx);
+    old.replaceWith(fresh);
+    const ticks = document.getElementById('suffix-ticks');
+    ticks.innerHTML = values.map((v) => `<span>${v}</span>`).join('');
+    realignSuffixTicks = wireDiscreteSlider(fresh, ticks, reloadForSuffix, 40);
+    fresh.title = `suffix = ${values[currentSuffixIdx]}`;
+    document.getElementById('suffix-pill').textContent = `suffix: ${values[currentSuffixIdx]} tokens`;
+  }
+  rebuildSuffixSlider(GREEDY_SUFFIX_VALUES);
+
+  // ---- decoding / draw controls ------------------------------------------------
+
+  const DRAW_LABELS = { mean: 'mean of 10', single: 'single draw', max: 'max of 10', min: 'min of 10' };
+  function updateDecodingPill() {
+    let text = 'decoding: greedy';
+    if (currentDecoding === 'nucleus') {
+      const by = currentDraw === 'max' || currentDraw === 'min'
+        ? ` by ${document.querySelector(`#draw-by option[value="${currentDrawBy}"]`).textContent}` : '';
+      text = `decoding: nucleus (p=0.95, n=10) · ${DRAW_LABELS[currentDraw]}${by}`;
+    }
+    document.getElementById('decoding-pill').textContent = text;
+  }
+
+  // Draw reduction changes swap the materialised payload in place -- the files are already
+  // cached, only the interpolation (memoised per reduction) runs.
+  function applyDrawChange() {
+    updateDecodingPill();
+    if (currentDecoding !== 'nucleus') return;
+    swapData(SUFFIX_VALUES[currentSuffixIdx]);
+    rerenderAll();
+  }
+  document.getElementById('draw').addEventListener('change', (e) => {
+    currentDraw = e.target.value;
+    document.getElementById('draw-by').disabled = !(currentDraw === 'max' || currentDraw === 'min');
+    applyDrawChange();
+  });
+  document.getElementById('draw-by').addEventListener('change', (e) => {
+    currentDrawBy = e.target.value;
+    applyDrawChange();
+  });
+  document.getElementById('decoding').addEventListener('change', (e) => {
+    currentDecoding = e.target.value;
+    document.getElementById('draw-controls').hidden = currentDecoding !== 'nucleus';
+    updateDecodingPill();
+    rebuildSuffixSlider(currentDecoding === 'nucleus' ? NUCLEUS_SUFFIX_VALUES : GREEDY_SUFFIX_VALUES);
+    reloadForSuffix(currentSuffixIdx);
+  });
 
   // Columns is a fixed 1..MODELS.length range regardless of how many models are currently
   // selected -- a plain repeat(N, 1fr) grid means fewer selected cards just leave empty
@@ -1610,6 +1983,13 @@
   const logAxesToggle = document.getElementById('log-axes');
   logAxesToggle.addEventListener('change', () => {
     currentLogAxes = logAxesToggle.checked;
+    rerenderAll();
+  });
+
+  // x = suffix start: same data, resampled through the shear (see shearGrid) -- no re-fetch.
+  const xStartToggle = document.getElementById('x-start');
+  xStartToggle.addEventListener('change', () => {
+    currentXStart = xStartToggle.checked;
     rerenderAll();
   });
 </script>

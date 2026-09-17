@@ -129,9 +129,46 @@ def discover_offset_prefix_points(models, suffix, results_base=model_registry.ME
     return sorted(points)
 
 
+def grid_axis(grid_res=80, max_doc_length=8192, grid_scale='linear', grid_min=30.0):
+    """The offset/prefix grid nodes load_offset_prefix_grid_data interpolates onto (same axis
+    for both). Exposed so the dashboard export can ship it for client-side interpolation."""
+    if grid_scale != 'log':
+        return np.linspace(0, max_doc_length, grid_res)
+    # Geometric spacing in the low decades so the contour fill tracks the (log-dense)
+    # sample points there instead of stretching one wide cell across them, then linear
+    # spacing out to the edge (keeps the boundary diagonal clean in a linear-axis view).
+    # 50 is forced in so the fill reaches exactly to the prefix=50 sample row; the grid
+    # also starts at grid_min (= the dashboard's offset=0 park position). Total ~= grid_res.
+    low = np.geomspace(grid_min, 550.0, 13)
+    high = np.linspace(550.0, max_doc_length, grid_res - low.size)
+    # 0 kept so the fill carries the true offset=0 values (the dashboard parks the offset=0
+    # dots on that column); 50 forced so the fill reaches exactly to the prefix=50 row.
+    return np.union1d(np.union1d(low, high), [0.0, 50.0])
+
+
+def start_finish_flags(divergence_point, suffix, start_tokens=5):
+    """(started, finished) boolean arrays, same shape as divergence_point ([docs] greedy,
+    [docs, N] sampling). divergence_point is the matched fraction of the suffix, so
+    round(dp * suffix) is the number of leading tokens reproduced; started = at least
+    start_tokens of them, finished = the whole suffix."""
+    matched = np.rint(np.asarray(divergence_point, dtype=float) * suffix).astype(int)
+    return matched >= start_tokens, matched == suffix
+
+
+def start_finish_rates(started, finished):
+    """{start_rate, conditional_finish_rate} from per-passage start/finish indicators (bools, or
+    per-document fractions after a draw reduction). Conditional finish is NaN with no starters."""
+    started, finished = np.asarray(started, dtype=float), np.asarray(finished, dtype=float)
+    return {
+        'start_rate': float(started.mean()),
+        'conditional_finish_rate': float(finished.sum() / started.sum()) if started.sum() else np.nan,
+    }
+
+
 def load_offset_prefix_grid_data(model, rep, suffix, backends=('hf', 'megatron'), metric='Rouge-L',
                                  interp='linear', grid_res=80, max_doc_length=8192, points=None,
-                                 n=None, p=None, grid_scale='linear', grid_min=30.0, smooth_sigma=0.0):
+                                 n=None, p=None, grid_scale='linear', grid_min=30.0, smooth_sigma=0.0,
+                                 grid_data=None, stat='mean', start_tokens=5):
     """(offset, prefix) -> metric points for one (model, rep, suffix), interpolated onto a
     regular grid over the full document-length domain, masked to the feasible region
     (offset+prefix+suffix<=max_doc_length). Shared by every offset x prefix 2D/3D panel.
@@ -143,6 +180,11 @@ def load_offset_prefix_grid_data(model, rep, suffix, backends=('hf', 'megatron')
     smooth_sigma>0 additionally runs a NaN-aware Gaussian over the grid (sigma in grid cells);
     it softens edges but pulls the surface off the sample values, so keep it small or 0.
     metric='hayes': Hayes et al. 2025 (n, p)-discoverable extraction rate, computed on the fly.
+    stat='var': the cell's value is the variance over its per-passage scores instead of the mean.
+    metric='start_rate' / 'conditional_finish_rate': see start_finish_flags (start_tokens); a
+    cell with no starters has an undefined conditional rate and stays NaN (no dot, hole in the
+    fill) rather than being interpolated over.
+    grid_data: optional preloaded results, reused across metrics/repetitions by the dashboard.
     grid_scale='log' keeps the full linear grid (so a linear-axis view still gets a clean
     diagonal along the feasible boundary) and adds log-spaced nodes from grid_min up through
     the low corner -- a plain linear grid's ~100-token first cell hides every sample below it
@@ -156,8 +198,9 @@ def load_offset_prefix_grid_data(model, rep, suffix, backends=('hf', 'megatron')
         points = discover_offset_prefix_points(model, suffix, backend=backends)
     offsets = sorted({o for o, prefix in points})
     prefixes = sorted({prefix for o, prefix in points})
-    grid_data = load_mem_results_scores_grid(offsets, prefixes, [suffix], models=[model],
-                                             results_base=model_registry.MEM_RESULTS_DIR, backend=list(backends))
+    if grid_data is None:
+        grid_data = load_mem_results_scores_grid(offsets, prefixes, [suffix], models=[model],
+                                                 results_base=model_registry.MEM_RESULTS_DIR, backend=list(backends))
     offset_vals, prefix_vals, zs = [], [], []
     for offset, prefix in points:
         key = (offset, prefix, suffix)
@@ -169,6 +212,11 @@ def load_offset_prefix_grid_data(model, rep, suffix, backends=('hf', 'megatron')
             if metric == 'hayes':
                 p_z = np.array(r.get_stats(expr, rep, offset, prefix, suffix, 'p_z').scores)
                 z = float((1 - (1 - p_z) ** n >= p).mean())
+            elif metric in ('start_rate', 'conditional_finish_rate'):
+                dp = r.get_stats(expr, rep, offset, prefix, suffix, 'divergence_point').scores
+                z = start_finish_rates(*start_finish_flags(dp, suffix, start_tokens))[metric]
+            elif stat == 'var':
+                z = float(np.var(r.get_all_metrics(expr, rep, offset, prefix, suffix)[metric].scores))
             else:
                 z = r.get_all_metrics(expr, rep, offset, prefix, suffix)[metric].mean
         except KeyError:
@@ -177,28 +225,20 @@ def load_offset_prefix_grid_data(model, rep, suffix, backends=('hf', 'megatron')
     offset_vals, prefix_vals, zs = np.array(offset_vals), np.array(prefix_vals), np.array(zs)
 
     feasible_bound = max_doc_length - suffix
-    if grid_scale == 'log':
-        # Geometric spacing in the low decades so the contour fill tracks the (log-dense)
-        # sample points there instead of stretching one wide cell across them, then linear
-        # spacing out to the edge (keeps the boundary diagonal clean in a linear-axis view).
-        # 50 is forced in so the fill reaches exactly to the prefix=50 sample row; the grid
-        # also starts at grid_min (= the dashboard's offset=0 park position). Total ~= grid_res.
-        low = np.geomspace(grid_min, 550.0, 13)
-        high = np.linspace(550.0, max_doc_length, grid_res - low.size)
-        # 0 kept so the fill carries the true offset=0 values (the dashboard parks the offset=0
-        # dots on that column); 50 forced so the fill reaches exactly to the prefix=50 row.
-        axis = np.union1d(np.union1d(low, high), [0.0, 50.0])
-    else:
-        axis = np.linspace(0, max_doc_length, grid_res)
-    g_prefix = axis
-    g_offset = axis
-    G_OFFSET, G_PREFIX = np.meshgrid(g_offset, g_prefix)
+    axis = grid_axis(grid_res, max_doc_length, grid_scale, grid_min)
+    G_OFFSET, G_PREFIX = np.meshgrid(axis, axis)
 
     # No pkl for this (model, suffix) yet (e.g. a suffix the sweep hasn't reached for this
     # model): hand back the empty surface on the same grid rather than letting griddata
     # choke on zero points, so a multi-model export/plot still gets a blank panel.
-    if zs.size == 0:
+    if zs.size == 0 or not np.isfinite(zs).any():
         return offset_vals, prefix_vals, zs, G_OFFSET, G_PREFIX, np.full(G_OFFSET.shape, np.nan), feasible_bound
+
+    # Undefined cells (NaN, e.g. conditional_finish_rate with no starters) are excluded from
+    # the scattered interpolation; in the bilinear lattice they stay NaN and punch a hole in the
+    # fill instead of being filled in like a never-run combo.
+    fin = np.isfinite(zs)
+    fo, fp, fz = offset_vals[fin], prefix_vals[fin], zs[fin]
 
     if interp == 'bilinear':
         # Bilinear on the candidate (offset x prefix) lattice itself. Unlike griddata's
@@ -209,21 +249,23 @@ def load_offset_prefix_grid_data(model, rep, suffix, backends=('hf', 'megatron')
         lattice = np.full((ox.size, py.size), np.nan)
         ix = {v: i for i, v in enumerate(ox)}
         iy = {v: i for i, v in enumerate(py)}
+        undefined = np.zeros_like(lattice, dtype=bool)
         for o, p, zv in zip(offset_vals, prefix_vals, zs):
             lattice[ix[o], iy[p]] = zv
-        holes = np.isnan(lattice)          # infeasible / never-run (offset, prefix) combos
+            undefined[ix[o], iy[p]] = not np.isfinite(zv)
+        holes = np.isnan(lattice) & ~undefined   # infeasible / never-run (offset, prefix) combos
         if holes.any():
             mo, mp = np.meshgrid(ox, py, indexing='ij')
-            lattice[holes] = griddata((offset_vals, prefix_vals), zs, (mo[holes], mp[holes]), method='linear')
-            edge = np.isnan(lattice)
+            lattice[holes] = griddata((fo, fp), fz, (mo[holes], mp[holes]), method='linear')
+            edge = np.isnan(lattice) & ~undefined
             if edge.any():
-                lattice[edge] = griddata((offset_vals, prefix_vals), zs, (mo[edge], mp[edge]), method='nearest')
+                lattice[edge] = griddata((fo, fp), fz, (mo[edge], mp[edge]), method='nearest')
         rgi = RegularGridInterpolator((ox, py), lattice, method='linear', bounds_error=False, fill_value=None)
         GZ = rgi(np.stack([G_OFFSET.ravel(), G_PREFIX.ravel()], axis=-1)).reshape(G_OFFSET.shape)
         # RGI has no convex hull -- restrict to the same region griddata('linear') would cover.
-        GZ[np.isnan(griddata((offset_vals, prefix_vals), zs, (G_OFFSET, G_PREFIX), method='linear'))] = np.nan
+        GZ[np.isnan(griddata((fo, fp), fz, (G_OFFSET, G_PREFIX), method='linear'))] = np.nan
     else:
-        GZ = griddata((offset_vals, prefix_vals), zs, (G_OFFSET, G_PREFIX), method=interp)
+        GZ = griddata((fo, fp), fz, (G_OFFSET, G_PREFIX), method=interp)
     GZ[G_OFFSET + G_PREFIX > feasible_bound] = np.nan
 
     if smooth_sigma:
