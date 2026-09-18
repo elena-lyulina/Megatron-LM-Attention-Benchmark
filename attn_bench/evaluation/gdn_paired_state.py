@@ -229,6 +229,8 @@ class StateProbe:
 
 
 ### FORWARD ###
+
+@torch.no_grad()
 def score(backend, tokens: list[int], softmax_chunk: int = 2048) -> dict:
     """One teacher-forced forward; NLL, argmax match and margin (true logit minus best other
     logit) at every input position, not only the suffix: the model is causal, so the trace
