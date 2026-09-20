@@ -1,4 +1,6 @@
-"""Paired complete-vs-truncated GDN state comparison on Gutenberg excerpts.
+"""Paired complete-vs-truncated recurrent-state comparison on Gutenberg excerpts.
+
+GDN or KDA checkpoints (the gdn_ in the file and results names predates KDA support).
 
 For every selected book and truncated point (offset O, prefix P) the model is compared
 teacher-forced on the same 249-token suffix at g = O+P:
@@ -45,6 +47,7 @@ Usage (via torchrun, 1 GPU):
 from __future__ import annotations
 
 import argparse
+import importlib
 import json
 import os
 import subprocess
@@ -154,15 +157,33 @@ def describe_forwards(tokens, points, suffix) -> tuple[list[str], int]:
 
 ### OBSERVER ###
 
+# Recurrent families the probe can read: module class -> the instance attribute holding the
+# prefill chunk kernel. Both kernels take q/k/v/g/beta as [B, T, ...] and return
+# (output, final_state [B, H, K, V]); everything else (KDA's A_log/dt_bias/flags) is passed
+# through untouched.
+STATE_FAMILIES = {
+    "GDN": ("megatron.core.ssm.gated_delta_net", "GatedDeltaNet", "gated_delta_rule"),
+    "KDA": ("megatron.core.ssm.kimi_delta_attention", "KimiDeltaAttention", "kda_rule"),
+}
+SEQUENCE_ARGS = ("q", "k", "v", "g", "beta")  # kernel arguments sliced along the token dim
+
+
 class StateProbe:
-    """Swaps gated_delta_rule on every GatedDeltaNet for a wrapper that runs the kernel in
-    segments ending at self.boundaries and keeps each segment's final state and the
-    recurrent output of its last token. Set boundaries, run one forward, call take()."""
+    """Swaps the chunk kernel on every recurrent layer (GDN or KDA, see STATE_FAMILIES) for a
+    wrapper that runs it in segments ending at self.boundaries and keeps each segment's final
+    state and the recurrent output of its last token. Set boundaries, run one forward, call
+    take()."""
 
     def __init__(self, model):
-        from megatron.core.ssm.gated_delta_net import GatedDeltaNet
-        self.modules = [m for m in model.modules() if isinstance(m, GatedDeltaNet)]
-        assert self.modules, "model has no GatedDeltaNet layers"
+        found = {}
+        for family, (module_name, class_name, attr) in STATE_FAMILIES.items():
+            cls = getattr(importlib.import_module(module_name), class_name)
+            modules = [m for m in model.modules() if isinstance(m, cls)]
+            if modules:
+                found[family] = (modules, attr)
+        assert found, "model has no GDN/KDA layers"
+        assert len(found) == 1, f"mixed recurrent families not supported: {sorted(found)}"
+        (self.family, (self.modules, self.attr)), = found.items()
         assert not any(m.training for m in self.modules), "model must be in eval mode"
         self.layer_ids = [m.layer_number for m in self.modules]
         self.boundaries = None
@@ -173,13 +194,14 @@ class StateProbe:
     def install(self):
         assert not self._originals, "already installed"
         for m in self.modules:
-            self._originals[m.layer_number] = m.gated_delta_rule
-            m.gated_delta_rule = self._wrap(m.gated_delta_rule, m.layer_number)
+            real_fn = getattr(m, self.attr)
+            self._originals[m.layer_number] = real_fn
+            setattr(m, self.attr, self._wrap(real_fn, m.layer_number))
 
     def restore(self):
         for m in self.modules:
             if m.layer_number in self._originals:
-                m.gated_delta_rule = self._originals[m.layer_number]
+                setattr(m, self.attr, self._originals[m.layer_number])
         self._originals = {}
         self._states = {}
         self._outputs = {}
@@ -197,12 +219,20 @@ class StateProbe:
         return states, outputs
 
     def _wrap(self, real_fn, layer_number):
-        def wrapper(query, key, value, *, g, beta, initial_state=None,
-                    output_final_state=False, use_qk_l2norm_in_kernel=False, cu_seqlens=None):
-            assert cu_seqlens is None and initial_state is None, "packed input / initial state not supported"
-            assert query.shape[0] == 1, "batch size must be 1"
+        def wrapper(*args, **kwargs):
+            # Both kernels take q, k, v, g, beta first; GDN passes q/k/v positionally and
+            # KDA everything by keyword. Split them off and pass the rest through untouched.
+            assert len(args) <= len(SEQUENCE_ARGS), "unexpected positional kernel arguments"
+            seq = dict(zip(SEQUENCE_ARGS, args))
+            seq.update({name: kwargs.pop(name) for name in SEQUENCE_ARGS if name in kwargs})
+            assert len(seq) == len(SEQUENCE_ARGS), f"missing kernel arguments: {set(SEQUENCE_ARGS) - set(seq)}"
+            assert kwargs.get("cu_seqlens") is None and kwargs.pop("initial_state", None) is None, \
+                "packed input / initial state not supported"
+            output_final_state = kwargs.pop("output_final_state", False)
+            q = seq["q"]
+            assert q.shape[0] == 1, "batch size must be 1"
             assert self.boundaries, "set probe.boundaries before the forward"
-            seq_len = query.shape[1]
+            seq_len = q.shape[1]
             wanted = set(self.boundaries)
             assert max(wanted) <= seq_len, f"boundary beyond input length {seq_len}"
             ends = sorted(wanted | {seq_len})
@@ -212,10 +242,8 @@ class StateProbe:
             start = 0
             for end in ends:
                 out_s, state = real_fn(
-                    query[:, start:end], key[:, start:end], value[:, start:end],
-                    g=g[:, start:end], beta=beta[:, start:end],
-                    initial_state=state, output_final_state=True,
-                    use_qk_l2norm_in_kernel=use_qk_l2norm_in_kernel, cu_seqlens=None,
+                    **{name: tensor[:, start:end] for name, tensor in seq.items()},
+                    **kwargs, initial_state=state, output_final_state=True,
                 )
                 outs.append(out_s)
                 if end in wanted:
@@ -534,7 +562,7 @@ def main():
     backend.load_model()
     load_seconds = time.perf_counter() - t0
     probe = StateProbe(backend.model)
-    print(f"model loaded in {load_seconds:.0f} s; {len(probe.layer_ids)} GDN layers")
+    print(f"model loaded in {load_seconds:.0f} s; {len(probe.layer_ids)} {probe.family} layers")
 
     output_dir.mkdir(parents=True, exist_ok=True)
     with open(output_dir / "run_metadata.json", "w") as f:

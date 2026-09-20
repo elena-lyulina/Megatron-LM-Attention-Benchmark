@@ -12,14 +12,14 @@
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=clariden-jobs-elyulin-aaaauapxybdkdx42ppvef2c2eq@swissai-initiative.slack.com
 
-# Paired complete-vs-truncated GDN state comparison, one GDN checkpoint per job, one GPU.
+# Paired complete-vs-truncated recurrent-state comparison (GDN or KDA), one checkpoint per job, one GPU.
 # See evaluation/gdn_paired_state.py. Results: <scratch>/gdn-state-results/<EXP_NAME>/
 # rep_R_offset_O_prefix_P.npz (+ run_metadata.json, test.json); a finished file is skipped.
 # Forwards are shared across points per book, so one job runs all points of a bucket at
 # once; ~5.5 s/book for the default six points (~1 h for 165 books x 4 buckets).
 #
 # Env vars:
-#   MODEL          gdn (default), carry-r0, carry-r1, ... (GDN tags in llama_checkpoints.sh)
+#   MODEL          gdn (default), gdn-upd, carry-r0, carry-r1, ..., kda (recurrent tags in llama_checkpoints.sh)
 #   REPETITIONS    comma-separated rep buckets (default: 32,64,128,256)
 #   POINTS         comma-separated truncated offset:prefix pairs (default: the six section-12
 #                  points in the .py); the full control (0, offset+prefix) is always run
@@ -32,6 +32,7 @@
 #
 # Usage: sbatch --time=0:20:00 --export=ALL,MODEL=gdn,MAX_BOOKS=4,TEST=1 gdn_paired_state.slurm
 #        sbatch --export=ALL,MODEL=carry-r0,MAX_BOOKS=165 gdn_paired_state.slurm
+#        sbatch --export=ALL,MODEL=kda,MAX_BOOKS=165 gdn_paired_state.slurm
 
 echo "START TIME: $(date)"
 
@@ -57,7 +58,7 @@ source $MEGATRON_LM_DIR/attn_bench/scripts/llama_checkpoints.sh
 MODEL=${MODEL:-gdn}
 model_config "$MODEL"
 if [ "$NEEDS_TRITON" != "1" ]; then
-    echo "MODEL=$MODEL is not a GDN checkpoint (no recurrent state to compare)."
+    echo "MODEL=$MODEL is not a GDN/KDA checkpoint (no recurrent state to compare)."
     exit 1
 fi
 
@@ -70,7 +71,7 @@ export PYTHONPATH=$MEGATRON_LM_DIR:${PYTHONPATH:-}
 export CUDA_DEVICE_MAX_CONNECTIONS=1
 
 # NEEDS_FLA_052: same side-installed fla as measure_mem.slurm for models whose kernels NaN
-# on the container's 0.4.2 (KDA today; harmless for GDN).
+# on the container's 0.4.2 (KDA; harmless for GDN).
 FLA_DIR=$MEGATRON_LM_DIR/attn_bench/packages-fla
 FLA_ENV=""
 if [ "$NEEDS_FLA_052" = "1" ]; then

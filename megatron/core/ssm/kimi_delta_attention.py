@@ -254,6 +254,10 @@ class KimiDeltaAttention(MegatronModule):
         setattr(self.dt_bias, "tensor_model_parallel", True)
         setattr(self.dt_bias, "partition_dim", 0)
 
+        # Instance attribute like GatedDeltaNet.gated_delta_rule, so the prefill kernel can be
+        # swapped per module (attn_bench/evaluation/gdn_paired_state.py reads the state this way).
+        self.kda_rule = chunk_kda
+
         # Gated output RMSNorm (applied per value-head channel), then output projection.
         self.out_norm = build_module(
             submodules.out_norm,
@@ -445,7 +449,7 @@ class KimiDeltaAttention(MegatronModule):
         # KDA recurrence. L2-norm(q,k), beta sigmoid and the fine-grained decay
         # g = -exp(A_log) * softplus(g_raw + dt_bias) are all fused inside the kernel.
         nvtx_range_push(suffix="chunk_kda")
-        core_attn_out, recurrent_state = chunk_kda(
+        core_attn_out, recurrent_state = self.kda_rule(
             q=q,
             k=k,
             v=v,
