@@ -1,17 +1,15 @@
-"""HuggingFace config/model classes for the Qwen-style hybrid.
+"""HuggingFace config/model classes for the Kimi-style hybrid (--experimental-attention-variant
+kimi_delta_attention + --multi-latent-attention + --linear-attention-freq 4): KDA on the
+linear_attention layers, MLA on every 4th layer (3/7/11/15).
 
-Not built on transformers' own Qwen3NextForCausalLM, despite it being the real "gated-attn +
-GDN" architecture this replicates: its softmax layers unconditionally apply q_norm/k_norm, a
-Qwen3-era stability feature unrelated to gated attention itself -- the gate's origin paper
-never applies it, and GatedLlamaAttention follows the paper, not Qwen3-Next (see its
-docstring). Its GDN layers also use a different in_proj/conv1d split, and it uses partial RoPE
-where ours is full RoPE (see modeling_gdn_llama.py's docstring and
-results/docs/qwen_hybrid_config.md for the full detail). So this file instead composes our own
-already-verified GatedLlamaAttention and GDNMixer per layer_types.
+Not built on Kimi-Linear's own HF model: that one uses NoPE MLA, 32 heads, MoE and a split
+q/k/v conv, none of which this checkpoint has. Instead this file composes the two blocks whose
+standalone conversions are already verified -- KDAMixer (modeling_kda_llama.py) and transformers'
+own DeepseekV2Attention (the mla.py path, DeepSeek-V2-Lite verbatim) -- per layer_types, the same
+way modeling_qwen_llama.py composes GDNMixer and GatedLlamaAttention.
 
-QwenLlamaConfig is a straight union of GatedLlamaConfig's attention fields (rope, GQA,
-attention_bias/dropout -- inherited from LlamaConfig) and GDNLlamaConfig's linear_* mixer
-fields, plus layer_types: which mixer sits at which layer (see hybrid.py).
+KimiLlamaConfig is DeepseekV2Config (MLA dims, plain RoPE, attention_bias/dropout) plus
+KDALlamaConfig's linear_* mixer fields plus layer_types (see hybrid.py).
 """
 
 from dataclasses import dataclass
@@ -23,30 +21,30 @@ from transformers.generation import GenerationMixin
 from transformers.masking_utils import create_causal_mask
 from transformers.modeling_outputs import ModelOutput
 from transformers.modeling_utils import PreTrainedModel
-from transformers.models.llama.configuration_llama import LlamaConfig
-from transformers.models.llama.modeling_llama import (LlamaMLP, LlamaRMSNorm,
-                                                      LlamaRotaryEmbedding)
+from transformers.models.deepseek_v2.configuration_deepseek_v2 import \
+    DeepseekV2Config
+from transformers.models.deepseek_v2.modeling_deepseek_v2 import (
+    DeepseekV2Attention, DeepseekV2RotaryEmbedding)
+from transformers.models.llama.modeling_llama import LlamaMLP, LlamaRMSNorm
 
 from attn_bench.checkpoint_conversion.attn_families.generation_mixin import \
     CacheParamsGenerationMixin
 from attn_bench.checkpoint_conversion.attn_families.hybrid import (
     HybridCache, compute_layer_types)
-from attn_bench.checkpoint_conversion.attn_families.modeling_gated_llama import \
-    GatedLlamaAttention
-from attn_bench.checkpoint_conversion.attn_families.modeling_gdn_llama import \
-    GDNMixer
+from attn_bench.checkpoint_conversion.attn_families.modeling_kda_llama import \
+    KDAMixer
 
 
-class QwenLlamaConfig(LlamaConfig):
-    model_type = "qwen_llama"
+class KimiLlamaConfig(DeepseekV2Config):
+    model_type = "kimi_llama"
 
     def __init__(
         self,
         linear_attention_freq: Union[int, List[int]] = 4,
-        linear_num_key_heads: int = 8,
-        linear_num_value_heads: int = 8,
-        linear_key_head_dim: int = 192,
-        linear_value_head_dim: int = 384,
+        linear_num_key_heads: int = 16,
+        linear_num_value_heads: int = 16,
+        linear_key_head_dim: int = 128,
+        linear_value_head_dim: int = 128,
         linear_conv_kernel_dim: int = 4,
         linear_conv_bias: bool = False,
         linear_in_proj_bias: bool = False,
@@ -65,32 +63,30 @@ class QwenLlamaConfig(LlamaConfig):
         self.linear_out_proj_bias = linear_out_proj_bias
         super().__init__(**kwargs)
         # After super().__init__ so self.num_hidden_layers is set. Only computed when not
-        # given explicitly -- a reload from a saved config.json carries its own layer_types
-        # and must not recompute it (same pattern as Qwen3NextConfig).
+        # given explicitly -- a reload from a saved config.json carries its own layer_types.
         self.layer_types = layer_types if layer_types is not None else compute_layer_types(
             self.linear_attention_freq, self.num_hidden_layers
         )
 
 
-class QwenLlamaDecoderLayer(nn.Module):
-    """Picks GDNMixer or GatedLlamaAttention per config.layer_types[layer_idx] -- both
-    imported, not reimplemented (see module docstring). input_layernorm/post_attention_
-    layernorm/mlp are identical regardless of mixer type, same as GDNLlamaDecoderLayer's and
-    LlamaDecoderLayer's own shape."""
+class KimiLlamaDecoderLayer(nn.Module):
+    """Picks KDAMixer or DeepseekV2Attention per config.layer_types[layer_idx] -- both
+    imported, not reimplemented. input_layernorm/post_attention_layernorm/mlp are identical
+    regardless of mixer type (dense MLP on every layer, no MoE)."""
 
-    def __init__(self, config: QwenLlamaConfig, layer_idx: int):
+    def __init__(self, config: KimiLlamaConfig, layer_idx: int):
         super().__init__()
         self.layer_type = config.layer_types[layer_idx]
         self.input_layernorm = LlamaRMSNorm(config.hidden_size, eps=config.rms_norm_eps)
         if self.layer_type == "linear_attention":
-            self.mixer = GDNMixer(config, layer_idx)
+            self.mixer = KDAMixer(config, layer_idx)
         else:
-            self.self_attn = GatedLlamaAttention(config, layer_idx)
+            self.self_attn = DeepseekV2Attention(config, layer_idx)
         self.post_attention_layernorm = LlamaRMSNorm(config.hidden_size, eps=config.rms_norm_eps)
         self.mlp = LlamaMLP(config)
 
     def forward(self, hidden_states, position_embeddings=None, attention_mask=None,
-               cache_params=None, cache_position=None):
+                cache_params=None, cache_position=None):
         residual = hidden_states
         hidden_states = self.input_layernorm(hidden_states)
         if self.layer_type == "linear_attention":
@@ -108,26 +104,16 @@ class QwenLlamaDecoderLayer(nn.Module):
         return residual + hidden_states
 
 
-class QwenLlamaPreTrainedModel(PreTrainedModel):
-    """_is_stateful = True, same flag GDNLlamaPreTrainedModel sets and for the same reason --
-    tells GenerationMixin._prepare_cache_for_generation to skip eagerly instantiating a
-    DynamicCache under past_key_values, since our own cache_params covers both mixer types.
+class KimiLlamaPreTrainedModel(PreTrainedModel):
+    """_is_stateful and the sdpa/flash/attention-backend flags for the same reasons as
+    QwenLlamaPreTrainedModel (see its docstring): cache_params covers both mixer types, and the
+    MLA layers need an efficient attention backend or they fall back to eager and OOM at long
+    prefixes."""
 
-    _supports_sdpa/_supports_flash_attn/_supports_attention_backend = True: unlike GDN/KDA
-    (no softmax attention at all, so PreTrainedModel's all-False defaults were fine), Qwen's
-    GatedLlamaAttention layers need an efficient backend offered -- GatedLlamaForCausalLM gets
-    these for free by subclassing the real LlamaForCausalLM/LlamaPreTrainedModel, which set all
-    three True; subclassing generic PreTrainedModel here (matching GDN/KDA's pattern) left them
-    False, forcing eager attention (materializes the full [B,H,S,S] matrix) for every
-    full_attention layer regardless of prefix length -- the cause of a real OOM in the T3f
-    memorization sweep at prefix=3971, batch=660 (job 3300059), that pure `gated` never hits
-    since it already gets SDPA. GatedLlamaAttention.forward already dispatches on
-    self.config._attn_implementation generically, so declaring support here is the whole fix."""
-
-    config: QwenLlamaConfig
-    config_class = QwenLlamaConfig
+    config: KimiLlamaConfig
+    config_class = KimiLlamaConfig
     base_model_prefix = "model"
-    _no_split_modules = ["QwenLlamaDecoderLayer"]
+    _no_split_modules = ["KimiLlamaDecoderLayer"]
     _is_stateful = True
     _supports_sdpa = True
     _supports_flash_attn = True
@@ -135,27 +121,29 @@ class QwenLlamaPreTrainedModel(PreTrainedModel):
 
 
 @dataclass
-class QwenLlamaOutput(ModelOutput):
+class KimiLlamaOutput(ModelOutput):
     last_hidden_state: Optional[torch.FloatTensor] = None
     cache_params: Optional[HybridCache] = None
 
 
 @dataclass
-class QwenLlamaCausalLMOutput(ModelOutput):
+class KimiLlamaCausalLMOutput(ModelOutput):
     loss: Optional[torch.FloatTensor] = None
     logits: Optional[torch.FloatTensor] = None
     cache_params: Optional[HybridCache] = None
 
 
-class QwenLlamaModel(QwenLlamaPreTrainedModel):
-    def __init__(self, config: QwenLlamaConfig):
+class KimiLlamaModel(KimiLlamaPreTrainedModel):
+    def __init__(self, config: KimiLlamaConfig):
         super().__init__(config)
         self.embed_tokens = nn.Embedding(config.vocab_size, config.hidden_size, config.pad_token_id)
         self.layers = nn.ModuleList(
-            [QwenLlamaDecoderLayer(config, layer_idx) for layer_idx in range(config.num_hidden_layers)]
+            [KimiLlamaDecoderLayer(config, layer_idx) for layer_idx in range(config.num_hidden_layers)]
         )
         self.norm = LlamaRMSNorm(config.hidden_size, eps=config.rms_norm_eps)
-        self.rotary_emb = LlamaRotaryEmbedding(config=config)
+        # DeepSeek's complex-valued (interleaved) RoPE on the qk_rope_head_dim slice only --
+        # what DeepseekV2Attention expects as position_embeddings.
+        self.rotary_emb = DeepseekV2RotaryEmbedding(config=config)
         self.gradient_checkpointing = False
         self.post_init()
 
@@ -175,7 +163,7 @@ class QwenLlamaModel(QwenLlamaPreTrainedModel):
         use_cache: Optional[bool] = None,
         cache_position: Optional[torch.LongTensor] = None,
         **kwargs,
-    ) -> QwenLlamaOutput:
+    ) -> KimiLlamaOutput:
         use_cache = use_cache if use_cache is not None else self.config.use_cache
         if (input_ids is None) ^ (inputs_embeds is not None):
             raise ValueError("You must specify exactly one of input_ids or inputs_embeds")
@@ -213,24 +201,18 @@ class QwenLlamaModel(QwenLlamaPreTrainedModel):
             )
         hidden_states = self.norm(hidden_states)
 
-        return QwenLlamaOutput(last_hidden_state=hidden_states, cache_params=cache_params if use_cache else None)
+        return KimiLlamaOutput(last_hidden_state=hidden_states, cache_params=cache_params if use_cache else None)
 
 
-class QwenLlamaForCausalLM(QwenLlamaPreTrainedModel, CacheParamsGenerationMixin, GenerationMixin):
-    """_tied_weights_keys cleared for the same reason GDNLlamaForCausalLM/GatedLlamaForCausalLM
-    clear it (confirmed necessary in isolation, job 3118149): without it, from_pretrained's
-    meta-device loading leaves lm_head.weight stuck on the meta device for a custom
-    architecture class.
-
-    prepare_inputs_for_generation comes from CacheParamsGenerationMixin (shared with GDN and
-    KDA) -- CacheParamsGenerationMixin must precede GenerationMixin in the base list so its
-    method wins over GenerationMixin's own default via MRO."""
+class KimiLlamaForCausalLM(KimiLlamaPreTrainedModel, CacheParamsGenerationMixin, GenerationMixin):
+    """_tied_weights_keys cleared and CacheParamsGenerationMixin placed before GenerationMixin
+    for the same reasons as QwenLlamaForCausalLM (see its docstring)."""
 
     _tied_weights_keys = None
 
-    def __init__(self, config: QwenLlamaConfig):
+    def __init__(self, config: KimiLlamaConfig):
         super().__init__(config)
-        self.model = QwenLlamaModel(config)
+        self.model = KimiLlamaModel(config)
         self.lm_head = nn.Linear(config.hidden_size, config.vocab_size, bias=False)
         self.post_init()
 
@@ -256,7 +238,7 @@ class QwenLlamaForCausalLM(QwenLlamaPreTrainedModel, CacheParamsGenerationMixin,
         use_cache: Optional[bool] = None,
         cache_position: Optional[torch.LongTensor] = None,
         **kwargs,
-    ) -> QwenLlamaCausalLMOutput:
+    ) -> KimiLlamaCausalLMOutput:
         outputs = self.model(
             input_ids=input_ids,
             attention_mask=attention_mask,
@@ -267,4 +249,4 @@ class QwenLlamaForCausalLM(QwenLlamaPreTrainedModel, CacheParamsGenerationMixin,
             cache_position=cache_position,
         )
         logits = self.lm_head(outputs.last_hidden_state)
-        return QwenLlamaCausalLMOutput(logits=logits, cache_params=outputs.cache_params)
+        return KimiLlamaCausalLMOutput(logits=logits, cache_params=outputs.cache_params)

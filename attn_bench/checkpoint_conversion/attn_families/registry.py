@@ -8,7 +8,7 @@ from typing import Any
 from attn_bench.checkpoint_conversion.attn_families import (full, gated, gemma,
                                                             mla, swa)
 
-ATTN_FAMILIES = ("full", "sink", "gated", "swa", "gemma", "gdn", "kda", "mla", "qwen")
+ATTN_FAMILIES = ("full", "sink", "gated", "swa", "gemma", "gdn", "kda", "mla", "qwen", "kimi")
 
 
 def detect_attn_family(args: Any) -> str:
@@ -18,6 +18,9 @@ def detect_attn_family(args: Any) -> str:
             return "qwen"
         return "gdn"
     if getattr(args, "experimental_attention_variant", None) == "kimi_delta_attention":
+        # Checked before the pure-kda branch below
+        if getattr(args, "multi_latent_attention", False):
+            return "kimi"
         return "kda"
     if getattr(args, "multi_latent_attention", False):
         return "mla"
@@ -66,6 +69,10 @@ def get_attn_family_module(args: Any):
         # lazy: pulls in modeling_qwen_llama.py, which needs fla (its GDN layers, like gdn.py).
         from attn_bench.checkpoint_conversion.attn_families import qwen
         return qwen
+    if attn_family == "kimi":
+        # lazy: pulls in modeling_kimi_llama.py, which needs fla >= 0.5.2 (its KDA layers, like kda.py).
+        from attn_bench.checkpoint_conversion.attn_families import kimi
+        return kimi
     raise NotImplementedError(
         f"HF conversion for the '{attn_family}' attention family isn't implemented yet "
         f"(only {sorted(ATTN_FAMILIES)} are). See attn_bench/checkpoint_conversion/attn_families/."

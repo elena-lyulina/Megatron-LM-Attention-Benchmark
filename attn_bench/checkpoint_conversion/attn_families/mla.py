@@ -18,6 +18,9 @@ Sources for the MLA-specific mapping:
   key names and that `linear_kv_up_proj.weight <-> kv_b_proj.weight` is a plain rename with no
   reshape (per-head `[nope|v]` layout matches HF's `.view(...).split([qk_nope, v])`).
 - HF: transformers.models.deepseek_v2 (transformers >= 4.48).
+
+convert_mla_attn_weights (the per-layer rename) is reused as-is by kimi.py for the Kimi-style
+hybrid's full_attention layers.
 """
 
 from collections import OrderedDict
@@ -78,6 +81,27 @@ def build_model(config: PretrainedConfig) -> AutoModelForCausalLM:
     return AutoModelForCausalLM.from_config(config)
 
 
+def convert_mla_attn_weights(model_dict: Dict[str, torch.Tensor], layer_idx: int) -> OrderedDict:
+    """Convert one MLA layer's attention weights + input_layernorm from Megatron's key layout to
+    HF's model.layers.{layer_idx}.{self_attn,input_layernorm}.* keys -- a straight rename."""
+    p = f'decoder.layers.{layer_idx}.self_attention.'
+    a = f'model.layers.{layer_idx}.self_attn.'
+    layer_checkpoint = OrderedDict()
+
+    layer_checkpoint[a + 'q_proj.weight'] = model_dict[p + 'linear_q_proj.weight']
+    layer_checkpoint[a + 'kv_a_proj_with_mqa.weight'] = model_dict[p + 'linear_kv_down_proj.weight']
+    # KV RMSNorm fused into linear_kv_up_proj (column_parallel_layer_norm_linear), not a
+    # standalone self_attention.kv_layernorm (that slot is IdentityOp in the MLA spec).
+    layer_checkpoint[a + 'kv_a_layernorm.weight'] = model_dict[p + 'linear_kv_up_proj.layer_norm_weight']
+    layer_checkpoint[a + 'kv_b_proj.weight'] = model_dict[p + 'linear_kv_up_proj.weight']
+    layer_checkpoint[a + 'o_proj.weight'] = model_dict[p + 'linear_proj.weight']
+
+    # Standalone pre-attention RMSNorm (MLA spec: input_layernorm=layer_norm(has_residual=True)).
+    layer_checkpoint[f'model.layers.{layer_idx}.input_layernorm.weight'] = \
+        model_dict[f'decoder.layers.{layer_idx}.input_layernorm.weight']
+    return layer_checkpoint
+
+
 def build_state_dict(model_dict: Dict[str, torch.Tensor], args: Any) -> OrderedDict:
     """Convert an MLA Megatron state dict to DeepseekV2ForCausalLM format. Near-literal key
     rename; the non-attention parts (MLP, embeddings, final norm, lm_head) mirror full.py."""
@@ -86,20 +110,7 @@ def build_state_dict(model_dict: Dict[str, torch.Tensor], args: Any) -> OrderedD
     checkpoint['model.embed_tokens.weight'] = model_dict['embedding.word_embeddings.weight']
 
     for layer_idx in range(args.num_layers):
-        p = f'decoder.layers.{layer_idx}.self_attention.'
-        a = f'model.layers.{layer_idx}.self_attn.'
-
-        checkpoint[a + 'q_proj.weight'] = model_dict[p + 'linear_q_proj.weight']
-        checkpoint[a + 'kv_a_proj_with_mqa.weight'] = model_dict[p + 'linear_kv_down_proj.weight']
-        # KV RMSNorm fused into linear_kv_up_proj (column_parallel_layer_norm_linear), not a
-        # standalone self_attention.kv_layernorm (that slot is IdentityOp in the MLA spec).
-        checkpoint[a + 'kv_a_layernorm.weight'] = model_dict[p + 'linear_kv_up_proj.layer_norm_weight']
-        checkpoint[a + 'kv_b_proj.weight'] = model_dict[p + 'linear_kv_up_proj.weight']
-        checkpoint[a + 'o_proj.weight'] = model_dict[p + 'linear_proj.weight']
-
-        # Standalone pre-attention RMSNorm (MLA spec: input_layernorm=layer_norm(has_residual=True)).
-        checkpoint[f'model.layers.{layer_idx}.input_layernorm.weight'] = \
-            model_dict[f'decoder.layers.{layer_idx}.input_layernorm.weight']
+        checkpoint.update(convert_mla_attn_weights(model_dict, layer_idx))
 
         mlp_weight = model_dict[f'decoder.layers.{layer_idx}.mlp.linear_fc1.weight']
         ffn_hidden_size = mlp_weight.shape[0] // 2

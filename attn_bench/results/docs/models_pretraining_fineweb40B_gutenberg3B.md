@@ -449,6 +449,29 @@ Logs: `attn_bench/logs/3334192.err` + `attn_bench/_logs/3334192.out` (`.out` in 
 
 ---
 
+## Hybrid Kimi-style mixer (12 KDA + 4 MLA)
+
+KDA on 12 layers + MLA at layers 3/7/11/15, FFN 7168. Config: `attn_bench/configs/param_count_configs/hybrid_kimi_1B_args_ffn7168.txt`.
+
+Ran in two slices: `3394491` hit `--exit-duration-in-mins 345` and saved a clean checkpoint at iteration 8794; `3399555` resumed from it (no repeated iterations) and ran to 18141, exiting via `[exiting program after consuming all available data at iteration 18141]`. Zero skipped / NaN iterations.
+
+| variant | Slurm job | start (CEST) | end (CEST) | run time | status | final lm loss (step 18141) | throughput (TFLOP/s/GPU) |
+|---|---|---|---|---|---|---|---|
+| hybrid kimi (scf1) | `3394491` (initial) → `3399555` (resume) | 2026-09-14 01:40:58 | 2026-09-15 09:58:01 | 5h 46m 50s + 4h 27m 24s | clean time-limit save → COMPLETED (data exhausted) | 2.3358 (final step; ~2.325 avg last 50) | ~227 (avg) |
+
+Throughput is pulled down by step-time spikes (median ~1.52 s/iter, but 31% / 9% of iterations above 2 s in the two slices), same pattern as noted in the MLA section.
+
+W&B runs (project `fineweb-40B_gutenberg-3B`): initial `llama3-1b-hybrid-kimi-scf1-fineweb40B-gutenberg3B-3394491` (`dg8sjpud`), resume `...-3399555` (`rg8w4xc1`).
+
+Checkpoint saved at step 18141, on scratch under `attn_bench/results/pretrain/fineweb-40B_gutenberg-3B/llama3-1b-hybrid-kimi-scf1-fineweb40B-gutenberg3B/checkpoints/` — move to long-term store under:
+`/users/elyulina/store/pretrain-results/llama3-1b-hybrid-kimi-scf1-fineweb40B-gutenberg3B/`
+
+Slurm script: `attn_bench/submissions/pretrain_llama3_1b_hybrid_kimi_fineweb40B_gutenberg3B.slurm`
+
+Logs: `attn_bench/logs/3394491.err` + `attn_bench/_logs/3394491.out` (initial), `attn_bench/logs/3399555.err` + `attn_bench/_logs/3399555.out` (resume) — `.out` files in `_logs/` for exceeding 3 MB.
+
+---
+
 ## Attention variants / trained models 
 
 | variant | Megatron flag | description |
@@ -468,6 +491,7 @@ Logs: `attn_bench/logs/3334192.err` + `attn_bench/_logs/3334192.out` (`.out` in 
 | kimi delta attention (KDA) | `--experimental-attention-variant kimi_delta_attention --linear-attention-freq [1]*16 --linear-num-key-heads 16 --linear-num-value-heads 16 --linear-key-head-dim 128 --linear-value-head-dim 128 --position-embedding-type none` | KDA linear-attention mixer replaces softmax attention on all layers (symmetric 128/128 heads); FFN shrunk to 6976 to param-match (~1.235B); needs flash-linear-attention ≥ 0.5.x |
 | hybrid qwen (12 GDN + 4 gated attn) | `--experimental-attention-variant gated_delta_net --linear-attention-freq 4 --linear-num-key-heads 8 --linear-num-value-heads 8 --attention-output-gate` | Qwen-style hybrid: `[1,1,1,0]×4` — GDN mixer on 12 layers, gated softmax attention on layers 3/7/11/15; FFN shrunk to 6208 to param-match (~1.234B) |
 | hybrid gemma (14 SWA w=1024 + 2 full) | `--window-size 1024,0 --window-attn-skip-freq 6` | Gemma-3-style interleave: sliding window on 14 layers, full attention at layers 6 and 12; no FFN shrink needed, param count identical to `full` (~1.236B) |
+| hybrid kimi (12 KDA + 4 MLA) | `--experimental-attention-variant kimi_delta_attention --linear-attention-freq 4 --multi-latent-attention` | Kimi-Linear-style hybrid: `[1,1,1,0]×4` — KDA on 12 layers, MLA on layers 3/7/11/15; FFN shrunk to 7168 to param-match (~1.237B) |
 
 ---
 

@@ -19,7 +19,8 @@ Sources for the KDA-specific mapping:
   KDA+MLA+MoE hybrid -- only the projection / gate / norm names transfer, not K3's conv or MoE.
 - Algorithm: "Kimi Linear" (arXiv 2510.26692); FLA reference `fla/layers/kda.py`.
 
-build_state_dict is therefore a near-literal key rename.
+build_state_dict is therefore a near-literal key rename. convert_kda_mixer_weights (the per-layer
+rename) is reused as-is by kimi.py for the Kimi-style hybrid's linear_attention layers.
 """
 
 from collections import OrderedDict
@@ -71,6 +72,33 @@ def build_model(config: KDALlamaConfig) -> KDALlamaForCausalLM:
     return model
 
 
+def convert_kda_mixer_weights(model_dict: Dict[str, torch.Tensor], layer_idx: int) -> OrderedDict:
+    """Convert one KDA layer's mixer weights + input_layernorm from Megatron's key layout to HF's
+    model.layers.{layer_idx}.{mixer,input_layernorm}.* keys -- a straight rename, no reshape."""
+    prefix = f'decoder.layers.{layer_idx}.self_attention.'
+    m = f'model.layers.{layer_idx}.mixer.'
+    layer_checkpoint = OrderedDict()
+
+    for name in ('q_proj', 'k_proj', 'v_proj', 'b_proj',
+                 'f_proj_down', 'f_proj_up', 'g_proj_down', 'g_proj_up'):
+        layer_checkpoint[m + f'{name}.weight'] = model_dict[prefix + f'{name}.weight']
+
+    layer_checkpoint[m + 'conv1d.weight'] = model_dict[prefix + 'conv1d.weight']
+    if prefix + 'conv1d.bias' in model_dict:
+        layer_checkpoint[m + 'conv1d.bias'] = model_dict[prefix + 'conv1d.bias']
+    layer_checkpoint[m + 'dt_bias'] = model_dict[prefix + 'dt_bias']
+    layer_checkpoint[m + 'A_log'] = model_dict[prefix + 'A_log']
+    layer_checkpoint[m + 'out_norm.weight'] = model_dict[prefix + 'out_norm.weight']
+    layer_checkpoint[m + 'out_proj.weight'] = model_dict[prefix + 'out_proj.weight']
+
+    # Standalone pre-mixer RMSNorm: get_kimi_delta_attention_module_spec sets
+    # fuse_input_layernorm=False, so it is its own key, not a projection-fused
+    # `*.layer_norm_weight`.
+    layer_checkpoint[f'model.layers.{layer_idx}.input_layernorm.weight'] = \
+        model_dict[f'decoder.layers.{layer_idx}.input_layernorm.weight']
+    return layer_checkpoint
+
+
 def build_state_dict(model_dict: Dict[str, torch.Tensor], args: Any) -> OrderedDict:
     """Convert a KDA Megatron state dict to KDALlamaForCausalLM format."""
     checkpoint = OrderedDict()
@@ -78,26 +106,7 @@ def build_state_dict(model_dict: Dict[str, torch.Tensor], args: Any) -> OrderedD
     checkpoint['model.embed_tokens.weight'] = model_dict['embedding.word_embeddings.weight']
 
     for layer_idx in range(args.num_layers):
-        prefix = f'decoder.layers.{layer_idx}.self_attention.'
-        m = f'model.layers.{layer_idx}.mixer.'
-
-        for name in ('q_proj', 'k_proj', 'v_proj', 'b_proj',
-                     'f_proj_down', 'f_proj_up', 'g_proj_down', 'g_proj_up'):
-            checkpoint[m + f'{name}.weight'] = model_dict[prefix + f'{name}.weight']
-
-        checkpoint[m + 'conv1d.weight'] = model_dict[prefix + 'conv1d.weight']
-        if prefix + 'conv1d.bias' in model_dict:
-            checkpoint[m + 'conv1d.bias'] = model_dict[prefix + 'conv1d.bias']
-        checkpoint[m + 'dt_bias'] = model_dict[prefix + 'dt_bias']
-        checkpoint[m + 'A_log'] = model_dict[prefix + 'A_log']
-        checkpoint[m + 'out_norm.weight'] = model_dict[prefix + 'out_norm.weight']
-        checkpoint[m + 'out_proj.weight'] = model_dict[prefix + 'out_proj.weight']
-
-        # Standalone pre-mixer RMSNorm: get_kimi_delta_attention_module_spec sets
-        # fuse_input_layernorm=False, so it is its own key, not a projection-fused
-        # `*.layer_norm_weight`.
-        checkpoint[f'model.layers.{layer_idx}.input_layernorm.weight'] = \
-            model_dict[f'decoder.layers.{layer_idx}.input_layernorm.weight']
+        checkpoint.update(convert_kda_mixer_weights(model_dict, layer_idx))
 
         mlp_weight = model_dict[f'decoder.layers.{layer_idx}.mlp.linear_fc1.weight']
         ffn_hidden_size = mlp_weight.shape[0] // 2
